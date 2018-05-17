@@ -6,3 +6,4 @@ https://drive.google.com/open?id=0B18E-boylcj8QnlkTURvam9aR1E <br> <br>
 http://www.oracle.com/technetwork/java/javase/downloads/jre9-downloads-3848532.html <br> <br>
 Then you just need launch DeadShock.jar and then have fun ;) <br>
 ![alt text](https://github.com/Abhai2016/DeadShock/blob/master/images/backgrounds/cover.jpg)
+![alt text](https://github.com/Abhai2016/DeadShock/blob/master/images/GameplayScreen.png)
