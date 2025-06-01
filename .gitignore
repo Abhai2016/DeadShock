@@ -1,3 +1,6 @@
 .idea/
-videos/
-sounds/
+/out
+/images
+/videos
+/sounds
+/target
