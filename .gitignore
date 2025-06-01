@@ -1,2 +1,6 @@
 .idea/
-/out
+out/
+target/
+images/
+videos/
+sounds/
