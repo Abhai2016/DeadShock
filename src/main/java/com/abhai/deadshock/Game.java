@@ -12,6 +12,7 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
@@ -73,7 +74,7 @@ public class Game extends Application {
 
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject data = (JSONObject) jsonParser.parse(new FileReader("file:/../data/saves.dat"));
+            JSONObject data = (JSONObject) jsonParser.parse(new FileReader("data/saves.dat"));
 
             JSONObject levelData = (JSONObject) data.get("levelData");
             difficultyLevelText = (String) levelData.get("difficultyLevel");
@@ -159,7 +160,7 @@ public class Game extends Application {
 
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject optionsData = (JSONObject) jsonParser.parse(new FileReader("file:/../data/options.dat"));
+            JSONObject optionsData = (JSONObject) jsonParser.parse(new FileReader("data/options.dat"));
             menu = new Menu();
             menu.musicSlider.setValue((double)optionsData.get("musicVolume"));
             menu.fxSlider.setValue((double)optionsData.get("FXVolume"));
@@ -261,7 +262,7 @@ public class Game extends Application {
             elizabeth = null;
 
             if (string.equals("New Game")) {
-                try (DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream("file:/../data/saves.dat"))) {
+                try (DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream("data/saves.dat"))) {
                     dataOutputStream.writeChar(' ');
                 } catch (IOException e) {
                     System.exit(0);
@@ -319,7 +320,7 @@ public class Game extends Application {
     public static void createEnemies() {
         try {
             JSONParser jsonParser = new JSONParser();
-            Object object = jsonParser.parse(new FileReader("file:/../data/enemies.dat"));
+            Object object = jsonParser.parse(new FileReader(("data/enemies.dat")));
             JSONObject jsonObject = new JSONObject( (JSONObject)object );
             JSONArray jsonArray = (JSONArray)jsonObject.get("level1");
             if (levelNumber == 1)
@@ -395,13 +396,13 @@ public class Game extends Application {
         if (booker.getTranslateX() > Level.BLOCK_SIZE * 285 && levelNumber == 2) {
             if (boss.getTrompInterval() == 0) {
                 Sounds.elizabethMediaPlayer = new MediaPlayer(new Media(
-                        new File("file:/../sounds/voice/elizabeth/oh_booker.mp3").toURI().toString()));
+                        new File("sounds/voice/elizabeth/oh_booker.mp3").getAbsoluteFile().toURI().toString()));
                 Sounds.elizabethMediaPlayer.setVolume(Game.menu.voiceSlider.getValue() / 100);
                 Sounds.elizabethMediaPlayer.play();
 
                 Sounds.elizabethMediaPlayer.setOnEndOfMedia(() -> {
                     Sounds.bookerVoice = new MediaPlayer(new Media(
-                            new File("file:/../sounds/voice/booker/your_mother.mp3").toURI().toString()));
+                            new File("sounds/voice/booker/your_mother.mp3").getAbsoluteFile().toURI().toString()));
                     Sounds.bookerVoice.setVolume(Game.menu.voiceSlider.getValue() / 100);
                     Sounds.bookerVoice.play();
                 });
@@ -420,7 +421,7 @@ public class Game extends Application {
         scene = new Scene(appRoot, 1280, 720);
 
         initContent();
-        stage.getIcons().add(new Image("file:/../images/icon.jpg"));
+        stage.getIcons().add(new Image(new File("images/icon.jpg").toURI().toString()));
         stage.setTitle("DeadShock");
         stage.setResizable(false);
         stage.setWidth(scene.getWidth());

@@ -7,6 +7,7 @@ import com.abhai.deadshock.Levels.Level;
 import com.abhai.deadshock.Sounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
@@ -24,7 +25,7 @@ public class Boss extends Pane {
     private final byte BOSS_SPEED = 1;
 
     private MediaPlayer mediaPlayer;
-    private ImageView imgView = new ImageView("file:/../images/characters/bigDaddy.png");
+    private ImageView imgView = new ImageView(new Image(new File("images/characters/bigDaddy.png").toURI().toString()));
     private Point2D velocity = new Point2D(0, 0);
     SpriteAnimation animation = new SpriteAnimation(imgView, Duration.seconds(2), 3, 3, 0, 100, 93, 100);
 
@@ -224,7 +225,7 @@ public class Boss extends Pane {
                 rectHP.setWidth(0);
                 getTransforms().add(new Rotate(90));
 
-                mediaPlayer = new MediaPlayer(new Media(new File("file:/../sounds/fx/boss/death.mp3").toURI().toString()));
+                mediaPlayer = new MediaPlayer(new Media(new File("sounds/fx/boss/death.mp3").getAbsoluteFile().toURI().toString()));
                 mediaPlayer.setVolume(Game.menu.fxSlider.getValue() / 100);
                 mediaPlayer.play();
 

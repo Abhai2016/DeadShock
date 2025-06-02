@@ -21,8 +21,8 @@ public class Level {
 
     public static ArrayList<Block> enemyBlocks = new ArrayList<>();
 
-    static Image imageNewLandBlock = new Image("file:/../images/blocks/newLandBlock.png");
-    static Image imageBlock = new Image("file:/../images/blocks/blocks.jpg");
+    static Image imageNewLandBlock = new Image(new File("images/blocks/newLandBlock.png").toURI().toString());
+    static Image imageBlock = new Image(new File("images/blocks/blocks.jpg").toURI().toString());
     private ImageView background;
     private ImageView imgView;
 
@@ -32,21 +32,21 @@ public class Level {
     public Level() {
         switch ((int)Game.levelNumber) {
             case 0:
-                background = new ImageView("file:/../images/backgrounds/bioshock.jpg");
+                background = new ImageView(new Image(new File("images/backgrounds/bioshock.jpg").toURI().toString()));
                 background.setFitHeight(BLOCK_SIZE * 15);
 
-                imgView = new ImageView("file:/../images/statue.jpg");
+                imgView = new ImageView(new Image(new File("images/statue.jpg").toURI().toString()));
                 imgView.setFitWidth(223);
                 imgView.setTranslateX(BLOCK_SIZE * 300 - imgView.getFitWidth());
                 Game.gameRoot.getChildren().addAll(background, imgView);
                 break;
             case 1:
-                background = new ImageView("file:/../images/backgrounds/bioshock_level2.jpg");
+                background = new ImageView(new Image(new File("images/backgrounds/bioshock_level2.jpg").toURI().toString()));
                 background.setFitHeight(BLOCK_SIZE * 15);
                 Game.gameRoot.getChildren().add(background);
                 break;
             case 2:
-                background = new ImageView("file:/../images/backgrounds/bioshock_level3.jpg");
+                background = new ImageView(new Image(new File("images/backgrounds/bioshock_level3.jpg").toURI().toString()));
                 background.setFitHeight(BLOCK_SIZE * 15);
                 Game.gameRoot.getChildren().add(background);
 
@@ -60,9 +60,9 @@ public class Level {
                     Game.gameRoot.getChildren().add(supply);
                 break;
             case 3:
-                background = new ImageView("file:/../images/backgrounds/bossLevel.jpg");
+                background = new ImageView(new Image(new File("images/backgrounds/bossLevel.jpg").toURI().toString()));
                 Game.gameRoot.getChildren().add(background);
-                imgView = new ImageView("file:/../images/blocks/bottomBlocks.png");
+                imgView = new ImageView(new Image(new File("images/blocks/bottomBlocks.png").toURI().toString()));
                 imgView.setTranslateY(Level.BLOCK_SIZE * 14);
                 Game.gameRoot.getChildren().add(imgView);
                 break;
@@ -72,10 +72,10 @@ public class Level {
 
     public void changeLevel(long level) {
         if (level == 1) {
-            background.setImage(new Image("file:/../images/backgrounds/bioshock_level2.jpg"));
+            background.setImage(new Image(new File("images/backgrounds/bioshock_level2.jpg").toURI().toString()));
             Game.gameRoot.getChildren().remove(imgView);
         } else if (level == 2) {
-            background.setImage(new Image("file:/../images/backgrounds/bioshock_level3.jpg"));
+            background.setImage(new Image(new File("images/backgrounds/bioshock_level3.jpg").toURI().toString()));
             Game.supplies.add(new Supply(0, 7920, 576));
             Game.supplies.add(new Supply(0, 8016, 576));
             Game.supplies.add(new Supply(1, 8592, 576));
@@ -85,8 +85,8 @@ public class Level {
             for (Supply supply : Game.supplies)
                 Game.gameRoot.getChildren().add(supply);
         } else {
-            background.setImage(new Image("file:/../images/backgrounds/bossLevel.jpg"));
-            imgView = new ImageView("file:/../images/blocks/bottomBlocks.png");
+            background.setImage(new Image(new File("images/backgrounds/bossLevel.jpg").toURI().toString()));
+            imgView = new ImageView(new Image(new File("images/blocks/bottomBlocks.png").toURI().toString()));
             imgView.setTranslateY(Level.BLOCK_SIZE * 14);
             Game.gameRoot.getChildren().add(imgView);
         }
@@ -96,7 +96,7 @@ public class Level {
     private void getLevel_data() {
         try {
             JSONParser jsonParser = new JSONParser();
-            Object obj = jsonParser.parse(new FileReader("file:/../data/levels.dat"));
+            Object obj = jsonParser.parse(new FileReader("data/levels.dat"));
             JSONObject jsonObject = new JSONObject((JSONObject)obj);
             JSONArray jsonArrayForBlocks = (JSONArray) jsonObject.get("level1");
             JSONArray jsonArrayForEnemyBlocks;

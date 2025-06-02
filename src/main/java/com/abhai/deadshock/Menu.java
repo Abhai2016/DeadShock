@@ -29,16 +29,16 @@ import static javafx.scene.input.KeyEvent.KEY_PRESSED;
 
 
 public class Menu {
-    private ImageView controls = new ImageView("file:/../images/controls.png");
+    private ImageView controls = new ImageView(new Image(new File("images/controls.png").toURI().toString()));
     private Pane description = new Pane();
 
-    public MediaPlayer music = new MediaPlayer(new Media(new File("file:/../sounds/music/Main_Theme.mp3").toURI().toString()));
-    private String rock = "file:/../sounds/music/rock/";
-    private String post = "file:/../sounds/music/post-hardcore_metalcore/";
-    private String electronic = "file:/../sounds/music/electronic/";
-    private String developer_choice = "file:/../sounds/music/developer_choice/";
+    public MediaPlayer music = new MediaPlayer(new Media(new File("sounds/music/Main_Theme.mp3").getAbsoluteFile().toURI().toString()));
+    private String rock = "sounds/music/rock/";
+    private String post = "sounds/music/post-hardcore_metalcore/";
+    private String electronic = "sounds/music/electronic/";
+    private String developer_choice = "sounds/music/developer_choice/";
 
-    private String tempMusic = "file:/../sounds/music/developer_choice/01.mp3";
+    private String tempMusic = "sounds/music/developer_choice/01.mp3";
 
     private Text musicText = new Text("Выбрано : ВЫБОР РАЗРАБОТЧИКА");
     private Text descriptionDifficultyLevel = new Text("УРОВЕНЬ СЛОЖНОСТИ 'СРЕДНИЙ':\n" +
@@ -93,7 +93,7 @@ public class Menu {
 
 
     private void createCover() {
-        ImageView cover = new ImageView(new Image("file:/../images/backgrounds/cover.jpg"));
+        ImageView cover = new ImageView(new Image(new File("images/backgrounds/cover.jpg").toURI().toString()));
         Text textCover = new Text("Для продолжения нажмите ввод");
         textCover.setFont(Font.font("Arial", FontWeight.BOLD, 28));
         textCover.setFill(Color.AQUA);
@@ -260,7 +260,7 @@ public class Menu {
             Game.vendingMachine.setMarikLevel();
         }
         music.stop();
-        music = new MediaPlayer(new Media(new File(tempMusic).toURI().toString()));
+        music = new MediaPlayer(new Media(new File(tempMusic).getAbsoluteFile().toURI().toString()));
         music.setVolume(musicSlider.getValue() / 100);
         music.play();
         addMediaListener();
@@ -331,11 +331,11 @@ public class Menu {
         rock.setOnMouseClicked( event -> {
             if (!start) {
                 music.stop();
-                music = new MediaPlayer(new Media(new File("file:/../sounds/music/rock/01.mp3").toURI().toString()));
+                music = new MediaPlayer(new Media(new File("sounds/music/rock/01.mp3").getAbsoluteFile().toURI().toString()));
                 music.setVolume(musicSlider.getValue() / 100);
             }
             else
-                tempMusic = "file:/../sounds/music/rock/01.mp3";
+                tempMusic = "sounds/music/rock/01.mp3";
 
             addMediaListener();
             musicText.setText("Выбрано : РОК");
@@ -344,11 +344,11 @@ public class Menu {
         post_hardcore.setOnMouseClicked( event -> {
             if (!start) {
                 music.stop();
-                music = new MediaPlayer(new Media(new File("file:/../sounds/music/post-hardcore_metalcore/01.mp3").toURI().toString()));
+                music = new MediaPlayer(new Media(new File("sounds/music/post-hardcore_metalcore/01.mp3").getAbsoluteFile().toURI().toString()));
                 music.setVolume(musicSlider.getValue() / 100);
             }
             else
-                tempMusic = "file:/../sounds/music/post-hardcore_metalcore/01.mp3";
+                tempMusic = "sounds/music/post-hardcore_metalcore/01.mp3";
 
             addMediaListener();
             musicText.setText("Выбрано : Post-Hardcore/Metalcore");
@@ -357,11 +357,11 @@ public class Menu {
         electronic.setOnMouseClicked( event -> {
             if (!start) {
                 music.stop();
-                music = new MediaPlayer(new Media(new File("file:/../sounds/music/electronic/01.mp3").toURI().toString()));
+                music = new MediaPlayer(new Media(new File("sounds/music/electronic/01.mp3").getAbsoluteFile().toURI().toString()));
                 music.setVolume(musicSlider.getValue() / 100);
             }
             else
-                tempMusic = "file:/../sounds/music/electronic/01.mp3";
+                tempMusic = "sounds/music/electronic/01.mp3";
 
             addMediaListener();
             musicText.setText("Выбрано : ЭЛЕКТРОННАЯ");
@@ -370,11 +370,11 @@ public class Menu {
         developer_choice.setOnMouseClicked( event -> {
             if (!start) {
                 music.stop();
-                music = new MediaPlayer(new Media(new File("file:/../sounds/music/developer_choice/01.mp3").toURI().toString()));
+                music = new MediaPlayer(new Media(new File("sounds/music/developer_choice/01.mp3").getAbsoluteFile().toURI().toString()));
                 music.setVolume(musicSlider.getValue() / 100);
             }
             else
-                tempMusic = "file:/../sounds/music/developer_choice/01.mp3";
+                tempMusic = "sounds/music/developer_choice/01.mp3";
 
             addMediaListener();
             musicText.setText("Выбрано : ВЫБОР РАЗРАБОТЧИКА");
@@ -572,7 +572,7 @@ public class Menu {
         if (music.getMedia().getSource().contains(text + "01.mp3")) {
             music.stop();
             music = null;
-            music = new MediaPlayer(new Media(new File(text + "02.mp3").toURI().toString()));
+            music = new MediaPlayer(new Media(new File(text + "02.mp3").getAbsoluteFile().toURI().toString()));
             music.setVolume(musicSlider.getValue() / 100);
             music.play();
             addMediaListener();
@@ -581,7 +581,7 @@ public class Menu {
         if (music.getMedia().getSource().contains(text + "02.mp3")) {
             music.stop();
             music = null;
-            music = new MediaPlayer(new Media(new File(text + "03.mp3").toURI().toString()));
+            music = new MediaPlayer(new Media(new File(text + "03.mp3").getAbsoluteFile().toURI().toString()));
             music.setVolume(musicSlider.getValue() / 100);
             music.play();
             addMediaListener();
@@ -590,7 +590,7 @@ public class Menu {
         if (music.getMedia().getSource().contains(text + "03.mp3")) {
             music.stop();
             music = null;
-            music = new MediaPlayer(new Media(new File(text + "04.mp3").toURI().toString()));
+            music = new MediaPlayer(new Media(new File(text + "04.mp3").getAbsoluteFile().toURI().toString()));
             music.setVolume(musicSlider.getValue() / 100);
             music.play();
             addMediaListener();
@@ -599,7 +599,7 @@ public class Menu {
         if (music.getMedia().getSource().contains(text + "04.mp3")) {
             music.stop();
             music = null;
-            music = new MediaPlayer(new Media(new File(text + "05.mp3").toURI().toString()));
+            music = new MediaPlayer(new Media(new File(text + "05.mp3").getAbsoluteFile().toURI().toString()));
             music.setVolume(musicSlider.getValue() / 100);
             music.play();
             addMediaListener();
@@ -608,7 +608,7 @@ public class Menu {
         if (music.getMedia().getSource().contains(text + "05.mp3")) {
             music.stop();
             music = null;
-            music = new MediaPlayer(new Media(new File(text + "06.mp3").toURI().toString()));
+            music = new MediaPlayer(new Media(new File(text + "06.mp3").getAbsoluteFile().toURI().toString()));
             music.setVolume(musicSlider.getValue() / 100);
             music.play();
             addMediaListener();
@@ -617,7 +617,7 @@ public class Menu {
         if (music.getMedia().getSource().contains(text + "06.mp3")) {
             music.stop();
             music = null;
-            music = new MediaPlayer(new Media(new File(text + "07.mp3").toURI().toString()));
+            music = new MediaPlayer(new Media(new File(text + "07.mp3").getAbsoluteFile().toURI().toString()));
             music.setVolume(musicSlider.getValue() / 100);
             music.play();
             addMediaListener();
@@ -626,7 +626,7 @@ public class Menu {
         if (music.getMedia().getSource().contains(text + "07.mp3")) {
             music.stop();
             music = null;
-            music = new MediaPlayer(new Media(new File(text + "01.mp3").toURI().toString()));
+            music = new MediaPlayer(new Media(new File(text + "01.mp3").getAbsoluteFile().toURI().toString()));
             music.setVolume(musicSlider.getValue() / 100);
             music.play();
             addMediaListener();
@@ -715,7 +715,7 @@ public class Menu {
         MenuBox(SubMenu sm) {
             subMenu = sm;
 
-            ImageView imgView = new ImageView("file:/../images/backgrounds/menu.png");
+            ImageView imgView = new ImageView(new Image(new File("images/backgrounds/menu.png").getAbsoluteFile().toURI().toString()));
             getChildren().addAll(imgView, subMenu);
         }
 

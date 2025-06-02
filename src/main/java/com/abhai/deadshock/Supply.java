@@ -7,9 +7,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
+import java.io.File;
+
 public class Supply extends Pane {
-    private ImageView medicine = new ImageView(new Image("file:/../images/supply/medicine.png"));
-    private ImageView ammo = new ImageView(new Image("file:/../images/supply/ammo.png"));
+    private ImageView medicine = new ImageView(new Image(new File("images/supply/medicine.png").toURI().toString()));
+    private ImageView ammo = new ImageView(new Image(new File("images/supply/ammo.png").toURI().toString()));
 
     private RotateTransition rt = new RotateTransition(Duration.seconds(1), ammo);
 

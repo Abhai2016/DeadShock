@@ -6,6 +6,7 @@ import com.abhai.deadshock.Weapon.Weapon;
 import javafx.animation.FadeTransition;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
@@ -15,14 +16,16 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+import java.io.File;
+
 import static javafx.scene.input.KeyEvent.KEY_PRESSED;
 
 class VendingMachine extends Pane {
     private final int BUTTON_HEIGHT = 53;
     private final int BUTTON_WIDTH = 356;
 
-    private ImageView vendingMachine = new ImageView("file:/../images/vending_machine/vending_machine.png");
-    private ImageView vendingMachineMenu = new ImageView("file:/../images/vending_machine/menu.png");
+    private ImageView vendingMachine = new ImageView(new Image(new File("images/vending_machine/vending_machine.png").toURI().toString()));
+    private ImageView vendingMachineMenu = new ImageView(new Image(new File("images/vending_machine/menu.png").toURI().toString()));
 
     private FadeTransition ft = new FadeTransition(Duration.seconds(0.3), vendingMachineMenu);
     private Button btnBigMedicine = new Button();

@@ -10,11 +10,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
+import java.io.File;
+
 public class HUD extends Pane {
-    private ImageView devilKiss = new ImageView("file:/../images/hud/devil_kiss.png");
-    private ImageView electricity = new ImageView("file:/../images/hud/electricity.png");
-    private ImageView hypnotist = new ImageView("file:/../images/hud/hypnotist.png");
-    private ImageView money = new ImageView("file:/../images/hud/money.png");
+    private ImageView devilKiss = new ImageView(new Image(new File("images/hud/devil_kiss.png").toURI().toString()));
+    private ImageView electricity = new ImageView(new Image(new File("images/hud/electricity.png").toURI().toString()));
+    private ImageView hypnotist = new ImageView(new Image(new File("images/hud/hypnotist.png").toURI().toString()));
+    private ImageView money;
 
     private Text textBullet = new Text();
     private Text textMoney = new Text();
@@ -45,7 +47,7 @@ public class HUD extends Pane {
         bulletPane.setTranslateX(1165);
         bulletPane.getChildren().addAll(rect, textBullet);
 
-        money = new ImageView("file:/../images/hud/money.png");
+        money = new ImageView(new Image(new File("images/hud/money.png").toURI().toString()));
         money.setTranslateX(0);
         money.setTranslateY(Level.BLOCK_SIZE * 15 - Level.BLOCK_SIZE * 1.5);
 
@@ -63,7 +65,7 @@ public class HUD extends Pane {
         hypnotist.setTranslateY(57);
         hypnotist.setVisible(false);
 
-        ImageView hp_and_salt = new ImageView("file:/../images/hud/HP and Salt.png");
+        ImageView hp_and_salt = new ImageView(new Image(new File("images/hud/HP and Salt.png").toURI().toString()));
         getChildren().addAll(HP, salt, hp_and_salt, devilKiss, electricity, hypnotist, bulletPane, money, textMoney);
         Game.appRoot.getChildren().add(this);
         setVisible(false);
@@ -89,7 +91,7 @@ public class HUD extends Pane {
 
 
     void setMarikLevel() {
-        money.setImage(new Image("file:/../images/hud/moneyForMarik.png"));
+        money.setImage(new Image(new File("images/hud/moneyForMarik.png").toURI().toString()));
         getChildren().remove(textMoney);
     }
 

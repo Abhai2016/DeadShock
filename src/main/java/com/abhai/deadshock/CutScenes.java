@@ -7,6 +7,7 @@ import com.abhai.deadshock.Levels.Block;
 import com.abhai.deadshock.Levels.Level;
 import com.abhai.deadshock.Weapon.Weapon;
 import javafx.animation.FadeTransition;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.media.Media;
@@ -22,7 +23,7 @@ import static javafx.scene.input.KeyEvent.KEY_PRESSED;
 public class CutScenes {
     private MediaPlayer video;
     private MediaView videoView;
-    ImageView imageView = new ImageView("file:/../images/black.jpg");
+    ImageView imageView = new ImageView(new Image(new File("images/black.jpg").toURI().toString()));
 
     public CutScenes() {
         Game.booker.setTranslateX(100);
@@ -41,7 +42,7 @@ public class CutScenes {
         Game.stage.setWidth(1235);
         switch ((int)Game.levelNumber) {
             case 0:
-                playVideo("file:/../videos/meeting_Elizabeth.mp4");
+                playVideo("videos/meeting_Elizabeth.mp4");
 
                 video.setOnEndOfMedia( () -> endCutScene1() );
 
@@ -52,7 +53,7 @@ public class CutScenes {
                 break;
 
             case 1:
-                playVideo("file:/../videos/murder_Comstock.mp4");
+                playVideo("videos/murder_Comstock.mp4");
                 video.setOnEndOfMedia( () -> endCutScene2() );
 
                 Game.scene.addEventFilter(KEY_PRESSED,event ->  {
@@ -65,7 +66,7 @@ public class CutScenes {
                 break;
             case 3:
                 Game.stage.setWidth(1230);
-                playVideo("file:/../videos/end.mp4");
+                playVideo("videos/end.mp4");
                 video.setOnEndOfMedia( () -> endCutScene2() );
 
                 Game.scene.addEventFilter(KEY_PRESSED, event ->  {
@@ -78,7 +79,7 @@ public class CutScenes {
 
 
     private void playVideo(String str) {
-        video = new MediaPlayer(new Media(new File(str).toURI().toString()));
+        video = new MediaPlayer(new Media(new File(str).getAbsoluteFile().toURI().toString()));
         videoView = new MediaView(video);
         videoView.setFitWidth(Game.scene.getWidth());
         videoView.setFitHeight(Game.scene.getHeight());
@@ -105,7 +106,7 @@ public class CutScenes {
 
         Game.appRoot.getChildren().add(imageView);
 
-        Sounds.bookerVoice = new MediaPlayer(new Media(new File("file:/../sounds/voice/hack_padlock.mp3").toURI().toString()));
+        Sounds.bookerVoice = new MediaPlayer(new Media(new File("sounds/voice/hack_padlock.mp3").getAbsoluteFile().toURI().toString()));
         Sounds.bookerVoice.setVolume(Game.menu.voiceSlider.getValue() / 100);
         Sounds.bookerVoice.play();
         Sounds.bookerVoice.setOnEndOfMedia( () -> partEndCutScene1() );
@@ -132,7 +133,7 @@ public class CutScenes {
         Game.stage.setWidth(1280);
         Game.appRoot.getChildren().remove(imageView);
 
-        try (FileWriter fileWriter = new FileWriter("file:/../data/saves.dat")) {
+        try (FileWriter fileWriter = new FileWriter(new File("data/saves.dat").getAbsoluteFile().toURI().toString())) {
             JSONObject levelData = new JSONObject();
             levelData.put("difficultyLevel", Game.difficultyLevelText);
             levelData.put("levelNumber", Game.levelNumber);
@@ -154,7 +155,7 @@ public class CutScenes {
             System.exit(0);
         }
 
-        try (FileWriter fileWriter = new FileWriter("file:/../data/options.dat")) {
+        try (FileWriter fileWriter = new FileWriter(new File("data/options.dat").getAbsoluteFile().toURI().toString())) {
             JSONObject optionsData = new JSONObject();
             optionsData.put("musicVolume", Game.menu.musicSlider.getValue());
             optionsData.put("FXVolume", Game.menu.fxSlider.getValue());
@@ -189,7 +190,7 @@ public class CutScenes {
         Game.appRoot.getChildren().remove(imageView);
         Game.boss = new Boss(Level.BLOCK_SIZE * 299, Level.BLOCK_SIZE * 13);
 
-        try (FileWriter fileWriter = new FileWriter("file:/../data/saves.dat")) {
+        try (FileWriter fileWriter = new FileWriter(new File("data/saves.dat").getAbsoluteFile().toURI().toString())) {
             JSONObject levelData = new JSONObject();
             levelData.put("difficultyLevel", Game.difficultyLevelText);
             levelData.put("levelNumber", Game.levelNumber);
@@ -224,7 +225,7 @@ public class CutScenes {
             System.exit(0);
         }
 
-        try (FileWriter fileWriter = new FileWriter("file:/../data/options.dat")) {
+        try (FileWriter fileWriter = new FileWriter(new File("data/options.dat").getAbsoluteFile().toURI().toString())) {
             JSONObject optionsData = new JSONObject();
             optionsData.put("musicVolume", Game.menu.musicSlider.getValue());
             optionsData.put("FXVolume", Game.menu.fxSlider.getValue());
@@ -250,7 +251,7 @@ public class CutScenes {
         Game.stage.setWidth(1280);
         Game.boss.setBoss();
 
-        try (FileWriter fileWriter = new FileWriter("file:/../data/saves.dat")) {
+        try (FileWriter fileWriter = new FileWriter(new File("data/saves.dat").getAbsoluteFile().toURI().toString())) {
             JSONObject levelData = new JSONObject();
             levelData.put("difficultyLevel", Game.difficultyLevelText);
             levelData.put("levelNumber", Game.levelNumber);
@@ -300,7 +301,7 @@ public class CutScenes {
             System.exit(0);
         }
 
-        try (FileWriter fileWriter = new FileWriter("file:/../data/options.dat")) {
+        try (FileWriter fileWriter = new FileWriter(new File("data/options.dat").getAbsoluteFile().toURI().toString())) {
             JSONObject optionsData = new JSONObject();
             optionsData.put("musicVolume", Game.menu.musicSlider.getValue());
             optionsData.put("FXVolume", Game.menu.fxSlider.getValue());

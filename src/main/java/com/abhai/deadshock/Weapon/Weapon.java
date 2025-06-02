@@ -18,7 +18,7 @@ public class Weapon extends Pane {
     ImageView explosion;
     SpriteAnimation explosionAnimation;
 
-    private ImageView gun = new ImageView(new Image("file:/../images/weapons/weapons.png"));
+    private ImageView gun = new ImageView(new Image(new File("images/weapons/weapons.png").toURI().toString()));
 
     private int clip = 0;
     private int shootInterval = 0;
@@ -72,11 +72,11 @@ public class Weapon extends Pane {
         else if (canChoosePistol)
             name = "pistol";
         Game.booker.changeAnimation(name);
-        gun = new ImageView("file:/../images/weapons/rpg.png");
+        gun = new ImageView(new Image(new File("images/weapons/rpg.png").toURI().toString()));
         setTranslateX(Level.BLOCK_SIZE * 24);
         setTranslateY(Level.BLOCK_SIZE * 12 - 20);
 
-        explosion = new ImageView("file:/../images/explosion.png");
+        explosion = new ImageView(new Image(new File("images/explosion.png").toURI().toString()));
         explosion.setFitWidth(128);
         explosion.setFitHeight(128);
         explosionAnimation = new SpriteAnimation(explosion, Duration.seconds(1), 16, 4, 0, 0, 128, 128);
@@ -99,7 +99,7 @@ public class Weapon extends Pane {
             name = "pistol";
         Game.booker.changeAnimation(name);
 
-        explosion = new ImageView("file:/../images/explosion.png");
+        explosion = new ImageView(new Image(new File("images/explosion.png").toURI().toString()));
         explosion.setFitWidth(128);
         explosion.setFitHeight(128);
         explosionAnimation = new SpriteAnimation(explosion, Duration.seconds(1), 16, 4, 0, 0, 128, 128);
@@ -190,7 +190,7 @@ public class Weapon extends Pane {
             setVisible(true);
         }else if (level == 2) {
             getChildren().remove(gun);
-            gun = new ImageView("file:/../images/weapons/rpg.png");
+            gun = new ImageView(new Image(new File("images/weapons/rpg.png").toURI().toString()));
             getChildren().add(gun);
             setTranslateX(Level.BLOCK_SIZE * 24);
             setTranslateY(Level.BLOCK_SIZE * 12 - 20);
@@ -222,7 +222,7 @@ public class Weapon extends Pane {
                     WeaponData.machineGunBullets = bullets = 120;
                     break;
                 case 2:
-                    explosion = new ImageView("file:/../images/explosion.png");
+                    explosion = new ImageView(new Image(new File("images/explosion.png").toURI().toString()));
                     explosion.setFitWidth(128);
                     explosion.setFitHeight(128);
                     explosionAnimation = new SpriteAnimation(explosion, Duration.seconds(1), 16, 4, 0, 0, 128, 128);
@@ -284,7 +284,7 @@ public class Weapon extends Pane {
                 case "pistol":
                     if (clip < 20) {
                         Sounds.pistolReload = new MediaPlayer(new Media(
-                                new File("file:/../sounds/fx/weapon/pistol_reload.mp3").toURI().toString()));
+                                new File("sounds/fx/weapon/pistol_reload.mp3").getAbsoluteFile().toURI().toString()));
                         Sounds.pistolReload.setVolume(Game.menu.fxSlider.getValue() / 100);
                         Sounds.pistolReload.play();
                         fillClip(name, 20);
@@ -293,7 +293,7 @@ public class Weapon extends Pane {
                 case "machine_gun":
                     if (clip < 30) {
                         Sounds.machineGunReload = new MediaPlayer(new Media(
-                                new File("file:/../sounds/fx/weapon/machine_gun_reload.mp3").toURI().toString()));
+                                new File("sounds/fx/weapon/machine_gun_reload.mp3").getAbsoluteFile().toURI().toString()));
                         Sounds.machineGunReload.setVolume(Game.menu.fxSlider.getValue() / 100);
                         Sounds.machineGunReload.play();
                         fillClip(name, 30);
@@ -369,7 +369,7 @@ public class Weapon extends Pane {
                 break;
             case "rpg":
                 Sounds.rpgShootAndReload = new MediaPlayer(new Media(
-                        new File("file:/../sounds/fx/weapon/rpgShootAndReload.mp3").toURI().toString()));
+                        new File("sounds/fx/weapon/rpgShootAndReload.mp3").getAbsoluteFile().toURI().toString()));
                 Sounds.rpgShootAndReload.setVolume(Game.menu.fxSlider.getValue() / 100);
                 Sounds.rpgShootAndReload.play();
                 Game.bullets.add(new RpgBullet());

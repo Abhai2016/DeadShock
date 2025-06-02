@@ -6,7 +6,10 @@ import com.abhai.deadshock.Game;
 import com.abhai.deadshock.Levels.Block;
 import com.abhai.deadshock.Sounds;
 import javafx.geometry.Point2D;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
+import java.io.File;
 
 class RpgBullet extends Bullet {
     private static byte RPG_BULLET_SPEED = 10;
@@ -23,7 +26,7 @@ class RpgBullet extends Bullet {
             setScaleX(-1);
         }
 
-        bullet = new ImageView("file:/../images/weapons/rpg_bullet.png");
+        bullet = new ImageView(new Image(new File("images/weapons/rpg_bullet.png").toURI().toString()));
 
         setTranslateY(Game.booker.getTranslateY() + 10);
         if (direction)

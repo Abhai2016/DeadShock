@@ -7,12 +7,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class Energetic extends Pane {
     private ArrayList<FireBall> fireBalls = new ArrayList<>();
     private Lightning lightning;
-    private ImageView imgView = new ImageView("file:/../images/energetics/devil_kiss.png");
+    private ImageView imgView = new ImageView(new Image(new File("images/energetics/devil_kiss.png").toURI().toString()));
     private String name = "";
     private Hypnosis hypnosis = new Hypnosis();
 
@@ -45,7 +46,7 @@ public class Energetic extends Pane {
             Game.hud.getDevilKiss().setVisible(true);
         }
 
-        imgView.setImage(new Image("file:/../images/energetics/electricity.png"));
+        imgView.setImage(new Image(new File("images/energetics/electricity.png").toURI().toString()));
         setTranslateX(Level.BLOCK_SIZE * 42);
         setTranslateY(Level.BLOCK_SIZE * 9 - 30);
 
@@ -69,7 +70,7 @@ public class Energetic extends Pane {
             countEnergetics++;
         }
 
-        imgView.setImage(new Image("file:/../images/energetics/hypnotist.png"));
+        imgView.setImage(new Image(new File("images/energetics/hypnotist.png").toURI().toString()));
         setTranslateX(Level.BLOCK_SIZE * 40);
         setTranslateY(Level.BLOCK_SIZE * 14 - 27);
 
@@ -200,11 +201,11 @@ public class Energetic extends Pane {
 
     public void changeLevel() {
         if (Game.levelNumber == 1) {
-            imgView.setImage(new Image("file:/../images/energetics/electricity.png"));
+            imgView.setImage(new Image(new File("images/energetics/electricity.png").toURI().toString()));
             setTranslateX(Level.BLOCK_SIZE * 42);
             setTranslateY(Level.BLOCK_SIZE * 9 - 30);
         } else if (Game.levelNumber == 2) {
-            imgView.setImage(new Image("file:/../images/energetics/hypnotist.png"));
+            imgView.setImage(new Image(new File("images/energetics/hypnotist.png").toURI().toString()));
             setTranslateX(Level.BLOCK_SIZE * 40);
             setTranslateY(Level.BLOCK_SIZE * 14 - 27);
         }

@@ -3,8 +3,11 @@ package com.abhai.deadshock.Weapon;
 import com.abhai.deadshock.Characters.EnemyBase;
 import com.abhai.deadshock.Levels.Block;
 import com.abhai.deadshock.Game;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+
+import java.io.File;
 
 public class Bullet extends Pane {
     static final int BULLET_SPEED = 15;
@@ -27,7 +30,7 @@ public class Bullet extends Pane {
             setScaleX(-1);
         }
 
-        bullet = new ImageView("file:/../images/weapons/normal_bullet.png");
+        bullet = new ImageView(new Image(new File("images/weapons/normal_bullet.png").toURI().toString()));
 
         switch (weaponName) {
             case "pistol":

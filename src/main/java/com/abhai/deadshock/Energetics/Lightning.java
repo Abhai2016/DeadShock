@@ -5,6 +5,7 @@ import com.abhai.deadshock.Characters.SpriteAnimation;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.Sounds;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -14,11 +15,11 @@ import java.io.File;
 
 class Lightning extends BaseEnergeticElement {
     private MediaPlayer mediaPlayerLightning = new MediaPlayer(
-            new Media(new File("file:/../sounds/fx/energetics/lightning.mp3").toURI().toString()));
+            new Media(new File("sounds/fx/energetics/lightning.mp3").getAbsoluteFile().toURI().toString()));
     private boolean delete = false;
 
     Lightning(double x, double y) {
-        imgView = new ImageView("file:/../images/energetics/lightning.png");
+        imgView = new ImageView(new Image(new File("images/energetics/lightning.png").toURI().toString()));
         imgView.setViewport( new Rectangle2D(0, 0, 172, 63) );
         animation = new SpriteAnimation(imgView, Duration.seconds(0.5), 10, 1, 0, 0, 172, 63);
         animation.play();

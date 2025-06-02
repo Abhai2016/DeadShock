@@ -27,7 +27,7 @@ import static javafx.scene.input.KeyEvent.KEY_PRESSED;
 
 public class Character extends Pane {
     private final byte CHARACTER_SPEED = 4;
-    private ImageView imgView = new ImageView(new Image("file:/../images/characters/booker.png"));
+    private ImageView imgView = new ImageView(new Image(new File("images/characters/booker.png").toURI().toString()));
     Point2D velocity = new Point2D(0, 0);
 
     private final byte count = 6;
@@ -485,7 +485,7 @@ public class Character extends Pane {
     private void playBookerVoice() {
         if (!Game.enemies.isEmpty() && Game.levelNumber == 0)
             if (Game.enemies.get(0).canSeeBooker && playVoice) {
-                Sounds.bookerVoice = new MediaPlayer(new Media(new File("file:/../sounds/voice/booker/shit.mp3").toURI().toString()));
+                Sounds.bookerVoice = new MediaPlayer(new Media(new File("sounds/voice/booker/shit.mp3").getAbsoluteFile().toURI().toString()));
                 Sounds.bookerVoice.setVolume(Game.menu.voiceSlider.getValue() / 100);
                 Sounds.bookerVoice.play();
                 playVoice = false;
@@ -493,7 +493,7 @@ public class Character extends Pane {
 
         if (Game.enemies.isEmpty() && !playVoice && Game.levelNumber == 0) {
                 Sounds.bookerVoice = new MediaPlayer(new Media(
-                        new File("file:/../sounds/voice/booker/creep_even_in_flying_town.mp3").toURI().toString()));
+                        new File("sounds/voice/booker/creep_even_in_flying_town.mp3").getAbsoluteFile().toURI().toString()));
                 Sounds.bookerVoice.setVolume(Game.menu.voiceSlider.getValue() / 100);
                 Sounds.bookerVoice.play();
                 playVoice = true;
@@ -589,7 +589,7 @@ public class Character extends Pane {
             countLives--;
             money -= priceForGeneration;
 
-            MediaPlayer video = new MediaPlayer(new Media(new File("file:/../videos/death.mp4").toURI().toString()));
+            MediaPlayer video = new MediaPlayer(new Media(new File("videos/death.mp4").getAbsoluteFile().toURI().toString()));
             MediaView videoView = new MediaView(video);
             videoView.setFitWidth(Game.scene.getWidth());
             videoView.setFitHeight(Game.scene.getHeight());
@@ -612,7 +612,7 @@ public class Character extends Pane {
                 Game.elizabeth.canMove = true;
                 Game.elizabeth.giveSupply = false;
                 Game.elizabeth.countMedicine = 0;
-                Game.elizabeth.imgView.setImage(new Image("file:/../images/characters/elizabeth.png"));
+                Game.elizabeth.imgView.setImage(new Image(new File("images/characters/elizabeth.png").toURI().toString()));
 
                 Game.menu.addListener();
                 HP = 100;

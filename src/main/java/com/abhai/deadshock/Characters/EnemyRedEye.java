@@ -6,10 +6,13 @@ import com.abhai.deadshock.Game;
 import com.abhai.deadshock.Weapon.RedEyeWeapon;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+
+import java.io.File;
 
 public class EnemyRedEye extends EnemyComstock {
 
@@ -29,7 +32,7 @@ public class EnemyRedEye extends EnemyComstock {
 
         velocity = new Point2D(0, 0);
         enemyWeapon = new RedEyeWeapon();
-        imgView = new ImageView("file:/../images/characters/red_eye.png");
+        imgView = new ImageView(new Image(new File("images/characters/red_eye.png").toURI().toString()));
         imgView.setViewport(new Rectangle2D(0, 0, 62, 65));
         animation = new SpriteAnimation(imgView, Duration.seconds(0.5), 10, 10, 0, 0, 62, 65);
 

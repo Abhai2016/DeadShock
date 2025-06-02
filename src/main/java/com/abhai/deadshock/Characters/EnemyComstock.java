@@ -10,10 +10,13 @@ import com.abhai.deadshock.Weapon.ComstockWeapon;
 import com.abhai.deadshock.Weapon.EnemyWeapon;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+
+import java.io.File;
 
 public class EnemyComstock extends EnemyBase {
     final byte ENEMY_SPEED = 3;
@@ -52,7 +55,7 @@ public class EnemyComstock extends EnemyBase {
 
         velocity = new Point2D(0, 10);
         enemyWeapon = new ComstockWeapon();
-        imgView = new ImageView("file:/../images/characters/comstock.png");
+        imgView = new ImageView(new Image(new File("images/characters/comstock.png").toURI().toString()));
         imgView.setViewport( new Rectangle2D(0, 0, getWidth(), getHeight()) );
         animation = new SpriteAnimation(imgView, Duration.seconds(0.5), 10, 10, 0, 0, 62, 65);
 

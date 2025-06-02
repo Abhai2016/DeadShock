@@ -4,13 +4,16 @@ import com.abhai.deadshock.Characters.EnemyBase;
 import com.abhai.deadshock.Levels.Block;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.Sounds;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
+import java.io.File;
 
 public class EnemyBullet extends Bullet {
     private byte damage;
 
     EnemyBullet(String enemyName, double scaleX, double x, double y) {
-        bullet = new ImageView("file:/../images/weapons/normal_bullet.png");
+        bullet = new ImageView(new Image(new File("images/weapons/normal_bullet.png").toURI().toString()));
 
         if (scaleX < 0) {
             direction = false;

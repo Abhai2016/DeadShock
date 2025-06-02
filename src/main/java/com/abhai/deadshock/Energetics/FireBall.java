@@ -5,14 +5,17 @@ import com.abhai.deadshock.Characters.SpriteAnimation;
 import com.abhai.deadshock.Levels.Block;
 import com.abhai.deadshock.Game;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
+
+import java.io.File;
 
 class FireBall extends BaseEnergeticElement {
     private boolean direction;
 
     FireBall(double x, double y) {
-        imgView = new ImageView("file:/../images/energetics/fireBall.png");
+        imgView = new ImageView(new Image(new File("images/energetics/fireBall.png").toURI().toString()));
         imgView.setViewport( new Rectangle2D(0, 0, 64, 30) );
         animation = new SpriteAnimation(imgView, Duration.seconds(0.5), 8, 8, 0, 0, 64, 30);
         animation.play();

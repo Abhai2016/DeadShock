@@ -11,6 +11,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.File;
+
 class ModalWindow {
 
     static void createNewWindows(String title) {
@@ -34,7 +36,8 @@ class ModalWindow {
 
         Button yes = new Button("Да");
         yes.setPrefWidth(50);
-        yes.setTranslateX(30);
+
+
         yes.setTranslateY(50);
 
         Button no = new Button("Нет");
@@ -54,7 +57,7 @@ class ModalWindow {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setTitle(title);
-        stage.getIcons().add(new Image("file:/../images/icon.jpg"));
+        stage.getIcons().add(new Image(new File("images/icon.jpg").toURI().toString()));
         stage.showAndWait();
     }
 }
