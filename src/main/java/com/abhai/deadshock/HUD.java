@@ -10,12 +10,17 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class HUD extends Pane {
-    private ImageView devilKiss = new ImageView(new Image(new File("images/hud/devil_kiss.png").toURI().toString()));
-    private ImageView electricity = new ImageView(new Image(new File("images/hud/electricity.png").toURI().toString()));
-    private ImageView hypnotist = new ImageView(new Image(new File("images/hud/hypnotist.png").toURI().toString()));
+    private Path devilKissImagePath = Paths.get("resources", "images", "hud", "devil_kiss.png");
+    private Path electricityImagePath = Paths.get("resources", "images", "hud", "electricity.png");
+    private Path hypnotistImagePath = Paths.get("resources", "images", "hud", "hypnotist.png");
+
+    private ImageView devilKiss = new ImageView(new Image(devilKissImagePath.toUri().toString()));
+    private ImageView electricity = new ImageView(new Image(electricityImagePath.toUri().toString()));
+    private ImageView hypnotist = new ImageView(new Image(hypnotistImagePath.toUri().toString()));
     private ImageView money;
 
     private Text textBullet = new Text();
@@ -47,7 +52,8 @@ public class HUD extends Pane {
         bulletPane.setTranslateX(1165);
         bulletPane.getChildren().addAll(rect, textBullet);
 
-        money = new ImageView(new Image(new File("images/hud/money.png").toURI().toString()));
+        Path moneyImagePath = Paths.get("resources", "images", "hud", "money.png");
+        money = new ImageView(new Image(moneyImagePath.toUri().toString()));
         money.setTranslateX(0);
         money.setTranslateY(Level.BLOCK_SIZE * 15 - Level.BLOCK_SIZE * 1.5);
 
@@ -65,7 +71,8 @@ public class HUD extends Pane {
         hypnotist.setTranslateY(57);
         hypnotist.setVisible(false);
 
-        ImageView hp_and_salt = new ImageView(new Image(new File("images/hud/HP and Salt.png").toURI().toString()));
+        Path hpImagePath = Paths.get("resources", "images", "hud", "HP and Salt.png");
+        ImageView hp_and_salt = new ImageView(new Image(hpImagePath.toUri().toString()));
         getChildren().addAll(HP, salt, hp_and_salt, devilKiss, electricity, hypnotist, bulletPane, money, textMoney);
         Game.appRoot.getChildren().add(this);
         setVisible(false);
@@ -91,7 +98,8 @@ public class HUD extends Pane {
 
 
     void setMarikLevel() {
-        money.setImage(new Image(new File("images/hud/moneyForMarik.png").toURI().toString()));
+        Path moneyImagePath = Paths.get("resources", "images", "hud", "moneyForMarik.png");
+        money.setImage(new Image(moneyImagePath.toUri().toString()));
         getChildren().remove(textMoney);
     }
 

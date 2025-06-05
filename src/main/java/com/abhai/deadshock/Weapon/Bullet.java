@@ -7,7 +7,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Bullet extends Pane {
     static final int BULLET_SPEED = 15;
@@ -30,7 +31,8 @@ public class Bullet extends Pane {
             setScaleX(-1);
         }
 
-        bullet = new ImageView(new Image(new File("images/weapons/normal_bullet.png").toURI().toString()));
+        Path imagePath = Paths.get("resources", "images", "weapons", "normal_bullet.png");
+        bullet = new ImageView(new Image(imagePath.toUri().toString()));
 
         switch (weaponName) {
             case "pistol":

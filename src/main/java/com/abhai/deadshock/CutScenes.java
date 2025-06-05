@@ -1,11 +1,11 @@
 package com.abhai.deadshock;
 
-
 import com.abhai.deadshock.Characters.Boss;
 import com.abhai.deadshock.Characters.Elizabeth;
 import com.abhai.deadshock.Levels.Block;
 import com.abhai.deadshock.Levels.Level;
 import com.abhai.deadshock.Weapon.Weapon;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.animation.FadeTransition;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -14,16 +14,22 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.util.Duration;
-import org.json.simple.JSONObject;
 
-import java.io.*;
+import java.io.FileWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static javafx.scene.input.KeyEvent.KEY_PRESSED;
 
 public class CutScenes {
     private MediaPlayer video;
     private MediaView videoView;
-    ImageView imageView = new ImageView(new Image(new File("images/black.jpg").toURI().toString()));
+
+    private Path savesPath = Paths.get("resources", "data", "saves.dat");
+    private Path optionsPath = Paths.get("resources", "data", "options.dat");
+
+    private Path imagePath = Paths.get("resources", "images", "black.jpg");
+    ImageView imageView = new ImageView(new Image(imagePath.toUri().toString()));
 
     public CutScenes() {
         Game.booker.setTranslateX(100);
@@ -40,46 +46,28 @@ public class CutScenes {
         Game.clearData();
 
         Game.stage.setWidth(1235);
-        switch ((int)Game.levelNumber) {
-            case 0:
-                playVideo("videos/meeting_Elizabeth.mp4");
-
+        switch (Game.levelNumber) {
+            case 0 -> {
+                playVideo("meeting_Elizabeth.mp4");
                 video.setOnEndOfMedia( () -> endCutScene1() );
-
-                Game.scene.addEventFilter(KEY_PRESSED, event -> {
-                    if (event.getCode() == KeyCode.ENTER || event.getCode() == KeyCode.ESCAPE)
-                        endCutScene1();
-                });
-                break;
-
-            case 1:
-                playVideo("videos/murder_Comstock.mp4");
+            }
+            case 1 -> {
+                playVideo("murder_Comstock.mp4");
                 video.setOnEndOfMedia( () -> endCutScene2() );
-
-                Game.scene.addEventFilter(KEY_PRESSED,event ->  {
-                    if (event.getCode() == KeyCode.ENTER || event.getCode() == KeyCode.ESCAPE)
-                        endCutScene2();
-                });
-                break;
-            case 2:
-                bossLevel();
-                break;
-            case 3:
+            }
+            case 2 -> bossLevel();
+            case 3 -> {
                 Game.stage.setWidth(1230);
-                playVideo("videos/end.mp4");
-                video.setOnEndOfMedia( () -> endCutScene2() );
-
-                Game.scene.addEventFilter(KEY_PRESSED, event ->  {
-                    if (event.getCode() == KeyCode.ENTER || event.getCode() == KeyCode.ESCAPE)
-                        endCutScene3();
-                });
-                break;
+                playVideo("end.mp4");
+                video.setOnEndOfMedia( () -> endCutScene3() );
+            }
         }
     }
 
 
     private void playVideo(String str) {
-        video = new MediaPlayer(new Media(new File(str).getAbsoluteFile().toURI().toString()));
+        Path videoPath = Paths.get("resources", "videos", str);
+        video = new MediaPlayer(new Media(videoPath.toUri().toString()));
         videoView = new MediaView(video);
         videoView.setFitWidth(Game.scene.getWidth());
         videoView.setFitHeight(Game.scene.getHeight());
@@ -106,21 +94,17 @@ public class CutScenes {
 
         Game.appRoot.getChildren().add(imageView);
 
-        Sounds.bookerVoice = new MediaPlayer(new Media(new File("sounds/voice/hack_padlock.mp3").getAbsoluteFile().toURI().toString()));
+        Path soundPath = Paths.get("resources", "sounds", "voice", "hack_padlock.mp3");
+        Sounds.bookerVoice = new MediaPlayer(new Media(soundPath.toUri().toString()));
         Sounds.bookerVoice.setVolume(Game.menu.voiceSlider.getValue() / 100);
         Sounds.bookerVoice.play();
-        Sounds.bookerVoice.setOnEndOfMedia( () -> partEndCutScene1() );
-
-        Game.scene.addEventFilter(KEY_PRESSED,event -> {
-            if (event.getCode() == KeyCode.ESCAPE || event.getCode() == KeyCode.ENTER)
-                partEndCutScene1();
-        });
+        Sounds.bookerVoice.setOnEndOfMedia(this::partEndCutScene1);
     }
 
 
     private void partEndCutScene1() {
         Sounds.bookerVoice.stop();
-        Game.level.createLevels(Game.levelNumber);
+        Game.level.createLevels();
         Game.createEnemies();
 
         Game.timer.start();
@@ -133,41 +117,10 @@ public class CutScenes {
         Game.stage.setWidth(1280);
         Game.appRoot.getChildren().remove(imageView);
 
-        try (FileWriter fileWriter = new FileWriter(new File("data/saves.dat").getAbsoluteFile().toURI().toString())) {
-            JSONObject levelData = new JSONObject();
-            levelData.put("difficultyLevel", Game.difficultyLevelText);
-            levelData.put("levelNumber", Game.levelNumber);
-
-            JSONObject character = new JSONObject();
-            character.put("money", Game.booker.getMoney());
-            character.put("salt", Game.booker.getSalt());
-            character.put("pistolClip", Game.weapon.getWeaponClip());
-            character.put("pistolBullets", Game.weapon.getBullets());
-            character.put("canChooseDevilKiss", Game.energetic.isCanChooseDevilKiss());
-            character.put("canChoosePistol", Game.weapon.isCanChoosePistol());
-
-            JSONObject result = new JSONObject();
-            result.put("character", character);
-            result.put("levelData", levelData);
-
-            fileWriter.write(result.toString());
-        } catch (Exception e) {
-            System.exit(0);
-        }
-
-        try (FileWriter fileWriter = new FileWriter(new File("data/options.dat").getAbsoluteFile().toURI().toString())) {
-            JSONObject optionsData = new JSONObject();
-            optionsData.put("musicVolume", Game.menu.musicSlider.getValue());
-            optionsData.put("FXVolume", Game.menu.fxSlider.getValue());
-            optionsData.put("voiceVolume", Game.menu.voiceSlider.getValue());
-            optionsData.put("track", Game.menu.music.getMedia().getSource());
-
-            fileWriter.write(optionsData.toString());
-        } catch (Exception e) {
-            System.exit(0);
-        }
+        ObjectMapper mapper = new ObjectMapper();
+        saveSaves(mapper);
+        saveOptions(mapper);
     }
-
 
     private void endCutScene2() {
         video.stop();
@@ -176,7 +129,7 @@ public class CutScenes {
 
         Game.levelNumber++;
         Game.level.changeLevel(Game.levelNumber);
-        Game.level.createLevels(Game.levelNumber);
+        Game.level.createLevels();
         Game.weapon.changeLevel(Game.levelNumber);
         Game.createEnemies();
 
@@ -190,52 +143,9 @@ public class CutScenes {
         Game.appRoot.getChildren().remove(imageView);
         Game.boss = new Boss(Level.BLOCK_SIZE * 299, Level.BLOCK_SIZE * 13);
 
-        try (FileWriter fileWriter = new FileWriter(new File("data/saves.dat").getAbsoluteFile().toURI().toString())) {
-            JSONObject levelData = new JSONObject();
-            levelData.put("difficultyLevel", Game.difficultyLevelText);
-            levelData.put("levelNumber", Game.levelNumber);
-
-            JSONObject character = new JSONObject();
-            character.put("money", Game.booker.getMoney());
-            character.put("salt", Game.booker.getSalt());
-
-            if (Game.weapon.getName().equals("pistol")) {
-                character.put("pistolClip", Game.weapon.getWeaponClip());
-                character.put("pistolBullets", Game.weapon.getBullets());
-                character.put("machineGunClip", Weapon.WeaponData.machineGunClip);
-                character.put("machineGunBullets", Weapon.WeaponData.machineGunBullets);
-            } else if (Game.weapon.getName().equals("machine_gun")) {
-                character.put("pistolClip", Weapon.WeaponData.pistolClip);
-                character.put("pistolBullets", Weapon.WeaponData.pistolBullets);
-                character.put("machineGunClip", Game.weapon.getWeaponClip());
-                character.put("machineGunBullets", Game.weapon.getBullets());
-            }
-
-            character.put("canChooseMachineGun", Game.weapon.isCanChooseMachineGun());
-            character.put("canChooseElectricity", Game.energetic.isCanChooseElectricity());
-            character.put("canChooseDevilKiss", Game.energetic.isCanChooseDevilKiss());
-            character.put("canChoosePistol", Game.weapon.isCanChoosePistol());
-
-            JSONObject result = new JSONObject();
-            result.put("character", character);
-            result.put("levelData", levelData);
-
-            fileWriter.write(result.toString());
-        } catch (Exception e) {
-            System.exit(0);
-        }
-
-        try (FileWriter fileWriter = new FileWriter(new File("data/options.dat").getAbsoluteFile().toURI().toString())) {
-            JSONObject optionsData = new JSONObject();
-            optionsData.put("musicVolume", Game.menu.musicSlider.getValue());
-            optionsData.put("FXVolume", Game.menu.fxSlider.getValue());
-            optionsData.put("voiceVolume", Game.menu.voiceSlider.getValue());
-            optionsData.put("track", Game.menu.music.getMedia().getSource());
-
-            fileWriter.write(optionsData.toString());
-        } catch (Exception e) {
-            System.exit(0);
-        }
+        ObjectMapper mapper = new ObjectMapper();
+        saveSaves(mapper);
+        saveOptions(mapper);
     }
 
 
@@ -243,7 +153,7 @@ public class CutScenes {
         Game.boss.setTrompInterval(0);
         Game.levelNumber++;
         Game.level.changeLevel(Game.levelNumber);
-        Game.level.createLevels(Game.levelNumber);
+        Game.level.createLevels();
 
         Game.timer.start();
         Game.menu.music.play();
@@ -251,77 +161,75 @@ public class CutScenes {
         Game.stage.setWidth(1280);
         Game.boss.setBoss();
 
-        try (FileWriter fileWriter = new FileWriter(new File("data/saves.dat").getAbsoluteFile().toURI().toString())) {
-            JSONObject levelData = new JSONObject();
-            levelData.put("difficultyLevel", Game.difficultyLevelText);
-            levelData.put("levelNumber", Game.levelNumber);
-
-            JSONObject character = new JSONObject();
-            character.put("money", Game.booker.getMoney());
-            character.put("salt", Game.booker.getSalt());
-
-            switch (Game.weapon.getName()) {
-                case "pistol":
-                    character.put("pistolClip", Game.weapon.getWeaponClip());
-                    character.put("pistolBullets", Game.weapon.getBullets());
-                    character.put("machineGunClip", Weapon.WeaponData.machineGunClip);
-                    character.put("machineGunBullets", Weapon.WeaponData.machineGunBullets);
-                    break;
-                case "machine_gun":
-                    character.put("pistolClip", Weapon.WeaponData.pistolClip);
-                    character.put("pistolBullets", Weapon.WeaponData.pistolBullets);
-                    character.put("machineGunClip", Game.weapon.getWeaponClip());
-                    character.put("machineGunBullets", Game.weapon.getBullets());
-                    break;
-                case "rpg":
-                    character.put("pistolClip", Weapon.WeaponData.pistolClip);
-                    character.put("pistolBullets", Weapon.WeaponData.pistolBullets);
-                    character.put("machineGunClip", Weapon.WeaponData.machineGunClip);
-                    character.put("machineGunBullets", Weapon.WeaponData.machineGunBullets);
-                    if (Game.weapon.getWeaponClip() < 1)
-                        Game.weapon.setWeaponClip(1);
-                    character.put("rpgClip", Game.weapon.getWeaponClip());
-                    character.put("rpgBullets", Game.weapon.getBullets());
-                    break;
-            }
-
-            character.put("canChoosePistol", Game.weapon.isCanChoosePistol());
-            character.put("canChooseMachineGun", Game.weapon.isCanChooseMachineGun());
-            character.put("canChooseRPG", Game.weapon.isCanChooseRPG());
-            character.put("canChooseDevilKiss", Game.energetic.isCanChooseDevilKiss());
-            character.put("canChooseElectricity", Game.energetic.isCanChooseElectricity());
-            character.put("canChooseHypnotist", Game.energetic.isCanChooseHypnotist());
-
-            JSONObject result = new JSONObject();
-            result.put("character", character);
-            result.put("levelData", levelData);
-
-            fileWriter.write(result.toString());
-        } catch (Exception e) {
-            System.exit(0);
-        }
-
-        try (FileWriter fileWriter = new FileWriter(new File("data/options.dat").getAbsoluteFile().toURI().toString())) {
-            JSONObject optionsData = new JSONObject();
-            optionsData.put("musicVolume", Game.menu.musicSlider.getValue());
-            optionsData.put("FXVolume", Game.menu.fxSlider.getValue());
-            optionsData.put("voiceVolume", Game.menu.voiceSlider.getValue());
-            optionsData.put("track", Game.menu.music.getMedia().getSource());
-
-            fileWriter.write(optionsData.toString());
-        } catch (Exception e) {
-            System.exit(0);
-        }
+        ObjectMapper mapper = new ObjectMapper();
+        saveSaves(mapper);
+        saveOptions(mapper);
     }
 
 
     private void endCutScene3() {
-        Game.clearDataForNewGame("Continue Game");
-        Game.appRoot.getChildren().remove(Game.gameRoot);
-        video.stop();
         Game.appRoot.getChildren().remove(videoView);
+        video.stop();
         videoView = null;
         Game.stage.setWidth(1280);
-        Game.initContent();
+        System.exit(0);
+    }
+
+    private void saveSaves(ObjectMapper mapper) {
+        try (FileWriter fileWriter = new FileWriter(savesPath.toFile())) {
+            if (savesPath.toFile().exists()) {
+                savesPath.toFile().delete();
+            }
+
+            if (!savesPath.toFile().exists()) {
+                savesPath.toFile().createNewFile();
+            }
+
+            Saves saves = new Saves();
+            saves.setDifficultyLevel(Game.difficultyLevelText);
+            saves.setLevelNumber(Game.levelNumber);
+            saves.setMoney(Game.booker.getMoney());
+            saves.setSalt(Game.booker.getSalt());
+
+            saves.setPistolClip(Weapon.WeaponData.pistolClip);
+            saves.setPistolBullets(Weapon.WeaponData.pistolBullets);
+            saves.setMachineGunClip(Weapon.WeaponData.machineGunClip);
+            saves.setMachineGunBullets(Weapon.WeaponData.machineGunBullets);
+            saves.setRpgClip(Weapon.WeaponData.rpgClip);
+            saves.setRpgBullets(Weapon.WeaponData.rpgBullets);
+
+            saves.setCanChoosePistol(Game.weapon.isCanChoosePistol());
+            saves.setCanChooseMachineGun(Game.weapon.isCanChooseMachineGun());
+            saves.setCanChooseRPG(Game.weapon.isCanChooseRPG());
+            saves.setCanChooseDevilKiss(Game.energetic.isCanChooseDevilKiss());
+            saves.setCanChooseElectricity(Game.energetic.isCanChooseElectricity());
+            saves.setCanChooseHypnotist(Game.energetic.isCanChooseHypnotist());
+
+            fileWriter.write(mapper.writeValueAsString(saves));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void saveOptions(ObjectMapper mapper) {
+        try (FileWriter fileWriter = new FileWriter(optionsPath.toFile())) {
+            if (optionsPath.toFile().exists()) {
+                optionsPath.toFile().delete();
+            }
+
+            if (!optionsPath.toFile().exists()) {
+                optionsPath.toFile().createNewFile();
+            }
+
+            Options options = new Options();
+            options.setFxVolume(Game.menu.fxSlider.getValue());
+            options.setMusicVolume(Game.menu.musicSlider.getValue());
+            options.setVoiceVolume(Game.menu.voiceSlider.getValue());
+            options.setTrack(Game.menu.music.getMedia().getSource());
+
+            fileWriter.write(mapper.writeValueAsString(options));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

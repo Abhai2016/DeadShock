@@ -11,7 +11,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 class ModalWindow {
 
@@ -57,7 +58,8 @@ class ModalWindow {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setTitle(title);
-        stage.getIcons().add(new Image(new File("images/icon.jpg").toURI().toString()));
+        Path imagePath = Paths.get("resources", "images", "icon.jpg");
+        stage.getIcons().add(new Image(imagePath.toUri().toString()));
         stage.showAndWait();
     }
 }

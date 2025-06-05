@@ -16,7 +16,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class EnemyComstock extends EnemyBase {
     final byte ENEMY_SPEED = 3;
@@ -55,7 +56,8 @@ public class EnemyComstock extends EnemyBase {
 
         velocity = new Point2D(0, 10);
         enemyWeapon = new ComstockWeapon();
-        imgView = new ImageView(new Image(new File("images/characters/comstock.png").toURI().toString()));
+        Path imagePath = Paths.get("resources","images", "characters", "comstock.png");
+        imgView = new ImageView(new Image(imagePath.toUri().toString()));
         imgView.setViewport( new Rectangle2D(0, 0, getWidth(), getHeight()) );
         animation = new SpriteAnimation(imgView, Duration.seconds(0.5), 10, 10, 0, 0, 62, 65);
 

@@ -99,4 +99,8 @@ public class Block extends Pane {
     public String getBlockType() {
         return blockType;
     }
+
+    public void setBlockType(String blockType) {
+        this.blockType = blockType;
+    }
 }

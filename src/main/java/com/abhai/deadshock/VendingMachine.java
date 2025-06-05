@@ -16,7 +16,9 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-import java.io.File;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static javafx.scene.input.KeyEvent.KEY_PRESSED;
 
@@ -24,8 +26,11 @@ class VendingMachine extends Pane {
     private final int BUTTON_HEIGHT = 53;
     private final int BUTTON_WIDTH = 356;
 
-    private ImageView vendingMachine = new ImageView(new Image(new File("images/vending_machine/vending_machine.png").toURI().toString()));
-    private ImageView vendingMachineMenu = new ImageView(new Image(new File("images/vending_machine/menu.png").toURI().toString()));
+    private Path vendingMachinePath = Paths.get("resources", "images", "vending_machine", "vending_machine.png");
+    private ImageView vendingMachine = new ImageView(new Image(vendingMachinePath.toUri().toString()));
+
+    private Path vendingMachineMenuImagePath = Paths.get("resources", "images", "vending_machine", "menu.png");
+    private ImageView vendingMachineMenu = new ImageView(new Image(vendingMachineMenuImagePath.toUri().toString()));
 
     private FadeTransition ft = new FadeTransition(Duration.seconds(0.3), vendingMachineMenu);
     private Button btnBigMedicine = new Button();

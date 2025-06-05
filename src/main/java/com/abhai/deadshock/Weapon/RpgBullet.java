@@ -9,7 +9,8 @@ import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 class RpgBullet extends Bullet {
     private static byte RPG_BULLET_SPEED = 10;
@@ -26,7 +27,8 @@ class RpgBullet extends Bullet {
             setScaleX(-1);
         }
 
-        bullet = new ImageView(new Image(new File("images/weapons/rpg_bullet.png").toURI().toString()));
+        Path imagePath = Paths.get("resources", "images", "weapons", "rpg_bullet.png");
+        bullet = new ImageView(new Image(imagePath.toUri().toString()));
 
         setTranslateY(Game.booker.getTranslateY() + 10);
         if (direction)

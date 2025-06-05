@@ -11,11 +11,14 @@ import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Elizabeth extends Pane {
-    Image imgElizabeth = new Image(new File("images/characters/elizabeth.png").toURI().toString());
-    private Image imgElizabethMedicine = new Image(new File("images/characters/elizabeth_medicine.png").toURI().toString());
+    private Path imagePath = Paths.get("resources", "images", "characters", "elizabeth.png");
+    Image imgElizabeth = new Image(imagePath.toUri().toString());
+    private Path imageMedicinePath = Paths.get("resources", "images", "characters", "elizabeth_medicine.png");
+    private Image imgElizabethMedicine = new Image(imageMedicinePath.toUri().toString());
     ImageView imgView = new ImageView(imgElizabeth);
 
     Supply ammo;
@@ -110,13 +113,13 @@ public class Elizabeth extends Pane {
     private void playVoice() {
         if (Game.levelNumber == 1)
             if (startLevel && getTranslateX() > 100) {
-                Sounds.elizabethMediaPlayer = new MediaPlayer(new Media(
-                        new File("sounds/voice/elizabeth/freedom.mp3").getAbsoluteFile().toURI().toString()));
+                Path freedomSoundPath = Paths.get("resources", "sounds", "voice", "elizabeth", "freedom.mp3");
+                Sounds.elizabethMediaPlayer = new MediaPlayer(new Media(freedomSoundPath.toUri().toString()));
                 Sounds.elizabethMediaPlayer.setVolume(Game.menu.voiceSlider.getValue() / 100);
                 Sounds.elizabethMediaPlayer.play();
                 Sounds.elizabethMediaPlayer.setOnEndOfMedia( () -> {
-                    Sounds.elizabethMediaPlayer = new MediaPlayer(new Media(
-                            new File("sounds/voice/are_you_have_ammo.mp3").getAbsoluteFile().toURI().toString()));
+                    Path ammoSoundPath = Paths.get("resources", "sounds", "voice", "do_you_have_ammo.mp3");
+                    Sounds.elizabethMediaPlayer = new MediaPlayer(new Media(ammoSoundPath.toUri().toString()));
                     Sounds.elizabethMediaPlayer.setVolume(Game.menu.voiceSlider.getValue() / 100);
                     Sounds.elizabethMediaPlayer.play();
                 } );
@@ -124,8 +127,9 @@ public class Elizabeth extends Pane {
                 startLevel = false;
             } else if (getTranslateX() > Level.BLOCK_SIZE * 150 && playVoiceWhereYouFrom) {
                 canMove = false;
+                Path soundPath = Paths.get("resources", "sounds", "voice", "where_are_you_from.mp3");
                 Sounds.elizabethMediaPlayer = new MediaPlayer(new Media(
-                        new File("sounds/voice/where_are_you_from.mp3").getAbsoluteFile().toURI().toString()));
+                        soundPath.toUri().toString()));
                 Sounds.elizabethMediaPlayer.setVolume(Game.menu.voiceSlider.getValue() / 100);
                 Sounds.elizabethMediaPlayer.play();
                 Sounds.elizabethMediaPlayer.setOnEndOfMedia( () -> {

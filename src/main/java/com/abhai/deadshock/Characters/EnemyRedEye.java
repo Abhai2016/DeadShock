@@ -12,7 +12,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class EnemyRedEye extends EnemyComstock {
 
@@ -32,7 +33,8 @@ public class EnemyRedEye extends EnemyComstock {
 
         velocity = new Point2D(0, 0);
         enemyWeapon = new RedEyeWeapon();
-        imgView = new ImageView(new Image(new File("images/characters/red_eye.png").toURI().toString()));
+        Path imagePath = Paths.get("resources", "images", "characters", "red_eye.png");
+        imgView = new ImageView(new Image(imagePath.toUri().toString()));
         imgView.setViewport(new Rectangle2D(0, 0, 62, 65));
         animation = new SpriteAnimation(imgView, Duration.seconds(0.5), 10, 10, 0, 0, 62, 65);
 

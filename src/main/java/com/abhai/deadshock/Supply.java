@@ -7,11 +7,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Supply extends Pane {
-    private ImageView medicine = new ImageView(new Image(new File("images/supply/medicine.png").toURI().toString()));
-    private ImageView ammo = new ImageView(new Image(new File("images/supply/ammo.png").toURI().toString()));
+    private Path medicineImagePath = Paths.get("resources", "images", "supply", "medicine.png");
+    private ImageView medicine = new ImageView(new Image(medicineImagePath.toUri().toString()));
+
+    private Path ammoImagePath = Paths.get("resources", "images", "supply", "ammo.png");
+    private ImageView ammo = new ImageView(new Image(ammoImagePath.toUri().toString()));
 
     private RotateTransition rt = new RotateTransition(Duration.seconds(1), ammo);
 

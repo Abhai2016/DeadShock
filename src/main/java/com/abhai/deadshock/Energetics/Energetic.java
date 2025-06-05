@@ -7,13 +7,17 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class Energetic extends Pane {
     private ArrayList<FireBall> fireBalls = new ArrayList<>();
     private Lightning lightning;
-    private ImageView imgView = new ImageView(new Image(new File("images/energetics/devil_kiss.png").toURI().toString()));
+    private Path devilKissImagePath = Paths.get("resources", "images", "energetics", "devil_kiss.png");
+    private Path electricityImagePath = Paths.get("resources", "images", "energetics", "electricity.png");
+    private Path hypnotistImagePath = Paths.get("resources", "images", "energetics", "hypnotist.png");
+    private ImageView imgView = new ImageView(new Image(devilKissImagePath.toUri().toString()));
     private String name = "";
     private Hypnosis hypnosis = new Hypnosis();
 
@@ -46,7 +50,7 @@ public class Energetic extends Pane {
             Game.hud.getDevilKiss().setVisible(true);
         }
 
-        imgView.setImage(new Image(new File("images/energetics/electricity.png").toURI().toString()));
+        imgView.setImage(new Image(electricityImagePath.toUri().toString()));
         setTranslateX(Level.BLOCK_SIZE * 42);
         setTranslateY(Level.BLOCK_SIZE * 9 - 30);
 
@@ -70,7 +74,7 @@ public class Energetic extends Pane {
             countEnergetics++;
         }
 
-        imgView.setImage(new Image(new File("images/energetics/hypnotist.png").toURI().toString()));
+        imgView.setImage(new Image(hypnotistImagePath.toUri().toString()));
         setTranslateX(Level.BLOCK_SIZE * 40);
         setTranslateY(Level.BLOCK_SIZE * 14 - 27);
 
@@ -201,11 +205,11 @@ public class Energetic extends Pane {
 
     public void changeLevel() {
         if (Game.levelNumber == 1) {
-            imgView.setImage(new Image(new File("images/energetics/electricity.png").toURI().toString()));
+            imgView.setImage(new Image(electricityImagePath.toUri().toString()));
             setTranslateX(Level.BLOCK_SIZE * 42);
             setTranslateY(Level.BLOCK_SIZE * 9 - 30);
         } else if (Game.levelNumber == 2) {
-            imgView.setImage(new Image(new File("images/energetics/hypnotist.png").toURI().toString()));
+            imgView.setImage(new Image(hypnotistImagePath.toUri().toString()));
             setTranslateX(Level.BLOCK_SIZE * 40);
             setTranslateY(Level.BLOCK_SIZE * 14 - 27);
         }

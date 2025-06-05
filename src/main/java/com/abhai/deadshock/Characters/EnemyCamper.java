@@ -9,7 +9,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class EnemyCamper extends EnemyBase {
     private int moveInterval = 0;
@@ -19,7 +20,8 @@ public class EnemyCamper extends EnemyBase {
         setWidth(33);
         setHeight(65);
 
-        imgView = new ImageView(new Image(new File("images/characters/camper.png").toURI().toString()));
+        Path imagePath = Paths.get("resources", "images", "characters", "camper.png");
+        imgView = new ImageView(new Image(imagePath.toUri().toString()));
         velocity = new Point2D(0, 10);
 
         name = "camper";

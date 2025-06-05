@@ -9,13 +9,15 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 class FireBall extends BaseEnergeticElement {
     private boolean direction;
 
     FireBall(double x, double y) {
-        imgView = new ImageView(new Image(new File("images/energetics/fireBall.png").toURI().toString()));
+        Path imagePath = Paths.get("resources", "images", "energetics", "fireBall.png");
+        imgView = new ImageView(new Image(imagePath.toUri().toString()));
         imgView.setViewport( new Rectangle2D(0, 0, 64, 30) );
         animation = new SpriteAnimation(imgView, Duration.seconds(0.5), 8, 8, 0, 0, 64, 30);
         animation.play();

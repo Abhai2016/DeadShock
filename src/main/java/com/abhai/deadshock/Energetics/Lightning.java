@@ -11,15 +11,17 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 class Lightning extends BaseEnergeticElement {
-    private MediaPlayer mediaPlayerLightning = new MediaPlayer(
-            new Media(new File("sounds/fx/energetics/lightning.mp3").getAbsoluteFile().toURI().toString()));
+    private Path soundPath = Paths.get("resources", "sounds", "fx", "energetics", "lightning.mp3");
+    private MediaPlayer mediaPlayerLightning = new MediaPlayer(new Media(soundPath.toUri().toString()));
     private boolean delete = false;
 
     Lightning(double x, double y) {
-        imgView = new ImageView(new Image(new File("images/energetics/lightning.png").toURI().toString()));
+        Path imagePath = Paths.get("resources", "images", "energetics", "lightning.png");
+        imgView = new ImageView(new Image(imagePath.toUri().toString()));
         imgView.setViewport( new Rectangle2D(0, 0, 172, 63) );
         animation = new SpriteAnimation(imgView, Duration.seconds(0.5), 10, 1, 0, 0, 172, 63);
         animation.play();

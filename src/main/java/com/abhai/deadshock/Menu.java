@@ -23,22 +23,26 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static javafx.scene.input.KeyEvent.KEY_PRESSED;
 
 
 public class Menu {
-    private ImageView controls = new ImageView(new Image(new File("images/controls.png").toURI().toString()));
+    private Path controlsImagePath = Paths.get("resources", "images", "controls.png");
+    private ImageView controls = new ImageView(new Image(controlsImagePath.toUri().toString()));
     private Pane description = new Pane();
 
-    public MediaPlayer music = new MediaPlayer(new Media(new File("sounds/music/Main_Theme.mp3").getAbsoluteFile().toURI().toString()));
-    private String rock = "sounds/music/rock/";
-    private String post = "sounds/music/post-hardcore_metalcore/";
-    private String electronic = "sounds/music/electronic/";
-    private String developer_choice = "sounds/music/developer_choice/";
+    private Path soundPath = Paths.get("resources", "sounds", "music", "Main_Theme.mp3");
+    public MediaPlayer music = new MediaPlayer(new Media(soundPath.toUri().toString()));
 
-    private String tempMusic = "sounds/music/developer_choice/01.mp3";
+    private final Path rock = Paths.get("resources", "sounds", "music", "rock");
+    private final Path post = Paths.get("resources", "sounds", "music", "post-hardcore_metalcore");
+    private final Path electronic = Paths.get("resources", "sounds", "music", "electronic");
+    private final Path developer_choice = Paths.get("resources", "sounds", "music", "developer_choice");
+
+    private Path tempMusic = Paths.get("resources", "sounds", "music", "developer_choice", "01.mp3");
 
     private Text musicText = new Text("Выбрано : ВЫБОР РАЗРАБОТЧИКА");
     private Text descriptionDifficultyLevel = new Text("УРОВЕНЬ СЛОЖНОСТИ 'СРЕДНИЙ':\n" +
@@ -67,6 +71,7 @@ public class Menu {
 
     private boolean start = true;
     boolean booleanNewGame = false;
+    boolean isShown = true;
 
 
     Menu() {
@@ -93,7 +98,8 @@ public class Menu {
 
 
     private void createCover() {
-        ImageView cover = new ImageView(new Image(new File("images/backgrounds/cover.jpg").toURI().toString()));
+        Path coverImagePath = Paths.get("resources", "images", "backgrounds", "cover.jpg");
+        ImageView cover = new ImageView(new Image(coverImagePath.toUri().toString()));
         Text textCover = new Text("Для продолжения нажмите ввод");
         textCover.setFont(Font.font("Arial", FontWeight.BOLD, 28));
         textCover.setFill(Color.AQUA);
@@ -136,11 +142,14 @@ public class Menu {
         mainMenu = new SubMenu(continueGame, newGame, options, exitGame);
         menuBox = new MenuBox(mainMenu);
 
-        if (Game.levelNumber > 0)
-            continueGame.setOnMouseClicked( event -> {
-                continueGame.setOnMouseClicked( event1 -> hideMenu() );
+
+        continueGame.setOnMouseClicked( event -> {
+            if (!start) {
+                hideMenu();
+            } else if (Game.levelNumber > 0) {
                 startGame();
-            });
+            }
+        });
 
         newGame.setOnMouseClicked(event -> {
             menuBox.setSubMenu(difficultyLevelMenu);
@@ -232,15 +241,15 @@ public class Menu {
             menuBox.setSubMenu(mainMenu);
             description.setVisible(false);
         });
+
         ready.setOnMouseClicked( event -> {
             ModalWindow.createNewWindows("НОВАЯ ИГРА");
             if (booleanNewGame) {
                 if (start && Game.levelNumber == 0) {
-                    continueGame.setOnMouseClicked(event1 -> hideMenu());
                     start = false;
                 } else {
-                    Game.clearDataForNewGame("New Game");
-                    Game.initContentForNewGame();
+                    Game.clearDataForNewGame();
+                    Game.initContent();
                 }
                 startGame();
             }
@@ -255,12 +264,13 @@ public class Menu {
         Game.booker.setDifficultyLevel();
         Game.energetic.setDifficultyLevel();
         Game.weapon.setDamage();
-        if (Game.difficultyLevelText.equals("marik")) {
+        if (Game.difficultyLevelText.equals("marik") && Game.levelNumber < 3) {
             Game.hud.setMarikLevel();
             Game.vendingMachine.setMarikLevel();
         }
         music.stop();
-        music = new MediaPlayer(new Media(new File(tempMusic).getAbsoluteFile().toURI().toString()));
+
+        music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
         music.setVolume(musicSlider.getValue() / 100);
         music.play();
         addMediaListener();
@@ -271,8 +281,8 @@ public class Menu {
 
 
     public void newGame() {
-        Game.clearDataForNewGame("New Game");
-        Game.initContentForNewGame();
+        Game.clearDataForNewGame();
+        Game.initContent();
 
         continueGame.setOnMouseClicked( event -> Game.nothing() );
         Game.scene.setOnKeyPressed( event -> Game.nothing());
@@ -321,66 +331,63 @@ public class Menu {
         musicText.setVisible(false);
         menuBox.getChildren().add(musicText);
 
-        MenuItem rock = new MenuItem("РОК");
-        MenuItem post_hardcore = new MenuItem("Post-Hardcore/Metalcore");
-        MenuItem electronic = new MenuItem("ЭЛЕКТРОННАЯ");
-        MenuItem developer_choice = new MenuItem("ВЫБОР РАЗРАБОТЧИКА");
-        MenuItem musicMenuBack = new MenuItem("НАЗАД");
-        musicMenu = new SubMenu(rock, post_hardcore, electronic, developer_choice, musicMenuBack);
+        MenuItem rockItem = new MenuItem("РОК");
+        MenuItem post_hardcoreItem = new MenuItem("Post-Hardcore/Metalcore");
+        MenuItem electronicItem = new MenuItem("ЭЛЕКТРОННАЯ");
+        MenuItem developer_choiceItem = new MenuItem("ВЫБОР РАЗРАБОТЧИКА");
+        MenuItem musicMenuBackItem = new MenuItem("НАЗАД");
+        musicMenu = new SubMenu(rockItem, post_hardcoreItem, electronicItem, developer_choiceItem, musicMenuBackItem);
 
-        rock.setOnMouseClicked( event -> {
+        rockItem.setOnMouseClicked( event -> {
+            tempMusic = Paths.get("resources", "sounds", "music", "rock", "01.mp3");
             if (!start) {
                 music.stop();
-                music = new MediaPlayer(new Media(new File("sounds/music/rock/01.mp3").getAbsoluteFile().toURI().toString()));
+
+                music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
                 music.setVolume(musicSlider.getValue() / 100);
             }
-            else
-                tempMusic = "sounds/music/rock/01.mp3";
 
             addMediaListener();
             musicText.setText("Выбрано : РОК");
         });
 
-        post_hardcore.setOnMouseClicked( event -> {
+        post_hardcoreItem.setOnMouseClicked( event -> {
+            tempMusic = Paths.get("resources", "sounds", "music", "post-hardcore_metalcore", "01.mp3");
             if (!start) {
                 music.stop();
-                music = new MediaPlayer(new Media(new File("sounds/music/post-hardcore_metalcore/01.mp3").getAbsoluteFile().toURI().toString()));
+                music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
                 music.setVolume(musicSlider.getValue() / 100);
             }
-            else
-                tempMusic = "sounds/music/post-hardcore_metalcore/01.mp3";
 
             addMediaListener();
             musicText.setText("Выбрано : Post-Hardcore/Metalcore");
         });
 
-        electronic.setOnMouseClicked( event -> {
+        electronicItem.setOnMouseClicked( event -> {
+            tempMusic = Paths.get("resources", "sounds", "music", "electronic", "01.mp3");
             if (!start) {
                 music.stop();
-                music = new MediaPlayer(new Media(new File("sounds/music/electronic/01.mp3").getAbsoluteFile().toURI().toString()));
+                music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
                 music.setVolume(musicSlider.getValue() / 100);
             }
-            else
-                tempMusic = "sounds/music/electronic/01.mp3";
 
             addMediaListener();
             musicText.setText("Выбрано : ЭЛЕКТРОННАЯ");
         });
 
-        developer_choice.setOnMouseClicked( event -> {
+        developer_choiceItem.setOnMouseClicked( event -> {
+            tempMusic = Paths.get("resources", "sounds", "music", "developer_choice", "01.mp3");
             if (!start) {
                 music.stop();
-                music = new MediaPlayer(new Media(new File("sounds/music/developer_choice/01.mp3").getAbsoluteFile().toURI().toString()));
+                music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
                 music.setVolume(musicSlider.getValue() / 100);
             }
-            else
-                tempMusic = "sounds/music/developer_choice/01.mp3";
 
             addMediaListener();
             musicText.setText("Выбрано : ВЫБОР РАЗРАБОТЧИКА");
         });
 
-        musicMenuBack.setOnMouseClicked( event -> {
+        musicMenuBackItem.setOnMouseClicked( event -> {
             menuBox.setSubMenu(soundOptionMenu);
             musicText.setVisible(false);
         });
@@ -489,6 +496,7 @@ public class Menu {
             if (Game.boss.getMediaPlayer() != null)
                 Game.boss.getMediaPlayer().play();
         Game.timer.start();
+        isShown = false;
     }
 
 
@@ -510,39 +518,53 @@ public class Menu {
             if (Game.boss.getMediaPlayer() != null)
                 Game.boss.getMediaPlayer().pause();
         Game.timer.stop();
+        isShown = true;
     }
 
 
     void update() {
         if (Controller.isPressed(KeyCode.ESCAPE)) {
             Game.keys.remove(KeyCode.ESCAPE);
-            showMenu();
+            if (!isShown) {
+                showMenu();
+            }
+
             Game.scene.setOnKeyPressed(event -> {
-                if (event.getCode() == KeyCode.ESCAPE)
+                if (event.getCode() == KeyCode.ESCAPE && isShown) {
                     hideMenu();
+                }
             });
         }
 
-        if ( Controller.isPressed(KeyCode.G) ) {
+        if (Controller.isPressed(KeyCode.G) ) {
             Game.keys.remove(KeyCode.G);
             checkMusic();
         }
     }
 
-
     private void checkMusic() {
-        if ( music.getMedia().getSource().contains(rock) )
-            checkTrack(rock);
-        if ( music.getMedia().getSource().contains(post) )
-            checkTrack(post);
-        if ( music.getMedia().getSource().contains(electronic) )
-            checkTrack(electronic);
-        if ( music.getMedia().getSource().contains(developer_choice) )
-            checkTrack(developer_choice);
+        if ( music.getMedia().getSource().contains("rock") ) {
+            tempMusic = rock;
+            checkTrack();
+        }
+
+        if ( music.getMedia().getSource().contains("metalcore") ) {
+            tempMusic = post;
+            checkTrack();
+        }
+
+        if ( music.getMedia().getSource().contains("electronic") ) {
+            tempMusic = electronic;
+            checkTrack();
+        }
+
+        if ( music.getMedia().getSource().contains("developer_choice") ) {
+            tempMusic = developer_choice;
+            checkTrack();
+        }
 
         addListener();
     }
-
 
     void checkMusicForContinueGame(String text) {
         if (text.contains("rock")) {
@@ -559,83 +581,70 @@ public class Menu {
             musicText.setText("Выбрано : ВЫБОР РАЗРАБОТЧИКА");
         }
 
-        tempMusic += text.substring(text.length() - 6, text.length());
+        tempMusic = tempMusic.resolve(text.substring(text.length() - 6, text.length()));
     }
-
 
     private void addMediaListener() {
         music.setOnEndOfMedia( () -> checkMusic() );
     }
 
-
-    private void checkTrack(String text) {
-        if (music.getMedia().getSource().contains(text + "01.mp3")) {
+    private void checkTrack() {
+        if (music.getMedia().getSource().contains("01.mp3")) {
             music.stop();
-            music = null;
-            music = new MediaPlayer(new Media(new File(text + "02.mp3").getAbsoluteFile().toURI().toString()));
+            music = new MediaPlayer(new Media(tempMusic.resolve("02.mp3").toUri().toString()));
             music.setVolume(musicSlider.getValue() / 100);
             music.play();
             addMediaListener();
             return;
         }
-        if (music.getMedia().getSource().contains(text + "02.mp3")) {
+        if (music.getMedia().getSource().contains("02.mp3")) {
             music.stop();
-            music = null;
-            music = new MediaPlayer(new Media(new File(text + "03.mp3").getAbsoluteFile().toURI().toString()));
+            music = new MediaPlayer(new Media(tempMusic.resolve("03.mp3").toUri().toString()));
             music.setVolume(musicSlider.getValue() / 100);
             music.play();
             addMediaListener();
             return;
         }
-        if (music.getMedia().getSource().contains(text + "03.mp3")) {
+        if (music.getMedia().getSource().contains("03.mp3")) {
             music.stop();
-            music = null;
-            music = new MediaPlayer(new Media(new File(text + "04.mp3").getAbsoluteFile().toURI().toString()));
+            music = new MediaPlayer(new Media(tempMusic.resolve("04.mp3").toUri().toString()));
             music.setVolume(musicSlider.getValue() / 100);
             music.play();
             addMediaListener();
             return;
         }
-        if (music.getMedia().getSource().contains(text + "04.mp3")) {
+        if (music.getMedia().getSource().contains("04.mp3")) {
             music.stop();
-            music = null;
-            music = new MediaPlayer(new Media(new File(text + "05.mp3").getAbsoluteFile().toURI().toString()));
+            music = new MediaPlayer(new Media(tempMusic.resolve("05.mp3").toUri().toString()));
             music.setVolume(musicSlider.getValue() / 100);
             music.play();
             addMediaListener();
             return;
         }
-        if (music.getMedia().getSource().contains(text + "05.mp3")) {
+        if (music.getMedia().getSource().contains("05.mp3")) {
             music.stop();
-            music = null;
-            music = new MediaPlayer(new Media(new File(text + "06.mp3").getAbsoluteFile().toURI().toString()));
+            music = new MediaPlayer(new Media(tempMusic.resolve("06.mp3").toUri().toString()));
             music.setVolume(musicSlider.getValue() / 100);
             music.play();
             addMediaListener();
             return;
         }
-        if (music.getMedia().getSource().contains(text + "06.mp3")) {
+        if (music.getMedia().getSource().contains("06.mp3")) {
             music.stop();
-            music = null;
-            music = new MediaPlayer(new Media(new File(text + "07.mp3").getAbsoluteFile().toURI().toString()));
+            music = new MediaPlayer(new Media(tempMusic.resolve("07.mp3").toUri().toString()));
             music.setVolume(musicSlider.getValue() / 100);
             music.play();
             addMediaListener();
             return;
         }
-        if (music.getMedia().getSource().contains(text + "07.mp3")) {
+        if (music.getMedia().getSource().contains("07.mp3")) {
             music.stop();
-            music = null;
-            music = new MediaPlayer(new Media(new File(text + "01.mp3").getAbsoluteFile().toURI().toString()));
+            music = new MediaPlayer(new Media(tempMusic.resolve("08.mp3").toUri().toString()));
             music.setVolume(musicSlider.getValue() / 100);
             music.play();
             addMediaListener();
         }
     }
-
-
-
-
 
 
     private class MenuItem extends StackPane {
@@ -675,7 +684,6 @@ public class Menu {
         }
     }
 
-
     private class SubMenu extends VBox {
 
         SubMenu() {
@@ -707,7 +715,6 @@ public class Menu {
         }
     }
 
-
     private class MenuBox extends Pane {
 
         private SubMenu subMenu;
@@ -715,7 +722,8 @@ public class Menu {
         MenuBox(SubMenu sm) {
             subMenu = sm;
 
-            ImageView imgView = new ImageView(new Image(new File("images/backgrounds/menu.png").getAbsoluteFile().toURI().toString()));
+            Path menuImagePath = Paths.get("resources", "images", "backgrounds", "menu.png");
+            ImageView imgView = new ImageView(new Image(menuImagePath.toUri().toString()));
             getChildren().addAll(imgView, subMenu);
         }
 

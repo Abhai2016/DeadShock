@@ -19,13 +19,15 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Boss extends Pane {
     private final byte BOSS_SPEED = 1;
 
     private MediaPlayer mediaPlayer;
-    private ImageView imgView = new ImageView(new Image(new File("images/characters/bigDaddy.png").toURI().toString()));
+    private Path imagePath = Paths.get("resources", "images", "characters", "bigDaddy.png");
+    private ImageView imgView = new ImageView(new Image(imagePath.toUri().toString()));
     private Point2D velocity = new Point2D(0, 0);
     SpriteAnimation animation = new SpriteAnimation(imgView, Duration.seconds(2), 3, 3, 0, 100, 93, 100);
 
@@ -54,7 +56,7 @@ public class Boss extends Pane {
             setBoss();
 
         getChildren().add(imgView);
-        Game.gameRoot.getChildren().addAll(this);
+        Game.gameRoot.getChildren().add(this);
     }
 
 
@@ -225,7 +227,8 @@ public class Boss extends Pane {
                 rectHP.setWidth(0);
                 getTransforms().add(new Rotate(90));
 
-                mediaPlayer = new MediaPlayer(new Media(new File("sounds/fx/boss/death.mp3").getAbsoluteFile().toURI().toString()));
+                Path soundPath = Paths.get("resources", "sounds", "fx", "boss", "death.mp3");
+                mediaPlayer = new MediaPlayer(new Media(soundPath.toUri().toString()));
                 mediaPlayer.setVolume(Game.menu.fxSlider.getValue() / 100);
                 mediaPlayer.play();
 

@@ -20,14 +20,16 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static javafx.scene.input.KeyEvent.KEY_PRESSED;
 
 
 public class Character extends Pane {
     private final byte CHARACTER_SPEED = 4;
-    private ImageView imgView = new ImageView(new Image(new File("images/characters/booker.png").toURI().toString()));
+    private Path imagePath = Paths.get("resources", "images", "characters", "booker.png");
+    private ImageView imgView = new ImageView(new Image(imagePath.toUri().toString()));
     Point2D velocity = new Point2D(0, 0);
 
     private final byte count = 6;
@@ -48,15 +50,15 @@ public class Character extends Pane {
 
 
     private int money = 0;
-    private byte countLives = 0;
-    private byte HP = 100;
-    private byte salt = 100;
-    private byte enemyDogfight = 0;
-    private byte characterDogFight = 0;
-    private byte medicineCount = 0;
-    private byte moneyForKillingEnemy = 0;
-    private byte bulletCount = 0;
-    private byte priceForGeneration = 0;
+    private int countLives = 0;
+    private int HP = 100;
+    private int salt = 100;
+    private int enemyDogfight = 0;
+    private int characterDogFight = 0;
+    private int medicineCount = 0;
+    private int moneyForKillingEnemy = 0;
+    private int bulletCount = 0;
+    private int priceForGeneration = 0;
     private double stunnedInterval = 0;
 
     private byte rand = 0;
@@ -173,8 +175,6 @@ public class Character extends Pane {
                     return;
                 }
 
-
-
             if (Game.levelNumber == 3) {
                 if (getBoundsInParent().intersects(Game.level.getImgView().getBoundsInParent())) {
                     setTranslateY(getTranslateY() - 1);
@@ -228,7 +228,7 @@ public class Character extends Pane {
     }
 
 
-    public byte getHP() {
+    public int getHP() {
         return HP;
     }
 
@@ -238,7 +238,7 @@ public class Character extends Pane {
     }
 
 
-    public byte getSalt() {
+    public int getSalt() {
         return salt;
     }
 
@@ -293,27 +293,27 @@ public class Character extends Pane {
     }
 
 
-    byte getEnemyDogfight() {
+    int getEnemyDogfight() {
         return enemyDogfight;
     }
 
 
-    byte getMedicineCount() {
+    int getMedicineCount() {
         return medicineCount;
     }
 
 
-    byte getCharacterDogFight() {
+    int getCharacterDogFight() {
         return characterDogFight;
     }
 
 
-    public byte getBulletCount() {
+    public int getBulletCount() {
         return bulletCount;
     }
 
 
-    byte getMoneyForKillingEnemy() {
+    int getMoneyForKillingEnemy() {
         return moneyForKillingEnemy;
     }
 
@@ -485,19 +485,20 @@ public class Character extends Pane {
     private void playBookerVoice() {
         if (!Game.enemies.isEmpty() && Game.levelNumber == 0)
             if (Game.enemies.get(0).canSeeBooker && playVoice) {
-                Sounds.bookerVoice = new MediaPlayer(new Media(new File("sounds/voice/booker/shit.mp3").getAbsoluteFile().toURI().toString()));
+                Path soundPath = Paths.get("resources", "sounds", "voice", "booker", "shit.mp3");
+                Sounds.bookerVoice = new MediaPlayer(new Media(soundPath.toUri().toString()));
                 Sounds.bookerVoice.setVolume(Game.menu.voiceSlider.getValue() / 100);
                 Sounds.bookerVoice.play();
                 playVoice = false;
             }
 
         if (Game.enemies.isEmpty() && !playVoice && Game.levelNumber == 0) {
-                Sounds.bookerVoice = new MediaPlayer(new Media(
-                        new File("sounds/voice/booker/creep_even_in_flying_town.mp3").getAbsoluteFile().toURI().toString()));
-                Sounds.bookerVoice.setVolume(Game.menu.voiceSlider.getValue() / 100);
-                Sounds.bookerVoice.play();
-                playVoice = true;
-            }
+            Path soundPath = Paths.get("resources", "sounds", "voice", "booker", "creep_even_in_flying_town.mp3");
+            Sounds.bookerVoice = new MediaPlayer(new Media(soundPath.toUri().toString()));
+            Sounds.bookerVoice.setVolume(Game.menu.voiceSlider.getValue() / 100);
+            Sounds.bookerVoice.play();
+            playVoice = true;
+        }
 
         if (Game.enemies.isEmpty() && Game.levelNumber == 1 && playVoice) {
             Sounds.audioClipLetsGo.play(Game.menu.voiceSlider.getValue() / 100);
@@ -585,11 +586,12 @@ public class Character extends Pane {
         if (Sounds.elizabethMediaPlayer != null)
             Sounds.elizabethMediaPlayer.stop();
         if (money >= priceForGeneration) {
-            Game.stage.setWidth(1235);
+            Game.stage.setWidth(1230);
             countLives--;
             money -= priceForGeneration;
 
-            MediaPlayer video = new MediaPlayer(new Media(new File("videos/death.mp4").getAbsoluteFile().toURI().toString()));
+            Path videoPath = Paths.get("resources", "videos", "death.mp4");
+            MediaPlayer video = new MediaPlayer(new Media(videoPath.toUri().toString()));
             MediaView videoView = new MediaView(video);
             videoView.setFitWidth(Game.scene.getWidth());
             videoView.setFitHeight(Game.scene.getHeight());
@@ -600,7 +602,7 @@ public class Character extends Pane {
             video.setOnEndOfMedia(() -> {
                 Game.timer.start();
                 Game.menu.music.play();
-                Game.appRoot.getChildren().removeAll(videoView);
+                Game.appRoot.getChildren().remove(videoView);
 
                 Game.gameRoot.setLayoutX(0);
                 Game.level.getBackground().setLayoutX(0);
@@ -612,7 +614,8 @@ public class Character extends Pane {
                 Game.elizabeth.canMove = true;
                 Game.elizabeth.giveSupply = false;
                 Game.elizabeth.countMedicine = 0;
-                Game.elizabeth.imgView.setImage(new Image(new File("images/characters/elizabeth.png").toURI().toString()));
+                Path imagePath = Paths.get("resources", "images", "characters", "elizabeth.png");
+                Game.elizabeth.imgView.setImage(new Image(imagePath.toUri().toString()));
 
                 Game.menu.addListener();
                 HP = 100;
