@@ -1,0 +1,7 @@
+There are two ways to launch the project: via Maven and via Intellij IDEA. Second options is preferable because it gives the control of the build like debugging
+
+Maven - mvn clean javafx:run
+
+Intellij IDEA
+    1) download javafx-sdk
+    2) add to vm options --module-path "C:\Program Files\Java\javafx-sdk-21\lib" --add-modules javafx.controls,javafx.media
