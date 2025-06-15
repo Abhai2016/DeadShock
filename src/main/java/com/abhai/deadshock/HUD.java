@@ -1,6 +1,6 @@
 package com.abhai.deadshock;
 
-import com.abhai.deadshock.Levels.Level;
+import com.abhai.deadshock.levels.Level;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -96,13 +96,11 @@ public class HUD extends Pane {
         return hypnotist;
     }
 
-
     void setMarikLevel() {
         Path moneyImagePath = Paths.get("resources", "images", "hud", "moneyForMarik.png");
         money.setImage(new Image(moneyImagePath.toUri().toString()));
         getChildren().remove(textMoney);
     }
-
 
     public void update() {
         HP.setWidth(Game.booker.getHP());

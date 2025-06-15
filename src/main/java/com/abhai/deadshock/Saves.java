@@ -20,8 +20,6 @@ public class Saves {
     private boolean canChooseHypnotist;
 
 
-
-
     public boolean isCanChooseHypnotist() {
         return canChooseHypnotist;
     }

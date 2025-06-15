@@ -1,6 +1,6 @@
-package com.abhai.deadshock.Energetics;
+package com.abhai.deadshock.energetics;
 
-import com.abhai.deadshock.Levels.Level;
+import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.Sounds;
 import javafx.scene.image.Image;
@@ -30,8 +30,6 @@ public class Energetic extends Pane {
     private byte priceForUsing = 0;
 
 
-
-    //for level1
     public Energetic() {
         setTranslateX(Level.BLOCK_SIZE * 50);
         setTranslateY(Level.BLOCK_SIZE * 9 + 18);
@@ -41,7 +39,6 @@ public class Energetic extends Pane {
     }
 
 
-    //for level2
     public Energetic(boolean value) {
         canChooseDevilKiss = value;
         if (canChooseDevilKiss) {
@@ -59,7 +56,6 @@ public class Energetic extends Pane {
     }
 
 
-    //for level3
     public Energetic(boolean devilKiss, boolean electricity) {
         canChooseDevilKiss = devilKiss;
         canChooseElectricity = electricity;
@@ -82,7 +78,7 @@ public class Energetic extends Pane {
         Game.gameRoot.getChildren().add(this);
     }
 
-    //for bossLevel
+
     public Energetic(boolean devilKiss, boolean electricity, boolean hypnotist) {
         canChooseDevilKiss = devilKiss;
         canChooseElectricity = electricity;
@@ -145,21 +141,17 @@ public class Energetic extends Pane {
         return canChooseHypnotist;
     }
 
-
-
-
-
     public void pickUp() {
         if (Game.booker.getBoundsInParent().intersects(getBoundsInParent())) {
-            switch ((int)Game.levelNumber) {
-                case 0:
+            switch (Game.levelNumber) {
+                case Level.FIRST_LEVEL:
                     Sounds.audioClipEnergetic.play(Game.menu.voiceSlider.getValue() / 100);
                     name = "devilKiss";
                     countEnergetics++;
                     Game.hud.getDevilKiss().setVisible(true);
                     canChooseDevilKiss = true;
                     break;
-                case 1:
+                case Level.SECOND_LEVEL:
                     Sounds.audioClipNewEnergetic.play(Game.menu.voiceSlider.getValue() / 100);
                     name = "electricity";
                     countEnergetics++;
@@ -167,7 +159,7 @@ public class Energetic extends Pane {
                     Game.hud.getElectricity().setVisible(true);
                     canChooseElectricity = true;
                     break;
-                case 2:
+                case Level.THIRD_LEVEL:
                     Sounds.audioClipNewEnergetic.play(Game.menu.voiceSlider.getValue() / 100);
                     name = "hypnotist";
                     countEnergetics++;
@@ -180,7 +172,6 @@ public class Energetic extends Pane {
             setVisible(false);
         }
     }
-
 
     public void setDifficultyLevel() {
         switch (Game.difficultyLevelText) {
@@ -202,20 +193,18 @@ public class Energetic extends Pane {
         }
     }
 
-
     public void changeLevel() {
-        if (Game.levelNumber == 1) {
+        if (Game.levelNumber == Level.SECOND_LEVEL) {
             imgView.setImage(new Image(electricityImagePath.toUri().toString()));
             setTranslateX(Level.BLOCK_SIZE * 42);
             setTranslateY(Level.BLOCK_SIZE * 9 - 30);
-        } else if (Game.levelNumber == 2) {
+        } else if (Game.levelNumber == Level.THIRD_LEVEL) {
             imgView.setImage(new Image(hypnotistImagePath.toUri().toString()));
             setTranslateX(Level.BLOCK_SIZE * 40);
             setTranslateY(Level.BLOCK_SIZE * 14 - 27);
         }
         setVisible(true);
     }
-
 
     public void changeEnergetic() {
         if (canChangeEnergetic) {
@@ -258,7 +247,6 @@ public class Energetic extends Pane {
         }
     }
 
-
     public void shoot() {
         switch (name) {
             case "devilKiss":
@@ -281,21 +269,17 @@ public class Energetic extends Pane {
         shoot = false;
     }
 
-
     public void setHypnosisForBooker() {
         hypnosis.setHypnosisForBooker();
     }
-
 
     public void updateHypnosisForBooker() {
         hypnosis.updateHypnosis();
     }
 
-
     public void deleteHypnosis() {
         hypnosis.deleteDeleteHypnosis();
     }
-
 
     public void update() {
         if (!fireBalls.isEmpty())

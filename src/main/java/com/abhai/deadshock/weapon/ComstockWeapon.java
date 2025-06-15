@@ -1,4 +1,4 @@
-package com.abhai.deadshock.Weapon;
+package com.abhai.deadshock.weapon;
 
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.Sounds;
@@ -8,8 +8,6 @@ public class ComstockWeapon extends EnemyWeapon {
     public ComstockWeapon() {
         clip = 20;
     }
-
-
 
     @Override
     public void shoot(double scaleX, double x, double y) {

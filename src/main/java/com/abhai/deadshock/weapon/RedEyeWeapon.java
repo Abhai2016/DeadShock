@@ -1,4 +1,4 @@
-package com.abhai.deadshock.Weapon;
+package com.abhai.deadshock.weapon;
 
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.Sounds;
@@ -9,8 +9,6 @@ public class RedEyeWeapon extends EnemyWeapon {
         clip = 30;
     }
 
-
-
     @Override
     public void shoot(double scaleX, double x, double y) {
         if (shootInterval > 20 && clip > 0) {
@@ -20,7 +18,6 @@ public class RedEyeWeapon extends EnemyWeapon {
             Game.enemyBullets.add(new EnemyBullet("red_eye", scaleX, x, y));
         }
     }
-
 
     @Override
     public void update() {

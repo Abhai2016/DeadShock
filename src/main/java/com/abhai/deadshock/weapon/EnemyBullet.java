@@ -1,7 +1,7 @@
-package com.abhai.deadshock.Weapon;
+package com.abhai.deadshock.weapon;
 
-import com.abhai.deadshock.Characters.EnemyBase;
-import com.abhai.deadshock.Levels.Block;
+import com.abhai.deadshock.characters.enemies.Enemy;
+import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.Sounds;
 import javafx.scene.image.Image;
@@ -100,10 +100,10 @@ public class EnemyBullet extends Bullet {
                 return;
             }
 
-        for (EnemyBase enemyBase : Game.enemies)
-            if (getBoundsInParent().intersects(enemyBase.getBoundsInParent())) {
+        for (Enemy enemy : Game.enemies)
+            if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
                 if (Game.difficultyLevelText.equals("marik") || Game.difficultyLevelText.equals("easy")) {
-                    enemyBase.setHP(enemyBase.getHP() - Game.weapon.getDamage());
+                    enemy.setHP(enemy.getHP() - Game.weapon.getDamage());
                     Game.gameRoot.getChildren().remove(this);
                     delete = true;
                     return;

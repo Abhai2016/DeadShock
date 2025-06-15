@@ -1,7 +1,7 @@
-package com.abhai.deadshock.Characters;
+package com.abhai.deadshock.characters;
 
-import com.abhai.deadshock.Levels.Block;
-import com.abhai.deadshock.Levels.Level;
+import com.abhai.deadshock.levels.Block;
+import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.Sounds;
 import com.abhai.deadshock.Supply;
@@ -21,24 +21,22 @@ public class Elizabeth extends Pane {
     private Image imgElizabethMedicine = new Image(imageMedicinePath.toUri().toString());
     ImageView imgView = new ImageView(imgElizabeth);
 
-    Supply ammo;
+    private Supply ammo;
 
-    private short medicineInterval = 0;
-    private short supplyInterval = 0;
-    private short emptySupplyInterval = 0;
-    private short moveInterval = 0;
-    private byte rand = 0;
-    short y = 0;
-    byte countMedicine = 0;
+    private int medicineInterval = 0;
 
+    private int supplyInterval = 0;
+    private int emptySupplyInterval = 0;
+    private int moveInterval = 0;
+    private int rand = 0;
+    public int y = 0;
 
-
+    public int countMedicine = 0;
     private boolean setY = true;
     private boolean startLevel = true;
     private boolean playVoiceWhereYouFrom = true;
     boolean canMove = true;
     boolean giveSupply = false;
-
 
 
     public Elizabeth() {
@@ -52,8 +50,13 @@ public class Elizabeth extends Pane {
         Game.gameRoot.getChildren().add(this);
     }
 
+    public Supply getAmmo() {
+        return ammo;
+    }
 
-
+    public void setAmmo(Supply ammo) {
+        this.ammo = ammo;
+    }
 
     private void moveX(int x) {
         for (int i = 0; i < Math.abs(x); i++) {
@@ -75,7 +78,6 @@ public class Elizabeth extends Pane {
         }
     }
 
-
     private void moveY(int y) {
         for (int i = 0; i < Math.abs(y); i++) {
             if (y > 0)
@@ -96,22 +98,21 @@ public class Elizabeth extends Pane {
             if (getTranslateY() == 0)
                 setTranslateY(getTranslateY() + 1);
 
-            if (giveSupply && Game.levelNumber != 2)
+            if (giveSupply && Game.levelNumber != Level.THIRD_LEVEL)
                 for (Block block : Level.enemyBlocks)
                     if (getBoundsInParent().intersects(block.getBoundsInParent())) {
                         setTranslateY(getTranslateY() - 1);
                         return;
                     }
 
-            if (Game.levelNumber == 3)
+            if (Game.levelNumber == Level.BOSS_LEVEL)
                 if (getBoundsInParent().intersects(Game.level.getImgView().getBoundsInParent()))
                     setTranslateY(getTranslateY() - 1);
         }
     }
 
-
     private void playVoice() {
-        if (Game.levelNumber == 1)
+        if (Game.levelNumber == Level.SECOND_LEVEL)
             if (startLevel && getTranslateX() > 100) {
                 Path freedomSoundPath = Paths.get("resources", "sounds", "voice", "elizabeth", "freedom.mp3");
                 Sounds.elizabethMediaPlayer = new MediaPlayer(new Media(freedomSoundPath.toUri().toString()));
@@ -141,7 +142,6 @@ public class Elizabeth extends Pane {
             }
     }
 
-
     private void playSupplyVoice() {
         rand = (byte) (Math.random() * 3);
         switch (rand) {
@@ -157,7 +157,6 @@ public class Elizabeth extends Pane {
         }
         supplyInterval = 0;
     }
-
 
     private void supply() {
         if (supplyInterval > 240 && countMedicine > 0 && Game.booker.getHP() < 100) {
@@ -191,7 +190,6 @@ public class Elizabeth extends Pane {
             }
     }
 
-
     private void behave() {
         if (!canMove) {
             if (setY) {
@@ -218,7 +216,7 @@ public class Elizabeth extends Pane {
                 moveY(-1);
         }
 
-        if (Game.levelNumber == 3)
+        if (Game.levelNumber == Level.BOSS_LEVEL)
             medicineInterval++;
 
         if (medicineInterval > 600) {
@@ -228,7 +226,6 @@ public class Elizabeth extends Pane {
 
         supply();
     }
-
 
     public void update() {
         supplyInterval++;

@@ -1,12 +1,14 @@
-package com.abhai.deadshock.Energetics;
+package com.abhai.deadshock.energetics;
 
-import com.abhai.deadshock.Characters.EnemyBase;
-import com.abhai.deadshock.Characters.SpriteAnimation;
+import com.abhai.deadshock.characters.enemies.Enemy;
+import com.abhai.deadshock.characters.SpriteAnimation;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.Sounds;
+import com.abhai.deadshock.levels.Level;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
@@ -14,7 +16,9 @@ import javafx.util.Duration;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-class Lightning extends BaseEnergeticElement {
+class Lightning extends Pane {
+    private ImageView imgView;
+    private SpriteAnimation animation;
     private Path soundPath = Paths.get("resources", "sounds", "fx", "energetics", "lightning.mp3");
     private MediaPlayer mediaPlayerLightning = new MediaPlayer(new Media(soundPath.toUri().toString()));
     private boolean delete = false;
@@ -46,11 +50,9 @@ class Lightning extends BaseEnergeticElement {
         Game.gameRoot.getChildren().add(this);
     }
 
-
     boolean isDelete() {
         return delete;
     }
-
 
     private void move() {
         if (Game.booker.getScaleX() > 0) {
@@ -65,19 +67,17 @@ class Lightning extends BaseEnergeticElement {
         setTranslateY(Game.booker.getTranslateY() - 10);
     }
 
-
     public boolean update() {
-        for (EnemyBase enemy : Game.enemies)
+        for (Enemy enemy : Game.enemies)
             if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
                 enemy.setHP(0);
                 Sounds.killByLightning.play(Game.menu.fxSlider.getValue() / 100);
                 return true;
             }
 
-        if (Game.levelNumber == 3)
-            if (getBoundsInParent().intersects(Game.boss.getBoundsInParent())) {
+        if (Game.levelNumber == Level.BOSS_LEVEL)
+            if (getBoundsInParent().intersects(Game.boss.getBoundsInParent()))
                 Game.boss.setHP(Game.boss.getHP() - Game.weapon.getDamage() / 2);
-            }
         move();
         return false;
     }

@@ -1,7 +1,8 @@
-package com.abhai.deadshock.Energetics;
+package com.abhai.deadshock.energetics;
 
-import com.abhai.deadshock.Characters.EnemyBase;
+import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.Game;
+import com.abhai.deadshock.levels.Level;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -13,9 +14,7 @@ public class Hypnosis {
 
     private double interval = 0;
     private double maxInterval = 0;
-
     private boolean hypnosis = false;
-
 
 
     Hypnosis() {
@@ -45,25 +44,20 @@ public class Hypnosis {
         Game.appRoot.getChildren().add(intervalRect);
     }
 
-
-
-
-
     boolean isHypnosis() {
         return hypnosis;
     }
 
-
     void setHypnosis() {
-        if (Game.levelNumber == 3)
+        if (Game.levelNumber == Level.BOSS_LEVEL)
             Game.boss.setHypnosis(true);
-        for(EnemyBase enemyBase : Game.enemies)
-            enemyBase.setHypnosis(true);
+        for(Enemy enemy : Game.enemies)
+            enemy.setHypnosis(true);
         hypnosis = true;
         interval = 0;
 
         intervalRect.setWidth(300);
-        if (Game.levelNumber != 3) {
+        if (Game.levelNumber != Level.BLOCK_SIZE) {
             intervalRect.setTranslateX(Game.appRoot.getWidth() / 2 - intervalRect.getWidth() / 2);
             intervalRect.setTranslateY(40);
         } else {
@@ -73,7 +67,7 @@ public class Hypnosis {
         intervalRect.setVisible(true);
 
 
-        if (Game.levelNumber != 3) {
+        if (Game.levelNumber != Level.BOSS_LEVEL) {
             intervalText.setTranslateX(Game.appRoot.getWidth() / 2 - intervalRect.getWidth() / 2 + 25);
             intervalText.setTranslateY(30);
         }
@@ -83,7 +77,6 @@ public class Hypnosis {
         }
         intervalText.setVisible(true);
     }
-
 
     void setHypnosisForBooker() {
         intervalRect.setWidth(300);
@@ -96,7 +89,6 @@ public class Hypnosis {
         intervalText.setVisible(true);
     }
 
-
     void updateHypnosis() {
         intervalRect.setWidth(300 - Game.booker.getStunnedInterval() / 180 * 300);
     }
@@ -107,17 +99,15 @@ public class Hypnosis {
         intervalText.setVisible(false);
     }
 
-
-
     public void update() {
         interval++;
         intervalRect.setWidth((maxInterval - interval) / maxInterval * 300);
 
         if (interval > maxInterval) {
-            if (Game.levelNumber == 3)
+            if (Game.levelNumber == Level.BOSS_LEVEL)
                 Game.boss.setHypnosis(false);
-            for (EnemyBase enemyBase : Game.enemies)
-                enemyBase.setHypnosis(false);
+            for (Enemy enemy : Game.enemies)
+                enemy.setHypnosis(false);
             hypnosis = false;
             interval = 0;
 

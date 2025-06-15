@@ -1,15 +1,18 @@
 package com.abhai.deadshock;
 
-import com.abhai.deadshock.Characters.EnemyBase;
+import com.abhai.deadshock.characters.enemies.Enemy;
+import com.abhai.deadshock.levels.Level;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.FillTransition;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -90,12 +93,10 @@ public class Menu {
         createCover();
     }
 
-
     public void addListener() {
         Game.scene.setOnKeyPressed(event -> Game.keys.put(event.getCode(), true) );
         Game.scene.setOnKeyReleased(event -> Game.keys.put(event.getCode(), false) );
     }
-
 
     private void createCover() {
         Path coverImagePath = Paths.get("resources", "images", "backgrounds", "cover.jpg");
@@ -114,25 +115,30 @@ public class Menu {
         fadeTransitionTextCover.setAutoReverse(true);
         fadeTransitionTextCover.play();
 
-        Game.scene.addEventFilter(KEY_PRESSED, event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                fadeTransitionTextCover.stop();
+        EventHandler<KeyEvent> removeCoverFilter = new EventHandler<>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.ENTER) {
+                    fadeTransitionTextCover.stop();
 
-                FadeTransition fadeTransitionCover = new FadeTransition(Duration.seconds(2), cover);
-                fadeTransitionCover.setFromValue(1);
-                fadeTransitionCover.setToValue(0);
-                fadeTransitionCover.play();
-                fadeTransitionCover.setOnFinished( event1 -> Game.appRoot.getChildren().removeAll(cover, textCover) );
+                    FadeTransition fadeTransitionCover = new FadeTransition(Duration.seconds(2), cover);
+                    fadeTransitionCover.setFromValue(1);
+                    fadeTransitionCover.setToValue(0);
+                    fadeTransitionCover.play();
+                    fadeTransitionCover.setOnFinished( event1 -> Game.appRoot.getChildren().removeAll(cover, textCover) );
 
-                FadeTransition fadeTransitionMenu = new FadeTransition(Duration.seconds(2), menuBox);
-                fadeTransitionMenu.setFromValue(0);
-                fadeTransitionMenu.setToValue(1);
-                fadeTransitionMenu.play();
-                Game.scene.setOnKeyPressed(event1 -> Game.nothing() );
+                    FadeTransition fadeTransitionMenu = new FadeTransition(Duration.seconds(2), menuBox);
+                    fadeTransitionMenu.setFromValue(0);
+                    fadeTransitionMenu.setToValue(1);
+                    fadeTransitionMenu.play();
+
+                    Game.scene.removeEventFilter(KEY_PRESSED, this);
+                }
             }
-        });
-    }
+        };
 
+        Game.scene.addEventFilter(KEY_PRESSED, removeCoverFilter);
+    }
 
     private void createMainMenu() {
         continueGame = new MenuItem("ПРОДОЛЖИТЬ ИГРУ");
@@ -146,7 +152,7 @@ public class Menu {
         continueGame.setOnMouseClicked( event -> {
             if (!start) {
                 hideMenu();
-            } else if (Game.levelNumber > 0) {
+            } else if (Game.levelNumber > Level.FIRST_LEVEL) {
                 startGame();
             }
         });
@@ -159,7 +165,6 @@ public class Menu {
         options.setOnMouseClicked( event -> menuBox.setSubMenu(optionsMenu) );
         exitGame.setOnMouseClicked( event -> System.exit(0) );
     }
-
 
     private void createDifficultyLevelMenu() {
         description.setVisible(false);
@@ -245,7 +250,7 @@ public class Menu {
         ready.setOnMouseClicked( event -> {
             ModalWindow.createNewWindows("НОВАЯ ИГРА");
             if (booleanNewGame) {
-                if (start && Game.levelNumber == 0) {
+                if (start && Game.levelNumber == Level.FIRST_LEVEL) {
                     start = false;
                 } else {
                     Game.clearDataForNewGame();
@@ -256,7 +261,6 @@ public class Menu {
         });
     }
 
-
     private void startGame() {
         menuBox.setSubMenu(mainMenu);
         description.setVisible(false);
@@ -264,7 +268,7 @@ public class Menu {
         Game.booker.setDifficultyLevel();
         Game.energetic.setDifficultyLevel();
         Game.weapon.setDamage();
-        if (Game.difficultyLevelText.equals("marik") && Game.levelNumber < 3) {
+        if (Game.difficultyLevelText.equals("marik") && Game.levelNumber < Level.BOSS_LEVEL) {
             Game.hud.setMarikLevel();
             Game.vendingMachine.setMarikLevel();
         }
@@ -279,7 +283,6 @@ public class Menu {
         hideMenu();
     }
 
-
     public void newGame() {
         Game.clearDataForNewGame();
         Game.initContent();
@@ -291,7 +294,6 @@ public class Menu {
         music.stop();
         showMenu();
     }
-
 
     private void createOptionsMenu() {
         MenuItem sound = new MenuItem("ЗВУК");
@@ -307,7 +309,6 @@ public class Menu {
         optionsBack.setOnMouseClicked( event -> menuBox.setSubMenu(mainMenu) );
     }
 
-
     private void createSoundOptionMenu() {
         MenuItem volume = new MenuItem("ГРОМКОСТЬ");
         MenuItem music = new MenuItem("МУЗЫКА");
@@ -321,7 +322,6 @@ public class Menu {
         });
         soundOptionBack.setOnMouseClicked( event -> menuBox.setSubMenu(mainMenu) );
     }
-
 
     private void createMusicMenu() {
         musicText.setTranslateX(Game.scene.getWidth() / 5);
@@ -393,7 +393,6 @@ public class Menu {
         });
     }
 
-
     private void createControlMenu() {
         controls.setVisible(false);
         controls.setTranslateX(50);
@@ -411,7 +410,6 @@ public class Menu {
         });
     }
 
-
     private void createSoundVolume() {
         soundVolumeMenu = new SubMenu();
 
@@ -424,7 +422,6 @@ public class Menu {
 
         soundMenuBack.setOnMouseClicked( event -> menuBox.setSubMenu(soundOptionMenu) );
     }
-
 
     private void createMusicVolume() {
         Label musicLabel = new Label("Музыка");
@@ -443,7 +440,6 @@ public class Menu {
         });
     }
 
-
     private void createFxVolume() {
         Label fxLabel = new Label("Звуковые эффекты");
         soundVolumeMenu.addItem(fxLabel);
@@ -460,7 +456,6 @@ public class Menu {
             Sounds.pistolShoot.setVolume(new_val.doubleValue() / 100);
         });
     }
-
 
     private void createVoiceVolume() {
         Label voiceLabel = new Label("Голос");
@@ -479,7 +474,6 @@ public class Menu {
         });
     }
 
-
     private void hideMenu() {
         FadeTransition ft = new FadeTransition(Duration.seconds(0.5), menuBox);
         ft.setFromValue(1);
@@ -489,7 +483,7 @@ public class Menu {
 
         addListener();
         music.play();
-        if (Game.levelNumber > 0)
+        if (Game.levelNumber > Level.FIRST_LEVEL)
             if (Sounds.elizabethMediaPlayer != null)
                 Sounds.elizabethMediaPlayer.play();
         if (Game.boss != null)
@@ -499,7 +493,6 @@ public class Menu {
         isShown = false;
     }
 
-
     private void showMenu() {
         FadeTransition ft = new FadeTransition(Duration.seconds(0.5), menuBox);
         ft.setFromValue(0);
@@ -507,7 +500,7 @@ public class Menu {
         ft.play();
         music.pause();
         Game.booker.animation.stop();
-        for (EnemyBase enemy : Game.enemies)
+        for (Enemy enemy : Game.enemies)
             if (enemy.animation != null)
                 enemy.animation.stop();
         if (Sounds.elizabethMediaPlayer != null)
@@ -521,9 +514,8 @@ public class Menu {
         isShown = true;
     }
 
-
     void update() {
-        if (Controller.isPressed(KeyCode.ESCAPE)) {
+        if (Controller.isPressed(KeyCode.ESCAPE) && !Game.vendingMachine.isShown()) {
             Game.keys.remove(KeyCode.ESCAPE);
             if (!isShown) {
                 showMenu();
@@ -645,7 +637,6 @@ public class Menu {
             addMediaListener();
         }
     }
-
 
     private class MenuItem extends StackPane {
 

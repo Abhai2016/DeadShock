@@ -1,7 +1,8 @@
-package com.abhai.deadshock.Weapon;
+package com.abhai.deadshock.weapon;
 
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.Sounds;
+import com.abhai.deadshock.levels.Level;
 
 public class EnemyWeapon {
     private short reloadingInterval = 0;
@@ -10,15 +11,10 @@ public class EnemyWeapon {
 
     private boolean nowReloading = false;
 
-
-
     EnemyWeapon() {
     }
 
-
-
     public void shoot(double scaleX, double x, double y) {}
-
 
     void reload(int fullClip) {
         if (!nowReloading) {
@@ -34,13 +30,13 @@ public class EnemyWeapon {
                     Sounds.audioClipIReloading.play(Game.menu.voiceSlider.getValue() / 100);
                     break;
                 case 3:
-                    if (Game.levelNumber > 0)
+                    if (Game.levelNumber > Level.FIRST_LEVEL)
                         Sounds.audioClipINeedClip2.play(Game.menu.voiceSlider.getValue() / 100);
                     else
                         Sounds.audioClipINeedClip.play(Game.menu.voiceSlider.getValue() / 100);
                     break;
                 case 5:
-                    if (Game.levelNumber > 0)
+                    if (Game.levelNumber > Level.FIRST_LEVEL)
                         Sounds.audioClipAmmoRunOut.play(Game.menu.voiceSlider.getValue() / 100);
                     else
                         Sounds.audioClipIReloading.play(Game.menu.voiceSlider.getValue() / 100);
@@ -55,7 +51,6 @@ public class EnemyWeapon {
             nowReloading = false;
         }
     }
-
 
     public void update() {
 

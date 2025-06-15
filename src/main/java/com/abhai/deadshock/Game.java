@@ -1,13 +1,15 @@
 package com.abhai.deadshock;
 
-import com.abhai.deadshock.Characters.*;
-import com.abhai.deadshock.Characters.Character;
-import com.abhai.deadshock.Energetics.Energetic;
-import com.abhai.deadshock.Levels.Block;
-import com.abhai.deadshock.Levels.Level;
-import com.abhai.deadshock.Weapon.Bullet;
-import com.abhai.deadshock.Weapon.EnemyBullet;
-import com.abhai.deadshock.Weapon.Weapon;
+import com.abhai.deadshock.characters.*;
+import com.abhai.deadshock.characters.enemies.*;
+import com.abhai.deadshock.characters.enemies.json.Enemies;
+import com.abhai.deadshock.characters.enemies.json.EnemyData;
+import com.abhai.deadshock.energetics.Energetic;
+import com.abhai.deadshock.levels.Block;
+import com.abhai.deadshock.levels.Level;
+import com.abhai.deadshock.weapon.Bullet;
+import com.abhai.deadshock.weapon.EnemyBullet;
+import com.abhai.deadshock.weapon.Weapon;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -34,7 +36,7 @@ public class Game extends Application {
     public static ArrayList<Block> blocks = new ArrayList<>();
     public static ArrayList<Bullet> bullets = new ArrayList<>();
     public static ArrayList<EnemyBullet> enemyBullets = new ArrayList<>();
-    public static ArrayList<EnemyBase> enemies = new ArrayList<>();
+    public static ArrayList<Enemy> enemies = new ArrayList<>();
     static HashMap<KeyCode, Boolean> keys = new HashMap<>();
 
     public static Stage stage;
@@ -44,7 +46,7 @@ public class Game extends Application {
     public static Pane appRoot = new Pane();
 
     public static Menu menu;
-    public static Character booker;
+    public static Booker booker;
     public static HUD hud;
     public static Weapon weapon;
     public static Elizabeth elizabeth;
@@ -59,7 +61,6 @@ public class Game extends Application {
     public static String difficultyLevelText = "normal";
 
     public static Level level;
-
 
     public static AnimationTimer timer = new AnimationTimer() {
         @Override
@@ -78,11 +79,11 @@ public class Game extends Application {
             if (savesPath.toFile().exists()) {
                 loadSaves(mapper, savesPath);
             } else {
-                levelNumber = 0;
+                levelNumber = Level.FIRST_LEVEL;
                 level = new Level();
                 level.createLevels();
                 vendingMachine = new VendingMachine();
-                booker = new Character();
+                booker = new Booker();
                 weapon = new Weapon();
                 hud = new HUD();
                 energetic = new Energetic();
@@ -103,7 +104,7 @@ public class Game extends Application {
             }
         }));
 
-        if (levelNumber != 3)
+        if (levelNumber != Level.BOSS_LEVEL)
             vendingMachine.createButtons();
     }
 
@@ -114,22 +115,22 @@ public class Game extends Application {
 
         level = new Level();
         level.createLevels();
-        if (levelNumber != 3)
+        if (levelNumber != Level.BOSS_LEVEL)
             vendingMachine = new VendingMachine();
         hud = new HUD();
 
-        booker = new Character();
+        booker = new Booker();
         booker.setMoney(saves.getMoney());
         booker.setSalt(saves.getSalt());
 
         switch (levelNumber) {
-            case 1 -> {
+            case Level.SECOND_LEVEL -> {
                 weapon = new Weapon(saves.isCanChoosePistol());
                 weapon.setWeaponClip(saves.getPistolClip());
                 weapon.setBullets(saves.getPistolBullets());
                 energetic = new Energetic(saves.isCanChooseDevilKiss());
             }
-            case 2 -> {
+            case Level.THIRD_LEVEL -> {
                 weapon = new Weapon(saves.isCanChoosePistol(), saves.isCanChooseMachineGun());
                 if (weapon.isCanChooseMachineGun()) {
                     weapon.setWeaponClip(saves.getMachineGunClip());
@@ -145,7 +146,7 @@ public class Game extends Application {
                 energetic = new Energetic(saves.isCanChooseDevilKiss(), saves.isCanChooseElectricity());
                 boss = new Boss(Level.BLOCK_SIZE * 299, Level.BLOCK_SIZE * 13);
             }
-            case 3 -> {
+            case Level.BOSS_LEVEL -> {
                 weapon = new Weapon(saves.isCanChoosePistol(), saves.isCanChooseMachineGun(), saves.isCanChooseRPG());
                 if (weapon.isCanChooseRPG()) {
                     weapon.setWeaponClip(saves.getRpgClip());
@@ -204,7 +205,7 @@ public class Game extends Application {
         if (level != null)
             level.getBackground().setLayoutX(0);
 
-        for (EnemyBase enemy : Game.enemies) {
+        for (Enemy enemy : Game.enemies) {
             Game.gameRoot.getChildren().remove(enemy);
             Game.gameRoot.getChildren().remove(enemy.getRectHP());
         }
@@ -228,7 +229,7 @@ public class Game extends Application {
         if (level != null)
             Game.level.getBackground().setLayoutX(0);
 
-        for (EnemyBase enemy : Game.enemies) {
+        for (Enemy enemy : Game.enemies) {
             Game.gameRoot.getChildren().remove(enemy);
             Game.gameRoot.getChildren().remove(enemy.getRectHP());
         }
@@ -242,7 +243,7 @@ public class Game extends Application {
             Game.gameRoot.getChildren().remove(bullet);
         Game.bullets.clear();
 
-        if (levelNumber > 0) {
+        if (levelNumber > Level.FIRST_LEVEL) {
             for (Block block : blocks)
                 gameRoot.getChildren().remove(block);
             blocks.clear();
@@ -295,7 +296,7 @@ public class Game extends Application {
         if (boss != null)
             boss = null;
 
-        if (Game.levelNumber == 2) {
+        if (Game.levelNumber == Level.THIRD_LEVEL) {
             for (Supply supply : supplies)
                 Game.gameRoot.getChildren().remove(supply);
             supplies.clear();
@@ -307,19 +308,19 @@ public class Game extends Application {
             ObjectMapper mapper = new ObjectMapper();
             Path enemiesPath = Paths.get("resources", "data", "enemies.dat");
             Enemies jsonEnemies = mapper.readValue(enemiesPath.toFile(), Enemies.class);
-            Data[] enemiesByLevel = new Data[]{};
+            EnemyData[] enemiesByLevel = new EnemyData[]{};
 
             switch (levelNumber) {
-                case 0 -> enemiesByLevel = jsonEnemies.getLevel1();
-                case 1 -> enemiesByLevel = jsonEnemies.getLevel2();
-                case 2 -> enemiesByLevel = jsonEnemies.getLevel3();
+                case Level.FIRST_LEVEL -> enemiesByLevel = jsonEnemies.getFirstLevel();
+                case Level.SECOND_LEVEL -> enemiesByLevel = jsonEnemies.getSecondLevel();
+                case Level.THIRD_LEVEL -> enemiesByLevel = jsonEnemies.getThirdLevel();
             }
 
-            for (Data enemy : enemiesByLevel) {
-                switch (enemy.getName()) {
-                    case "comstock" -> enemies.add(new EnemyComstock(enemy.getX(), enemy.getY()));
-                    case "red_eye" -> enemies.add(new EnemyRedEye(enemy.getX(), enemy.getY()));
-                    case "camper" -> enemies.add(new EnemyCamper(enemy.getX(), enemy.getY()));
+            for (EnemyData enemy : enemiesByLevel) {
+                switch (enemy.getType()) {
+                    case "comstock" -> enemies.add(new Comstock(enemy.getX(), enemy.getY()));
+                    case "red_eye" -> enemies.add(new RedEye(enemy.getX(), enemy.getY()));
+                    case "camper" -> enemies.add(new Camper(enemy.getX(), enemy.getY()));
                 }
             }
         } catch (Exception e) {
@@ -331,7 +332,7 @@ public class Game extends Application {
     }
 
     private static void update() {
-        for (EnemyBase enemy : enemies) {
+        for (Enemy enemy : enemies) {
             enemy.update();
             if (enemy.isDelete()) {
                 enemies.remove(enemy);
@@ -361,17 +362,17 @@ public class Game extends Application {
 
         if (!energetic.getName().equals(""))
             energetic.update();
-        if (levelNumber > 0)
+        if (levelNumber > Level.FIRST_LEVEL)
             elizabeth.update();
 
         menu.update();
         hud.update();
         weapon.update();
 
-        if (booker.getTranslateX() > Level.BLOCK_SIZE * 295 && levelNumber != 2)
+        if (booker.getTranslateX() > Level.BLOCK_SIZE * 295 && levelNumber != Level.THIRD_LEVEL)
             cutScene = new CutScenes();
 
-        if (booker.getTranslateX() > Level.BLOCK_SIZE * 285 && levelNumber == 2) {
+        if (booker.getTranslateX() > Level.BLOCK_SIZE * 285 && levelNumber == Level.THIRD_LEVEL) {
             if (boss.getTrompInterval() == 0) {
                 Sounds.elizabethMediaPlayer = new MediaPlayer(new Media(elizabethSoundPath.toUri().toString()));
                 Sounds.elizabethMediaPlayer.setVolume(Game.menu.voiceSlider.getValue() / 100);
@@ -389,8 +390,6 @@ public class Game extends Application {
         }
     }
 
-
-
     @Override
     public void start(Stage primaryStage) throws Exception {
         stage = primaryStage;
@@ -406,7 +405,6 @@ public class Game extends Application {
         stage.setScene(scene);
         stage.show();
     }
-
 
     public static void main(String[] args) {
         launch(args);

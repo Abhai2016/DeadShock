@@ -1,13 +1,14 @@
-package com.abhai.deadshock.Characters;
+package com.abhai.deadshock.characters.enemies;
 
 
-import com.abhai.deadshock.Levels.Block;
+import com.abhai.deadshock.characters.SpriteAnimation;
+import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.Levels.Level;
+import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.Sounds;
 import com.abhai.deadshock.Supply;
-import com.abhai.deadshock.Weapon.ComstockWeapon;
-import com.abhai.deadshock.Weapon.EnemyWeapon;
+import com.abhai.deadshock.weapon.ComstockWeapon;
+import com.abhai.deadshock.weapon.EnemyWeapon;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
@@ -19,7 +20,7 @@ import javafx.util.Duration;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class EnemyComstock extends EnemyBase {
+public class Comstock extends Enemy {
     final byte ENEMY_SPEED = 3;
     EnemyWeapon enemyWeapon;
 
@@ -32,12 +33,10 @@ public class EnemyComstock extends EnemyBase {
     private Supply supply;
 
 
-    // for subclasses
-    EnemyComstock() {
+    Comstock() {
     }
 
-
-    public EnemyComstock(long x, long y) {
+    public Comstock(long x, long y) {
         setWidth(62);
         setHeight(65);
 
@@ -68,10 +67,6 @@ public class EnemyComstock extends EnemyBase {
         Game.gameRoot.getChildren().addAll(this, rectHP);
     }
 
-
-
-
-
     private void moveX(int x) {
         for (int i = 0; i < Math.abs(x); i++) {
             if (Game.booker.getTranslateX() != getTranslateX()) {
@@ -92,7 +87,7 @@ public class EnemyComstock extends EnemyBase {
                     return;
                 }
 
-            for (EnemyBase enemy : Game.enemies)
+            for (Enemy enemy : Game.enemies)
                 if (this != enemy && !enemy.pickUpSupply)
                     if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
                         if (x > 0)
@@ -117,7 +112,6 @@ public class EnemyComstock extends EnemyBase {
         }
     }
 
-
     private void moveY(int y) {
         for (int i = 0; i < Math.abs(y); i++) {
             if (y > 0) {
@@ -139,7 +133,7 @@ public class EnemyComstock extends EnemyBase {
                     }
             }
 
-            for (EnemyBase enemy : Game.enemies)
+            for (Enemy enemy : Game.enemies)
                 if (this != enemy && !enemy.pickUpSupply)
                     if (getBoundsInParent().intersects(enemy.getBoundsInParent()))
                         if (y > 0 && getTranslateY() < enemy.getTranslateY()) {
@@ -179,14 +173,12 @@ public class EnemyComstock extends EnemyBase {
         }
     }
 
-
     void jump() {
         if (canJump) {
             velocity = velocity.add(0, -24);
             canJump = false;
         }
     }
-
 
     private void createSupply(int randSupply) {
         if (randSupply == 0)
@@ -197,15 +189,14 @@ public class EnemyComstock extends EnemyBase {
                 Sounds.audioClipAmmo.play(Game.menu.voiceSlider.getValue() / 100);
             else
                 Sounds.audioClipAmmo2.play(Game.menu.voiceSlider.getValue() / 100);
-            if (Game.elizabeth.ammo != null)
-                Game.gameRoot.getChildren().remove(Game.elizabeth.ammo);
-            Game.elizabeth.ammo = new Supply(Game.elizabeth.getTranslateX(), Game.elizabeth.getTranslateY(), name);
+            if (Game.elizabeth.getAmmo() != null)
+                Game.gameRoot.getChildren().remove(Game.elizabeth.getAmmo());
+            Game.elizabeth.setAmmo(new Supply(Game.elizabeth.getTranslateX(), Game.elizabeth.getTranslateY(), name));
         }
 
         Game.gameRoot.getChildren().remove(this);
         delete = true;
     }
-
 
     private void pickUpSupply() {
         if (pickUpSupply) {
@@ -227,12 +218,12 @@ public class EnemyComstock extends EnemyBase {
             }
 
             if (Game.difficultyLevelText.equals("high") || Game.difficultyLevelText.equals("hardcore"))
-                for (EnemyBase enemyBase : Game.enemies)
-                    if (enemyBase != this && enemyBase.getBoundsInParent().intersects(getBoundsInParent())) {
+                for (Enemy enemy : Game.enemies)
+                    if (enemy != this && enemy.getBoundsInParent().intersects(getBoundsInParent())) {
                         if (supply.getSupply().equals("medicine")) {
                             for (int count = 0; count < Game.booker.getMedicineCount(); count++)
-                                if (enemyBase.getHP() < 100)
-                                    enemyBase.setHP(enemyBase.getHP() + 1);
+                                if (enemy.getHP() < 100)
+                                    enemy.setHP(enemy.getHP() + 1);
                                 else
                                     break;
                         }
@@ -242,7 +233,6 @@ public class EnemyComstock extends EnemyBase {
                     }
         }
     }
-
 
     private void notSeePlayer() {
         if (Game.booker.getTranslateY() > getTranslateY()) {
@@ -254,11 +244,10 @@ public class EnemyComstock extends EnemyBase {
         animation.play();
     }
 
-
     private void canSeePlayer() {
         if (Game.booker.getTranslateY() < getTranslateY() || Game.booker.getTranslateX() == getTranslateX())
-            if ( (Game.levelNumber == 2 && Game.booker.getTranslateY() < getTranslateY() - Level.BLOCK_SIZE * 2)
-                    || Game.booker.stayingOnLittlePlatform) {
+            if ( (Game.levelNumber == Level.THIRD_LEVEL && Game.booker.getTranslateY()
+                    < getTranslateY() - Level.BLOCK_SIZE * 2) || Game.booker.stayingOnLittlePlatform) {
                 seeInterval++;
                 if (seeInterval > 180) {
                     booleanVoice = true;
@@ -269,7 +258,6 @@ public class EnemyComstock extends EnemyBase {
             } else
                 seeInterval = 0;
     }
-
 
     private void playVoiceLostPlayer() {
         if (booleanVoice) {
@@ -298,10 +286,9 @@ public class EnemyComstock extends EnemyBase {
         }
     }
 
-
     private void playVoiceFoundPlayer() {
         if (booleanVoice) {
-            if (Game.levelNumber == 0) {
+            if (Game.levelNumber == Level.FIRST_LEVEL) {
                 rand = (byte) (Math.random() * 6);
                 switch (rand) {
                     case 0:
@@ -334,7 +321,6 @@ public class EnemyComstock extends EnemyBase {
             booleanVoice = false;
         }
     }
-
 
     private void playEnemyVoice() {
         rand = (byte) (Math.random() * 10);
@@ -373,7 +359,6 @@ public class EnemyComstock extends EnemyBase {
         voiceInterval = 0;
     }
 
-
     private void playDeath() {
         canSeeBooker = false;
         animation.stop();
@@ -385,7 +370,7 @@ public class EnemyComstock extends EnemyBase {
         Game.gameRoot.getChildren().remove(rectHP);
 
         byte randSupply = (byte) (Math.random() * 2);
-        if (Game.levelNumber != 0) {
+        if (Game.levelNumber != Level.FIRST_LEVEL) {
             createSupply(randSupply);
             return;
         }
@@ -393,7 +378,6 @@ public class EnemyComstock extends EnemyBase {
         getChildren().add(supply.getImageSupply());
         pickUpSupply = true;
     }
-
 
     private void behave() {
         if (getTranslateY() > Game.scene.getHeight()) {
@@ -438,7 +422,6 @@ public class EnemyComstock extends EnemyBase {
         if (voiceInterval > 240)
             playEnemyVoice();
     }
-
 
     @Override
     public void update() {

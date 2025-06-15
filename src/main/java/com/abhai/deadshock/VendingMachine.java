@@ -1,21 +1,22 @@
 package com.abhai.deadshock;
 
-import com.abhai.deadshock.Characters.EnemyBase;
-import com.abhai.deadshock.Levels.Level;
-import com.abhai.deadshock.Weapon.Weapon;
+import com.abhai.deadshock.characters.enemies.Enemy;
+import com.abhai.deadshock.levels.Level;
+import com.abhai.deadshock.weapon.Weapon;
 import javafx.animation.FadeTransition;
+import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -43,10 +44,29 @@ class VendingMachine extends Pane {
     private Text moneyText = new Text();
 
     private String chosenElementMenu = "bigMedicine";
-    private boolean startMenu = true;
-    private boolean machineMenu = true;
+    private boolean isShown = false;
 
-
+    private EventHandler<KeyEvent> closeMenu = new EventHandler<>() {
+        @Override
+        public void handle(KeyEvent event) {
+            if (isShown) {
+                if (event.getCode() == KeyCode.ENTER)
+                    keyAction();
+                else if (event.getCode() == KeyCode.ESCAPE) {
+                    Game.timer.start();
+                    Game.menu.music.play();
+                    ft.setByValue(1);
+                    ft.setToValue(0);
+                    ft.play();
+                    moneyText.setVisible(false);
+                    Game.tutorial.deleteMenuText();
+                    Game.scene.removeEventFilter(KEY_PRESSED, this);
+                    isShown = false;
+                    event.consume();
+                }
+            }
+        }
+    };
 
     VendingMachine() {
         vendingMachineMenu.setTranslateX(200);
@@ -62,18 +82,18 @@ class VendingMachine extends Pane {
         ft.setToValue(0);
         ft.play();
 
-        switch ((int)Game.levelNumber) {
-            case 0:
+        switch (Game.levelNumber) {
+            case Level.FIRST_LEVEL:
                 vendingMachine.setTranslateX(Level.BLOCK_SIZE * 187 + 15);
                 vendingMachine.setTranslateY(Level.BLOCK_SIZE * 3 - 6);
                 vendingMachineMenu.setViewport( new Rectangle2D(0, 0, 920, 597) );
                 break;
-            case 1:
+            case Level.SECOND_LEVEL:
                 vendingMachine.setTranslateX(Level.BLOCK_SIZE * 157);
                 vendingMachine.setTranslateY(Level.BLOCK_SIZE * 7 - 6);
                 vendingMachineMenu.setViewport( new Rectangle2D(920, 0, 920, 597) );
                 break;
-            case 2:
+            case Level.THIRD_LEVEL:
                 vendingMachine.setTranslateX(Level.BLOCK_SIZE * 137.5);
                 vendingMachine.setTranslateY(Level.BLOCK_SIZE * 4 - 6);
                 vendingMachineMenu.setViewport( new Rectangle2D(920, 0, 920, 597) );
@@ -82,35 +102,35 @@ class VendingMachine extends Pane {
 
         getChildren().addAll(vendingMachine);
         Game.gameRoot.getChildren().add(this);
+        addListener();
     }
 
-
     void changeLevel() {
-        if (Game.levelNumber == 1) {
+        if (Game.levelNumber == Level.SECOND_LEVEL) {
             vendingMachine.setTranslateX(Level.BLOCK_SIZE * 157);
             vendingMachine.setTranslateY(Level.BLOCK_SIZE * 7 - 6);
             vendingMachineMenu.setViewport( new Rectangle2D(920, 0, 920, 597) );
-        } else if (Game.levelNumber == 2) {
+        } else if (Game.levelNumber == Level.THIRD_LEVEL) {
             vendingMachine.setTranslateX(Level.BLOCK_SIZE * 137.5);
             vendingMachine.setTranslateY(Level.BLOCK_SIZE * 4 - 6);
             vendingMachineMenu.setViewport( new Rectangle2D(920, 0, 920, 597) );
         }
     }
 
-
     void openMachineMenu() {
-        if (Game.levelNumber == 0 && startMenu) {
-            Game.tutorial.deleteText();
+        isShown = true;
+
+        if (Game.levelNumber == Level.FIRST_LEVEL) {
             Game.tutorial.addMenuText();
-            startMenu = false;
         }
 
+        Game.tutorial.deleteText();
         Game.timer.stop();
         Game.menu.music.pause();
         Sounds.audioClipOpenMenu.play(Game.menu.fxSlider.getValue() / 100);
         moneyText.setText(String.valueOf(Game.booker.getMoney()));
 
-        for (EnemyBase enemy : Game.enemies)
+        for (Enemy enemy : Game.enemies)
             if (enemy.animation != null)
                 enemy.animation.stop();
 
@@ -118,11 +138,9 @@ class VendingMachine extends Pane {
         ft.setToValue(1);
         ft.play();
 
-
         moneyText.setVisible(true);
-        addListener();
+        Game.scene.addEventFilter(KEY_PRESSED, closeMenu);
     }
-
 
     void createButtons() {
         btnBigMedicine.setPrefWidth(BUTTON_WIDTH);
@@ -139,11 +157,9 @@ class VendingMachine extends Pane {
         setButton(btnMachineGunBullets, btnPistolBullets);
     }
 
-
     void setMarikLevel() {
         Game.appRoot.getChildren().remove(moneyText);
     }
-
 
     private void setButton(Button button, Button preButton) {
         button.setPrefWidth(BUTTON_WIDTH);
@@ -154,125 +170,93 @@ class VendingMachine extends Pane {
         Game.appRoot.getChildren().add(button);
     }
 
-
     private void addListener() {
-        switch ((int)Game.levelNumber) {
-            case 0:
+        switch (Game.levelNumber) {
+            case Level.FIRST_LEVEL -> {
                 btnBigMedicine.setOnMouseClicked( event -> {
-                    Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
-                    vendingMachineMenu.setViewport( new Rectangle2D(0, 0, 920, 597) );
-                    chosenElementMenu = "bigMedicine";
+                    if (isShown) {
+                        Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
+                        vendingMachineMenu.setViewport( new Rectangle2D(0, 0, 920, 597) );
+                        chosenElementMenu = "bigMedicine";
+                    }
                 });
                 btnLittleMedicine.setOnMouseClicked( event -> {
-                    Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
-                    vendingMachineMenu.setViewport( new Rectangle2D(0, 597, 920, 597) );
-                    chosenElementMenu = "littleMedicine";
+                    if (isShown) {
+                        Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
+                        vendingMachineMenu.setViewport( new Rectangle2D(0, 597, 920, 597) );
+                        chosenElementMenu = "littleMedicine";
+                    }
                 });
                 btnBigSalt.setOnMouseClicked( event -> {
-                    Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
-                    vendingMachineMenu.setViewport( new Rectangle2D(0, 1194, 920, 597) );
-                    chosenElementMenu = "bigSalt";
+                    if (isShown) {
+                        Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
+                        vendingMachineMenu.setViewport( new Rectangle2D(0, 1194, 920, 597) );
+                        chosenElementMenu = "bigSalt";
+                    }
                 });
                 btnLittleSalt.setOnMouseClicked( event -> {
-                    Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
-                    vendingMachineMenu.setViewport( new Rectangle2D(0, 1791, 920, 597) );
-                    chosenElementMenu = "littleSalt";
+                    if (isShown) {
+                        Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
+                        vendingMachineMenu.setViewport( new Rectangle2D(0, 1791, 920, 597) );
+                        chosenElementMenu = "littleSalt";
+                    }
                 });
                 btnPistolBullets.setOnMouseClicked( event -> {
-                    Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
-                    vendingMachineMenu.setViewport( new Rectangle2D(0, 2388, 920, 597) );
-                    chosenElementMenu = "pistolBullets";
+                    if (isShown) {
+                        Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
+                        vendingMachineMenu.setViewport( new Rectangle2D(0, 2388, 920, 597) );
+                        chosenElementMenu = "pistolBullets";
+                    }
                 });
-                break;
-            case 1:
-                btnBigMedicine.setOnMouseClicked( event -> {
-                    Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
-                    vendingMachineMenu.setViewport( new Rectangle2D(920, 0, 920, 597) );
-                    chosenElementMenu = "bigMedicine";
-                });
-                btnLittleMedicine.setOnMouseClicked( event -> {
-                    Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
-                    vendingMachineMenu.setViewport( new Rectangle2D(920, 597, 920, 597) );
-                    chosenElementMenu = "littleMedicine";
-                });
-                btnBigSalt.setOnMouseClicked( event -> {
-                    Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
-                    vendingMachineMenu.setViewport( new Rectangle2D(920, 1194, 920, 597) );
-                    chosenElementMenu = "bigSalt";
-                });
-                btnLittleSalt.setOnMouseClicked( event -> {
-                    Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
-                    vendingMachineMenu.setViewport( new Rectangle2D(920, 1791, 920, 597) );
-                    chosenElementMenu = "littleSalt";
-                });
-                btnPistolBullets.setOnMouseClicked( event -> {
-                    Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
-                    vendingMachineMenu.setViewport( new Rectangle2D(920, 2388, 920, 597) );
-                    chosenElementMenu = "pistolBullets";
-                });
-                btnMachineGunBullets.setOnMouseClicked( event -> {
-                    Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
-                    vendingMachineMenu.setViewport( new Rectangle2D(920, 2985, 920, 597) );
-                    chosenElementMenu = "machineGunBullets";
-                });
-                break;
-            case 2:
-                btnBigMedicine.setOnMouseClicked( event -> {
-                    Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
-                    vendingMachineMenu.setViewport( new Rectangle2D(920, 0, 920, 597) );
-                    chosenElementMenu = "bigMedicine";
-                });
-                btnLittleMedicine.setOnMouseClicked( event -> {
-                    Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
-                    vendingMachineMenu.setViewport( new Rectangle2D(920, 597, 920, 597) );
-                    chosenElementMenu = "littleMedicine";
-                });
-                btnBigSalt.setOnMouseClicked( event -> {
-                    Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
-                    vendingMachineMenu.setViewport( new Rectangle2D(920, 1194, 920, 597) );
-                    chosenElementMenu = "bigSalt";
-                });
-                btnLittleSalt.setOnMouseClicked( event -> {
-                    Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
-                    vendingMachineMenu.setViewport( new Rectangle2D(920, 1791, 920, 597) );
-                    chosenElementMenu = "littleSalt";
-                });
-                btnPistolBullets.setOnMouseClicked( event -> {
-                    Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
-                    vendingMachineMenu.setViewport( new Rectangle2D(920, 2388, 920, 597) );
-                    chosenElementMenu = "pistolBullets";
-                });
-                btnMachineGunBullets.setOnMouseClicked( event -> {
-                    Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
-                    vendingMachineMenu.setViewport( new Rectangle2D(920, 2985, 920, 597) );
-                    chosenElementMenu = "machineGunBullets";
-                });
-                break;
-        }
-        Game.scene.addEventFilter(KEY_PRESSED, event -> {
-            if (event.getCode() == KeyCode.ENTER)
-                keyAction();
-            else if (event.getCode() == KeyCode.ESCAPE) {
-                Game.timer.start();
-                Game.menu.music.play();
-                Game.menu.addListener();
-
-                ft.setByValue(1);
-                ft.setToValue(0);
-                ft.play();
-
-                moneyText.setVisible(false);
-
-                changeListener();
-                if (!startMenu && machineMenu) {
-                    Game.tutorial.deleteMenuText();
-                    Game.tutorial = null;
-                    machineMenu = false;
-                }
             }
-        });
-    }
+            case Level.SECOND_LEVEL, Level.THIRD_LEVEL -> {
+                btnBigMedicine.setOnMouseClicked( event -> {
+                    if (isShown) {
+                        Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
+                        vendingMachineMenu.setViewport( new Rectangle2D(920, 0, 920, 597) );
+                        chosenElementMenu = "bigMedicine";
+                    }
+                });
+                btnLittleMedicine.setOnMouseClicked( event -> {
+                    if (isShown) {
+                        Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
+                        vendingMachineMenu.setViewport( new Rectangle2D(920, 597, 920, 597) );
+                        chosenElementMenu = "littleMedicine";
+                    }
+                });
+                btnBigSalt.setOnMouseClicked( event -> {
+                    if (isShown) {
+                        Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
+                        vendingMachineMenu.setViewport( new Rectangle2D(920, 1194, 920, 597) );
+                        chosenElementMenu = "bigSalt";
+                    }
+                });
+                btnLittleSalt.setOnMouseClicked( event -> {
+                    if (isShown) {
+                        Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
+                        vendingMachineMenu.setViewport( new Rectangle2D(920, 1791, 920, 597) );
+                        chosenElementMenu = "littleSalt";
+                    }
+                });
+                btnPistolBullets.setOnMouseClicked( event -> {
+                    if (isShown) {
+                        Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
+                        vendingMachineMenu.setViewport( new Rectangle2D(920, 2388, 920, 597) );
+                        chosenElementMenu = "pistolBullets";
+                    }
+                });
+                btnMachineGunBullets.setOnMouseClicked( event -> {
+                    if (isShown) {
+                        Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
+                        vendingMachineMenu.setViewport( new Rectangle2D(920, 2985, 920, 597) );
+                        chosenElementMenu = "machineGunBullets";
+                    }
+                });
+            }
+        }
 
+        Game.scene.addEventFilter(KEY_PRESSED, closeMenu);
+    }
 
     private void keyAction() {
         switch (chosenElementMenu) {
@@ -386,7 +370,6 @@ class VendingMachine extends Pane {
         }
     }
 
-
     private void full(String str) {
         Text text = new Text(str);
         text.setFont(Font.font("Arial", 26));
@@ -396,28 +379,18 @@ class VendingMachine extends Pane {
         if (str.equals("У вас недостаточно средств! Для продолжения кликните по этому сообщению"))
             text.setTranslateX(vendingMachineMenu.getTranslateX() - 10);
         Game.appRoot.getChildren().add(text);
-        changeListener();
-        Game.scene.setOnKeyPressed(event -> Game.nothing() );
-        text.setOnMouseClicked( event -> {
-            Game.appRoot.getChildren().remove(text);
-            addListener();
-        });
+        text.setOnMouseClicked( event -> Game.appRoot.getChildren().remove(text));
     }
-
-
-    private void changeListener() {
-        btnBigMedicine.setOnMouseClicked( event -> Game.nothing() );
-        btnLittleMedicine.setOnMouseClicked( event -> Game.nothing() );
-        btnBigSalt.setOnMouseClicked( event -> Game.nothing() );
-        btnLittleSalt.setOnMouseClicked( event -> Game.nothing() );
-        btnPistolBullets.setOnMouseClicked( event -> Game.nothing() );
-        if (Game.levelNumber > 0)
-            btnMachineGunBullets.setOnMouseClicked( event -> Game.nothing() );
-    }
-
-
 
     ImageView getVendingMachine() {
         return vendingMachine;
+    }
+
+    public boolean isShown() {
+        return isShown;
+    }
+
+    public void setIsShown(boolean isShown) {
+        this.isShown = isShown;
     }
 }

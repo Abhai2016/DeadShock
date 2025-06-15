@@ -1,6 +1,6 @@
-package com.abhai.deadshock.Characters;
+package com.abhai.deadshock.characters.enemies;
 
-import com.abhai.deadshock.Levels.Block;
+import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.Sounds;
 import javafx.geometry.Point2D;
@@ -12,11 +12,11 @@ import javafx.scene.shape.Rectangle;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class EnemyCamper extends EnemyBase {
+public class Camper extends Enemy {
     private int moveInterval = 0;
 
 
-    public EnemyCamper(long x, long y) {
+    public Camper(long x, long y) {
         setWidth(33);
         setHeight(65);
 
@@ -42,9 +42,6 @@ public class EnemyCamper extends EnemyBase {
         Game.gameRoot.getChildren().addAll(this, rectHP);
     }
 
-
-
-
     private void moveY(int y) {
         for (int i = 0; i < Math.abs(y); i++) {
             if (y > 0)
@@ -61,7 +58,6 @@ public class EnemyCamper extends EnemyBase {
             rectHP.setTranslateY(getTranslateY() - 15);
         }
     }
-
 
     private void playCamperVoice() {
         Sounds.audioClipCamper.play(Game.menu.fxSlider.getValue() / 100);
@@ -80,7 +76,6 @@ public class EnemyCamper extends EnemyBase {
         Game.booker.setHP(Game.booker.getHP() - 10);
         voiceInterval = 0;
     }
-
 
     private void camperBehave() {
         if (Sounds.audioClipCamper.isPlaying()) {
@@ -111,7 +106,6 @@ public class EnemyCamper extends EnemyBase {
             voiceInterval = 0;
     }
 
-
     private void playDeath() {
         deathVoice();
 
@@ -122,7 +116,6 @@ public class EnemyCamper extends EnemyBase {
         Game.gameRoot.getChildren().remove(this);
         Game.gameRoot.getChildren().remove(rectHP);
     }
-
 
     @Override
     public void update() {

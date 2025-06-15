@@ -1,7 +1,7 @@
-package com.abhai.deadshock.Weapon;
+package com.abhai.deadshock.weapon;
 
-import com.abhai.deadshock.Characters.EnemyBase;
-import com.abhai.deadshock.Levels.Block;
+import com.abhai.deadshock.characters.enemies.Enemy;
+import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.Game;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -18,9 +18,6 @@ public class Bullet extends Pane {
     boolean direction = true;
     boolean delete = false;
 
-
-
-    // for subclasses
     Bullet() {
 
     }
@@ -71,7 +68,7 @@ public class Bullet extends Pane {
             delete = true;
         }
 
-        for (EnemyBase enemy : Game.enemies)
+        for (Enemy enemy : Game.enemies)
             if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
                 Game.gameRoot.getChildren().remove(this);
                 enemy.setHP((short) (enemy.getHP() - Game.weapon.getDamage()));

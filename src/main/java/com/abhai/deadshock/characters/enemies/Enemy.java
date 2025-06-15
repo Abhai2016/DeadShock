@@ -1,5 +1,6 @@
-package com.abhai.deadshock.Characters;
+package com.abhai.deadshock.characters.enemies;
 
+import com.abhai.deadshock.characters.SpriteAnimation;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.Sounds;
 import javafx.geometry.Point2D;
@@ -7,61 +8,60 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 
-public class EnemyBase extends Pane {
+public class Enemy extends Pane {
+
     public SpriteAnimation animation;
+
     ImageView imgView;
     Point2D velocity;
     Rectangle rectHP;
-
-    String name;
+    public String name;
 
     private boolean playVoice;
-    boolean delete;
-    boolean pickUpSupply;
+
     boolean canSeeBooker;
+    boolean delete;
+    public boolean pickUpSupply;
     boolean hypnosis;
-
     byte rand;
+
     short voiceInterval;
-    double HP;
+    public int HP;
 
-
-    EnemyBase() {
+    Enemy() {
     }
 
+    public boolean isCanSeeBooker() {
+        return canSeeBooker;
+    }
 
+    public void setCanSeeBooker(boolean canSeeBooker) {
+        this.canSeeBooker = canSeeBooker;
+    }
 
     public boolean isDelete() {
         return delete;
     }
 
-
-    public double getHP() {
+    public int getHP() {
         return HP;
     }
-
 
     public void setPlayVoice(boolean value) {
         playVoice = value;
     }
 
-
-    public void setHP(double value) {
+    public void setHP(int value) {
         HP = value;
     }
-
 
     public Rectangle getRectHP() {
         return rectHP;
     }
 
-
     public void setHypnosis(boolean value) {
         hypnosis = value;
     }
-
-
-
 
     void deathVoice() {
         if (playVoice) {
@@ -77,7 +77,6 @@ public class EnemyBase extends Pane {
             playVoice = false;
         }
     }
-
 
     public void playHitVoice() {
         if (playVoice) {
@@ -96,7 +95,6 @@ public class EnemyBase extends Pane {
            playVoice = false;
         }
     }
-
 
     public void update() {
 

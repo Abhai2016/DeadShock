@@ -1,15 +1,18 @@
-package com.abhai.deadshock.Characters;
+package com.abhai.deadshock.characters;
 
-import com.abhai.deadshock.Levels.Block;
-import com.abhai.deadshock.Levels.Level;
+import com.abhai.deadshock.characters.enemies.Enemy;
+import com.abhai.deadshock.levels.Block;
+import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.Sounds;
 import com.abhai.deadshock.Supply;
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -26,11 +29,11 @@ import java.nio.file.Paths;
 import static javafx.scene.input.KeyEvent.KEY_PRESSED;
 
 
-public class Character extends Pane {
+public class Booker extends Pane {
     private final byte CHARACTER_SPEED = 4;
     private Path imagePath = Paths.get("resources", "images", "characters", "booker.png");
     private ImageView imgView = new ImageView(new Image(imagePath.toUri().toString()));
-    Point2D velocity = new Point2D(0, 0);
+    public Point2D velocity = new Point2D(0, 0);
 
     private final byte count = 6;
     private final byte columns = 6;
@@ -46,7 +49,7 @@ public class Character extends Pane {
     private boolean booleanVelocityX = true;
     private boolean booleanVelocityY = true;
     private boolean start = true;
-    boolean stayingOnLittlePlatform = false;
+    public boolean stayingOnLittlePlatform = false;
 
 
     private int money = 0;
@@ -73,7 +76,7 @@ public class Character extends Pane {
 
 
 
-    public Character() {
+    public Booker() {
         imgView.setFitWidth(55);
         imgView.setFitHeight(63);
         imgView.setViewport(new Rectangle2D(offSetX, offSetY, width, height));
@@ -90,11 +93,10 @@ public class Character extends Pane {
     }
 
 
-
     public void moveX(int x) {
         for (int i = 0; i < Math.abs(x); i++) {
             if (x > 0) {
-                if ( (Game.levelNumber == 3 && getTranslateX() < Level.BLOCK_SIZE * 37 - getWidth()) || Game.levelNumber != 3)
+                if (Game.levelNumber != Level.BOSS_LEVEL || getTranslateX() < Level.BLOCK_SIZE * 37 - getWidth())
                     setTranslateX(getTranslateX() + 1);
             } else if (getTranslateX() > 1)
                 setTranslateX(getTranslateX() - 1);
@@ -110,7 +112,7 @@ public class Character extends Pane {
                     }
             }
 
-            for (EnemyBase enemy : Game.enemies)
+            for (Enemy enemy : Game.enemies)
                 if (getBoundsInParent().intersects(enemy.getBoundsInParent()) && !enemy.pickUpSupply) {
                     setTranslateX(getTranslateX() - getScaleX());
                     HP -= enemyDogfight;
@@ -126,7 +128,6 @@ public class Character extends Pane {
         }
     }
 
-
     private void moveY(int y) {
         for (int i = 0; i < Math.abs(y); i++) {
             if (y > 0) {
@@ -141,7 +142,7 @@ public class Character extends Pane {
                         if (y > 0) {
                             setTranslateY(getTranslateY() - 1);
                             canJump = true;
-                            if (Game.levelNumber != 2)
+                            if (Game.levelNumber != Level.THIRD_LEVEL)
                                 if (block.getBlockType().equals("LITTLE_BOX") || block.getBlockType().equals("LITTLE_STONE")
                                         || block.getBlockType().equals("LITTLE_BRICK") || block.getBlockType().equals("LITTLE_LAND")
                                         || block.getBlockType().equals("LITTLE_METAL"))
@@ -156,7 +157,7 @@ public class Character extends Pane {
                         }
                 }
 
-            for (EnemyBase enemy : Game.enemies)
+            for (Enemy enemy : Game.enemies)
                 if (getBoundsInParent().intersects(enemy.getBoundsInParent()) && !enemy.pickUpSupply) {
                     HP -= enemyDogfight;
                     Sounds.audioClipFight.play(Game.menu.fxSlider.getValue() / 100);
@@ -175,7 +176,7 @@ public class Character extends Pane {
                     return;
                 }
 
-            if (Game.levelNumber == 3) {
+            if (Game.levelNumber == Level.BOSS_LEVEL) {
                 if (getBoundsInParent().intersects(Game.level.getImgView().getBoundsInParent())) {
                     setTranslateY(getTranslateY() - 1);
                     if (stunnedInterval > 180) {
@@ -206,7 +207,6 @@ public class Character extends Pane {
         }
     }
 
-
     public void jump() {
         if (canJump) {
             velocity = velocity.add(0, -23);
@@ -214,106 +214,83 @@ public class Character extends Pane {
         }
     }
 
-
-
-
-
     public short getOffSetY() {
         return offSetY;
     }
-
 
     public byte getCHARACTER_SPEED() {
         return CHARACTER_SPEED;
     }
 
-
     public int getHP() {
         return HP;
     }
-
 
     public void setHP(int value) {
         HP = (byte)value;
     }
 
-
     public int getSalt() {
         return salt;
     }
-
 
     public void setSalt(long value) {
         salt = (byte)value;
     }
 
-
-    boolean isBooleanVelocityX() {
+    public boolean isBooleanVelocityX() {
         return booleanVelocityX;
     }
 
-
-    void setBooleanVelocityX(boolean value) {
+    public void setBooleanVelocityX(boolean value) {
         booleanVelocityX = value;
     }
 
-
-    boolean isBooleanVelocityY() {
+    public boolean isBooleanVelocityY() {
         return booleanVelocityY;
     }
 
-
-    void setBooleanVelocityY(boolean value) {
+    public void setBooleanVelocityY(boolean value) {
         booleanVelocityY = value;
     }
-
 
     public int getMoney() {
         return money;
     }
 
-
     public void setMoney(long value) {
         money = (int)value;
     }
-
 
     public void setCanChangeAnimation(boolean value) {
         canChangeAnimation = value;
     }
 
-
     public boolean isCanChangeAnimation() {
         return canChangeAnimation;
     }
-
 
     public ImageView getImgView() {
         return imgView;
     }
 
-
-    int getEnemyDogfight() {
+    public int getEnemyDogfight() {
         return enemyDogfight;
     }
 
-
-    int getMedicineCount() {
+    public int getMedicineCount() {
         return medicineCount;
     }
 
-
-    int getCharacterDogFight() {
+    public int getCharacterDogFight() {
         return characterDogFight;
     }
-
 
     public int getBulletCount() {
         return bulletCount;
     }
 
-
-    int getMoneyForKillingEnemy() {
+    public int getMoneyForKillingEnemy() {
         return moneyForKillingEnemy;
     }
 
@@ -321,17 +298,13 @@ public class Character extends Pane {
         return stunned;
     }
 
-    void setStunned(boolean value) {
+    public void setStunned(boolean value) {
         stunned = value;
     }
 
     public double getStunnedInterval() {
         return stunnedInterval;
     }
-
-
-
-
 
     private void takeSupply() {
         if (Game.elizabeth.giveSupply)
@@ -359,7 +332,6 @@ public class Character extends Pane {
             }
     }
 
-
     private void takeMedicine() {
         for (int count = 0; count < medicineCount; count++)
             if (HP < 100)
@@ -373,11 +345,10 @@ public class Character extends Pane {
             Sounds.feelBetterVoice.play(Game.menu.voiceSlider.getValue() / 100);
     }
 
-
     public void setDifficultyLevel() {
         switch (Game.difficultyLevelText) {
             case "marik":
-                if (Game.levelNumber == 0)
+                if (Game.levelNumber == Level.FIRST_LEVEL)
                     money = 1000000;
                 medicineCount = 30;
                 bulletCount = 30;
@@ -388,7 +359,7 @@ public class Character extends Pane {
                 countLives = 4;
                 break;
             case "easy":
-                if (Game.levelNumber == 0)
+                if (Game.levelNumber == Level.FIRST_LEVEL)
                     money = 300;
                 medicineCount = 20;
                 bulletCount = 20;
@@ -399,7 +370,7 @@ public class Character extends Pane {
                 priceForGeneration = 15;
                 break;
             case "normal":
-                if (Game.levelNumber == 0)
+                if (Game.levelNumber == Level.FIRST_LEVEL)
                     money = 150;
                 medicineCount = 15;
                 bulletCount = 15;
@@ -410,7 +381,7 @@ public class Character extends Pane {
                 priceForGeneration = 20;
                 break;
             case "high":
-                if (Game.levelNumber == 0)
+                if (Game.levelNumber == Level.FIRST_LEVEL)
                     money = 100;
                 medicineCount = 10;
                 bulletCount = 10;
@@ -421,7 +392,7 @@ public class Character extends Pane {
                 priceForGeneration = 25;
                 break;
             case "hardcore":
-                if (Game.levelNumber == 0)
+                if (Game.levelNumber == Level.FIRST_LEVEL)
                     money = 100;
                 medicineCount = 10;
                 bulletCount = 10;
@@ -433,7 +404,6 @@ public class Character extends Pane {
                 break;
         }
     }
-
 
     public void changeViewPort(int x, int y, int width) {
         offSetX = (short) x;
@@ -448,7 +418,6 @@ public class Character extends Pane {
 
         animation.stop();
     }
-
 
     public void changeAnimation(String weaponName) {
         animation.stop();
@@ -481,10 +450,9 @@ public class Character extends Pane {
         canChangeAnimation = false;
     }
 
-
     private void playBookerVoice() {
-        if (!Game.enemies.isEmpty() && Game.levelNumber == 0)
-            if (Game.enemies.get(0).canSeeBooker && playVoice) {
+        if (!Game.enemies.isEmpty() && Game.levelNumber == Level.FIRST_LEVEL)
+            if (Game.enemies.get(0).isCanSeeBooker() && playVoice) {
                 Path soundPath = Paths.get("resources", "sounds", "voice", "booker", "shit.mp3");
                 Sounds.bookerVoice = new MediaPlayer(new Media(soundPath.toUri().toString()));
                 Sounds.bookerVoice.setVolume(Game.menu.voiceSlider.getValue() / 100);
@@ -492,7 +460,7 @@ public class Character extends Pane {
                 playVoice = false;
             }
 
-        if (Game.enemies.isEmpty() && !playVoice && Game.levelNumber == 0) {
+        if (Game.enemies.isEmpty() && !playVoice && Game.levelNumber == Level.FIRST_LEVEL) {
             Path soundPath = Paths.get("resources", "sounds", "voice", "booker", "creep_even_in_flying_town.mp3");
             Sounds.bookerVoice = new MediaPlayer(new Media(soundPath.toUri().toString()));
             Sounds.bookerVoice.setVolume(Game.menu.voiceSlider.getValue() / 100);
@@ -500,12 +468,11 @@ public class Character extends Pane {
             playVoice = true;
         }
 
-        if (Game.enemies.isEmpty() && Game.levelNumber == 1 && playVoice) {
+        if (Game.enemies.isEmpty() && Game.levelNumber == Level.SECOND_LEVEL && playVoice) {
             Sounds.audioClipLetsGo.play(Game.menu.voiceSlider.getValue() / 100);
             playVoice = false;
         }
     }
-
 
     private void playDeath() {
         Game.timer.stop();
@@ -538,7 +505,7 @@ public class Character extends Pane {
             countLives--;
             money -= priceForGeneration;
 
-            for(EnemyBase enemy : Game.enemies)
+            for(Enemy enemy : Game.enemies)
                 enemy.animation.stop();
 
             if (countLives < 0) {
@@ -547,38 +514,44 @@ public class Character extends Pane {
                 textContinue.setTranslateX(Game.scene.getWidth() / 4);
             }
 
-            Game.scene.addEventFilter(KEY_PRESSED, event -> {
-                if (event.getCode() == KeyCode.ENTER) {
-                    Game.timer.start();
-                    Game.menu.music.play();
-                    Game.appRoot.getChildren().removeAll(gameOver, textContinue);
-                    if (start) {
-                        Game.appRoot.getChildren().remove(textMoney);
-                        start = false;
-                    }
+            EventHandler<KeyEvent> removeCoverFilter = new EventHandler<>() {
+                @Override
+                public void handle(KeyEvent event) {
+                    if (event.getCode() == KeyCode.ENTER) {
+                        Game.timer.start();
+                        Game.menu.music.play();
+                        Game.appRoot.getChildren().removeAll(gameOver, textContinue);
+                        if (start) {
+                            Game.appRoot.getChildren().remove(textMoney);
+                            start = false;
+                        }
 
-                    setTranslateX(100);
-                    setTranslateY(200);
+                        setTranslateX(100);
+                        setTranslateY(200);
 
-                    Game.gameRoot.setLayoutX(0);
-                    Game.level.getBackground().setLayoutX(0);
-                    Game.menu.addListener();
-                    HP = 100;
-                    velocity = new Point2D(0, 0);
+                        Game.gameRoot.setLayoutX(0);
+                        Game.level.getBackground().setLayoutX(0);
+                        Game.menu.addListener();
+                        HP = 100;
+                        velocity = new Point2D(0, 0);
 
-                    if (countLives < 0) {
-                        playVoice = true;
-                        countLives = 1;
-                        Game.clearData();
-                        Game.createEnemies();
-                        salt = 100;
+                        if (countLives < 0) {
+                            playVoice = true;
+                            countLives = 1;
+                            Game.clearData();
+                            Game.createEnemies();
+                            salt = 100;
+                        }
+
+                        Game.scene.removeEventFilter(KEY_PRESSED, this);
                     }
                 }
-            });
+            };
+
+            Game.scene.addEventFilter(KEY_PRESSED, removeCoverFilter);
         } else
             gameOver();
     }
-
 
     private void playVideoDeath() {
         Game.timer.stop();
@@ -637,9 +610,8 @@ public class Character extends Pane {
             gameOver();
     }
 
-
     private void gameOver() {
-        if (Game.levelNumber == 3)
+        if (Game.levelNumber == Level.BOSS_LEVEL)
             Game.boss.animation.stop();
 
         gameOver.setFont(Font.font("Arial", FontWeight.BOLD, 28));
@@ -653,7 +625,6 @@ public class Character extends Pane {
             Game.menu.newGame();
         });
     }
-
 
     public void update() {
         if (velocity.getY() < 8)
@@ -679,7 +650,7 @@ public class Character extends Pane {
             else
                 animation.play();
 
-            if (Game.levelNumber > 0)
+            if (Game.levelNumber > Level.FIRST_LEVEL)
                 takeSupply();
 
             if (getTranslateY() > Game.scene.getHeight())
@@ -696,12 +667,10 @@ public class Character extends Pane {
                 gameOver();
                 return;
             }
-            if (Game.levelNumber == 0)
+            if (Game.levelNumber == Level.FIRST_LEVEL)
                 playDeath();
             else
                 playVideoDeath();
         }
     }
 }
-
-

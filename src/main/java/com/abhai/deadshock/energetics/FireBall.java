@@ -1,18 +1,22 @@
-package com.abhai.deadshock.Energetics;
+package com.abhai.deadshock.energetics;
 
-import com.abhai.deadshock.Characters.EnemyBase;
-import com.abhai.deadshock.Characters.SpriteAnimation;
-import com.abhai.deadshock.Levels.Block;
+import com.abhai.deadshock.characters.enemies.Enemy;
+import com.abhai.deadshock.characters.SpriteAnimation;
+import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.Game;
+import com.abhai.deadshock.levels.Level;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-class FireBall extends BaseEnergeticElement {
+class FireBall extends Pane {
+    private ImageView imgView;
+    private SpriteAnimation animation;
     private boolean direction;
 
     FireBall(double x, double y) {
@@ -42,7 +46,7 @@ class FireBall extends BaseEnergeticElement {
         else
             setTranslateX(getTranslateX() - 5);
 
-        for (EnemyBase enemy : Game.enemies)
+        for (Enemy enemy : Game.enemies)
             if (getBoundsInParent().intersects(enemy.getBoundsInParent()))
                 enemy.setHP(0);
 
@@ -50,7 +54,7 @@ class FireBall extends BaseEnergeticElement {
             if (getBoundsInParent().intersects(block.getBoundsInParent()))
                 return true;
 
-        if (Game.levelNumber == 3)
+        if (Game.levelNumber == Level.BOSS_LEVEL)
             if (getBoundsInParent().intersects(Game.boss.getBoundsInParent())) {
                 Game.boss.setHP(Game.boss.getHP() - Game.weapon.getRpgDamage());
                 return true;

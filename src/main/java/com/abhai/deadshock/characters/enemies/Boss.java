@@ -1,9 +1,9 @@
-package com.abhai.deadshock.Characters;
+package com.abhai.deadshock.characters.enemies;
 
-
+import com.abhai.deadshock.characters.SpriteAnimation;
 import com.abhai.deadshock.CutScenes;
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.Levels.Level;
+import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.Sounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -29,7 +29,7 @@ public class Boss extends Pane {
     private Path imagePath = Paths.get("resources", "images", "characters", "bigDaddy.png");
     private ImageView imgView = new ImageView(new Image(imagePath.toUri().toString()));
     private Point2D velocity = new Point2D(0, 0);
-    SpriteAnimation animation = new SpriteAnimation(imgView, Duration.seconds(2), 3, 3, 0, 100, 93, 100);
+    public SpriteAnimation animation = new SpriteAnimation(imgView, Duration.seconds(2), 3, 3, 0, 100, 93, 100);
 
     private int stunInterval = 0;
     private int velocityInterval = 0;
@@ -38,7 +38,7 @@ public class Boss extends Pane {
     private boolean moveRight = false;
     private boolean booleanVelocityX = true;
     private boolean hypnosis = false;
-    boolean alive = true;
+    public boolean alive = true;
 
     private Rectangle rectHP = new Rectangle(500, 5, Color.RED);
     private Text name = new Text("Большой папочка");
@@ -52,15 +52,12 @@ public class Boss extends Pane {
         setTranslateX(x - imgView.getFitWidth());
         setTranslateY(y - imgView.getFitHeight());
 
-        if (Game.levelNumber == 3)
+        if (Game.levelNumber == Level.BOSS_LEVEL)
             setBoss();
 
         getChildren().add(imgView);
         Game.gameRoot.getChildren().add(this);
     }
-
-
-
 
     public void setHP(double value) {
         HP = value;
@@ -86,9 +83,6 @@ public class Boss extends Pane {
         return mediaPlayer;
     }
 
-
-
-
     public void setBoss() {
         imgView.setViewport(new Rectangle2D(0, 0, 100, 100));
         imgView.setFitWidth(100);
@@ -104,7 +98,6 @@ public class Boss extends Pane {
         rectHP.setTranslateY(40);
         Game.appRoot.getChildren().add(rectHP);
     }
-
 
     private void moveX(int x) {
         for (int i = 0; i < Math.abs(x); i++) {
@@ -130,7 +123,6 @@ public class Boss extends Pane {
             }
         }
     }
-
 
     private void behave() {
         if (stunInterval > 900) {
@@ -185,10 +177,9 @@ public class Boss extends Pane {
         }
     }
 
-
     public void update() {
         if (HP > 0) {
-            if (Game.levelNumber == 2) {
+            if (Game.levelNumber == Level.THIRD_LEVEL) {
                 if (trompInterval > 0 && trompInterval < 60)
                     imgView.setViewport(new Rectangle2D(176, 0, 92, 100));
                 else if (trompInterval > 60) {

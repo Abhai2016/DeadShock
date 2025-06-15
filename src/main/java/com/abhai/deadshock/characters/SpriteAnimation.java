@@ -1,4 +1,4 @@
-package com.abhai.deadshock.Characters;
+package com.abhai.deadshock.characters;
 
 import javafx.animation.Animation;
 import javafx.animation.Interpolator;
@@ -9,22 +9,22 @@ import javafx.util.Duration;
 
 public class SpriteAnimation extends Transition {
     private final ImageView imgView;
-    private byte count;
-    private byte columns;
-    private short offSetX;
-    private short offSetY;
-    private short width;
-    private short height;
+    private int count;
+    private int columns;
+    private int offSetX;
+    private int offSetY;
+    private int width;
+    private int height;
 
     public SpriteAnimation(ImageView imgView, Duration duration, int count,
                     int columns, int offSetX, int offSetY, int width, int height) {
         this.imgView = imgView;
-        this.count = (byte)count;
-        this.columns = (byte)columns;
-        this.offSetX = (short)offSetX;
-        this.offSetY = (short)offSetY;
-        this.width = (short)width;
-        this.height = (short)height;
+        this.count = count;
+        this.columns = columns;
+        this.offSetX = offSetX;
+        this.offSetY = offSetY;
+        this.width = width;
+        this.height = height;
         setCycleDuration(duration);
         setCycleCount(Animation.INDEFINITE);
         setInterpolator(Interpolator.LINEAR);
@@ -33,7 +33,7 @@ public class SpriteAnimation extends Transition {
 
     @Override
     protected void interpolate(double k) {
-        short index = (short)Math.min( Math.floor(k * count), count - 1 );
+        int index = (int) Math.min( Math.floor(k * count), count - 1 );
         int x = (index % columns) * width + offSetX;
         int y = (index / columns) * height + offSetY;
         imgView.setViewport( new Rectangle2D(x, y, width, height) );

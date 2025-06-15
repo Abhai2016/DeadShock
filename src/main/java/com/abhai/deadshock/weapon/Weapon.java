@@ -1,7 +1,7 @@
-package com.abhai.deadshock.Weapon;
+package com.abhai.deadshock.weapon;
 
-import com.abhai.deadshock.Characters.SpriteAnimation;
-import com.abhai.deadshock.Levels.Level;
+import com.abhai.deadshock.characters.SpriteAnimation;
+import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.Sounds;
 import javafx.geometry.Rectangle2D;
@@ -16,6 +16,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Weapon extends Pane {
+    private String name = "";
+
     ImageView explosion;
     SpriteAnimation explosionAnimation;
 
@@ -32,8 +34,8 @@ public class Weapon extends Pane {
     private int clip = 0;
     private int shootInterval = 0;
     private int bullets = 0;
-    private byte damage = 0;
-    private short rpgDamage = 0;
+    private int damage = 0;
+    private int rpgDamage = 0;
 
     private boolean nowReloading = false;
     private boolean canReload = true;
@@ -42,10 +44,6 @@ public class Weapon extends Pane {
     private boolean canChooseMachineGun = false;
     private boolean canChooseRPG = false;
 
-    private String name = "";
-
-
-    //for level1
     public Weapon() {
         gun.setViewport( new Rectangle2D(265, 88, 33, 18) );
         setTranslateX(Level.BLOCK_SIZE * 38);
@@ -55,9 +53,6 @@ public class Weapon extends Pane {
         Game.gameRoot.getChildren().add(this);
     }
 
-
-
-    //for level2
     public Weapon(boolean value) {
         canChoosePistol = value;
         if (canChoosePistol) {
@@ -72,7 +67,6 @@ public class Weapon extends Pane {
         Game.gameRoot.getChildren().add(this);
     }
 
-    //for level3
     public Weapon(boolean pistol, boolean machineGun) {
         canChoosePistol = pistol;
         canChooseMachineGun = machineGun;
@@ -95,7 +89,6 @@ public class Weapon extends Pane {
         Game.gameRoot.getChildren().add(this);
     }
 
-    //for bossLevel
     public Weapon(boolean pistol, boolean machineGun, boolean rpg) {
         canChoosePistol = pistol;
         canChooseMachineGun = machineGun;
@@ -115,86 +108,69 @@ public class Weapon extends Pane {
         explosionAnimation.setCycleCount(1);
     }
 
-
-
-
     public String getName() {
         return name;
     }
-
 
     public int getWeaponClip() {
         return clip;
     }
 
-
     public void setWeaponClip(long value) {
         clip = (byte)value;
     }
-
 
     public int getBullets() {
         return bullets;
     }
 
-
     public void setBullets(long value) {
         bullets = (short)value;
     }
-
 
     public void setCanReload(boolean value) {
         canReload = value;
     }
 
-
     public boolean isCanReload() {
         return canReload;
     }
-
 
     public boolean isNowReloading() {
         return nowReloading;
     }
 
-
     public void setSingleShot(boolean value) {
         singleShot = value;
     }
 
-
-    public byte getDamage() {
+    public int getDamage() {
         return damage;
     }
 
-
-    public short getRpgDamage() {
+    public int getRpgDamage() {
         return rpgDamage;
     }
-
 
     public boolean isCanChoosePistol() {
         return canChoosePistol;
     }
 
-
     public boolean isCanChooseMachineGun() {
         return canChooseMachineGun;
     }
-
 
     public boolean isCanChooseRPG() {
         return canChooseRPG;
     }
 
-
     public void changeLevel(long level) {
-        if (level == 1) {
+        if (level == Level.SECOND_LEVEL) {
             gun.setViewport( new Rectangle2D(400, 80, 56, 18) );
             setTranslateX(Level.BLOCK_SIZE * 26);
             setTranslateY(Level.BLOCK_SIZE * 12 - 20);
             setVisible(true);
-        } else if (level == 2) {
+        } else if (level == Level.THIRD_LEVEL) {
             getChildren().remove(gun);
             gun = new ImageView(new Image(rpgImagePath.toUri().toString()));
             getChildren().add(gun);
@@ -204,12 +180,11 @@ public class Weapon extends Pane {
         }
     }
 
-
     public void pickUpWeapon() {
         if (!nowReloading) {
             Game.booker.setCanChangeAnimation(true);
             switch (Game.levelNumber) {
-                case 0:
+                case Level.FIRST_LEVEL:
                     Sounds.audioClipFit.play(Game.menu.voiceSlider.getValue() / 100);
                     name = "pistol";
                     Game.booker.changeAnimation(name);
@@ -217,7 +192,7 @@ public class Weapon extends Pane {
                     WeaponData.pistolClip = clip = 20;
                     WeaponData.pistolBullets = bullets = 80;
                     break;
-                case 1:
+                case Level.SECOND_LEVEL:
                     Sounds.excellentVoice.play(Game.menu.voiceSlider.getValue() / 100);
                     name = "machine_gun";
                     Game.booker.changeAnimation(name);
@@ -227,7 +202,7 @@ public class Weapon extends Pane {
                     WeaponData.machineGunClip = clip = 30;
                     WeaponData.machineGunBullets = bullets = 120;
                     break;
-                case 2:
+                case Level.THIRD_LEVEL:
                     explosion = new ImageView(new Image(explosionImagePath.toUri().toString()));
                     explosion.setFitWidth(128);
                     explosion.setFitHeight(128);
@@ -256,7 +231,6 @@ public class Weapon extends Pane {
         }
     }
 
-
     public void setDamage() {
         switch (Game.difficultyLevelText) {
             case "marik":
@@ -281,7 +255,6 @@ public class Weapon extends Pane {
                 break;
         }
     }
-
 
     public void reload() {
         if (canReload && !nowReloading && bullets > 0) {
@@ -310,7 +283,6 @@ public class Weapon extends Pane {
             }
         }
     }
-
 
     private void fillClip(String name, int value) {
         nowReloading = true;
@@ -352,7 +324,6 @@ public class Weapon extends Pane {
         }
     }
 
-
     public void shoot() {
         switch (name) {
             case "machine_gun":
@@ -381,7 +352,6 @@ public class Weapon extends Pane {
                 break;
         }
     }
-
 
     public void changeWeapon(String str) {
         if (!name.equals("")) {
@@ -416,7 +386,6 @@ public class Weapon extends Pane {
         }
     }
 
-
     private void partChangeWeapon() {
         switch (name) {
             case "pistol":
@@ -434,11 +403,9 @@ public class Weapon extends Pane {
         }
     }
 
-
     public void update() {
         shootInterval++;
     }
-
 
     public static class WeaponData {
         public static int pistolClip = 0;

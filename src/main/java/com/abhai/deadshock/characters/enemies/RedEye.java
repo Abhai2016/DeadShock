@@ -1,9 +1,10 @@
-package com.abhai.deadshock.Characters;
+package com.abhai.deadshock.characters.enemies;
 
-import com.abhai.deadshock.Levels.Block;
-import com.abhai.deadshock.Levels.Level;
+import com.abhai.deadshock.characters.SpriteAnimation;
+import com.abhai.deadshock.levels.Block;
+import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.Weapon.RedEyeWeapon;
+import com.abhai.deadshock.weapon.RedEyeWeapon;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
@@ -15,9 +16,9 @@ import javafx.util.Duration;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class EnemyRedEye extends EnemyComstock {
+public class RedEye extends Comstock {
 
-    public EnemyRedEye(long x, long y) {
+    public RedEye(long x, long y) {
         name = "red_eye";
         delete = false;
         pickUpSupply = false;

@@ -1,6 +1,6 @@
 package com.abhai.deadshock;
 
-import com.abhai.deadshock.Weapon.Weapon;
+import com.abhai.deadshock.weapon.Weapon;
 import javafx.animation.RotateTransition;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -24,8 +24,6 @@ public class Supply extends Pane {
 
     private boolean delete = false;
 
-
-
     public Supply(int value, double x, double y) {
         switch (value) {
             case 0:
@@ -41,7 +39,6 @@ public class Supply extends Pane {
         setTranslateY(y - 15);
     }
 
-
     public Supply(double x, double y, String name) {
         enemyName = name;
 
@@ -56,11 +53,9 @@ public class Supply extends Pane {
         rt.play();
     }
 
-
     public String getSupply() {
         return supply;
     }
-
 
     public ImageView getImageSupply() {
         if (supply.equals("medicine"))
@@ -69,11 +64,9 @@ public class Supply extends Pane {
             return ammo;
     }
 
-
     public boolean isDelete() {
         return delete;
     }
-
 
     public void update() {
         if (getBoundsInParent().intersects(Game.booker.getBoundsInParent()))

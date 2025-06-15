@@ -1,17 +1,10 @@
 package com.abhai.deadshock;
 
-import com.abhai.deadshock.Levels.Level;
 import javafx.scene.input.KeyCode;
 
 class Controller {
 
     static void update() {
-        if (Game.booker.getTranslateX() > Level.BLOCK_SIZE * 80 && Game.tutorial != null && Game.levelNumber != 0) {
-            Game.tutorial.deleteText();
-            Game.tutorial = null;
-        }
-
-
         if ( isPressed(KeyCode.D) && Game.booker.getTranslateX() < Game.gameRoot.getWidth() - Game.booker.getWidth()
                 && !Game.booker.isStunned()) {
             if (Game.booker.isCanChangeAnimation())
@@ -61,7 +54,8 @@ class Controller {
             if (Game.booker.getBoundsInParent().intersects(Game.weapon.getBoundsInParent()))
                 Game.weapon.pickUpWeapon();
             else if (Game.vendingMachine != null)
-                if (Game.booker.getBoundsInParent().intersects(Game.vendingMachine.getVendingMachine().getBoundsInParent()))
+                if (Game.booker.getBoundsInParent().intersects(Game.vendingMachine.getVendingMachine().getBoundsInParent())
+                        && !Game.vendingMachine.isShown())
                     Game.vendingMachine.openMachineMenu();
                 else if (Game.booker.getBoundsInParent().intersects(Game.energetic.getBoundsInParent()))
                     Game.energetic.pickUp();

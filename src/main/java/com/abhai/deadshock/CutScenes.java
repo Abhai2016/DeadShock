@@ -1,14 +1,12 @@
 package com.abhai.deadshock;
 
-import com.abhai.deadshock.Characters.Boss;
-import com.abhai.deadshock.Characters.Elizabeth;
-import com.abhai.deadshock.Levels.Block;
-import com.abhai.deadshock.Levels.Level;
-import com.abhai.deadshock.Weapon.Weapon;
+import com.abhai.deadshock.characters.enemies.Boss;
+import com.abhai.deadshock.characters.Elizabeth;
+import com.abhai.deadshock.levels.Block;
+import com.abhai.deadshock.levels.Level;
+import com.abhai.deadshock.weapon.Weapon;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.animation.FadeTransition;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -19,17 +17,13 @@ import java.io.FileWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static javafx.scene.input.KeyEvent.KEY_PRESSED;
-
 public class CutScenes {
     private MediaPlayer video;
     private MediaView videoView;
 
     private Path savesPath = Paths.get("resources", "data", "saves.dat");
     private Path optionsPath = Paths.get("resources", "data", "options.dat");
-
-    private Path imagePath = Paths.get("resources", "images", "black.jpg");
-    ImageView imageView = new ImageView(new Image(imagePath.toUri().toString()));
+    private boolean actionPerformed = false;
 
     public CutScenes() {
         Game.booker.setTranslateX(100);
@@ -47,23 +41,61 @@ public class CutScenes {
 
         Game.stage.setWidth(1235);
         switch (Game.levelNumber) {
-            case 0 -> {
+            case Level.FIRST_LEVEL -> {
                 playVideo("meeting_Elizabeth.mp4");
-                video.setOnEndOfMedia( () -> endCutScene1() );
+                video.setOnEndOfMedia( () -> {
+                    if (!actionPerformed) {
+                        actionPerformed = true;
+                        endCutScene1();
+                    }
+                });
+                Game.scene.setOnKeyPressed(event -> {
+                    if (event.getCode() == KeyCode.ESCAPE || event.getCode() == KeyCode.ENTER
+                            && !actionPerformed) {
+                        actionPerformed = true;
+                        endCutScene1();
+                        event.consume();
+                    }
+                });
             }
-            case 1 -> {
+            case Level.SECOND_LEVEL -> {
                 playVideo("murder_Comstock.mp4");
-                video.setOnEndOfMedia( () -> endCutScene2() );
+                video.setOnEndOfMedia( () -> {
+                    if (!actionPerformed) {
+                        actionPerformed = true;
+                        endCutScene2();
+                    }
+                });
+                Game.scene.setOnKeyPressed(event -> {
+                    if (event.getCode() == KeyCode.ESCAPE  || event.getCode() == KeyCode.ENTER
+                            && !actionPerformed) {
+                        actionPerformed = true;
+                        endCutScene2();
+                        event.consume();
+                    }
+                });
             }
-            case 2 -> bossLevel();
-            case 3 -> {
+            case Level.THIRD_LEVEL -> bossLevel();
+            case Level.BOSS_LEVEL -> {
                 Game.stage.setWidth(1230);
                 playVideo("end.mp4");
-                video.setOnEndOfMedia( () -> endCutScene3() );
+                video.setOnEndOfMedia( () -> {
+                    if (!actionPerformed) {
+                        actionPerformed = true;
+                        endCutScene3();
+                    }
+                });
+                Game.scene.setOnKeyPressed(event -> {
+                    if (event.getCode() == KeyCode.ESCAPE  || event.getCode() == KeyCode.ENTER
+                            && !actionPerformed) {
+                        actionPerformed = true;
+                        endCutScene3();
+                        event.consume();
+                    }
+                });
             }
         }
     }
-
 
     private void playVideo(String str) {
         Path videoPath = Paths.get("resources", "videos", str);
@@ -80,7 +112,6 @@ public class CutScenes {
         video.play();
     }
 
-
     private void endCutScene1() {
         if (Game.tutorial != null)
             Game.tutorial.deleteText();
@@ -92,17 +123,6 @@ public class CutScenes {
         Game.appRoot.getChildren().remove(videoView);
         videoView = null;
 
-        Game.appRoot.getChildren().add(imageView);
-
-        Path soundPath = Paths.get("resources", "sounds", "voice", "hack_padlock.mp3");
-        Sounds.bookerVoice = new MediaPlayer(new Media(soundPath.toUri().toString()));
-        Sounds.bookerVoice.setVolume(Game.menu.voiceSlider.getValue() / 100);
-        Sounds.bookerVoice.play();
-        Sounds.bookerVoice.setOnEndOfMedia(this::partEndCutScene1);
-    }
-
-
-    private void partEndCutScene1() {
         Sounds.bookerVoice.stop();
         Game.level.createLevels();
         Game.createEnemies();
@@ -115,7 +135,6 @@ public class CutScenes {
         Game.vendingMachine.changeLevel();
         Game.energetic.changeLevel();
         Game.stage.setWidth(1280);
-        Game.appRoot.getChildren().remove(imageView);
 
         ObjectMapper mapper = new ObjectMapper();
         saveSaves(mapper);
@@ -140,14 +159,12 @@ public class CutScenes {
         Game.vendingMachine.changeLevel();
         Game.energetic.changeLevel();
         Game.stage.setWidth(1280);
-        Game.appRoot.getChildren().remove(imageView);
         Game.boss = new Boss(Level.BLOCK_SIZE * 299, Level.BLOCK_SIZE * 13);
 
         ObjectMapper mapper = new ObjectMapper();
         saveSaves(mapper);
         saveOptions(mapper);
     }
-
 
     private void bossLevel() {
         Game.boss.setTrompInterval(0);
@@ -165,7 +182,6 @@ public class CutScenes {
         saveSaves(mapper);
         saveOptions(mapper);
     }
-
 
     private void endCutScene3() {
         Game.appRoot.getChildren().remove(videoView);

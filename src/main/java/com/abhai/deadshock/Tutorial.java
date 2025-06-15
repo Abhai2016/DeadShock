@@ -1,7 +1,7 @@
 package com.abhai.deadshock;
 
 
-import com.abhai.deadshock.Levels.Level;
+import com.abhai.deadshock.levels.Level;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -35,8 +35,8 @@ class Tutorial {
 
 
     Tutorial() {
-        switch((int)Game.levelNumber) {
-            case 0:
+        switch(Game.levelNumber) {
+            case Level.FIRST_LEVEL:
                 setText(moveCharacter, 100);
                 setText(jump, Level.BLOCK_SIZE * 23);
                 setText(pickUpWeapon, Level.BLOCK_SIZE * 33);
@@ -49,19 +49,18 @@ class Tutorial {
                 setText(getMoneyFromEnemy, Level.BLOCK_SIZE * 95);
                 setText(turnOnVendingMachine, Level.BLOCK_SIZE * 181, 100);
                 break;
-            case 1:
+            case Level.SECOND_LEVEL:
                 setText(saves, Level.BLOCK_SIZE);
                 setText(switchWeapon, Level.BLOCK_SIZE * 18);
                 setText(switchEnergetic, Level.BLOCK_SIZE * 46);
                 setText(takeMedicine, Level.BLOCK_SIZE * 55, 50);
                 break;
-            case 2:
+            case Level.THIRD_LEVEL:
                 setText(changeWeapon, Level.BLOCK_SIZE * 19);
                 setText(rpgBullets, Level.BLOCK_SIZE * 33, 50);
                 break;
         }
     }
-
 
     private void setText(Text text, int x) {
         text.setFont( Font.font("Aria", 28) );
@@ -71,7 +70,6 @@ class Tutorial {
         Game.gameRoot.getChildren().add(text);
     }
 
-
     private void setText(Text text, int x, int y) {
         text.setFont( Font.font("Aria", 28) );
         text.setFill(Color.WHITE);
@@ -80,31 +78,27 @@ class Tutorial {
         Game.gameRoot.getChildren().add(text);
     }
 
-
     void addMenuText() {
         menu.setFont( Font.font("Aria", 28) );
         menu.setFill(Color.WHITE);
         menu.setTranslateX(50);
         menu.setTranslateY(50);
         Game.appRoot.getChildren().add(menu);
-
     }
-
 
     void deleteMenuText() {
         Game.appRoot.getChildren().remove(menu);
     }
 
-
     void deleteText() {
-        switch ((int)Game.levelNumber) {
-            case 0:
+        switch (Game.levelNumber) {
+            case Level.FIRST_LEVEL:
                 Game.gameRoot.getChildren().removeAll(moveCharacter, jump, pickUpWeapon, shoot, reload, changeTrack, changeMusic, getMoneyFromEnemy, turnOnVendingMachine, shootEnergetic, reloadEnergetic);
                 break;
-            case 1:
+            case Level.SECOND_LEVEL:
                 Game.gameRoot.getChildren().removeAll(takeMedicine, switchWeapon, switchEnergetic, saves);
                 break;
-            case 2:
+            case Level.THIRD_LEVEL:
                 Game.gameRoot.getChildren().removeAll(changeWeapon, rpgBullets);
         }
     }

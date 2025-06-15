@@ -1,4 +1,4 @@
-package com.abhai.deadshock.Levels;
+package com.abhai.deadshock.levels;
 
 import com.abhai.deadshock.Game;
 import javafx.geometry.Rectangle2D;
@@ -17,7 +17,7 @@ public class Block extends Pane {
         setTranslateX(x);
         setTranslateY(y);
 
-        if (Game.levelNumber == 0)
+        if (Game.levelNumber == Level.FIRST_LEVEL)
             switch (this.blockType) {
                 case "BOX":
                     block.setViewport( new Rectangle2D(250, 208, 82, 82) );
@@ -41,7 +41,7 @@ public class Block extends Pane {
                     block.setViewport( new Rectangle2D(250, 344, 82, 41) );
                     break;
             }
-        else if (Game.levelNumber == 1)
+        else if (Game.levelNumber == Level.SECOND_LEVEL)
             switch (this.blockType) {
                 case "LAND":
                     block.setViewport( new Rectangle2D(140, 78, 82, 82) );
@@ -72,9 +72,9 @@ public class Block extends Pane {
                     block.setFitHeight(Level.BLOCK_SIZE / 2);
                     block.setViewport( new Rectangle2D(250, 344, 82, 41) );
                     break;
-            } else if (Game.levelNumber == 2) {
+            } else if (Game.levelNumber == Level.THIRD_LEVEL) {
             block = new ImageView(Level.imageNewLandBlock);
-        } else if (Game.levelNumber == 3) {
+        } else if (Game.levelNumber == Level.BOSS_LEVEL) {
             block.setFitHeight(Level.BLOCK_SIZE / 2);
             block.setViewport( new Rectangle2D(360, 414, 82, 41) );
         }

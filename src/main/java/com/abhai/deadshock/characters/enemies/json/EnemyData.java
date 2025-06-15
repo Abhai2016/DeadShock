@@ -1,17 +1,16 @@
-package com.abhai.deadshock.Characters;
+package com.abhai.deadshock.characters.enemies.json;
 
-public class Data {
-    private String name;
+public class EnemyData {
+    private String type;
     private int x;
     private int y;
 
-
-    public String getName() {
-        return name;
+    public String getType() {
+        return type;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public int getX() {
