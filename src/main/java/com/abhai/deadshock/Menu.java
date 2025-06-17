@@ -515,7 +515,7 @@ public class Menu {
     }
 
     void update() {
-        if (Controller.isPressed(KeyCode.ESCAPE) && !Game.vendingMachine.isShown()) {
+        if (Controller.isPressed(KeyCode.ESCAPE) && (Game.vendingMachine == null || !Game.vendingMachine.isShown())) {
             Game.keys.remove(KeyCode.ESCAPE);
             if (!isShown) {
                 showMenu();

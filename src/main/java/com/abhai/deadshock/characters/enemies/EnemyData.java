@@ -1,4 +1,4 @@
-package com.abhai.deadshock.characters.enemies.json;
+package com.abhai.deadshock.characters.enemies;
 
 public class EnemyData {
     private String type;

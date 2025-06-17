@@ -5,6 +5,7 @@ import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.Sounds;
+import com.abhai.deadshock.levels.BlockType;
 import com.abhai.deadshock.levels.Level;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
@@ -108,7 +109,7 @@ class RpgBullet extends Bullet {
                     }
 
             for (Block block : Game.blocks)
-                if (getBoundsInParent().intersects(block.getBoundsInParent())) {
+                if (getBoundsInParent().intersects(block.getBoundsInParent()) && !block.getType().equals(BlockType.INVISIBLE)) {
                     createExplosion();
                     return;
                 }

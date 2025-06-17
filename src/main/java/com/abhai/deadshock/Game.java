@@ -2,14 +2,14 @@ package com.abhai.deadshock;
 
 import com.abhai.deadshock.characters.*;
 import com.abhai.deadshock.characters.enemies.*;
-import com.abhai.deadshock.characters.enemies.json.Enemies;
-import com.abhai.deadshock.characters.enemies.json.EnemyData;
+import com.abhai.deadshock.characters.enemies.EnemyData;
 import com.abhai.deadshock.energetics.Energetic;
 import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.weapon.Bullet;
 import com.abhai.deadshock.weapon.EnemyBullet;
 import com.abhai.deadshock.weapon.Weapon;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -26,6 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
 
@@ -309,13 +310,13 @@ public class Game extends Application {
         try {
             ObjectMapper mapper = new ObjectMapper();
             Path enemiesPath = Paths.get("resources", "data", "enemies.dat");
-            Enemies jsonEnemies = mapper.readValue(enemiesPath.toFile(), Enemies.class);
+            Map<String, EnemyData[]> jsonEnemies = mapper.readValue(enemiesPath.toFile(), new TypeReference<>() {});
             EnemyData[] enemiesByLevel = new EnemyData[]{};
 
             switch (levelNumber) {
-                case Level.FIRST_LEVEL -> enemiesByLevel = jsonEnemies.getFirstLevel();
-                case Level.SECOND_LEVEL -> enemiesByLevel = jsonEnemies.getSecondLevel();
-                case Level.THIRD_LEVEL -> enemiesByLevel = jsonEnemies.getThirdLevel();
+                case Level.FIRST_LEVEL -> enemiesByLevel = jsonEnemies.get("firstLevel");
+                case Level.SECOND_LEVEL -> enemiesByLevel = jsonEnemies.get("secondLevel");
+                case Level.THIRD_LEVEL -> enemiesByLevel = jsonEnemies.get("thirdLevel");
             }
 
             for (EnemyData enemy : enemiesByLevel) {

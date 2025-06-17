@@ -2,6 +2,7 @@ package com.abhai.deadshock.levels;
 
 
 import com.abhai.deadshock.Supply;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -10,6 +11,7 @@ import com.abhai.deadshock.Game;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
 import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
 
@@ -94,20 +96,20 @@ public class Level {
 
     private String[] getLevel() throws IOException {
         Path levelsPath = Paths.get("resources", "data", "levels.dat");
-        LevelData levelData = new ObjectMapper().readValue(levelsPath.toFile(), LevelData.class);
+        Map<String, String[]> levelData = new ObjectMapper().readValue(levelsPath.toFile(), new TypeReference<>() {});
 
         switch (Game.levelNumber) {
             case SECOND_LEVEL -> {
-                return levelData.getSecondLevel();
+                return levelData.get("secondLevel");
             }
             case THIRD_LEVEL -> {
-                return levelData.getThirdLevel();
+                return levelData.get("thirdLevel");
             }
             case BOSS_LEVEL -> {
-                return levelData.getBossLevel();
+                return levelData.get("bossLevel");
             }
             default -> {
-                return levelData.getFirstLevel();
+                return levelData.get("firstLevel");
             }
         }
     }
