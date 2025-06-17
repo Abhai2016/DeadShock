@@ -103,6 +103,7 @@ public class CutScenes {
         videoView = new MediaView(video);
         videoView.setFitWidth(Game.scene.getWidth());
         videoView.setFitHeight(Game.scene.getHeight());
+        videoView.getMediaPlayer().setVolume(Game.menu.voiceSlider.getValue() / 100);
         Game.appRoot.getChildren().add(videoView);
 
         FadeTransition ft = new FadeTransition(Duration.seconds(1), videoView);
@@ -116,7 +117,7 @@ public class CutScenes {
         if (Game.tutorial != null)
             Game.tutorial.deleteText();
         Game.levelNumber++;
-        Game.level.changeLevel(Game.levelNumber);
+        Game.level.changeLevel();
         Game.weapon.changeLevel(Game.levelNumber);
 
         video.stop();
@@ -147,7 +148,7 @@ public class CutScenes {
         videoView = null;
 
         Game.levelNumber++;
-        Game.level.changeLevel(Game.levelNumber);
+        Game.level.changeLevel();
         Game.level.createLevels();
         Game.weapon.changeLevel(Game.levelNumber);
         Game.createEnemies();
@@ -159,7 +160,7 @@ public class CutScenes {
         Game.vendingMachine.changeLevel();
         Game.energetic.changeLevel();
         Game.stage.setWidth(1280);
-        Game.boss = new Boss(Level.BLOCK_SIZE * 299, Level.BLOCK_SIZE * 13);
+        Game.boss = new Boss(Block.BLOCK_SIZE * 299, Block.BLOCK_SIZE * 13);
 
         ObjectMapper mapper = new ObjectMapper();
         saveSaves(mapper);
@@ -167,9 +168,10 @@ public class CutScenes {
     }
 
     private void bossLevel() {
+        Game.tutorial.deleteText();
         Game.boss.setTrompInterval(0);
         Game.levelNumber++;
-        Game.level.changeLevel(Game.levelNumber);
+        Game.level.changeLevel();
         Game.level.createLevels();
 
         Game.timer.start();

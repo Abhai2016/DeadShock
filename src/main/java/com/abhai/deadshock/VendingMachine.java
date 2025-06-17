@@ -21,6 +21,7 @@ import javafx.util.Duration;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
 import static javafx.scene.input.KeyEvent.KEY_PRESSED;
 
 class VendingMachine extends Pane {
@@ -84,18 +85,18 @@ class VendingMachine extends Pane {
 
         switch (Game.levelNumber) {
             case Level.FIRST_LEVEL:
-                vendingMachine.setTranslateX(Level.BLOCK_SIZE * 187 + 15);
-                vendingMachine.setTranslateY(Level.BLOCK_SIZE * 3 - 6);
+                vendingMachine.setTranslateX(BLOCK_SIZE * 187 + 15);
+                vendingMachine.setTranslateY(BLOCK_SIZE * 3 - 6);
                 vendingMachineMenu.setViewport( new Rectangle2D(0, 0, 920, 597) );
                 break;
             case Level.SECOND_LEVEL:
-                vendingMachine.setTranslateX(Level.BLOCK_SIZE * 157);
-                vendingMachine.setTranslateY(Level.BLOCK_SIZE * 7 - 6);
+                vendingMachine.setTranslateX(BLOCK_SIZE * 157);
+                vendingMachine.setTranslateY(BLOCK_SIZE * 7 - 6);
                 vendingMachineMenu.setViewport( new Rectangle2D(920, 0, 920, 597) );
                 break;
             case Level.THIRD_LEVEL:
-                vendingMachine.setTranslateX(Level.BLOCK_SIZE * 137.5);
-                vendingMachine.setTranslateY(Level.BLOCK_SIZE * 4 - 6);
+                vendingMachine.setTranslateX(BLOCK_SIZE * 137.5);
+                vendingMachine.setTranslateY(BLOCK_SIZE * 4 - 6);
                 vendingMachineMenu.setViewport( new Rectangle2D(920, 0, 920, 597) );
                 break;
         }
@@ -107,12 +108,12 @@ class VendingMachine extends Pane {
 
     void changeLevel() {
         if (Game.levelNumber == Level.SECOND_LEVEL) {
-            vendingMachine.setTranslateX(Level.BLOCK_SIZE * 157);
-            vendingMachine.setTranslateY(Level.BLOCK_SIZE * 7 - 6);
+            vendingMachine.setTranslateX(BLOCK_SIZE * 157);
+            vendingMachine.setTranslateY(BLOCK_SIZE * 7 - 6);
             vendingMachineMenu.setViewport( new Rectangle2D(920, 0, 920, 597) );
         } else if (Game.levelNumber == Level.THIRD_LEVEL) {
-            vendingMachine.setTranslateX(Level.BLOCK_SIZE * 137.5);
-            vendingMachine.setTranslateY(Level.BLOCK_SIZE * 4 - 6);
+            vendingMachine.setTranslateX(BLOCK_SIZE * 137.5);
+            vendingMachine.setTranslateY(BLOCK_SIZE * 4 - 6);
             vendingMachineMenu.setViewport( new Rectangle2D(920, 0, 920, 597) );
         }
     }

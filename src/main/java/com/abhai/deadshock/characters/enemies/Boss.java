@@ -22,6 +22,8 @@ import javafx.util.Duration;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
+
 public class Boss extends Pane {
     private final byte BOSS_SPEED = 1;
 
@@ -86,8 +88,8 @@ public class Boss extends Pane {
     public void setBoss() {
         imgView.setViewport(new Rectangle2D(0, 0, 100, 100));
         imgView.setFitWidth(100);
-        setTranslateX(Level.BLOCK_SIZE * 14);
-        setTranslateY(Level.BLOCK_SIZE * 14 - imgView.getFitHeight());
+        setTranslateX(BLOCK_SIZE * 14);
+        setTranslateY(BLOCK_SIZE * 14 - imgView.getFitHeight());
         name.setFont( Font.font("Aria", 28) );
         name.setFill(Color.WHITE);
         name.setTranslateX(Game.appRoot.getWidth() / 2 - 95);
@@ -101,7 +103,7 @@ public class Boss extends Pane {
 
     private void moveX(int x) {
         for (int i = 0; i < Math.abs(x); i++) {
-            if (x > 0 && getTranslateX() < Level.BLOCK_SIZE * 37 + imgView.getFitWidth()) {
+            if (x > 0 && getTranslateX() < BLOCK_SIZE * 37 + imgView.getFitWidth()) {
                 setScaleX(-1);
                 setTranslateX(getTranslateX() + 1);
             } else if (getTranslateX() > 1){
@@ -200,7 +202,7 @@ public class Boss extends Pane {
 
                         if (getTranslateX() < imgView.getFitWidth())
                             moveRight = true;
-                        else if (getTranslateX() > Level.BLOCK_SIZE * 37 - imgView.getFitWidth())
+                        else if (getTranslateX() > BLOCK_SIZE * 37 - imgView.getFitWidth())
                             moveRight = false;
 
                         if (velocity.getX() < 0)

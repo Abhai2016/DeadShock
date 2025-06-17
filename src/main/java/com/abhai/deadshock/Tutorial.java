@@ -6,6 +6,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
+
 class Tutorial {
     private Text moveCharacter = new Text("Чтобы идти влево и вправо, нажимайте A и D соответственно");
     private Text jump = new Text("Для прыжка нажимайте W");
@@ -38,26 +40,26 @@ class Tutorial {
         switch(Game.levelNumber) {
             case Level.FIRST_LEVEL:
                 setText(moveCharacter, 100);
-                setText(jump, Level.BLOCK_SIZE * 23);
-                setText(pickUpWeapon, Level.BLOCK_SIZE * 33);
-                setText(shoot, Level.BLOCK_SIZE * 45);
-                setText(shootEnergetic, Level.BLOCK_SIZE * 43, 100);
-                setText(reloadEnergetic, Level.BLOCK_SIZE * 43, 150);
-                setText(reload, Level.BLOCK_SIZE * 55);
-                setText(changeTrack, Level.BLOCK_SIZE * 74, 100);
-                setText(changeMusic, Level.BLOCK_SIZE * 73, 150);
-                setText(getMoneyFromEnemy, Level.BLOCK_SIZE * 95);
-                setText(turnOnVendingMachine, Level.BLOCK_SIZE * 181, 100);
+                setText(jump, BLOCK_SIZE * 23);
+                setText(pickUpWeapon, BLOCK_SIZE * 33);
+                setText(shoot, BLOCK_SIZE * 45);
+                setText(shootEnergetic, BLOCK_SIZE * 43, 100);
+                setText(reloadEnergetic, BLOCK_SIZE * 43, 150);
+                setText(reload, BLOCK_SIZE * 55);
+                setText(changeTrack, BLOCK_SIZE * 74, 100);
+                setText(changeMusic, BLOCK_SIZE * 73, 150);
+                setText(getMoneyFromEnemy, BLOCK_SIZE * 95);
+                setText(turnOnVendingMachine, BLOCK_SIZE * 181, 100);
                 break;
             case Level.SECOND_LEVEL:
-                setText(saves, Level.BLOCK_SIZE);
-                setText(switchWeapon, Level.BLOCK_SIZE * 18);
-                setText(switchEnergetic, Level.BLOCK_SIZE * 46);
-                setText(takeMedicine, Level.BLOCK_SIZE * 55, 50);
+                setText(saves, BLOCK_SIZE);
+                setText(switchWeapon, BLOCK_SIZE * 18);
+                setText(switchEnergetic, BLOCK_SIZE * 46);
+                setText(takeMedicine, BLOCK_SIZE * 55, 50);
                 break;
             case Level.THIRD_LEVEL:
-                setText(changeWeapon, Level.BLOCK_SIZE * 19);
-                setText(rpgBullets, Level.BLOCK_SIZE * 33, 50);
+                setText(changeWeapon, BLOCK_SIZE * 19);
+                setText(rpgBullets, BLOCK_SIZE * 33, 50);
                 break;
         }
     }

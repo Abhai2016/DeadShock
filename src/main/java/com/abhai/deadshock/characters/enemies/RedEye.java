@@ -1,9 +1,9 @@
 package com.abhai.deadshock.characters.enemies;
 
 import com.abhai.deadshock.characters.SpriteAnimation;
-import com.abhai.deadshock.levels.Block;
-import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.Game;
+import com.abhai.deadshock.levels.Block;
+import com.abhai.deadshock.levels.BlockType;
 import com.abhai.deadshock.weapon.RedEyeWeapon;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -54,14 +54,10 @@ public class RedEye extends Comstock {
         if (HP < 125)
             rectHP.setVisible(true);
         rectHP.setWidth(HP / 125 * 62);
+    }
 
-        if (!hypnosis) {
-            for (Block block : Level.enemyBlocks)
-                if (block.getBoundsInParent().intersects(getBoundsInParent())) {
-                    setTranslateX(getTranslateX() - getScaleX() * ENEMY_SPEED);
-                    jump();
-                    return;
-                }
-        }
+    @Override
+    protected boolean intersects(Block block) {
+        return getBoundsInParent().intersects(block.getBoundsInParent());
     }
 }

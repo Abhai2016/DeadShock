@@ -15,6 +15,8 @@ import javafx.util.Duration;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
+
 public class Weapon extends Pane {
     private String name = "";
 
@@ -46,8 +48,8 @@ public class Weapon extends Pane {
 
     public Weapon() {
         gun.setViewport( new Rectangle2D(265, 88, 33, 18) );
-        setTranslateX(Level.BLOCK_SIZE * 38);
-        setTranslateY(Level.BLOCK_SIZE * 12 - 18);
+        setTranslateX(BLOCK_SIZE * 38);
+        setTranslateY(BLOCK_SIZE * 12 - 18);
 
         getChildren().add(gun);
         Game.gameRoot.getChildren().add(this);
@@ -60,8 +62,8 @@ public class Weapon extends Pane {
             Game.booker.changeAnimation(name);
         }
         gun.setViewport( new Rectangle2D(400, 80, 56, 18) );
-        setTranslateX(Level.BLOCK_SIZE * 26);
-        setTranslateY(Level.BLOCK_SIZE * 12 - 20);
+        setTranslateX(BLOCK_SIZE * 26);
+        setTranslateY(BLOCK_SIZE * 12 - 20);
 
         getChildren().add(gun);
         Game.gameRoot.getChildren().add(this);
@@ -76,8 +78,8 @@ public class Weapon extends Pane {
             name = "pistol";
         Game.booker.changeAnimation(name);
         gun = new ImageView(new Image(rpgImagePath.toUri().toString()));
-        setTranslateX(Level.BLOCK_SIZE * 24);
-        setTranslateY(Level.BLOCK_SIZE * 12 - 20);
+        setTranslateX(BLOCK_SIZE * 24);
+        setTranslateY(BLOCK_SIZE * 12 - 20);
 
         explosion = new ImageView(new Image(explosionImagePath.toUri().toString()));
         explosion.setFitWidth(128);
@@ -167,15 +169,15 @@ public class Weapon extends Pane {
     public void changeLevel(long level) {
         if (level == Level.SECOND_LEVEL) {
             gun.setViewport( new Rectangle2D(400, 80, 56, 18) );
-            setTranslateX(Level.BLOCK_SIZE * 26);
-            setTranslateY(Level.BLOCK_SIZE * 12 - 20);
+            setTranslateX(BLOCK_SIZE * 26);
+            setTranslateY(BLOCK_SIZE * 12 - 20);
             setVisible(true);
         } else if (level == Level.THIRD_LEVEL) {
             getChildren().remove(gun);
             gun = new ImageView(new Image(rpgImagePath.toUri().toString()));
             getChildren().add(gun);
-            setTranslateX(Level.BLOCK_SIZE * 24);
-            setTranslateY(Level.BLOCK_SIZE * 12 - 20);
+            setTranslateX(BLOCK_SIZE * 24);
+            setTranslateY(BLOCK_SIZE * 12 - 20);
             setVisible(true);
         }
     }

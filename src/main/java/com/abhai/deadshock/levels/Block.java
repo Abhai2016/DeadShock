@@ -2,105 +2,69 @@ package com.abhai.deadshock.levels;
 
 import com.abhai.deadshock.Game;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
-public class Block extends Pane {
-    private String blockType;
+import java.nio.file.Paths;
 
-    public Block(Level.BlockType blockType, int x, int y) {
-        this.blockType = blockType.toString();
-        ImageView block = new ImageView(Level.imageBlock);
-        block.setFitWidth(Level.BLOCK_SIZE);
-        block.setFitHeight(Level.BLOCK_SIZE);
+public class Block extends Pane {
+    public static final int BLOCK_SIZE = 48;
+    private BlockType type;
+
+    public Block(BlockType type, int x, int y) {
+        this.type = type;
+        ImageView block = new ImageView(new Image(Paths.get("resources", "images", "blocks", "block.jpg")
+                .toUri().toString()));
+        block.setFitWidth(BLOCK_SIZE);
+        block.setFitHeight(BLOCK_SIZE);
 
         setTranslateX(x);
         setTranslateY(y);
 
-        if (Game.levelNumber == Level.FIRST_LEVEL)
-            switch (this.blockType) {
-                case "BOX":
-                    block.setViewport( new Rectangle2D(250, 208, 82, 82) );
-                    break;
-                case "METAL":
-                    block.setViewport( new Rectangle2D(360, 208, 82, 82) );
-                    break;
-                case "STONE":
-                    block.setViewport( new Rectangle2D(250, 78, 82, 82) );
-                    break;
-                case "LITTLE_BOX":
-                    block.setFitHeight(Level.BLOCK_SIZE / 2);
-                    block.setViewport( new Rectangle2D(250, 414, 82, 41) );
-                    break;
-                case "LITTLE_BRICK":
-                    block.setFitHeight(Level.BLOCK_SIZE / 2);
-                    block.setViewport( new Rectangle2D(360, 344, 82, 41) );
-                    break;
-                case "LITTLE_STONE":
-                    block.setFitHeight(Level.BLOCK_SIZE / 2);
-                    block.setViewport( new Rectangle2D(250, 344, 82, 41) );
-                    break;
+        switch (type) {
+            case BlockType.LITTLE_BRICK -> {
+                block.setFitHeight(BLOCK_SIZE / 2);
+                block.setViewport( new Rectangle2D(360, 344, 82, 41) );
             }
-        else if (Game.levelNumber == Level.SECOND_LEVEL)
-            switch (this.blockType) {
-                case "LAND":
-                    block.setViewport( new Rectangle2D(140, 78, 82, 82) );
-                    break;
-                case "METAL":
-                    block.setViewport( new Rectangle2D(360, 208, 82, 82) );
-                    break;
-                case "STONE":
-                    block.setViewport( new Rectangle2D(250, 78, 82, 82) );
-                    break;
-                case "LITTLE_BOX":
-                    block.setFitHeight(Level.BLOCK_SIZE / 2);
-                    block.setViewport( new Rectangle2D(250, 414, 82, 41) );
-                    break;
-                case "LITTLE_BRICK":
-                    block.setFitHeight(Level.BLOCK_SIZE / 2);
-                    block.setViewport( new Rectangle2D(360, 344, 82, 41) );
-                    break;
-                case "LITTLE_LAND":
-                    block.setFitHeight(Level.BLOCK_SIZE / 2);
-                    block.setViewport( new Rectangle2D(140, 344, 82, 41) );
-                    break;
-                case "LITTLE_METAL":
-                    block.setFitHeight(Level.BLOCK_SIZE / 2);
-                    block.setViewport( new Rectangle2D(360, 414, 82, 41) );
-                    break;
-                case "LITTLE_STONE":
-                    block.setFitHeight(Level.BLOCK_SIZE / 2);
-                    block.setViewport( new Rectangle2D(250, 344, 82, 41) );
-                    break;
-            } else if (Game.levelNumber == Level.THIRD_LEVEL) {
-            block = new ImageView(Level.imageNewLandBlock);
-        } else if (Game.levelNumber == Level.BOSS_LEVEL) {
-            block.setFitHeight(Level.BLOCK_SIZE / 2);
-            block.setViewport( new Rectangle2D(360, 414, 82, 41) );
+            case BlockType.LAND -> block.setViewport( new Rectangle2D(140, 78, 82, 82) );
+            case BlockType.BOX -> block.setViewport( new Rectangle2D(250, 208, 82, 82) );
+            case BlockType.METAL -> block.setViewport( new Rectangle2D(360, 208, 82, 82) );
+            case BlockType.STONE -> block.setViewport( new Rectangle2D(250, 78, 82, 82) );
+            case BlockType.NEW_LAND -> block = new ImageView(new Image(
+                    Paths.get("resources", "images", "blocks", "newLandBlock.png").toUri().toString()));
+            case BlockType.LITTLE_LAND -> {
+                block.setFitHeight(BLOCK_SIZE / 2);
+                block.setViewport( new Rectangle2D(140, 344, 82, 41) );
+            }
+            case BlockType.LITTLE_BOX -> {
+                block.setFitHeight(BLOCK_SIZE / 2);
+                block.setViewport( new Rectangle2D(250, 414, 82, 41) );
+            }
+            case BlockType.LITTLE_METAL -> {
+                block.setFitHeight(BLOCK_SIZE / 2);
+                block.setViewport( new Rectangle2D(360, 414, 82, 41) );
+            }
+            case BlockType.LITTLE_STONE -> {
+                block.setFitHeight(BLOCK_SIZE / 2);
+                block.setViewport( new Rectangle2D(250, 344, 82, 41) );
+            }
         }
 
-        getChildren().add(block);
+        if (!type.equals(BlockType.INVISIBLE)) {
+            getChildren().add(block);
+        }
+
         Game.blocks.add(this);
         Game.gameRoot.getChildren().add(this);
     }
 
 
-    public Block(String blockType, long x, long y) {
-        if (blockType.equals("invisible")) {
-            setTranslateX(x);
-            setTranslateY(y);
-
-            setWidth(Level.BLOCK_SIZE);
-            setHeight(Level.BLOCK_SIZE);
-        }
+    public BlockType getType() {
+        return type;
     }
 
-
-    public String getBlockType() {
-        return blockType;
-    }
-
-    public void setBlockType(String blockType) {
-        this.blockType = blockType;
+    public void setBlockType(BlockType type) {
+        this.type = type;
     }
 }

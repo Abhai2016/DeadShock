@@ -8,6 +8,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
+
 public class Hypnosis {
     private Rectangle intervalRect = new Rectangle(300, 3, Color.WHITE);
     private Text intervalText = new Text("Длительность гипноза");
@@ -57,7 +59,7 @@ public class Hypnosis {
         interval = 0;
 
         intervalRect.setWidth(300);
-        if (Game.levelNumber != Level.BLOCK_SIZE) {
+        if (Game.levelNumber != BLOCK_SIZE) {
             intervalRect.setTranslateX(Game.appRoot.getWidth() / 2 - intervalRect.getWidth() / 2);
             intervalRect.setTranslateY(40);
         } else {

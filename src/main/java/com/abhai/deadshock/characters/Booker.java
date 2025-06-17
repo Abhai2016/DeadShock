@@ -2,6 +2,7 @@ package com.abhai.deadshock.characters;
 
 import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.levels.Block;
+import com.abhai.deadshock.levels.BlockType;
 import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.Sounds;
@@ -96,13 +97,13 @@ public class Booker extends Pane {
     public void moveX(int x) {
         for (int i = 0; i < Math.abs(x); i++) {
             if (x > 0) {
-                if (Game.levelNumber != Level.BOSS_LEVEL || getTranslateX() < Level.BLOCK_SIZE * 37 - getWidth())
+                if (Game.levelNumber != Level.BOSS_LEVEL || getTranslateX() < Block.BLOCK_SIZE * 37 - getWidth())
                     setTranslateX(getTranslateX() + 1);
             } else if (getTranslateX() > 1)
                 setTranslateX(getTranslateX() - 1);
 
-            for (Block platform : Game.blocks) {
-                if (getBoundsInParent().intersects(platform.getBoundsInParent()))
+            for (Block block : Game.blocks) {
+                if (getBoundsInParent().intersects(block.getBoundsInParent()) && !block.getType().equals(BlockType.INVISIBLE))
                     if (x > 0) {
                         setTranslateX(getTranslateX() - 1);
                         return;
@@ -138,14 +139,16 @@ public class Booker extends Pane {
 
             if (!stunned)
                 for (Block block : Game.blocks) {
-                    if (getBoundsInParent().intersects(block.getBoundsInParent()))
+                    if (getBoundsInParent().intersects(block.getBoundsInParent()) && !block.getType().equals(BlockType.INVISIBLE))
                         if (y > 0) {
                             setTranslateY(getTranslateY() - 1);
                             canJump = true;
                             if (Game.levelNumber != Level.THIRD_LEVEL)
-                                if (block.getBlockType().equals("LITTLE_BOX") || block.getBlockType().equals("LITTLE_STONE")
-                                        || block.getBlockType().equals("LITTLE_BRICK") || block.getBlockType().equals("LITTLE_LAND")
-                                        || block.getBlockType().equals("LITTLE_METAL"))
+                                if (block.getType().equals(BlockType.LITTLE_BOX)
+                                        || block.getType().equals(BlockType.LITTLE_STONE)
+                                        || block.getType().equals(BlockType.LITTLE_BRICK)
+                                        || block.getType().equals(BlockType.LITTLE_LAND)
+                                        || block.getType().equals(BlockType.LITTLE_METAL))
                                     stayingOnLittlePlatform = true;
                                 else
                                     stayingOnLittlePlatform = false;
@@ -568,6 +571,7 @@ public class Booker extends Pane {
             MediaView videoView = new MediaView(video);
             videoView.setFitWidth(Game.scene.getWidth());
             videoView.setFitHeight(Game.scene.getHeight());
+            videoView.getMediaPlayer().setVolume(Game.menu.voiceSlider.getValue() / 100);
             Game.appRoot.getChildren().add(videoView);
 
             video.play();
@@ -583,7 +587,7 @@ public class Booker extends Pane {
                 setTranslateY(300);
                 Game.elizabeth.y = (short) Game.elizabeth.getTranslateY();
                 Game.elizabeth.setTranslateX(getTranslateX());
-                Game.elizabeth.setTranslateY(Game.scene.getHeight() - Level.BLOCK_SIZE * 2);
+                Game.elizabeth.setTranslateY(Game.scene.getHeight() - Block.BLOCK_SIZE * 2);
                 Game.elizabeth.canMove = true;
                 Game.elizabeth.giveSupply = false;
                 Game.elizabeth.countMedicine = 0;

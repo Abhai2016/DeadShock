@@ -11,6 +11,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
+
 public class Energetic extends Pane {
     private ArrayList<FireBall> fireBalls = new ArrayList<>();
     private Lightning lightning;
@@ -31,8 +33,8 @@ public class Energetic extends Pane {
 
 
     public Energetic() {
-        setTranslateX(Level.BLOCK_SIZE * 50);
-        setTranslateY(Level.BLOCK_SIZE * 9 + 18);
+        setTranslateX(BLOCK_SIZE * 50);
+        setTranslateY(BLOCK_SIZE * 9 + 18);
 
         getChildren().add(imgView);
         Game.gameRoot.getChildren().add(this);
@@ -48,8 +50,8 @@ public class Energetic extends Pane {
         }
 
         imgView.setImage(new Image(electricityImagePath.toUri().toString()));
-        setTranslateX(Level.BLOCK_SIZE * 42);
-        setTranslateY(Level.BLOCK_SIZE * 9 - 30);
+        setTranslateX(BLOCK_SIZE * 42);
+        setTranslateY(BLOCK_SIZE * 9 - 30);
 
         getChildren().add(imgView);
         Game.gameRoot.getChildren().add(this);
@@ -71,8 +73,8 @@ public class Energetic extends Pane {
         }
 
         imgView.setImage(new Image(hypnotistImagePath.toUri().toString()));
-        setTranslateX(Level.BLOCK_SIZE * 40);
-        setTranslateY(Level.BLOCK_SIZE * 14 - 27);
+        setTranslateX(BLOCK_SIZE * 40);
+        setTranslateY(BLOCK_SIZE * 14 - 27);
 
         getChildren().add(imgView);
         Game.gameRoot.getChildren().add(this);
@@ -196,12 +198,12 @@ public class Energetic extends Pane {
     public void changeLevel() {
         if (Game.levelNumber == Level.SECOND_LEVEL) {
             imgView.setImage(new Image(electricityImagePath.toUri().toString()));
-            setTranslateX(Level.BLOCK_SIZE * 42);
-            setTranslateY(Level.BLOCK_SIZE * 9 - 30);
+            setTranslateX(BLOCK_SIZE * 42);
+            setTranslateY(BLOCK_SIZE * 9 - 30);
         } else if (Game.levelNumber == Level.THIRD_LEVEL) {
             imgView.setImage(new Image(hypnotistImagePath.toUri().toString()));
-            setTranslateX(Level.BLOCK_SIZE * 40);
-            setTranslateY(Level.BLOCK_SIZE * 14 - 27);
+            setTranslateX(BLOCK_SIZE * 40);
+            setTranslateY(BLOCK_SIZE * 14 - 27);
         }
         setVisible(true);
     }

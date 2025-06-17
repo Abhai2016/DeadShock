@@ -3,6 +3,7 @@ package com.abhai.deadshock.weapon;
 import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.Game;
+import com.abhai.deadshock.levels.BlockType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -71,7 +72,7 @@ public class Bullet extends Pane {
         for (Enemy enemy : Game.enemies)
             if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
                 Game.gameRoot.getChildren().remove(this);
-                enemy.setHP((short) (enemy.getHP() - Game.weapon.getDamage()));
+                enemy.setHP((enemy.getHP() - Game.weapon.getDamage()));
                 enemy.setPlayVoice(true);
                 enemy.playHitVoice();
                 delete = true;
@@ -81,13 +82,13 @@ public class Bullet extends Pane {
         if (Game.boss != null)
             if (getBoundsInParent().intersects(Game.boss.getBoundsInParent())) {
                 Game.gameRoot.getChildren().remove(this);
-                Game.boss.setHP((short) (Game.boss.getHP() - Game.weapon.getDamage()));
+                Game.boss.setHP((Game.boss.getHP() - Game.weapon.getDamage()));
                 delete = true;
                 return;
             }
 
         for (Block block : Game.blocks)
-            if (getBoundsInParent().intersects(block.getBoundsInParent())) {
+            if (getBoundsInParent().intersects(block.getBoundsInParent()) && !block.getType().equals(BlockType.INVISIBLE)) {
                 Game.gameRoot.getChildren().remove(this);
                 delete = true;
                 return;

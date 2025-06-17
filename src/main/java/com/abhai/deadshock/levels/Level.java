@@ -1,7 +1,6 @@
 package com.abhai.deadshock.levels;
 
 
-import com.abhai.deadshock.characters.enemies.json.EnemyData;
 import com.abhai.deadshock.Supply;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.image.Image;
@@ -11,25 +10,14 @@ import com.abhai.deadshock.Game;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
+
+import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
 
 public class Level {
-    public static final int BLOCK_SIZE = 48;
     public static final int FIRST_LEVEL = 1;
     public static final int SECOND_LEVEL = 2;
     public static final int THIRD_LEVEL = 3;
     public static final int BOSS_LEVEL = 4;
-
-    enum BlockType {
-        NEW_LAND, LAND, BOX, METAL, STONE, LITTLE_BRICK, LITTLE_LAND, LITTLE_BOX, LITTLE_METAL, LITTLE_STONE
-    }
-
-    public static ArrayList<Block> enemyBlocks = new ArrayList<>();
-    static Path newLandBlockImagePath = Paths.get("resources", "images", "blocks", "newLandBlock.png");
-    static Image imageNewLandBlock = new Image(newLandBlockImagePath.toUri().toString());
-    static Path imageBlockPath = Paths.get("resources", "images", "blocks", "block.jpg");
-    static Image imageBlock = new Image(imageBlockPath.toUri().toString());
 
     Path secondLevelImagePath = Paths.get("resources", "images", "backgrounds", "bioshock_level2.jpg");
     Path thirdLevelImagePath = Paths.get("resources", "images", "backgrounds", "bioshock_level3.jpg");
@@ -38,8 +26,6 @@ public class Level {
 
     private ImageView background;
     private ImageView imgView;
-
-    private String[] level;
 
 
     public Level() {
@@ -78,17 +64,17 @@ public class Level {
                 background = new ImageView(new Image(bossLevelImagePath.toUri().toString()));
                 Game.gameRoot.getChildren().add(background);
                 imgView = new ImageView(new Image(bottomBlockImagePath.toUri().toString()));
-                imgView.setTranslateY(Level.BLOCK_SIZE * 14);
+                imgView.setTranslateY(BLOCK_SIZE * 14);
                 Game.gameRoot.getChildren().add(imgView);
             }
         }
     }
 
-    public void changeLevel(int level) {
-        if (level == Level.SECOND_LEVEL) {
+    public void changeLevel() {
+        if (Game.levelNumber == Level.SECOND_LEVEL) {
             background.setImage(new Image(secondLevelImagePath.toUri().toString()));
             Game.gameRoot.getChildren().remove(imgView);
-        } else if (level == Level.THIRD_LEVEL) {
+        } else if (Game.levelNumber == Level.THIRD_LEVEL) {
             background.setImage(new Image(thirdLevelImagePath.toUri().toString()));
             Game.supplies.add(new Supply(0, 7920, 576));
             Game.supplies.add(new Supply(0, 8016, 576));
@@ -101,43 +87,36 @@ public class Level {
         } else {
             background.setImage(new Image(bossLevelImagePath.toUri().toString()));
             imgView = new ImageView(new Image(bottomBlockImagePath.toUri().toString()));
-            imgView.setTranslateY(Level.BLOCK_SIZE * 14);
+            imgView.setTranslateY(BLOCK_SIZE * 14);
             Game.gameRoot.getChildren().add(imgView);
         }
     }
 
-    private String[] getLevel(int levelNumber) throws IOException {
+    private String[] getLevel() throws IOException {
         Path levelsPath = Paths.get("resources", "data", "levels.dat");
         LevelData levelData = new ObjectMapper().readValue(levelsPath.toFile(), LevelData.class);
-        String[] blocks;
 
-        switch (levelNumber) {
+        switch (Game.levelNumber) {
             case SECOND_LEVEL -> {
-                blocks = levelData.getSecondLevel();
-                for (EnemyData enemyData : levelData.getEnemyBlocksForTheSecondLevel()) {
-                    enemyBlocks.add(new Block(enemyData.getType(), enemyData.getX(), enemyData.getY()));
-                }
+                return levelData.getSecondLevel();
             }
             case THIRD_LEVEL -> {
-                blocks = levelData.getThirdLevel();
-                for (EnemyData enemyData : levelData.getEnemyBlocksForTheThirdLevel()) {
-                    enemyBlocks.add(new Block(enemyData.getType(), enemyData.getX(), enemyData.getY()));
-                }
+                return levelData.getThirdLevel();
             }
-            case BOSS_LEVEL -> blocks = levelData.getBossLevel();
-            default -> blocks = levelData.getFirstLevel();
+            case BOSS_LEVEL -> {
+                return levelData.getBossLevel();
+            }
+            default -> {
+                return levelData.getFirstLevel();
+            }
         }
-
-        level = new String[blocks.length];
-        for (int i = 0; i < level.length; i++) {
-            level[i] = Arrays.stream(blocks).toList().get(i);
-        }
-        return level;
     }
 
     public void createLevels() {
+        String[] level = new String[0];
+
         try {
-            level = getLevel(Game.levelNumber);
+            level = getLevel();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -156,6 +135,7 @@ public class Level {
                 case '8' -> new Block(BlockType.LITTLE_BOX, j * BLOCK_SIZE, i * BLOCK_SIZE);
                 case '9' -> new Block(BlockType.LITTLE_METAL, j * BLOCK_SIZE, i * BLOCK_SIZE);
                 case '_' -> new Block(BlockType.LITTLE_STONE, j * BLOCK_SIZE, i * BLOCK_SIZE);
+                case '-' -> new Block(BlockType.INVISIBLE, j * BLOCK_SIZE, i * BLOCK_SIZE);
             }
         }
     }

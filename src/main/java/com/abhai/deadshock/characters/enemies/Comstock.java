@@ -4,6 +4,7 @@ package com.abhai.deadshock.characters.enemies;
 import com.abhai.deadshock.characters.SpriteAnimation;
 import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.Game;
+import com.abhai.deadshock.levels.BlockType;
 import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.Sounds;
 import com.abhai.deadshock.Supply;
@@ -67,6 +68,10 @@ public class Comstock extends Enemy {
         Game.gameRoot.getChildren().addAll(this, rectHP);
     }
 
+    protected boolean intersects(Block block) {
+        return getBoundsInParent().intersects(block.getBoundsInParent()) && !block.getType().equals(BlockType.INVISIBLE);
+    }
+
     private void moveX(int x) {
         for (int i = 0; i < Math.abs(x); i++) {
             if (Game.booker.getTranslateX() != getTranslateX()) {
@@ -80,8 +85,8 @@ public class Comstock extends Enemy {
             } else
                 setTranslateX(getTranslateX() + 1);
 
-            for (Block platform : Game.blocks)
-                if (getBoundsInParent().intersects(platform.getBoundsInParent())) {
+            for (Block block : Game.blocks)
+                if (intersects(block)) {
                     setTranslateX(getTranslateX() - getScaleX());
                     jump();
                     return;
@@ -121,7 +126,7 @@ public class Comstock extends Enemy {
                 setTranslateY(getTranslateY() - 1);
 
             for (Block block : Game.blocks) {
-                if (getBoundsInParent().intersects(block.getBoundsInParent()))
+                if (intersects(block))
                     if (y > 0) {
                         setTranslateY(getTranslateY() - 1);
                         canJump = true;
@@ -247,7 +252,7 @@ public class Comstock extends Enemy {
     private void canSeePlayer() {
         if (Game.booker.getTranslateY() < getTranslateY() || Game.booker.getTranslateX() == getTranslateX())
             if ( (Game.levelNumber == Level.THIRD_LEVEL && Game.booker.getTranslateY()
-                    < getTranslateY() - Level.BLOCK_SIZE * 2) || Game.booker.stayingOnLittlePlatform) {
+                    < getTranslateY() - Block.BLOCK_SIZE * 2) || Game.booker.stayingOnLittlePlatform) {
                 seeInterval++;
                 if (seeInterval > 180) {
                     booleanVoice = true;
@@ -447,7 +452,5 @@ public class Comstock extends Enemy {
                 playDeath();
             pickUpSupply();
         }
-
-
     }
 }

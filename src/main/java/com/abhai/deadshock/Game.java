@@ -27,6 +27,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
+
 
 public class Game extends Application {
     private static Path elizabethSoundPath = Paths.get("resources", "sounds", "voice", "elizabeth", "oh_booker.mp3");
@@ -144,7 +146,7 @@ public class Game extends Application {
                     weapon.setBullets(saves.getPistolBullets());
                 }
                 energetic = new Energetic(saves.isCanChooseDevilKiss(), saves.isCanChooseElectricity());
-                boss = new Boss(Level.BLOCK_SIZE * 299, Level.BLOCK_SIZE * 13);
+                boss = new Boss(BLOCK_SIZE * 299, BLOCK_SIZE * 13);
             }
             case Level.BOSS_LEVEL -> {
                 weapon = new Weapon(saves.isCanChoosePistol(), saves.isCanChooseMachineGun(), saves.isCanChooseRPG());
@@ -171,7 +173,7 @@ public class Game extends Application {
                     weapon.setBullets(saves.getPistolBullets());
                 }
                 energetic = new Energetic(saves.isCanChooseDevilKiss(), saves.isCanChooseElectricity(), saves.isCanChooseHypnotist());
-                boss = new Boss(Level.BLOCK_SIZE * 10, Level.BLOCK_SIZE * 14);
+                boss = new Boss(BLOCK_SIZE * 10, BLOCK_SIZE * 14);
             }
         }
         elizabeth = new Elizabeth();
@@ -369,10 +371,10 @@ public class Game extends Application {
         hud.update();
         weapon.update();
 
-        if (booker.getTranslateX() > Level.BLOCK_SIZE * 295 && levelNumber != Level.THIRD_LEVEL)
+        if (booker.getTranslateX() > BLOCK_SIZE * 295 && levelNumber != Level.THIRD_LEVEL)
             cutScene = new CutScenes();
 
-        if (booker.getTranslateX() > Level.BLOCK_SIZE * 285 && levelNumber == Level.THIRD_LEVEL) {
+        if (booker.getTranslateX() > BLOCK_SIZE * 285 && levelNumber == Level.THIRD_LEVEL) {
             if (boss.getTrompInterval() == 0) {
                 Sounds.elizabethMediaPlayer = new MediaPlayer(new Media(elizabethSoundPath.toUri().toString()));
                 Sounds.elizabethMediaPlayer.setVolume(Game.menu.voiceSlider.getValue() / 100);

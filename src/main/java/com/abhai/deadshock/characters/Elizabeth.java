@@ -98,13 +98,6 @@ public class Elizabeth extends Pane {
             if (getTranslateY() == 0)
                 setTranslateY(getTranslateY() + 1);
 
-            if (giveSupply && Game.levelNumber != Level.THIRD_LEVEL)
-                for (Block block : Level.enemyBlocks)
-                    if (getBoundsInParent().intersects(block.getBoundsInParent())) {
-                        setTranslateY(getTranslateY() - 1);
-                        return;
-                    }
-
             if (Game.levelNumber == Level.BOSS_LEVEL)
                 if (getBoundsInParent().intersects(Game.level.getImgView().getBoundsInParent()))
                     setTranslateY(getTranslateY() - 1);
@@ -126,7 +119,7 @@ public class Elizabeth extends Pane {
                 } );
 
                 startLevel = false;
-            } else if (getTranslateX() > Level.BLOCK_SIZE * 150 && playVoiceWhereYouFrom) {
+            } else if (getTranslateX() > Block.BLOCK_SIZE * 150 && playVoiceWhereYouFrom) {
                 canMove = false;
                 Path soundPath = Paths.get("resources", "sounds", "voice", "where_are_you_from.mp3");
                 Sounds.elizabethMediaPlayer = new MediaPlayer(new Media(

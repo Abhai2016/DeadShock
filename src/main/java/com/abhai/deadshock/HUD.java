@@ -13,6 +13,8 @@ import javafx.scene.text.Text;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
+
 public class HUD extends Pane {
     private Path devilKissImagePath = Paths.get("resources", "images", "hud", "devil_kiss.png");
     private Path electricityImagePath = Paths.get("resources", "images", "hud", "electricity.png");
@@ -55,12 +57,12 @@ public class HUD extends Pane {
         Path moneyImagePath = Paths.get("resources", "images", "hud", "money.png");
         money = new ImageView(new Image(moneyImagePath.toUri().toString()));
         money.setTranslateX(0);
-        money.setTranslateY(Level.BLOCK_SIZE * 15 - Level.BLOCK_SIZE * 1.5);
+        money.setTranslateY(BLOCK_SIZE * 15 - BLOCK_SIZE * 1.5);
 
         textMoney.setFont(Font.font("Arial", FontWeight.BOLD , 22));
         textMoney.setFill(Color.PALEGOLDENROD);
-        textMoney.setTranslateX(Level.BLOCK_SIZE - 24);
-        textMoney.setTranslateY(money.getTranslateY() + Level.BLOCK_SIZE / 2 + 15);
+        textMoney.setTranslateX(BLOCK_SIZE - 24);
+        textMoney.setTranslateY(money.getTranslateY() + BLOCK_SIZE / 2 + 15);
 
         devilKiss.setTranslateY(57);
         devilKiss.setVisible(false);
@@ -110,10 +112,10 @@ public class HUD extends Pane {
         textMoney.setText( String.valueOf(Game.booker.getMoney()) );
 
         if (Game.booker.getMoney() > 99)
-            textMoney.setTranslateX(Level.BLOCK_SIZE - 24);
+            textMoney.setTranslateX(BLOCK_SIZE - 24);
         else if (Game.booker.getMoney() > 9)
-            textMoney.setTranslateX(Level.BLOCK_SIZE - 17);
+            textMoney.setTranslateX(BLOCK_SIZE - 17);
         else if (Game.booker.getMoney() < 10)
-            textMoney.setTranslateX(Level.BLOCK_SIZE - 12);
+            textMoney.setTranslateX(BLOCK_SIZE - 12);
     }
 }
