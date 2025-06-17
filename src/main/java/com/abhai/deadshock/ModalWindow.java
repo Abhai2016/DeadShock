@@ -58,7 +58,7 @@ class ModalWindow {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setTitle(title);
-        Path imagePath = Paths.get("resources", "images", "icon.jpg");
+        Path imagePath = Paths.get("resources", "images", "icons", "icon.jpg");
         stage.getIcons().add(new Image(imagePath.toUri().toString()));
         stage.showAndWait();
     }

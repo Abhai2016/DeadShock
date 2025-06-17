@@ -26,7 +26,7 @@ public class Weapon extends Pane {
     private Path imagePath = Paths.get("resources", "images", "weapons", "weapons.png");
     private ImageView gun = new ImageView(new Image(imagePath.toUri().toString()));
 
-    private Path explosionImagePath = Paths.get("resources", "images", "explosion.png");
+    private Path explosionImagePath = Paths.get("resources", "images", "weapons", "explosion.png");
     private Path rpgImagePath = Paths.get("resources", "images", "weapons", "rpg.png");
 
     private Path pistolReloadSoundPath = Paths.get("resources", "sounds", "fx", "weapon", "pistol_reload.mp3");

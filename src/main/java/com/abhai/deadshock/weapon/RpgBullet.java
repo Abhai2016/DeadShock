@@ -27,7 +27,7 @@ class RpgBullet extends Bullet {
             setScaleX(-1);
         }
 
-        Path imagePath = Paths.get("resources", "images", "weapons", "rpg_bullet.png");
+        Path imagePath = Paths.get("resources", "images", "weapons", "rpgBullet.png");
         bullet = new ImageView(new Image(imagePath.toUri().toString()));
 
         setTranslateY(Game.booker.getTranslateY() + 10);

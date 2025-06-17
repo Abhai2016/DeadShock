@@ -14,7 +14,7 @@ public class Block extends Pane {
 
     public Block(BlockType type, int x, int y) {
         this.type = type;
-        ImageView block = new ImageView(new Image(Paths.get("resources", "images", "blocks", "block.jpg")
+        ImageView block = new ImageView(new Image(Paths.get("resources", "images", "blocks", "blocks.jpg")
                 .toUri().toString()));
         block.setFitWidth(BLOCK_SIZE);
         block.setFitHeight(BLOCK_SIZE);

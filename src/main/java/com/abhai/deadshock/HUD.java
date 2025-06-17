@@ -1,6 +1,5 @@
 package com.abhai.deadshock;
 
-import com.abhai.deadshock.levels.Level;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -16,7 +15,7 @@ import java.nio.file.Paths;
 import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
 
 public class HUD extends Pane {
-    private Path devilKissImagePath = Paths.get("resources", "images", "hud", "devil_kiss.png");
+    private Path devilKissImagePath = Paths.get("resources", "images", "hud", "devilKiss.png");
     private Path electricityImagePath = Paths.get("resources", "images", "hud", "electricity.png");
     private Path hypnotistImagePath = Paths.get("resources", "images", "hud", "hypnotist.png");
 
@@ -73,7 +72,7 @@ public class HUD extends Pane {
         hypnotist.setTranslateY(57);
         hypnotist.setVisible(false);
 
-        Path hpImagePath = Paths.get("resources", "images", "hud", "HP and Salt.png");
+        Path hpImagePath = Paths.get("resources", "images", "hud", "hpAndSalt.png");
         ImageView hp_and_salt = new ImageView(new Image(hpImagePath.toUri().toString()));
         getChildren().addAll(HP, salt, hp_and_salt, devilKiss, electricity, hypnotist, bulletPane, money, textMoney);
         Game.appRoot.getChildren().add(this);

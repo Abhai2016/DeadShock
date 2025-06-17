@@ -28,10 +28,10 @@ class VendingMachine extends Pane {
     private final int BUTTON_HEIGHT = 53;
     private final int BUTTON_WIDTH = 356;
 
-    private Path vendingMachinePath = Paths.get("resources", "images", "vending_machine", "vending_machine.png");
+    private Path vendingMachinePath = Paths.get("resources", "images", "vendingMachine", "vendingMachine.png");
     private ImageView vendingMachine = new ImageView(new Image(vendingMachinePath.toUri().toString()));
 
-    private Path vendingMachineMenuImagePath = Paths.get("resources", "images", "vending_machine", "menu.png");
+    private Path vendingMachineMenuImagePath = Paths.get("resources", "images", "vendingMachine", "menu.png");
     private ImageView vendingMachineMenu = new ImageView(new Image(vendingMachineMenuImagePath.toUri().toString()));
 
     private FadeTransition ft = new FadeTransition(Duration.seconds(0.3), vendingMachineMenu);

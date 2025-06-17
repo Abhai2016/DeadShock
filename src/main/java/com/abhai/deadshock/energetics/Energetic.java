@@ -16,7 +16,7 @@ import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
 public class Energetic extends Pane {
     private ArrayList<FireBall> fireBalls = new ArrayList<>();
     private Lightning lightning;
-    private Path devilKissImagePath = Paths.get("resources", "images", "energetics", "devil_kiss.png");
+    private Path devilKissImagePath = Paths.get("resources", "images", "energetics", "devilKiss.png");
     private Path electricityImagePath = Paths.get("resources", "images", "energetics", "electricity.png");
     private Path hypnotistImagePath = Paths.get("resources", "images", "energetics", "hypnotist.png");
     private ImageView imgView = new ImageView(new Image(devilKissImagePath.toUri().toString()));

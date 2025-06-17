@@ -29,7 +29,7 @@ public class Bullet extends Pane {
             setScaleX(-1);
         }
 
-        Path imagePath = Paths.get("resources", "images", "weapons", "normal_bullet.png");
+        Path imagePath = Paths.get("resources", "images", "weapons", "bullet.png");
         bullet = new ImageView(new Image(imagePath.toUri().toString()));
 
         switch (weaponName) {

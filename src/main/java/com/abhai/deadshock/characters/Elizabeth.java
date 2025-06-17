@@ -17,7 +17,7 @@ import java.nio.file.Paths;
 public class Elizabeth extends Pane {
     private Path imagePath = Paths.get("resources", "images", "characters", "elizabeth.png");
     Image imgElizabeth = new Image(imagePath.toUri().toString());
-    private Path imageMedicinePath = Paths.get("resources", "images", "characters", "elizabeth_medicine.png");
+    private Path imageMedicinePath = Paths.get("resources", "images", "characters", "elizabethWithMedicine.png");
     private Image imgElizabethMedicine = new Image(imageMedicinePath.toUri().toString());
     ImageView imgView = new ImageView(imgElizabeth);
 

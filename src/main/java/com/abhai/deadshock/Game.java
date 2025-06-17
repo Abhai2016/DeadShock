@@ -399,7 +399,7 @@ public class Game extends Application {
         scene = new Scene(appRoot, 1280, 720);
 
         initContent();
-        Path iconPath = Paths.get("resources", "images", "icon.jpg");
+        Path iconPath = Paths.get("resources", "images", "icons", "icon.jpg");
         stage.getIcons().add(new Image(iconPath.toUri().toString()));
         stage.setTitle("DeadShock");
         stage.setResizable(false);

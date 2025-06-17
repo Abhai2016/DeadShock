@@ -34,7 +34,7 @@ public class RedEye extends Comstock {
 
         velocity = new Point2D(0, 0);
         enemyWeapon = new RedEyeWeapon();
-        Path imagePath = Paths.get("resources", "images", "characters", "red_eye.png");
+        Path imagePath = Paths.get("resources", "images", "characters", "redEye.png");
         imgView = new ImageView(new Image(imagePath.toUri().toString()));
         imgView.setViewport(new Rectangle2D(0, 0, 62, 65));
         animation = new SpriteAnimation(imgView, Duration.seconds(0.5), 10, 10, 0, 0, 62, 65);

@@ -21,10 +21,11 @@ public class Level {
     public static final int THIRD_LEVEL = 3;
     public static final int BOSS_LEVEL = 4;
 
-    Path secondLevelImagePath = Paths.get("resources", "images", "backgrounds", "bioshock_level2.jpg");
-    Path thirdLevelImagePath = Paths.get("resources", "images", "backgrounds", "bioshock_level3.jpg");
+    Path firstLevelImagePath = Paths.get("resources", "images", "backgrounds", "firstLevel.jpg");
+    Path secondLevelImagePath = Paths.get("resources", "images", "backgrounds", "secondLevel.jpg");
+    Path thirdLevelImagePath = Paths.get("resources", "images", "backgrounds", "thirdLevel.jpg");
     Path bossLevelImagePath = Paths.get("resources", "images", "backgrounds", "bossLevel.jpg");
-    Path bottomBlockImagePath = Paths.get("resources", "images", "blocks", "bottomBlocks.png");
+    Path bottomBlockImagePath = Paths.get("resources", "images", "blocks", "bottomBlock.png");
 
     private ImageView background;
     private ImageView imgView;
@@ -33,8 +34,7 @@ public class Level {
     public Level() {
         switch (Game.levelNumber) {
             case FIRST_LEVEL -> {
-                Path bioshockBackgroundImagePath = Paths.get("resources", "images", "backgrounds", "bioshock.jpg");
-                background = new ImageView(new Image(bioshockBackgroundImagePath.toUri().toString()));
+                background = new ImageView(new Image(firstLevelImagePath.toUri().toString()));
                 background.setFitHeight(BLOCK_SIZE * 15);
                 Path statueImagePath = Paths.get("resources", "images", "statue.jpg");
                 imgView = new ImageView(new Image(statueImagePath.toUri().toString()));

@@ -15,7 +15,7 @@ public class EnemyBullet extends Bullet {
     private byte damage;
 
     EnemyBullet(String enemyName, double scaleX, double x, double y) {
-        Path imagePath = Paths.get("resources", "images", "weapons", "normal_bullet.png");
+        Path imagePath = Paths.get("resources", "images", "weapons", "bullet.png");
         bullet = new ImageView(new Image(imagePath.toUri().toString()));
 
         if (scaleX < 0) {
