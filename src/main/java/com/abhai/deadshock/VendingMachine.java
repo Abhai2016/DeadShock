@@ -2,7 +2,7 @@ package com.abhai.deadshock;
 
 import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.levels.Level;
-import com.abhai.deadshock.weapon.Weapon;
+import com.abhai.deadshock.weapons.Weapon;
 import javafx.animation.FadeTransition;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;

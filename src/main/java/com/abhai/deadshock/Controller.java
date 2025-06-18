@@ -73,7 +73,7 @@ class Controller {
             Game.weapon.shoot();
 
 
-        if (isPressed(KeyCode.L) && !Game.energetic.getName().equals("") && !Game.booker.isStunned()
+        if (isPressed(KeyCode.L) && Game.energetic.getType() != null && !Game.booker.isStunned()
                 && Game.booker.getSalt() >= Game.energetic.getPriceForUsing() && Game.energetic.isShoot())
             Game.energetic.shoot();
 

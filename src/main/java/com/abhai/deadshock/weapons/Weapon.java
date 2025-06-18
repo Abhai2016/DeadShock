@@ -1,4 +1,4 @@
-package com.abhai.deadshock.weapon;
+package com.abhai.deadshock.weapons;
 
 import com.abhai.deadshock.characters.SpriteAnimation;
 import com.abhai.deadshock.levels.Level;
@@ -29,9 +29,9 @@ public class Weapon extends Pane {
     private Path explosionImagePath = Paths.get("resources", "images", "weapons", "explosion.png");
     private Path rpgImagePath = Paths.get("resources", "images", "weapons", "rpg.png");
 
-    private Path pistolReloadSoundPath = Paths.get("resources", "sounds", "fx", "weapon", "pistol_reload.mp3");
-    private Path machineGunReloadSoundPath = Paths.get("resources", "sounds", "fx", "weapon", "machine_gun_reload.mp3");
-    private Path rpgReloadSoundPath = Paths.get("resources", "sounds", "fx", "weapon", "rpgShootAndReload.mp3");
+    private Path pistolReloadSoundPath = Paths.get("resources", "sounds", "fx", "weapons", "pistolReload.mp3");
+    private Path machineGunReloadSoundPath = Paths.get("resources", "sounds", "fx", "weapons", "machineGunReload.mp3");
+    private Path rpgReloadSoundPath = Paths.get("resources", "sounds", "fx", "weapons", "rpgShotWithReload.mp3");
 
     private int clip = 0;
     private int shootInterval = 0;
@@ -187,7 +187,7 @@ public class Weapon extends Pane {
             Game.booker.setCanChangeAnimation(true);
             switch (Game.levelNumber) {
                 case Level.FIRST_LEVEL:
-                    Sounds.audioClipFit.play(Game.menu.voiceSlider.getValue() / 100);
+                    Sounds.willWork.play(Game.menu.voiceSlider.getValue() / 100);
                     name = "pistol";
                     Game.booker.changeAnimation(name);
                     canChoosePistol = true;
@@ -195,7 +195,7 @@ public class Weapon extends Pane {
                     WeaponData.pistolBullets = bullets = 80;
                     break;
                 case Level.SECOND_LEVEL:
-                    Sounds.excellentVoice.play(Game.menu.voiceSlider.getValue() / 100);
+                    Sounds.great.play(Game.menu.voiceSlider.getValue() / 100);
                     name = "machine_gun";
                     Game.booker.changeAnimation(name);
                     canChooseMachineGun = true;
@@ -211,7 +211,7 @@ public class Weapon extends Pane {
                     explosionAnimation = new SpriteAnimation(explosion, Duration.seconds(1), 16, 4, 0, 0, 128, 128);
                     explosionAnimation.setCycleCount(1);
 
-                    Sounds.excellentVoice.play(Game.menu.voiceSlider.getValue() / 100);
+                    Sounds.great.play(Game.menu.voiceSlider.getValue() / 100);
                     if (name.equals("pistol")) {
                         WeaponData.pistolClip = clip;
                         WeaponData.pistolBullets = bullets;
@@ -313,7 +313,7 @@ public class Weapon extends Pane {
                 });
                 break;
             case "rpg":
-                Sounds.rpgShootAndReload.setOnEndOfMedia( () -> {
+                Sounds.rpgShotWithReload.setOnEndOfMedia( () -> {
                     while (clip < value)
                         if (bullets > 0) {
                             clip++;
@@ -330,7 +330,7 @@ public class Weapon extends Pane {
         switch (name) {
             case "machine_gun":
                 if (shootInterval > 5) {
-                    Sounds.machineGunShoot.play(Game.menu.fxSlider.getValue() / 100);
+                    Sounds.machineGunShot.play(Game.menu.fxSlider.getValue() / 100);
                     Game.bullets.add(new Bullet(name));
                     clip--;
                     shootInterval = 0;
@@ -338,16 +338,16 @@ public class Weapon extends Pane {
                 break;
             case "pistol":
                 if (singleShot) {
-                    Sounds.pistolShoot.play(Game.menu.fxSlider.getValue() / 100);
+                    Sounds.pistolShot.play(Game.menu.fxSlider.getValue() / 100);
                     Game.bullets.add(new Bullet(name));
                     clip--;
                     singleShot = false;
                 }
                 break;
             case "rpg":
-                Sounds.rpgShootAndReload = new MediaPlayer(new Media(rpgReloadSoundPath.toUri().toString()));
-                Sounds.rpgShootAndReload.setVolume(Game.menu.fxSlider.getValue() / 100);
-                Sounds.rpgShootAndReload.play();
+                Sounds.rpgShotWithReload = new MediaPlayer(new Media(rpgReloadSoundPath.toUri().toString()));
+                Sounds.rpgShotWithReload.setVolume(Game.menu.fxSlider.getValue() / 100);
+                Sounds.rpgShotWithReload.play();
                 Game.bullets.add(new RpgBullet());
                 clip--;
                 reload();

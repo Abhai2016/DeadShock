@@ -14,20 +14,20 @@ import java.util.ArrayList;
 import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
 
 public class Energetic extends Pane {
-    private ArrayList<FireBall> fireBalls = new ArrayList<>();
-    private Lightning lightning;
+    private ArrayList<DevilKissShot> devilKissShots = new ArrayList<>();
+    private Electricity electricity;
     private Path devilKissImagePath = Paths.get("resources", "images", "energetics", "devilKiss.png");
     private Path electricityImagePath = Paths.get("resources", "images", "energetics", "electricity.png");
-    private Path hypnotistImagePath = Paths.get("resources", "images", "energetics", "hypnotist.png");
+    private Path hypnosisImagePath = Paths.get("resources", "images", "energetics", "hypnosis.png");
     private ImageView imgView = new ImageView(new Image(devilKissImagePath.toUri().toString()));
-    private String name = "";
+    private EnergeticType type;
     private Hypnosis hypnosis = new Hypnosis();
 
     private boolean shoot = true;
     private boolean canChangeEnergetic = false;
     private boolean canChooseDevilKiss = false;
     private boolean canChooseElectricity = false;
-    private boolean canChooseHypnotist = false;
+    private boolean canChooseHypnosis = false;
     private byte countEnergetics = 0;
     private byte priceForUsing = 0;
 
@@ -44,7 +44,7 @@ public class Energetic extends Pane {
     public Energetic(boolean value) {
         canChooseDevilKiss = value;
         if (canChooseDevilKiss) {
-            name = "devilKiss";
+            type = EnergeticType.DEVIL_KISS;
             countEnergetics++;
             Game.hud.getDevilKiss().setVisible(true);
         }
@@ -62,17 +62,17 @@ public class Energetic extends Pane {
         canChooseDevilKiss = devilKiss;
         canChooseElectricity = electricity;
         if (canChooseDevilKiss) {
-            name = "devilKiss";
+            type = EnergeticType.DEVIL_KISS;
             Game.hud.getDevilKiss().setVisible(true);
             countEnergetics++;
         }
         if (canChooseElectricity) {
-            name = "electricity";
+            type = EnergeticType.ELECTRICITY;
             Game.hud.getElectricity().setVisible(true);
             countEnergetics++;
         }
 
-        imgView.setImage(new Image(hypnotistImagePath.toUri().toString()));
+        imgView.setImage(new Image(hypnosisImagePath.toUri().toString()));
         setTranslateX(BLOCK_SIZE * 40);
         setTranslateY(BLOCK_SIZE * 14 - 27);
 
@@ -81,30 +81,30 @@ public class Energetic extends Pane {
     }
 
 
-    public Energetic(boolean devilKiss, boolean electricity, boolean hypnotist) {
+    public Energetic(boolean devilKiss, boolean electricity, boolean hypnosis) {
         canChooseDevilKiss = devilKiss;
         canChooseElectricity = electricity;
-        canChooseHypnotist = hypnotist;
+        canChooseHypnosis = hypnosis;
         if (canChooseDevilKiss) {
-            name = "devilKiss";
+            type = EnergeticType.DEVIL_KISS;
             Game.hud.getDevilKiss().setVisible(true);
             countEnergetics++;
         }
         if (canChooseElectricity) {
-            name = "electricity";
+            type = EnergeticType.ELECTRICITY;
             Game.hud.getElectricity().setVisible(true);
             countEnergetics++;
         }
-        if (canChooseHypnotist) {
-            name = "hypnotist";
-            Game.hud.getHypnotist().setVisible(true);
+        if (canChooseHypnosis) {
+            type = EnergeticType.HYPNOSIS;
+            Game.hud.getHypnosis().setVisible(true);
             countEnergetics++;
         }
     }
 
 
-    public String getName() {
-        return name;
+    public EnergeticType getType() {
+        return type;
     }
 
     public void setShoot(boolean value) {
@@ -139,35 +139,35 @@ public class Energetic extends Pane {
         return canChooseDevilKiss;
     }
 
-    public boolean isCanChooseHypnotist() {
-        return canChooseHypnotist;
+    public boolean isCanChooseHypnosis() {
+        return canChooseHypnosis;
     }
 
     public void pickUp() {
         if (Game.booker.getBoundsInParent().intersects(getBoundsInParent())) {
             switch (Game.levelNumber) {
                 case Level.FIRST_LEVEL:
-                    Sounds.audioClipEnergetic.play(Game.menu.voiceSlider.getValue() / 100);
-                    name = "devilKiss";
+                    Sounds.energetic.play(Game.menu.voiceSlider.getValue() / 100);
+                    type = EnergeticType.DEVIL_KISS;
                     countEnergetics++;
                     Game.hud.getDevilKiss().setVisible(true);
                     canChooseDevilKiss = true;
                     break;
                 case Level.SECOND_LEVEL:
-                    Sounds.audioClipNewEnergetic.play(Game.menu.voiceSlider.getValue() / 100);
-                    name = "electricity";
+                    Sounds.newEnergetic.play(Game.menu.voiceSlider.getValue() / 100);
+                    type = EnergeticType.ELECTRICITY;
                     countEnergetics++;
                     canChangeEnergetic = true;
                     Game.hud.getElectricity().setVisible(true);
                     canChooseElectricity = true;
                     break;
                 case Level.THIRD_LEVEL:
-                    Sounds.audioClipNewEnergetic.play(Game.menu.voiceSlider.getValue() / 100);
-                    name = "hypnotist";
+                    Sounds.newEnergetic.play(Game.menu.voiceSlider.getValue() / 100);
+                    type = EnergeticType.HYPNOSIS;
                     countEnergetics++;
                     canChangeEnergetic = true;
-                    Game.hud.getHypnotist().setVisible(true);
-                    canChooseHypnotist = true;
+                    Game.hud.getHypnosis().setVisible(true);
+                    canChooseHypnosis = true;
                     break;
             }
             setTranslateY(0);
@@ -201,7 +201,7 @@ public class Energetic extends Pane {
             setTranslateX(BLOCK_SIZE * 42);
             setTranslateY(BLOCK_SIZE * 9 - 30);
         } else if (Game.levelNumber == Level.THIRD_LEVEL) {
-            imgView.setImage(new Image(hypnotistImagePath.toUri().toString()));
+            imgView.setImage(new Image(hypnosisImagePath.toUri().toString()));
             setTranslateX(BLOCK_SIZE * 40);
             setTranslateY(BLOCK_SIZE * 14 - 27);
         }
@@ -210,39 +210,39 @@ public class Energetic extends Pane {
 
     public void changeEnergetic() {
         if (canChangeEnergetic) {
-            switch (name) {
-                case "devilKiss":
+            switch (type) {
+                case EnergeticType.DEVIL_KISS:
                     if (canChooseElectricity) {
-                        name = "electricity";
-                        Sounds.changeOnElectricity.play(Game.menu.fxSlider.getValue() / 100);
+                        type = EnergeticType.ELECTRICITY;
+                        Sounds.changeToElectricity.play(Game.menu.fxSlider.getValue() / 100);
                         Game.hud.getElectricity().setVisible(true);
-                    } else if (canChooseHypnotist) {
-                        name = "hypnotist";
-                        Sounds.changeOnHypnotist.play(Game.menu.fxSlider.getValue() / 100);
-                        Game.hud.getHypnotist().setVisible(true);
+                    } else if (canChooseHypnosis) {
+                        type = EnergeticType.HYPNOSIS;
+                        Sounds.changeToHypnosis.play(Game.menu.fxSlider.getValue() / 100);
+                        Game.hud.getHypnosis().setVisible(true);
                     }
                     break;
-                case "electricity":
-                    if (canChooseHypnotist) {
-                        name = "hypnotist";
-                        Sounds.changeOnHypnotist.play(Game.menu.fxSlider.getValue() / 100);
-                        Game.hud.getHypnotist().setVisible(true);
+                case EnergeticType.ELECTRICITY:
+                    if (canChooseHypnosis) {
+                        type = EnergeticType.HYPNOSIS;
+                        Sounds.changeToHypnosis.play(Game.menu.fxSlider.getValue() / 100);
+                        Game.hud.getHypnosis().setVisible(true);
                     } else if (canChooseDevilKiss) {
-                        name = "devilKiss";
-                        Sounds.changeOnDevilKiss.play(Game.menu.fxSlider.getValue() / 100);
+                        type = EnergeticType.DEVIL_KISS;
+                        Sounds.changeToDevilKiss.play(Game.menu.fxSlider.getValue() / 100);
                         Game.hud.getElectricity().setVisible(false);
                     }
                     break;
-                case "hypnotist":
+                case EnergeticType.HYPNOSIS:
                     if (canChooseDevilKiss) {
-                        name = "devilKiss";
-                        Sounds.changeOnDevilKiss.play(Game.menu.fxSlider.getValue() / 100);
+                        type = EnergeticType.DEVIL_KISS;
+                        Sounds.changeToDevilKiss.play(Game.menu.fxSlider.getValue() / 100);
                         Game.hud.getElectricity().setVisible(false);
-                        Game.hud.getHypnotist().setVisible(false);
+                        Game.hud.getHypnosis().setVisible(false);
                     } else if (canChooseElectricity) {
-                        name = "electricity";
-                        Sounds.changeOnElectricity.play(Game.menu.fxSlider.getValue() / 100);
-                        Game.hud.getHypnotist().setVisible(false);
+                        type = EnergeticType.ELECTRICITY;
+                        Sounds.changeToElectricity.play(Game.menu.fxSlider.getValue() / 100);
+                        Game.hud.getHypnosis().setVisible(false);
                     }
             }
             canChangeEnergetic = false;
@@ -250,21 +250,21 @@ public class Energetic extends Pane {
     }
 
     public void shoot() {
-        switch (name) {
-            case "devilKiss":
-                fireBalls.add(new FireBall(Game.booker.getTranslateX(), Game.booker.getTranslateY() + 5));
-                Sounds.devilKissShoot.play(Game.menu.fxSlider.getValue() / 100);
+        switch (type) {
+            case EnergeticType.DEVIL_KISS:
+                devilKissShots.add(new DevilKissShot(Game.booker.getTranslateX(), Game.booker.getTranslateY() + 5));
+                Sounds.devilKissShot.play(Game.menu.fxSlider.getValue() / 100);
                 break;
-            case "electricity":
-                if (lightning != null) {
-                    Game.gameRoot.getChildren().remove(lightning);
-                    lightning = null;
+            case EnergeticType.ELECTRICITY:
+                if (electricity != null) {
+                    Game.gameRoot.getChildren().remove(electricity);
+                    electricity = null;
                 }
-                lightning = new Lightning(Game.booker.getTranslateX(), Game.booker.getTranslateY());
+                electricity = new Electricity(Game.booker.getTranslateX(), Game.booker.getTranslateY());
                 break;
-            case "hypnotist":
+            case EnergeticType.HYPNOSIS:
                 hypnosis.setHypnosis();
-                Sounds.hypnotist.play(Game.menu.fxSlider.getValue() / 100);
+                Sounds.hypnosis.play(Game.menu.fxSlider.getValue() / 100);
                 break;
         }
         Game.booker.setSalt(Game.booker.getSalt() - priceForUsing);
@@ -284,17 +284,17 @@ public class Energetic extends Pane {
     }
 
     public void update() {
-        if (!fireBalls.isEmpty())
-            for (FireBall fireBall : fireBalls)
-                if (fireBall.update()) {
-                    Game.energetic.fireBalls.remove(fireBall);
-                    Game.gameRoot.getChildren().remove(fireBall);
+        if (!devilKissShots.isEmpty())
+            for (DevilKissShot devilKissShot : devilKissShots)
+                if (devilKissShot.update()) {
+                    Game.energetic.devilKissShots.remove(devilKissShot);
+                    Game.gameRoot.getChildren().remove(devilKissShot);
                     return;
                 }
-        if (lightning != null) {
-            lightning.update();
-            if (lightning.isDelete())
-                lightning = null;
+        if (electricity != null) {
+            electricity.update();
+            if (electricity.isDelete())
+                electricity = null;
         }
 
         if (hypnosis.isHypnosis())

@@ -64,13 +64,13 @@ public class Camper extends Enemy {
         rand = (byte)(Math.random() * 3);
         switch (rand) {
             case 0:
-                Sounds.audioClipEnemyHit.play(Game.menu.fxSlider.getValue() / 100);
+                Sounds.bookerHit.play(Game.menu.fxSlider.getValue() / 100);
                 break;
             case 1:
-                Sounds.audioClipEnemyHit2.play(Game.menu.fxSlider.getValue() / 100);
+                Sounds.bookerHit2.play(Game.menu.fxSlider.getValue() / 100);
                 break;
             case 2:
-                Sounds.audioClipEnemyHit3.play(Game.menu.fxSlider.getValue() / 100);
+                Sounds.bookerHit3.play(Game.menu.fxSlider.getValue() / 100);
                 break;
         }
         Game.booker.setHP(Game.booker.getHP() - 10);

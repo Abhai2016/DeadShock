@@ -94,14 +94,9 @@ class Tutorial {
 
     void deleteText() {
         switch (Game.levelNumber) {
-            case Level.FIRST_LEVEL:
-                Game.gameRoot.getChildren().removeAll(moveCharacter, jump, pickUpWeapon, shoot, reload, changeTrack, changeMusic, getMoneyFromEnemy, turnOnVendingMachine, shootEnergetic, reloadEnergetic);
-                break;
-            case Level.SECOND_LEVEL:
-                Game.gameRoot.getChildren().removeAll(takeMedicine, switchWeapon, switchEnergetic, saves);
-                break;
-            case Level.THIRD_LEVEL:
-                Game.gameRoot.getChildren().removeAll(changeWeapon, rpgBullets);
+            case Level.FIRST_LEVEL -> Game.gameRoot.getChildren().removeAll(moveCharacter, jump, pickUpWeapon, shoot, reload, changeTrack, changeMusic, getMoneyFromEnemy, turnOnVendingMachine, shootEnergetic, reloadEnergetic);
+            case Level.SECOND_LEVEL -> Game.gameRoot.getChildren().removeAll(takeMedicine, switchWeapon, switchEnergetic, saves);
+            case Level.THIRD_LEVEL -> Game.gameRoot.getChildren().removeAll(changeWeapon, rpgBullets);
         }
     }
 }

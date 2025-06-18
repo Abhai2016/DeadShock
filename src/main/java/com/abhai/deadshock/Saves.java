@@ -17,15 +17,15 @@ public class Saves {
     private boolean canChooseRPG;
     private boolean canChooseDevilKiss;
     private boolean canChooseElectricity;
-    private boolean canChooseHypnotist;
+    private boolean canChooseHypnosis;
 
 
-    public boolean isCanChooseHypnotist() {
-        return canChooseHypnotist;
+    public boolean isCanChooseHypnosis() {
+        return canChooseHypnosis;
     }
 
-    public void setCanChooseHypnotist(boolean canChooseHypnotist) {
-        this.canChooseHypnotist = canChooseHypnotist;
+    public void setCanChooseHypnosis(boolean canChooseHypnosis) {
+        this.canChooseHypnosis = canChooseHypnosis;
     }
 
     public boolean isCanChooseRPG() {

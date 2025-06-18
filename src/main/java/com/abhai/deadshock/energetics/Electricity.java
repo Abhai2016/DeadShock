@@ -16,15 +16,15 @@ import javafx.util.Duration;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-class Lightning extends Pane {
+class Electricity extends Pane {
     private ImageView imgView;
     private SpriteAnimation animation;
-    private Path soundPath = Paths.get("resources", "sounds", "fx", "energetics", "lightning.mp3");
-    private MediaPlayer mediaPlayerLightning = new MediaPlayer(new Media(soundPath.toUri().toString()));
+    private Path soundPath = Paths.get("resources", "sounds", "fx", "energetics", "electricity.mp3");
+    private MediaPlayer mediaPlayerElectricity = new MediaPlayer(new Media(soundPath.toUri().toString()));
     private boolean delete = false;
 
-    Lightning(double x, double y) {
-        Path imagePath = Paths.get("resources", "images", "energetics", "lightning.png");
+    Electricity(double x, double y) {
+        Path imagePath = Paths.get("resources", "images", "energetics", "electricityShot.png");
         imgView = new ImageView(new Image(imagePath.toUri().toString()));
         imgView.setViewport( new Rectangle2D(0, 0, 172, 63) );
         animation = new SpriteAnimation(imgView, Duration.seconds(0.5), 10, 1, 0, 0, 172, 63);
@@ -39,9 +39,9 @@ class Lightning extends Pane {
 
         setTranslateY(y - 10);
 
-        mediaPlayerLightning.setVolume(Game.menu.fxSlider.getValue() / 100);
-        mediaPlayerLightning.play();
-        mediaPlayerLightning.setOnEndOfMedia( () -> {
+        mediaPlayerElectricity.setVolume(Game.menu.fxSlider.getValue() / 100);
+        mediaPlayerElectricity.play();
+        mediaPlayerElectricity.setOnEndOfMedia( () -> {
             delete = true;
             Game.gameRoot.getChildren().remove(this);
         });
@@ -71,7 +71,7 @@ class Lightning extends Pane {
         for (Enemy enemy : Game.enemies)
             if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
                 enemy.setHP(0);
-                Sounds.killByLightning.play(Game.menu.fxSlider.getValue() / 100);
+                Sounds.electricityDeath.play(Game.menu.fxSlider.getValue() / 100);
                 return true;
             }
 

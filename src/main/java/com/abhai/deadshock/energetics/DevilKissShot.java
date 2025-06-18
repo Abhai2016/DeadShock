@@ -14,13 +14,13 @@ import javafx.util.Duration;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-class FireBall extends Pane {
+class DevilKissShot extends Pane {
     private ImageView imgView;
     private SpriteAnimation animation;
     private boolean direction;
 
-    FireBall(double x, double y) {
-        Path imagePath = Paths.get("resources", "images", "energetics", "fireBall.png");
+    DevilKissShot(double x, double y) {
+        Path imagePath = Paths.get("resources", "images", "energetics", "devilKissShot.png");
         imgView = new ImageView(new Image(imagePath.toUri().toString()));
         imgView.setViewport( new Rectangle2D(0, 0, 64, 30) );
         animation = new SpriteAnimation(imgView, Duration.seconds(0.5), 8, 8, 0, 0, 64, 30);

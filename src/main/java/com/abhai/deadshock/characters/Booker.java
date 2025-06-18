@@ -117,7 +117,7 @@ public class Booker extends Pane {
                 if (getBoundsInParent().intersects(enemy.getBoundsInParent()) && !enemy.pickUpSupply) {
                     setTranslateX(getTranslateX() - getScaleX());
                     HP -= enemyDogfight;
-                    Sounds.audioClipFight.play(Game.menu.fxSlider.getValue() / 100);
+                    Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
                     if (enemy.name.equals("camper"))
                         velocity = velocity.add( - getScaleX() * 15, 0);
                     return;
@@ -163,7 +163,7 @@ public class Booker extends Pane {
             for (Enemy enemy : Game.enemies)
                 if (getBoundsInParent().intersects(enemy.getBoundsInParent()) && !enemy.pickUpSupply) {
                     HP -= enemyDogfight;
-                    Sounds.audioClipFight.play(Game.menu.fxSlider.getValue() / 100);
+                    Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
                     if (y > 0) {
                         setTranslateY(getTranslateY() - 1);
                         if (enemy.name.equals("camper"))
@@ -193,7 +193,7 @@ public class Booker extends Pane {
                 if (getBoundsInParent().intersects(Game.boss.getBoundsInParent())) {
                     setTranslateY(getTranslateY() - 1);
                     if (Game.boss.alive) {
-                        Sounds.audioClipFight.play(Game.menu.fxSlider.getValue() / 100);
+                        Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
                         if (!Game.difficultyLevelText.equals("marik"))
                             HP -= enemyDogfight;
                         else
@@ -326,7 +326,7 @@ public class Booker extends Pane {
                     Game.supplies.remove(supply);
                 }
                 else if (supply.getSupply().equals("ammo")) {
-                    Sounds.excellentVoice.play(Game.menu.voiceSlider.getValue() / 100);
+                    Sounds.great.play(Game.menu.voiceSlider.getValue() / 100);
                     Game.weapon.setBullets(Game.weapon.getBullets() + Game.booker.getBulletCount());
                     Game.gameRoot.getChildren().remove(supply);
                     Game.supplies.remove(supply);
@@ -342,10 +342,12 @@ public class Booker extends Pane {
             else
                 break;
         rand = (byte) (Math.random() * 2);
-        if (rand == 0)
-            Sounds.doctorVoice.play(Game.menu.voiceSlider.getValue() / 100);
+        if (rand == 0) {
+            Sounds.feelsBetter.setVolume(Game.menu.voiceSlider.getValue() / 100);
+            Sounds.feelsBetter.play();
+        }
         else
-            Sounds.feelBetterVoice.play(Game.menu.voiceSlider.getValue() / 100);
+            Sounds.feelingBetter.play(Game.menu.voiceSlider.getValue() / 100);
     }
 
     public void setDifficultyLevel() {
@@ -456,23 +458,23 @@ public class Booker extends Pane {
     private void playBookerVoice() {
         if (!Game.enemies.isEmpty() && Game.levelNumber == Level.FIRST_LEVEL)
             if (Game.enemies.get(0).isCanSeeBooker() && playVoice) {
-                Path soundPath = Paths.get("resources", "sounds", "voice", "booker", "shit.mp3");
-                Sounds.bookerVoice = new MediaPlayer(new Media(soundPath.toUri().toString()));
-                Sounds.bookerVoice.setVolume(Game.menu.voiceSlider.getValue() / 100);
-                Sounds.bookerVoice.play();
+                Path soundPath = Paths.get("resources", "sounds", "voices", "booker", "shit.mp3");
+                Sounds.feelsBetter = new MediaPlayer(new Media(soundPath.toUri().toString()));
+                Sounds.feelsBetter.setVolume(Game.menu.voiceSlider.getValue() / 100);
+                Sounds.feelsBetter.play();
                 playVoice = false;
             }
 
         if (Game.enemies.isEmpty() && !playVoice && Game.levelNumber == Level.FIRST_LEVEL) {
-            Path soundPath = Paths.get("resources", "sounds", "voice", "booker", "creep_even_in_flying_town.mp3");
-            Sounds.bookerVoice = new MediaPlayer(new Media(soundPath.toUri().toString()));
-            Sounds.bookerVoice.setVolume(Game.menu.voiceSlider.getValue() / 100);
-            Sounds.bookerVoice.play();
+            Path soundPath = Paths.get("resources", "sounds", "voices", "booker", "cretins.mp3");
+            Sounds.feelsBetter = new MediaPlayer(new Media(soundPath.toUri().toString()));
+            Sounds.feelsBetter.setVolume(Game.menu.voiceSlider.getValue() / 100);
+            Sounds.feelsBetter.play();
             playVoice = true;
         }
 
         if (Game.enemies.isEmpty() && Game.levelNumber == Level.SECOND_LEVEL && playVoice) {
-            Sounds.audioClipLetsGo.play(Game.menu.voiceSlider.getValue() / 100);
+            Sounds.letsGo.play(Game.menu.voiceSlider.getValue() / 100);
             playVoice = false;
         }
     }

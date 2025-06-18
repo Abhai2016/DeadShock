@@ -37,15 +37,15 @@ public class Menu {
     private ImageView controls = new ImageView(new Image(controlsImagePath.toUri().toString()));
     private Pane description = new Pane();
 
-    private Path soundPath = Paths.get("resources", "sounds", "music", "Main_Theme.mp3");
+    private Path soundPath = Paths.get("resources", "sounds", "music", "mainTheme.mp3");
     public MediaPlayer music = new MediaPlayer(new Media(soundPath.toUri().toString()));
 
     private final Path rock = Paths.get("resources", "sounds", "music", "rock");
-    private final Path post = Paths.get("resources", "sounds", "music", "post-hardcore_metalcore");
+    private final Path post = Paths.get("resources", "sounds", "music", "metalcore");
     private final Path electronic = Paths.get("resources", "sounds", "music", "electronic");
-    private final Path developer_choice = Paths.get("resources", "sounds", "music", "developer_choice");
+    private final Path developersChoice = Paths.get("resources", "sounds", "music", "developersChoice");
 
-    private Path tempMusic = Paths.get("resources", "sounds", "music", "developer_choice", "01.mp3");
+    private Path tempMusic = Paths.get("resources", "sounds", "music", "developersChoice", "01.mp3");
 
     private Text musicText = new Text("Выбрано : ВЫБОР РАЗРАБОТЧИКА");
     private Text descriptionDifficultyLevel = new Text("УРОВЕНЬ СЛОЖНОСТИ 'СРЕДНИЙ':\n" +
@@ -332,11 +332,11 @@ public class Menu {
         menuBox.getChildren().add(musicText);
 
         MenuItem rockItem = new MenuItem("РОК");
-        MenuItem post_hardcoreItem = new MenuItem("Post-Hardcore/Metalcore");
+        MenuItem post_hardcoreItem = new MenuItem("METALCORE");
         MenuItem electronicItem = new MenuItem("ЭЛЕКТРОННАЯ");
-        MenuItem developer_choiceItem = new MenuItem("ВЫБОР РАЗРАБОТЧИКА");
+        MenuItem developersChoice = new MenuItem("ВЫБОР РАЗРАБОТЧИКА");
         MenuItem musicMenuBackItem = new MenuItem("НАЗАД");
-        musicMenu = new SubMenu(rockItem, post_hardcoreItem, electronicItem, developer_choiceItem, musicMenuBackItem);
+        musicMenu = new SubMenu(rockItem, post_hardcoreItem, electronicItem, developersChoice, musicMenuBackItem);
 
         rockItem.setOnMouseClicked( event -> {
             tempMusic = Paths.get("resources", "sounds", "music", "rock", "01.mp3");
@@ -352,7 +352,7 @@ public class Menu {
         });
 
         post_hardcoreItem.setOnMouseClicked( event -> {
-            tempMusic = Paths.get("resources", "sounds", "music", "post-hardcore_metalcore", "01.mp3");
+            tempMusic = Paths.get("resources", "sounds", "music", "metalcore", "01.mp3");
             if (!start) {
                 music.stop();
                 music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
@@ -360,7 +360,7 @@ public class Menu {
             }
 
             addMediaListener();
-            musicText.setText("Выбрано : Post-Hardcore/Metalcore");
+            musicText.setText("Выбрано : Metalcore");
         });
 
         electronicItem.setOnMouseClicked( event -> {
@@ -375,8 +375,8 @@ public class Menu {
             musicText.setText("Выбрано : ЭЛЕКТРОННАЯ");
         });
 
-        developer_choiceItem.setOnMouseClicked( event -> {
-            tempMusic = Paths.get("resources", "sounds", "music", "developer_choice", "01.mp3");
+        developersChoice.setOnMouseClicked( event -> {
+            tempMusic = Paths.get("resources", "sounds", "music", "developersChoice", "01.mp3");
             if (!start) {
                 music.stop();
                 music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
@@ -453,7 +453,7 @@ public class Menu {
 
         fxSlider.valueProperty().addListener((ov, old_val, new_val) -> {
             fxText.setText(String.valueOf(new_val.intValue()));
-            Sounds.pistolShoot.setVolume(new_val.doubleValue() / 100);
+            Sounds.pistolShot.setVolume(new_val.doubleValue() / 100);
         });
     }
 
@@ -470,7 +470,7 @@ public class Menu {
 
         voiceSlider.valueProperty().addListener((ov, old_val, new_val) -> {
             voiceText.setText(String.valueOf(new_val.intValue()));
-            Sounds.bookerVoice.setVolume(new_val.doubleValue() / 100);
+            Sounds.feelsBetter.setVolume(new_val.doubleValue() / 100);
         });
     }
 
@@ -550,8 +550,8 @@ public class Menu {
             checkTrack();
         }
 
-        if ( music.getMedia().getSource().contains("developer_choice") ) {
-            tempMusic = developer_choice;
+        if ( music.getMedia().getSource().contains("developersChoice") ) {
+            tempMusic = developersChoice;
             checkTrack();
         }
 
@@ -562,14 +562,14 @@ public class Menu {
         if (text.contains("rock")) {
             tempMusic = rock;
             musicText.setText("Выбрано : РОК");
-        } else if (text.contains("post-hardcore_metalcore")) {
+        } else if (text.contains("metalcore")) {
             tempMusic = post;
-            musicText.setText("Выбрано : Post-Hardcore/Metalcore");
+            musicText.setText("Выбрано : METALCORE");
         } else if (text.contains("electronic")) {
             tempMusic = electronic;
             musicText.setText("Выбрано : ЭЛЕКТРОННАЯ");
         } else {
-            tempMusic = developer_choice;
+            tempMusic = developersChoice;
             musicText.setText("Выбрано : ВЫБОР РАЗРАБОТЧИКА");
         }
 

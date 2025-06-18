@@ -1,6 +1,6 @@
 package com.abhai.deadshock;
 
-import com.abhai.deadshock.weapon.Weapon;
+import com.abhai.deadshock.weapons.Weapon;
 import javafx.animation.RotateTransition;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;

@@ -1,4 +1,4 @@
-package com.abhai.deadshock.weapon;
+package com.abhai.deadshock.weapons;
 
 import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.levels.Block;

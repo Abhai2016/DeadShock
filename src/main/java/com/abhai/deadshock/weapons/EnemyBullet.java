@@ -1,4 +1,4 @@
-package com.abhai.deadshock.weapon;
+package com.abhai.deadshock.weapons;
 
 import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.levels.Block;
@@ -83,13 +83,13 @@ public class EnemyBullet extends Bullet {
             byte rand = (byte)(Math.random() * 3);
             switch (rand) {
                 case 0:
-                    Sounds.audioClipEnemyHit.play(Game.menu.voiceSlider.getValue() / 100);
+                    Sounds.bookerHit.play(Game.menu.voiceSlider.getValue() / 100);
                     break;
                 case 1:
-                    Sounds.audioClipEnemyHit2.play(Game.menu.voiceSlider.getValue() / 100);
+                    Sounds.bookerHit2.play(Game.menu.voiceSlider.getValue() / 100);
                     break;
                 case 2:
-                    Sounds.audioClipEnemyHit3.play(Game.menu.voiceSlider.getValue() / 100);
+                    Sounds.bookerHit3.play(Game.menu.voiceSlider.getValue() / 100);
                     break;
             }
         }

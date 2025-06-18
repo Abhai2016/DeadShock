@@ -8,145 +8,143 @@ import java.nio.file.Paths;
 
 public class Sounds {
     //Booker
-    public static MediaPlayer bookerVoice = new MediaPlayer(new Media(Paths.get("resources", "sounds", "voice",
-            "booker", "doctor_take_me_that.mp3").toUri().toString()));
-    public static AudioClip doctorVoice = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "booker", "doctor_take_me_that.mp3").toUri().toString());
-    public static AudioClip excellentVoice = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "booker", "excellent.mp3").toUri().toString());
-    public static AudioClip audioClipFit = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "booker", "fit.mp3").toUri().toString());
-    public static AudioClip audioClipEnemyHit = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "booker", "enemy_hit.mp3").toUri().toString());
-    public static AudioClip audioClipEnemyHit2 = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "booker", "enemy_hit2.mp3").toUri().toString());
-    public static AudioClip audioClipEnemyHit3 = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "booker", "enemy_hit3.mp3").toUri().toString());
-    public static AudioClip feelBetterVoice = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "booker", "I_already_feel_better.mp3").toUri().toString());
-    public static AudioClip audioClipLetsGo = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "booker", "let's_go_house_wait_us.mp3").toUri().toString());
-    public static AudioClip audioClipEnergetic = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "booker", "energetic_hmm.mp3").toUri().toString());
-    public static AudioClip audioClipNewEnergetic = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "booker", "new_energetic.mp3").toUri().toString());
+    public static MediaPlayer feelsBetter = new MediaPlayer(new Media(Paths.get("resources", "sounds", "voices",
+            "booker", "feelsBetter.mp3").toUri().toString()));
+    public static AudioClip great = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "booker", "great.mp3").toUri().toString());
+    public static AudioClip willWork = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "booker", "willWork.mp3").toUri().toString());
+    public static AudioClip bookerHit = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "booker", "hit.mp3").toUri().toString());
+    public static AudioClip bookerHit2 = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "booker", "hit2.mp3").toUri().toString());
+    public static AudioClip bookerHit3 = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "booker", "hit3.mp3").toUri().toString());
+    public static AudioClip feelingBetter = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "booker", "feelingBetter.mp3").toUri().toString());
+    public static AudioClip letsGo = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "booker", "letsGo.mp3").toUri().toString());
+    public static AudioClip energetic = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "booker", "energetic.mp3").toUri().toString());
+    public static AudioClip newEnergetic = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "booker", "newEnergetic.mp3").toUri().toString());
 
 
     //Elizabeth
     public static MediaPlayer elizabethMediaPlayer;
-    public static AudioClip audioClipAmmo = new AudioClip(Paths.get("resources", "sounds", "voice",
+    public static AudioClip audioClipAmmo = new AudioClip(Paths.get("resources", "sounds", "voices",
             "elizabeth", "ammo.mp3").toUri().toString());
-    public static AudioClip audioClipAmmo2 = new AudioClip(Paths.get("resources", "sounds", "voice",
+    public static AudioClip audioClipAmmo2 = new AudioClip(Paths.get("resources", "sounds", "voices",
             "elizabeth", "ammo2.mp3").toUri().toString());
-    public static AudioClip audioClipBookerCatch = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "elizabeth", "booker_catch.mp3").toUri().toString());
-    public static AudioClip audioClipBookerCatch2 = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "elizabeth", "booker_catch2.mp3").toUri().toString());
-    public static AudioClip audioClipBookerCatch3 = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "elizabeth", "booker_catch3.mp3").toUri().toString());
-    public static AudioClip audioClipEmpty = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "elizabeth", "I_am_empty.mp3").toUri().toString());
-    public static AudioClip audioClipAnything = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "elizabeth", "I_didn't_find_anything.mp3").toUri().toString());
-    public static AudioClip audioClipAnymore = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "elizabeth", "I_haven't_anything_anymore.mp3").toUri().toString());
-    public static AudioClip audioClipAnother = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "elizabeth", "I_would_try_find_another.mp3").toUri().toString());
+    public static AudioClip bookerCatch = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "elizabeth", "bookerCatch.mp3").toUri().toString());
+    public static AudioClip bookerCatch2 = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "elizabeth", "bookerCatch2.mp3").toUri().toString());
+    public static AudioClip bookerCatch3 = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "elizabeth", "bookerCatch3.mp3").toUri().toString());
+    public static AudioClip empty = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "elizabeth", "empty.mp3").toUri().toString());
+    public static AudioClip foundNothing = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "elizabeth", "foundNothing.mp3").toUri().toString());
+    public static AudioClip haveNothing = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "elizabeth", "haveNothing.mp3").toUri().toString());
+    public static AudioClip tryToFind = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "elizabeth", "tryToFind.mp3").toUri().toString());
 
 
     //Enemies
-    public static AudioClip audioClipILostHim = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "I_lost_him.mp3").toUri().toString());
-    public static AudioClip audioClipILostHim2 = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "I_lost_him2.mp3").toUri().toString());
-    public static AudioClip audioClipWhereHeGoes = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "where_he_goes.mp3").toUri().toString());
-    public static AudioClip audioClipJustBeenHere = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "just_been_here.mp3").toUri().toString());
-    public static AudioClip audioClipHeIsGone = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "he_is_gone.mp3").toUri().toString());
-    public static AudioClip audioClipHeHasGone = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "he_has_gone.mp3").toUri().toString());
+    public static AudioClip lostHim = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "lostHim.mp3").toUri().toString());
+    public static AudioClip lostHim2 = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "lostHim2.mp3").toUri().toString());
+    public static AudioClip heHasGone3 = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "heHasGone3.mp3").toUri().toString());
+    public static AudioClip wereHere = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "wereHere.mp3").toUri().toString());
+    public static AudioClip heHasGone = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "heHasGone.mp3").toUri().toString());
+    public static AudioClip heHasGone2 = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "heHasGone2.mp3").toUri().toString());
 
-    public static AudioClip audioClipDontGoAway = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "don't_go_away.mp3").toUri().toString());
-    public static AudioClip audioClipFire = new AudioClip(Paths.get("resources", "sounds", "voice",
+    public static AudioClip wontGoAway = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "wontGoAway.mp3").toUri().toString());
+    public static AudioClip audioClipFire = new AudioClip(Paths.get("resources", "sounds", "voices",
             "enemies", "fire.mp3").toUri().toString());
-    public static AudioClip audioClipHeAlreadyHere = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "he_already_here.mp3").toUri().toString());
-    public static AudioClip audioClipThrowWeapon = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "throw_weapon_out.mp3").toUri().toString());
-    public static AudioClip audioClipYouDieHere = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "you_die_here.mp3").toUri().toString());
-    public static AudioClip audioClipInFight = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "in_fight.mp3").toUri().toString());
-    public static AudioClip audioClipTheyHere = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "I_knew_that_they_here.mp3").toUri().toString());
-    public static AudioClip audioClipTakeThem = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "take_them.mp3").toUri().toString());
-
-    public static AudioClip audioClipCamper = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "camper.wav").toUri().toString());
-    public static AudioClip audioClipDie = new AudioClip(Paths.get("resources", "sounds", "voice",
+    public static AudioClip heIsHere = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "heIsHere.mp3").toUri().toString());
+    public static AudioClip getDownWeapon = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "getDownWeapon.mp3").toUri().toString());
+    public static AudioClip die = new AudioClip(Paths.get("resources", "sounds", "voices",
             "enemies", "die.mp3").toUri().toString());
-    public static AudioClip audioClipDie2 = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "die2.mp3").toUri().toString());
-    public static AudioClip audioClipHit = new AudioClip(Paths.get("resources", "sounds", "voice",
+    public static AudioClip attack = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "attack.mp3").toUri().toString());
+    public static AudioClip theyAreHere = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "theyAreHere.mp3").toUri().toString());
+    public static AudioClip takeThem = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "takeThem.mp3").toUri().toString());
+
+    public static AudioClip audioClipCamper = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "camper.wav").toUri().toString());
+    public static AudioClip death = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "death.mp3").toUri().toString());
+    public static AudioClip death2 = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "death2.mp3").toUri().toString());
+    public static AudioClip audioClipHit = new AudioClip(Paths.get("resources", "sounds", "voices",
             "enemies", "hit.mp3").toUri().toString());
-    public static AudioClip audioClipHit2 = new AudioClip(Paths.get("resources", "sounds", "voice",
+    public static AudioClip audioClipHit2 = new AudioClip(Paths.get("resources", "sounds", "voices",
             "enemies", "hit2.mp3").toUri().toString());
-    public static AudioClip audioClipHit3 = new AudioClip(Paths.get("resources", "sounds", "voice",
+    public static AudioClip audioClipHit3 = new AudioClip(Paths.get("resources", "sounds", "voices",
             "enemies", "hit3.mp3").toUri().toString());
 
-    public static AudioClip enemyVoice = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "can_you_shoot.mp3").toUri().toString());
-    public static AudioClip enemyVoice2 = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "die_already.mp3").toUri().toString());
-    public static AudioClip enemyVoice3 = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "don't_care_about_bullets.mp3").toUri().toString());
-    public static AudioClip enemyVoice4 = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "keep_shooting.mp3").toUri().toString());
-    public static AudioClip enemyVoice5 = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "kill_me_if_you_can.mp3").toUri().toString());
-    public static AudioClip enemyVoice6 = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "that_all_you_can.mp3").toUri().toString());
-    public static AudioClip enemyVoice7 = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "who_are_you.mp3").toUri().toString());
-    public static AudioClip enemyVoice8 = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "you_a_stupid.mp3").toUri().toString());
-    public static AudioClip enemyVoice9 = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "take_him_bullets.mp3").toUri().toString());
-    public static AudioClip enemyVoice10 = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "keep_fire.mp3").toUri().toString());
+    public static AudioClip canYouShoot = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "canYouShoot.mp3").toUri().toString());
+    public static AudioClip dieAlready = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "dieAlready.mp3").toUri().toString());
+    public static AudioClip dontSpareBullets = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "dontSpareBullets.mp3").toUri().toString());
+    public static AudioClip keepShooting2 = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "keepShooting2.mp3").toUri().toString());
+    public static AudioClip killMe = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "killMe.mp3").toUri().toString());
+    public static AudioClip allYouCan = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "allYouCan.mp3").toUri().toString());
+    public static AudioClip whoAreYou = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "whoAreYou.mp3").toUri().toString());
+    public static AudioClip stupid = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "stupid.mp3").toUri().toString());
+    public static AudioClip giveHimBullets = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "giveHimBullets.mp3").toUri().toString());
+    public static AudioClip keepShooting = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "keepShooting.mp3").toUri().toString());
 
-    public static AudioClip audioClipIEmpty = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "I_empty.mp3").toUri().toString());
-    public static AudioClip audioClipINeedClip = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "I_need_clip.mp3").toUri().toString());
-    public static AudioClip audioClipINeedClip2 = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "I_need_clip2.mp3").toUri().toString());
-    public static AudioClip audioClipIReloading = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "I_am_reloading.mp3").toUri().toString());
-    public static AudioClip audioClipAmmoRunOut = new AudioClip(Paths.get("resources", "sounds", "voice",
-            "enemies", "ammo_run_out.mp3").toUri().toString());
+    public static AudioClip noAmmo2 = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "noAmmo2.mp3").toUri().toString());
+    public static AudioClip needAmmo = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "needAmmo.mp3").toUri().toString());
+    public static AudioClip needAmmo2 = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "needAmmo.mp3").toUri().toString());
+    public static AudioClip reloading = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "reloading.mp3").toUri().toString());
+    public static AudioClip noAmmo = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "noAmmo.mp3").toUri().toString());
 
 
     //fx
-    public static AudioClip pistolShoot = new AudioClip(Paths.get("resources", "sounds", "fx",
-            "weapon", "pistol_shoot.mp3").toUri().toString());
-    public static AudioClip machineGunShoot = new AudioClip(Paths.get("resources", "sounds", "fx",
-            "weapon", "machine_gun_shoot.mp3").toUri().toString());
+    public static AudioClip pistolShot = new AudioClip(Paths.get("resources", "sounds", "fx",
+            "weapons", "pistolShot.mp3").toUri().toString());
+    public static AudioClip machineGunShot = new AudioClip(Paths.get("resources", "sounds", "fx",
+            "weapons", "machineGunShot.mp3").toUri().toString());
     public static MediaPlayer pistolReload = new MediaPlayer(new Media(Paths.get("resources", "sounds", "fx",
-            "weapon", "pistol_reload.mp3").toUri().toString()));
+            "weapons", "pistolReload.mp3").toUri().toString()));
     public static MediaPlayer machineGunReload = new MediaPlayer(new Media(Paths.get("resources", "sounds", "fx",
-            "weapon", "machine_gun_reload.mp3").toUri().toString()));
-    public static MediaPlayer rpgShootAndReload = new MediaPlayer(new Media(Paths.get("resources", "sounds", "fx",
-            "weapon", "rpgShootAndReload.mp3").toUri().toString()));
+            "weapons", "machineGunReload.mp3").toUri().toString()));
+    public static MediaPlayer rpgShotWithReload = new MediaPlayer(new Media(Paths.get("resources", "sounds", "fx",
+            "weapons", "rpgShotWithReload.mp3").toUri().toString()));
     public static AudioClip rpgExplosion = new AudioClip(Paths.get("resources", "sounds", "fx",
-            "weapon", "rpgExplosion.mp3").toUri().toString());
+            "weapons", "rpgExplosion.mp3").toUri().toString());
 
-    public static AudioClip audioClipFight = new AudioClip(Paths.get("resources", "sounds", "fx",
-            "infighting.mp3").toUri().toString());
+    public static AudioClip closeCombat = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "booker", "closeCombat.mp3").toUri().toString());
 
     static AudioClip audioClipOpenMenu = new AudioClip(Paths.get("resources", "sounds", "fx",
             "vendingMachine", "openMenu.mp3").toUri().toString());
@@ -155,18 +153,18 @@ public class Sounds {
     static AudioClip audioClipPurchase = new AudioClip(Paths.get("resources", "sounds", "fx",
             "vendingMachine", "purchase.mp3").toUri().toString());
 
-    public static AudioClip devilKissShoot = new AudioClip(Paths.get("resources", "sounds", "fx",
-            "energetics", "fireBall.mp3").toUri().toString());
-    public static AudioClip killByLightning = new AudioClip(Paths.get("resources", "sounds", "fx",
-            "energetics", "shock_die.mp3").toUri().toString());
-    public static AudioClip hypnotist = new AudioClip(Paths.get("resources", "sounds", "fx",
-            "energetics", "hypnotist.mp3").toUri().toString());
-    public static AudioClip changeOnDevilKiss = new AudioClip(Paths.get("resources", "sounds", "fx",
-            "energetics", "changeOnDevilKiss.mp3").toUri().toString());
-    public static AudioClip changeOnElectricity = new AudioClip(Paths.get("resources", "sounds", "fx",
-            "energetics", "changeOnElectricity.mp3").toUri().toString());
-    public static AudioClip changeOnHypnotist = new AudioClip(Paths.get("resources", "sounds", "fx",
-            "energetics", "changeOnHypnotist.mp3").toUri().toString());
+    public static AudioClip devilKissShot = new AudioClip(Paths.get("resources", "sounds", "fx",
+            "energetics", "devilKissShot.mp3").toUri().toString());
+    public static AudioClip electricityDeath = new AudioClip(Paths.get("resources", "sounds", "fx",
+            "energetics", "electricityDeath.mp3").toUri().toString());
+    public static AudioClip hypnosis = new AudioClip(Paths.get("resources", "sounds", "fx",
+            "energetics", "hypnosis.mp3").toUri().toString());
+    public static AudioClip changeToDevilKiss = new AudioClip(Paths.get("resources", "sounds", "fx",
+            "energetics", "changeToDevilKiss.mp3").toUri().toString());
+    public static AudioClip changeToElectricity = new AudioClip(Paths.get("resources", "sounds", "fx",
+            "energetics", "changeToElectricity.mp3").toUri().toString());
+    public static AudioClip changeToHypnosis = new AudioClip(Paths.get("resources", "sounds", "fx",
+            "energetics", "changeToHypnosis.mp3").toUri().toString());
 
     //boss
     public static AudioClip bossTromp = new AudioClip(Paths.get("resources", "sounds", "fx",

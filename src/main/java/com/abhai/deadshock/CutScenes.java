@@ -4,7 +4,7 @@ import com.abhai.deadshock.characters.enemies.Boss;
 import com.abhai.deadshock.characters.Elizabeth;
 import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.levels.Level;
-import com.abhai.deadshock.weapon.Weapon;
+import com.abhai.deadshock.weapons.Weapon;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.animation.FadeTransition;
 import javafx.scene.input.KeyCode;
@@ -42,7 +42,7 @@ public class CutScenes {
         Game.stage.setWidth(1235);
         switch (Game.levelNumber) {
             case Level.FIRST_LEVEL -> {
-                playVideo("meeting_Elizabeth.mp4");
+                playVideo("elizabeth.mp4");
                 video.setOnEndOfMedia( () -> {
                     if (!actionPerformed) {
                         actionPerformed = true;
@@ -59,7 +59,7 @@ public class CutScenes {
                 });
             }
             case Level.SECOND_LEVEL -> {
-                playVideo("murder_Comstock.mp4");
+                playVideo("comstock.mp4");
                 video.setOnEndOfMedia( () -> {
                     if (!actionPerformed) {
                         actionPerformed = true;
@@ -114,8 +114,7 @@ public class CutScenes {
     }
 
     private void endCutScene1() {
-        if (Game.tutorial != null)
-            Game.tutorial.deleteText();
+        Game.tutorial.deleteText();
         Game.levelNumber++;
         Game.level.changeLevel();
         Game.weapon.changeLevel(Game.levelNumber);
@@ -124,7 +123,7 @@ public class CutScenes {
         Game.appRoot.getChildren().remove(videoView);
         videoView = null;
 
-        Sounds.bookerVoice.stop();
+        Sounds.feelsBetter.stop();
         Game.level.createLevels();
         Game.createEnemies();
 
@@ -147,6 +146,7 @@ public class CutScenes {
         Game.appRoot.getChildren().remove(videoView);
         videoView = null;
 
+        Game.tutorial.deleteText();
         Game.levelNumber++;
         Game.level.changeLevel();
         Game.level.createLevels();
@@ -221,7 +221,7 @@ public class CutScenes {
             saves.setCanChooseRPG(Game.weapon.isCanChooseRPG());
             saves.setCanChooseDevilKiss(Game.energetic.isCanChooseDevilKiss());
             saves.setCanChooseElectricity(Game.energetic.isCanChooseElectricity());
-            saves.setCanChooseHypnotist(Game.energetic.isCanChooseHypnotist());
+            saves.setCanChooseHypnosis(Game.energetic.isCanChooseHypnosis());
 
             fileWriter.write(mapper.writeValueAsString(saves));
         } catch (Exception e) {

@@ -6,9 +6,9 @@ import com.abhai.deadshock.characters.enemies.EnemyData;
 import com.abhai.deadshock.energetics.Energetic;
 import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.levels.Level;
-import com.abhai.deadshock.weapon.Bullet;
-import com.abhai.deadshock.weapon.EnemyBullet;
-import com.abhai.deadshock.weapon.Weapon;
+import com.abhai.deadshock.weapons.Bullet;
+import com.abhai.deadshock.weapons.EnemyBullet;
+import com.abhai.deadshock.weapons.Weapon;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.animation.AnimationTimer;
@@ -32,8 +32,8 @@ import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
 
 
 public class Game extends Application {
-    private static Path elizabethSoundPath = Paths.get("resources", "sounds", "voice", "elizabeth", "oh_booker.mp3");
-    private static Path bookerSoundPath = Paths.get("resources", "sounds", "voice", "booker", "your_mother.mp3");
+    private static Path elizabethSoundPath = Paths.get("resources", "sounds", "voices", "elizabeth", "booker.mp3");
+    private static Path bookerSoundPath = Paths.get("resources", "sounds", "voices", "booker", "fuck.mp3");
 
     public static ArrayList<Supply> supplies = new ArrayList<>();
     public static ArrayList<Block> blocks = new ArrayList<>();
@@ -173,7 +173,7 @@ public class Game extends Application {
                     weapon.setWeaponClip(saves.getPistolClip());
                     weapon.setBullets(saves.getPistolBullets());
                 }
-                energetic = new Energetic(saves.isCanChooseDevilKiss(), saves.isCanChooseElectricity(), saves.isCanChooseHypnotist());
+                energetic = new Energetic(saves.isCanChooseDevilKiss(), saves.isCanChooseElectricity(), saves.isCanChooseHypnosis());
                 boss = new Boss(BLOCK_SIZE * 10, BLOCK_SIZE * 14);
             }
         }
@@ -363,7 +363,7 @@ public class Game extends Application {
         Controller.update();
         booker.update();
 
-        if (!energetic.getName().equals(""))
+        if (energetic.getType() != null)
             energetic.update();
         if (levelNumber > Level.FIRST_LEVEL)
             elizabeth.update();
@@ -382,9 +382,9 @@ public class Game extends Application {
                 Sounds.elizabethMediaPlayer.play();
 
                 Sounds.elizabethMediaPlayer.setOnEndOfMedia(() -> {
-                    Sounds.bookerVoice = new MediaPlayer(new Media(bookerSoundPath.toUri().toString()));
-                    Sounds.bookerVoice.setVolume(Game.menu.voiceSlider.getValue() / 100);
-                    Sounds.bookerVoice.play();
+                    Sounds.feelsBetter = new MediaPlayer(new Media(bookerSoundPath.toUri().toString()));
+                    Sounds.feelsBetter.setVolume(Game.menu.voiceSlider.getValue() / 100);
+                    Sounds.feelsBetter.play();
                 });
             }
             boss.setTrompInterval(boss.getTrompInterval() + 1);

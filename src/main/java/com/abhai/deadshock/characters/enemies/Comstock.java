@@ -8,8 +8,8 @@ import com.abhai.deadshock.levels.BlockType;
 import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.Sounds;
 import com.abhai.deadshock.Supply;
-import com.abhai.deadshock.weapon.ComstockWeapon;
-import com.abhai.deadshock.weapon.EnemyWeapon;
+import com.abhai.deadshock.weapons.ComstockWeapon;
+import com.abhai.deadshock.weapons.EnemyWeapon;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
@@ -107,7 +107,7 @@ public class Comstock extends Enemy {
                 setTranslateX(getTranslateX() - getScaleX());
                 if (Game.booker.isBooleanVelocityX()) {
                     Game.booker.setHP(Game.booker.getHP() - Game.booker.getEnemyDogfight());
-                    Sounds.audioClipFight.play(Game.menu.fxSlider.getValue() / 100);
+                    Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
                     Game.booker.velocity = Game.booker.velocity.add(getScaleX() * 15, 0);
                     Game.booker.setBooleanVelocityX(false);
                 }
@@ -160,7 +160,7 @@ public class Comstock extends Enemy {
                     setTranslateY(getTranslateY() - 1);
                     if (booleanVelocity) {
                         Game.booker.setHP(Game.booker.getHP() - Game.booker.getEnemyDogfight());
-                        Sounds.audioClipFight.play(Game.menu.fxSlider.getValue() / 100);
+                        Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
                         velocity = velocity.add(getScaleX() * 5, -24);
                         booleanVelocity = false;
                     }
@@ -168,7 +168,7 @@ public class Comstock extends Enemy {
                     setTranslateY(getTranslateY() + 1);
                     if (Game.booker.isBooleanVelocityY()) {
                         HP -= Game.booker.getCharacterDogFight();
-                        Sounds.audioClipFight.play(Game.menu.fxSlider.getValue() / 100);
+                        Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
                         Game.booker.velocity = Game.booker.velocity.add(0, -22);
                         Game.booker.setBooleanVelocityY(false);
                     }
@@ -207,14 +207,15 @@ public class Comstock extends Enemy {
         if (pickUpSupply) {
             if (Game.booker.getBoundsInParent().intersects(getBoundsInParent())) {
                 if (supply.getSupply().equals("medicine")) {
-                    Sounds.doctorVoice.play(Game.menu.voiceSlider.getValue() / 100);
+                    Sounds.feelsBetter.setVolume(Game.menu.voiceSlider.getValue() / 100);
+                    Sounds.feelsBetter.play();
                     for (int count = 0; count < Game.booker.getMedicineCount(); count++)
                         if (Game.booker.getHP() < 100)
                             Game.booker.setHP(Game.booker.getHP() + 1);
                         else
                             break;
                 } else {
-                    Sounds.excellentVoice.play(Game.menu.voiceSlider.getValue() / 100);
+                    Sounds.great.play(Game.menu.voiceSlider.getValue() / 100);
                     Game.weapon.setBullets(Game.weapon.getBullets() + Game.booker.getBulletCount());
                 }
                 Game.gameRoot.getChildren().remove(this);
@@ -269,22 +270,22 @@ public class Comstock extends Enemy {
             rand = (byte) (Math.random() * 6);
             switch (rand) {
                 case 0:
-                    Sounds.audioClipILostHim.play(Game.menu.voiceSlider.getValue() / 100);
+                    Sounds.lostHim.play(Game.menu.voiceSlider.getValue() / 100);
                     break;
                 case 1:
-                    Sounds.audioClipWhereHeGoes.play(Game.menu.voiceSlider.getValue() / 100);
+                    Sounds.heHasGone3.play(Game.menu.voiceSlider.getValue() / 100);
                     break;
                 case 2:
-                    Sounds.audioClipJustBeenHere.play(Game.menu.voiceSlider.getValue() / 100);
+                    Sounds.wereHere.play(Game.menu.voiceSlider.getValue() / 100);
                     break;
                 case 3:
-                    Sounds.audioClipHeIsGone.play(Game.menu.voiceSlider.getValue() / 100);
+                    Sounds.heHasGone.play(Game.menu.voiceSlider.getValue() / 100);
                     break;
                 case 4:
-                    Sounds.audioClipILostHim2.play(Game.menu.voiceSlider.getValue() / 100);
+                    Sounds.lostHim2.play(Game.menu.voiceSlider.getValue() / 100);
                     break;
                 case 5:
-                    Sounds.audioClipHeHasGone.play(Game.menu.voiceSlider.getValue() / 100);
+                    Sounds.heHasGone2.play(Game.menu.voiceSlider.getValue() / 100);
                     break;
             }
             booleanVoice = false;
@@ -297,31 +298,31 @@ public class Comstock extends Enemy {
                 rand = (byte) (Math.random() * 6);
                 switch (rand) {
                     case 0:
-                        Sounds.audioClipDontGoAway.play(Game.menu.voiceSlider.getValue() / 100);
+                        Sounds.wontGoAway.play(Game.menu.voiceSlider.getValue() / 100);
                         break;
                     case 1:
                         Sounds.audioClipFire.play(Game.menu.voiceSlider.getValue() / 100);
                         break;
                     case 2:
-                        Sounds.audioClipHeAlreadyHere.play(Game.menu.voiceSlider.getValue() / 100);
+                        Sounds.heIsHere.play(Game.menu.voiceSlider.getValue() / 100);
                         break;
                     case 3:
-                        Sounds.audioClipThrowWeapon.play(Game.menu.voiceSlider.getValue() / 100);
+                        Sounds.getDownWeapon.play(Game.menu.voiceSlider.getValue() / 100);
                         break;
                     case 4:
-                        Sounds.audioClipYouDieHere.play(Game.menu.voiceSlider.getValue() / 100);
+                        Sounds.die.play(Game.menu.voiceSlider.getValue() / 100);
                         break;
                     case 5:
-                        Sounds.audioClipInFight.play(Game.menu.voiceSlider.getValue() / 100);
+                        Sounds.attack.play(Game.menu.voiceSlider.getValue() / 100);
                         break;
                 }
             }
             else {
                 rand = (byte) (Math.random() * 2);
                 if (rand == 0)
-                    Sounds.audioClipTheyHere.play(Game.menu.voiceSlider.getValue() / 100);
+                    Sounds.theyAreHere.play(Game.menu.voiceSlider.getValue() / 100);
                 else
-                    Sounds.audioClipTakeThem.play(Game.menu.voiceSlider.getValue() / 100);
+                    Sounds.takeThem.play(Game.menu.voiceSlider.getValue() / 100);
             }
             booleanVoice = false;
         }
@@ -331,34 +332,34 @@ public class Comstock extends Enemy {
         rand = (byte) (Math.random() * 10);
         switch (rand) {
             case 0:
-                Sounds.enemyVoice.play(Game.menu.voiceSlider.getValue() / 100);
+                Sounds.canYouShoot.play(Game.menu.voiceSlider.getValue() / 100);
                 break;
             case 1:
-                Sounds.enemyVoice2.play(Game.menu.voiceSlider.getValue() / 100);
+                Sounds.dieAlready.play(Game.menu.voiceSlider.getValue() / 100);
                 break;
             case 2:
-                Sounds.enemyVoice3.play(Game.menu.voiceSlider.getValue() / 100);
+                Sounds.dontSpareBullets.play(Game.menu.voiceSlider.getValue() / 100);
                 break;
             case 3:
-                Sounds.enemyVoice4.play(Game.menu.voiceSlider.getValue() / 100);
+                Sounds.keepShooting2.play(Game.menu.voiceSlider.getValue() / 100);
                 break;
             case 4:
-                Sounds.enemyVoice5.play(Game.menu.voiceSlider.getValue() / 100);
+                Sounds.killMe.play(Game.menu.voiceSlider.getValue() / 100);
                 break;
             case 5:
-                Sounds.enemyVoice6.play(Game.menu.voiceSlider.getValue() / 100);
+                Sounds.allYouCan.play(Game.menu.voiceSlider.getValue() / 100);
                 break;
             case 6:
-                Sounds.enemyVoice7.play(Game.menu.voiceSlider.getValue() / 100);
+                Sounds.whoAreYou.play(Game.menu.voiceSlider.getValue() / 100);
                 break;
             case 7:
-                Sounds.enemyVoice8.play(Game.menu.voiceSlider.getValue() / 100);
+                Sounds.stupid.play(Game.menu.voiceSlider.getValue() / 100);
                 break;
             case 8:
-                Sounds.enemyVoice9.play(Game.menu.voiceSlider.getValue() / 100);
+                Sounds.giveHimBullets.play(Game.menu.voiceSlider.getValue() / 100);
                 break;
             case 9:
-                Sounds.enemyVoice10.play(Game.menu.voiceSlider.getValue() / 100);
+                Sounds.keepShooting.play(Game.menu.voiceSlider.getValue() / 100);
                 break;
         }
         voiceInterval = 0;

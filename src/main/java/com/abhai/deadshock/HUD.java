@@ -17,11 +17,11 @@ import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
 public class HUD extends Pane {
     private Path devilKissImagePath = Paths.get("resources", "images", "hud", "devilKiss.png");
     private Path electricityImagePath = Paths.get("resources", "images", "hud", "electricity.png");
-    private Path hypnotistImagePath = Paths.get("resources", "images", "hud", "hypnotist.png");
+    private Path hypnosisImagePath = Paths.get("resources", "images", "hud", "hypnosis.png");
 
     private ImageView devilKiss = new ImageView(new Image(devilKissImagePath.toUri().toString()));
     private ImageView electricity = new ImageView(new Image(electricityImagePath.toUri().toString()));
-    private ImageView hypnotist = new ImageView(new Image(hypnotistImagePath.toUri().toString()));
+    private ImageView hypnosis = new ImageView(new Image(hypnosisImagePath.toUri().toString()));
     private ImageView money;
 
     private Text textBullet = new Text();
@@ -69,12 +69,12 @@ public class HUD extends Pane {
         electricity.setTranslateY(57);
         electricity.setVisible(false);
 
-        hypnotist.setTranslateY(57);
-        hypnotist.setVisible(false);
+        hypnosis.setTranslateY(57);
+        hypnosis.setVisible(false);
 
         Path hpImagePath = Paths.get("resources", "images", "hud", "hpAndSalt.png");
         ImageView hp_and_salt = new ImageView(new Image(hpImagePath.toUri().toString()));
-        getChildren().addAll(HP, salt, hp_and_salt, devilKiss, electricity, hypnotist, bulletPane, money, textMoney);
+        getChildren().addAll(HP, salt, hp_and_salt, devilKiss, electricity, hypnosis, bulletPane, money, textMoney);
         Game.appRoot.getChildren().add(this);
         setVisible(false);
     }
@@ -93,8 +93,8 @@ public class HUD extends Pane {
         return electricity;
     }
 
-    public ImageView getHypnotist() {
-        return hypnotist;
+    public ImageView getHypnosis() {
+        return hypnosis;
     }
 
     void setMarikLevel() {

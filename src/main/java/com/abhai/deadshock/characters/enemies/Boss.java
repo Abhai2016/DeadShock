@@ -118,7 +118,7 @@ public class Boss extends Pane {
                         Game.booker.setHP(Game.booker.getHP() - Game.booker.getEnemyDogfight() / 2);
                     else
                         Game.booker.setHP(Game.booker.getHP() - 5);
-                    Sounds.audioClipFight.play(Game.menu.fxSlider.getValue() / 100);
+                    Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
                     Game.booker.velocity = Game.booker.velocity.add(- getScaleX() * 15, 0);
                     Game.booker.setBooleanVelocityX(false);
                 }

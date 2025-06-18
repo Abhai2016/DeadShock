@@ -68,10 +68,10 @@ public class Enemy extends Pane {
             byte randVoice = (byte) (Math.random() * 2);
             switch (randVoice) {
                 case 0:
-                    Sounds.audioClipDie.play(Game.menu.fxSlider.getValue() / 100);
+                    Sounds.death.play(Game.menu.fxSlider.getValue() / 100);
                     break;
                 case 1:
-                    Sounds.audioClipDie2.play(Game.menu.fxSlider.getValue() / 100);
+                    Sounds.death2.play(Game.menu.fxSlider.getValue() / 100);
                     break;
             }
             playVoice = false;

@@ -107,21 +107,14 @@ public class Elizabeth extends Pane {
     private void playVoice() {
         if (Game.levelNumber == Level.SECOND_LEVEL)
             if (startLevel && getTranslateX() > 100) {
-                Path freedomSoundPath = Paths.get("resources", "sounds", "voice", "elizabeth", "freedom.mp3");
+                Path freedomSoundPath = Paths.get("resources", "sounds", "voices", "elizabeth", "freedom.mp3");
                 Sounds.elizabethMediaPlayer = new MediaPlayer(new Media(freedomSoundPath.toUri().toString()));
                 Sounds.elizabethMediaPlayer.setVolume(Game.menu.voiceSlider.getValue() / 100);
                 Sounds.elizabethMediaPlayer.play();
-                Sounds.elizabethMediaPlayer.setOnEndOfMedia( () -> {
-                    Path ammoSoundPath = Paths.get("resources", "sounds", "voice", "do_you_have_ammo.mp3");
-                    Sounds.elizabethMediaPlayer = new MediaPlayer(new Media(ammoSoundPath.toUri().toString()));
-                    Sounds.elizabethMediaPlayer.setVolume(Game.menu.voiceSlider.getValue() / 100);
-                    Sounds.elizabethMediaPlayer.play();
-                } );
-
                 startLevel = false;
             } else if (getTranslateX() > Block.BLOCK_SIZE * 150 && playVoiceWhereYouFrom) {
                 canMove = false;
-                Path soundPath = Paths.get("resources", "sounds", "voice", "where_are_you_from.mp3");
+                Path soundPath = Paths.get("resources", "sounds", "voices", "elizabeth", "whereAreYouFrom.mp3");
                 Sounds.elizabethMediaPlayer = new MediaPlayer(new Media(
                         soundPath.toUri().toString()));
                 Sounds.elizabethMediaPlayer.setVolume(Game.menu.voiceSlider.getValue() / 100);
@@ -139,13 +132,13 @@ public class Elizabeth extends Pane {
         rand = (byte) (Math.random() * 3);
         switch (rand) {
             case 0:
-                Sounds.audioClipBookerCatch.play(Game.menu.voiceSlider.getValue() / 100);
+                Sounds.bookerCatch.play(Game.menu.voiceSlider.getValue() / 100);
                 break;
             case 1:
-                Sounds.audioClipBookerCatch2.play(Game.menu.voiceSlider.getValue() / 100);
+                Sounds.bookerCatch2.play(Game.menu.voiceSlider.getValue() / 100);
                 break;
             case 2:
-                Sounds.audioClipBookerCatch3.play(Game.menu.voiceSlider.getValue() / 100);
+                Sounds.bookerCatch3.play(Game.menu.voiceSlider.getValue() / 100);
                 break;
         }
         supplyInterval = 0;
@@ -167,16 +160,16 @@ public class Elizabeth extends Pane {
                 rand = (byte) (Math.random() * 4);
                 switch (rand) {
                     case 0:
-                        Sounds.audioClipEmpty.play(Game.menu.voiceSlider.getValue() / 100);
+                        Sounds.empty.play(Game.menu.voiceSlider.getValue() / 100);
                         break;
                     case 1:
-                        Sounds.audioClipAnything.play(Game.menu.voiceSlider.getValue() / 100);
+                        Sounds.foundNothing.play(Game.menu.voiceSlider.getValue() / 100);
                         break;
                     case 2:
-                        Sounds.audioClipAnymore.play(Game.menu.voiceSlider.getValue() / 100);
+                        Sounds.haveNothing.play(Game.menu.voiceSlider.getValue() / 100);
                         break;
                     case 3:
-                        Sounds.audioClipAnother.play(Game.menu.voiceSlider.getValue() / 100);
+                        Sounds.tryToFind.play(Game.menu.voiceSlider.getValue() / 100);
                         break;
                 }
                 emptySupplyInterval = 0;

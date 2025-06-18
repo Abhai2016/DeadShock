@@ -1,4 +1,4 @@
-package com.abhai.deadshock.weapon;
+package com.abhai.deadshock.weapons;
 
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.Sounds;
@@ -12,7 +12,7 @@ public class RedEyeWeapon extends EnemyWeapon {
     @Override
     public void shoot(double scaleX, double x, double y) {
         if (shootInterval > 20 && clip > 0) {
-            Sounds.machineGunShoot.play(Game.menu.fxSlider.getValue() / 100);
+            Sounds.machineGunShot.play(Game.menu.fxSlider.getValue() / 100);
             clip--;
             shootInterval = 0;
             Game.enemyBullets.add(new EnemyBullet("red_eye", scaleX, x, y));

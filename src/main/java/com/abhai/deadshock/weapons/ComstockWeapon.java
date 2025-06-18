@@ -1,4 +1,4 @@
-package com.abhai.deadshock.weapon;
+package com.abhai.deadshock.weapons;
 
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.Sounds;
@@ -12,7 +12,7 @@ public class ComstockWeapon extends EnemyWeapon {
     @Override
     public void shoot(double scaleX, double x, double y) {
         if (shootInterval > 30 && clip > 0) {
-            Sounds.pistolShoot.play(Game.menu.fxSlider.getValue() / 100);
+            Sounds.pistolShot.play(Game.menu.fxSlider.getValue() / 100);
             clip--;
             shootInterval = 0;
             Game.enemyBullets.add(new EnemyBullet("comstock", scaleX, x, y));
