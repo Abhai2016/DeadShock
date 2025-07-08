@@ -1,10 +1,10 @@
-package com.abhai.deadshock.weapons;
+package com.abhai.deadshock.weapons.bullets;
 
 
 import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.levels.Block;
-import com.abhai.deadshock.Sounds;
+import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.levels.BlockType;
 import com.abhai.deadshock.levels.Level;
 import javafx.geometry.Point2D;
@@ -14,13 +14,13 @@ import javafx.scene.image.ImageView;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-class RpgBullet extends Bullet {
+public class RpgBullet extends Bullet {
     private static byte RPG_BULLET_SPEED = 10;
 
     private Point2D point2D = new Point2D(0, 0);
     private boolean isExplosion = false;
 
-    RpgBullet() {
+    public RpgBullet() {
         direction = true;
         if (Game.booker.getScaleX() < 0) {
             direction = false;
@@ -102,7 +102,6 @@ class RpgBullet extends Bullet {
                 for (Enemy enemy : Game.enemies)
                     if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
                         enemy.setHP(enemy.getHP() - Game.weapon.getRpgDamage());
-                        enemy.setPlayVoice(true);
                         enemy.playHitVoice();
                         createExplosion();
                         return;

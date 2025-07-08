@@ -1,8 +1,9 @@
-package com.abhai.deadshock;
+package com.abhai.deadshock.utils;
 
+import com.abhai.deadshock.Game;
 import javafx.scene.input.KeyCode;
 
-class Controller {
+public class Controller {
 
     static void update() {
         if ( isPressed(KeyCode.D) && Game.booker.getTranslateX() < Game.gameRoot.getWidth() - Game.booker.getWidth()
@@ -21,7 +22,7 @@ class Controller {
         }
 
         if ( isPressed(KeyCode.A) && isPressed(KeyCode.D) && !Game.booker.isStunned())
-            Game.booker.animation.stop();
+            Game.booker.stopAnimation();
 
         if ( !isPressed(KeyCode.A) && !isPressed(KeyCode.D) ) {
             Game.booker.setCanChangeAnimation(true);
@@ -96,7 +97,7 @@ class Controller {
     }
 
 
-    static boolean isPressed(KeyCode keyCode) {
+    public static boolean isPressed(KeyCode keyCode) {
         return Game.keys.getOrDefault(keyCode, false);
     }
 }

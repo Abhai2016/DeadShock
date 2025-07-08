@@ -1,7 +1,7 @@
 package com.abhai.deadshock.weapons;
 
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.Sounds;
+import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.levels.Level;
 
 public class EnemyWeapon {

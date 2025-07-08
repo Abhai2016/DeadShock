@@ -1,4 +1,4 @@
-package com.abhai.deadshock;
+package com.abhai.deadshock.utils;
 
 public class Saves {
     private String difficultyLevel;

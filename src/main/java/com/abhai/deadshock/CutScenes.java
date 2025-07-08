@@ -2,8 +2,11 @@ package com.abhai.deadshock;
 
 import com.abhai.deadshock.characters.enemies.Boss;
 import com.abhai.deadshock.characters.Elizabeth;
+import com.abhai.deadshock.hud.Tutorial;
 import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.levels.Level;
+import com.abhai.deadshock.utils.Options;
+import com.abhai.deadshock.utils.Saves;
 import com.abhai.deadshock.weapons.Weapon;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.animation.FadeTransition;
@@ -123,7 +126,6 @@ public class CutScenes {
         Game.appRoot.getChildren().remove(videoView);
         videoView = null;
 
-        Sounds.feelsBetter.stop();
         Game.level.createLevels();
         Game.createEnemies();
 

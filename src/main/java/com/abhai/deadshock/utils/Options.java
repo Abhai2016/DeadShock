@@ -1,4 +1,4 @@
-package com.abhai.deadshock;
+package com.abhai.deadshock.utils;
 
 public class Options {
     private double musicVolume;

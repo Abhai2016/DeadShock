@@ -1,9 +1,9 @@
 package com.abhai.deadshock.energetics;
 
 import com.abhai.deadshock.characters.enemies.Enemy;
-import com.abhai.deadshock.characters.SpriteAnimation;
+import com.abhai.deadshock.utils.SpriteAnimation;
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.Sounds;
+import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.levels.Level;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;

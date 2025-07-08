@@ -4,10 +4,17 @@ import com.abhai.deadshock.characters.*;
 import com.abhai.deadshock.characters.enemies.*;
 import com.abhai.deadshock.characters.enemies.EnemyData;
 import com.abhai.deadshock.energetics.Energetic;
+import com.abhai.deadshock.hud.HUD;
+import com.abhai.deadshock.hud.Tutorial;
 import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.levels.Level;
-import com.abhai.deadshock.weapons.Bullet;
-import com.abhai.deadshock.weapons.EnemyBullet;
+import com.abhai.deadshock.menus.Menu;
+import com.abhai.deadshock.utils.Controller;
+import com.abhai.deadshock.utils.Options;
+import com.abhai.deadshock.utils.Saves;
+import com.abhai.deadshock.utils.Sounds;
+import com.abhai.deadshock.weapons.bullets.Bullet;
+import com.abhai.deadshock.weapons.bullets.EnemyBullet;
 import com.abhai.deadshock.weapons.Weapon;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,8 +24,6 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -32,15 +37,12 @@ import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
 
 
 public class Game extends Application {
-    private static Path elizabethSoundPath = Paths.get("resources", "sounds", "voices", "elizabeth", "booker.mp3");
-    private static Path bookerSoundPath = Paths.get("resources", "sounds", "voices", "booker", "fuck.mp3");
-
     public static ArrayList<Supply> supplies = new ArrayList<>();
     public static ArrayList<Block> blocks = new ArrayList<>();
     public static ArrayList<Bullet> bullets = new ArrayList<>();
     public static ArrayList<EnemyBullet> enemyBullets = new ArrayList<>();
     public static ArrayList<Enemy> enemies = new ArrayList<>();
-    static HashMap<KeyCode, Boolean> keys = new HashMap<>();
+    public static HashMap<KeyCode, Boolean> keys = new HashMap<>();
 
     public static Stage stage;
     public static Scene scene;
@@ -54,7 +56,7 @@ public class Game extends Application {
     public static Weapon weapon;
     public static Elizabeth elizabeth;
     public static Boss boss;
-    static VendingMachine vendingMachine;
+    public static VendingMachine vendingMachine;
 
     static Tutorial tutorial;
     public static CutScenes cutScene;
@@ -72,7 +74,7 @@ public class Game extends Application {
         }
     };
 
-    static void initContent() {
+    public static void initContent() {
         appRoot.getChildren().add(gameRoot);
 
         try {
@@ -208,10 +210,7 @@ public class Game extends Application {
         if (level != null)
             level.getBackground().setLayoutX(0);
 
-        for (Enemy enemy : Game.enemies) {
-            Game.gameRoot.getChildren().remove(enemy);
-            Game.gameRoot.getChildren().remove(enemy.getRectHP());
-        }
+        Game.gameRoot.getChildren().removeAll(enemies);
         Game.enemies.clear();
 
         for (EnemyBullet enemyBullet : Game.enemyBullets)
@@ -225,17 +224,14 @@ public class Game extends Application {
         Game.keys.clear();
     }
 
-    static void clearDataForNewGame() {
+    public static void clearDataForNewGame() {
         Game.appRoot.getChildren().remove(Game.gameRoot);
         Game.gameRoot.setLayoutX(0);
 
         if (level != null)
             Game.level.getBackground().setLayoutX(0);
 
-        for (Enemy enemy : Game.enemies) {
-            Game.gameRoot.getChildren().remove(enemy);
-            Game.gameRoot.getChildren().remove(enemy.getRectHP());
-        }
+        Game.gameRoot.getChildren().removeAll(enemies);
         Game.enemies.clear();
 
         for (EnemyBullet enemyBullet : Game.enemyBullets)
@@ -331,14 +327,15 @@ public class Game extends Application {
         }
     }
 
-    static void nothing() {
+    public static void nothing() {
     }
 
     private static void update() {
         for (Enemy enemy : enemies) {
             enemy.update();
-            if (enemy.isDelete()) {
+            if (enemy.isToDelete()) {
                 enemies.remove(enemy);
+                gameRoot.getChildren().remove(enemy);
                 break;
             }
         }
@@ -377,14 +374,12 @@ public class Game extends Application {
 
         if (booker.getTranslateX() > BLOCK_SIZE * 285 && levelNumber == Level.THIRD_LEVEL) {
             if (boss.getTrompInterval() == 0) {
-                Sounds.elizabethMediaPlayer = new MediaPlayer(new Media(elizabethSoundPath.toUri().toString()));
-                Sounds.elizabethMediaPlayer.setVolume(Game.menu.voiceSlider.getValue() / 100);
-                Sounds.elizabethMediaPlayer.play();
+                Sounds.ohBooker.setVolume(Game.menu.voiceSlider.getValue() / 100);
+                Sounds.ohBooker.play();
 
                 Sounds.elizabethMediaPlayer.setOnEndOfMedia(() -> {
-                    Sounds.feelsBetter = new MediaPlayer(new Media(bookerSoundPath.toUri().toString()));
-                    Sounds.feelsBetter.setVolume(Game.menu.voiceSlider.getValue() / 100);
-                    Sounds.feelsBetter.play();
+                    Sounds.fuck.setVolume(Game.menu.voiceSlider.getValue() / 100);
+                    Sounds.fuck.play();
                 });
             }
             boss.setTrompInterval(boss.getTrompInterval() + 1);

@@ -1,5 +1,6 @@
-package com.abhai.deadshock;
+package com.abhai.deadshock.hud;
 
+import com.abhai.deadshock.Game;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -81,7 +82,7 @@ public class HUD extends Pane {
 
 
 
-    Text getTextMoney() {
+    public Text getTextMoney() {
         return textMoney;
     }
 
@@ -97,7 +98,7 @@ public class HUD extends Pane {
         return hypnosis;
     }
 
-    void setMarikLevel() {
+    public void setMarikLevel() {
         Path moneyImagePath = Paths.get("resources", "images", "hud", "moneyForMarik.png");
         money.setImage(new Image(moneyImagePath.toUri().toString()));
         getChildren().remove(textMoney);

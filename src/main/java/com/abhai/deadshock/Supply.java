@@ -1,5 +1,6 @@
 package com.abhai.deadshock;
 
+import com.abhai.deadshock.characters.enemies.EnemyType;
 import com.abhai.deadshock.weapons.Weapon;
 import javafx.animation.RotateTransition;
 import javafx.scene.image.Image;
@@ -20,7 +21,7 @@ public class Supply extends Pane {
     private RotateTransition rt = new RotateTransition(Duration.seconds(1), ammo);
 
     private String supply;
-    private String enemyName;
+    private EnemyType enemyType;
 
     private boolean delete = false;
 
@@ -39,8 +40,8 @@ public class Supply extends Pane {
         setTranslateY(y - 15);
     }
 
-    public Supply(double x, double y, String name) {
-        enemyName = name;
+    public Supply(double x, double y, EnemyType enemyType) {
+        this.enemyType = enemyType;
 
         supply = "ammo";
         getChildren().add(ammo);
@@ -70,37 +71,37 @@ public class Supply extends Pane {
 
     public void update() {
         if (getBoundsInParent().intersects(Game.booker.getBoundsInParent()))
-            switch (enemyName) {
-                case "comstock":
+            switch (enemyType) {
+                case EnemyType.COMSTOCK -> {
                     if (Game.weapon.getName().equals("pistol"))
                         Game.weapon.setBullets(Game.weapon.getBullets() + Game.booker.getBulletCount());
                     else
                         Weapon.WeaponData.pistolBullets += Game.booker.getBulletCount();
                     Game.gameRoot.getChildren().remove(this);
                     delete = true;
-                    break;
-
-                case "red_eye":
+                }
+                case EnemyType.RED_EYE -> {
                     if (Game.weapon.getName().equals("machine_gun"))
                         Game.weapon.setBullets(Game.weapon.getBullets() + Game.booker.getBulletCount());
                     else
                         Weapon.WeaponData.machineGunBullets += Game.booker.getBulletCount();
                     Game.gameRoot.getChildren().remove(this);
                     delete = true;
-                    break;
-            } else {
-                rt.setOnFinished( event -> rt.play() );
-
-                if (getTranslateX() < Game.booker.getTranslateX())
-                    setTranslateX(getTranslateX() + Game.booker.getCHARACTER_SPEED() * 1.5);
-                if (getTranslateX() > Game.booker.getTranslateX())
-                    setTranslateX(getTranslateX() - Game.booker.getCHARACTER_SPEED() * 1.5);
-
-                if (getTranslateY() < Game.booker.getTranslateY())
-                    setTranslateY(getTranslateY() + Game.booker.getCHARACTER_SPEED() * 1.5);
-                if (getTranslateY() > Game.booker.getTranslateY())
-                    setTranslateY(getTranslateY() - Game.booker.getCHARACTER_SPEED() * 1.5);
+                }
             }
+        else {
+            rt.setOnFinished(event -> rt.play());
+
+            if (getTranslateX() < Game.booker.getTranslateX())
+                setTranslateX(getTranslateX() + Game.booker.getCHARACTER_SPEED() * 1.5);
+            if (getTranslateX() > Game.booker.getTranslateX())
+                setTranslateX(getTranslateX() - Game.booker.getCHARACTER_SPEED() * 1.5);
+
+            if (getTranslateY() < Game.booker.getTranslateY())
+                setTranslateY(getTranslateY() + Game.booker.getCHARACTER_SPEED() * 1.5);
+            if (getTranslateY() > Game.booker.getTranslateY())
+                setTranslateY(getTranslateY() - Game.booker.getCHARACTER_SPEED() * 1.5);
+        }
 
     }
 }

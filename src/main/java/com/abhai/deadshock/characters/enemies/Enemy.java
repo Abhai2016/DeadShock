@@ -1,98 +1,59 @@
 package com.abhai.deadshock.characters.enemies;
 
-import com.abhai.deadshock.characters.SpriteAnimation;
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.Sounds;
+import com.abhai.deadshock.utils.Sounds;
 import javafx.geometry.Point2D;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Rectangle;
 
 public class Enemy extends Pane {
+    protected ImageView imageView;
+    protected Point2D velocity;
+    protected EnemyType type;
 
-    public SpriteAnimation animation;
+    protected boolean toDelete = false;
+    protected boolean hypnotized = false;
 
-    ImageView imgView;
-    Point2D velocity;
-    Rectangle rectHP;
-    public String name;
-
-    private boolean playVoice;
-
-    boolean canSeeBooker;
-    boolean delete;
-    public boolean pickUpSupply;
-    boolean hypnosis;
-    byte rand;
-
-    short voiceInterval;
-    public int HP;
+    protected int HP = 100;
+    protected int voiceInterval = 0;
 
     Enemy() {
     }
 
-    public boolean isCanSeeBooker() {
-        return canSeeBooker;
-    }
-
-    public void setCanSeeBooker(boolean canSeeBooker) {
-        this.canSeeBooker = canSeeBooker;
-    }
-
-    public boolean isDelete() {
-        return delete;
+    public boolean isToDelete() {
+        return toDelete;
     }
 
     public int getHP() {
         return HP;
     }
 
-    public void setPlayVoice(boolean value) {
-        playVoice = value;
-    }
-
     public void setHP(int value) {
         HP = value;
     }
 
-    public Rectangle getRectHP() {
-        return rectHP;
+    public void setHypnotized(boolean value) {
+        hypnotized = value;
     }
 
-    public void setHypnosis(boolean value) {
-        hypnosis = value;
+    public boolean isCamper() {
+        return type.equals(EnemyType.CAMPER);
     }
 
-    void deathVoice() {
-        if (playVoice) {
-            byte randVoice = (byte) (Math.random() * 2);
-            switch (randVoice) {
-                case 0:
-                    Sounds.death.play(Game.menu.fxSlider.getValue() / 100);
-                    break;
-                case 1:
-                    Sounds.death2.play(Game.menu.fxSlider.getValue() / 100);
-                    break;
-            }
-            playVoice = false;
+    protected void deathVoice() {
+        switch ((int) (Math.random() * 2)) {
+            case 0:
+                Sounds.death.play(Game.menu.fxSlider.getValue() / 100);
+            case 1:
+                Sounds.death2.play(Game.menu.fxSlider.getValue() / 100);
         }
     }
 
     public void playHitVoice() {
-        if (playVoice) {
-            rand = (byte) (Math.random() * 3);
-            switch (rand) {
-                case 0:
-                    Sounds.audioClipHit.play(Game.menu.voiceSlider.getValue() / 100);
-                    break;
-                case 1:
-                    Sounds.audioClipHit2.play(Game.menu.voiceSlider.getValue() / 100);
-                    break;
-                case 2:
-                    Sounds.audioClipHit3.play(Game.menu.voiceSlider.getValue() / 100);
-                    break;
-            }
-           playVoice = false;
+        switch ((int) (Math.random() * 3)) {
+            case 0 -> Sounds.audioClipHit.play(Game.menu.voiceSlider.getValue() / 100);
+            case 1 -> Sounds.audioClipHit2.play(Game.menu.voiceSlider.getValue() / 100);
+            case 2 -> Sounds.audioClipHit3.play(Game.menu.voiceSlider.getValue() / 100);
         }
     }
 

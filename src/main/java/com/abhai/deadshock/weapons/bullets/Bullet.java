@@ -1,4 +1,4 @@
-package com.abhai.deadshock.weapons;
+package com.abhai.deadshock.weapons.bullets;
 
 import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.levels.Block;
@@ -12,18 +12,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Bullet extends Pane {
-    static final int BULLET_SPEED = 15;
+    public static final int BULLET_SPEED = 15;
 
-    ImageView bullet;
+    public ImageView bullet;
 
-    boolean direction = true;
-    boolean delete = false;
+    public boolean direction = true;
+    public boolean delete = false;
 
     Bullet() {
 
     }
 
-    Bullet(String weaponName) {
+    public Bullet(String weaponName) {
         if (Game.booker.getScaleX() < 0) {
             direction = false;
             setScaleX(-1);
@@ -73,7 +73,6 @@ public class Bullet extends Pane {
             if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
                 Game.gameRoot.getChildren().remove(this);
                 enemy.setHP((enemy.getHP() - Game.weapon.getDamage()));
-                enemy.setPlayVoice(true);
                 enemy.playHitVoice();
                 delete = true;
                 return;

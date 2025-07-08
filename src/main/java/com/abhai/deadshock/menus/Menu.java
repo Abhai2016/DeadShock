@@ -1,7 +1,11 @@
-package com.abhai.deadshock;
+package com.abhai.deadshock.menus;
 
+import com.abhai.deadshock.utils.Controller;
+import com.abhai.deadshock.Game;
+import com.abhai.deadshock.characters.Animatable;
 import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.levels.Level;
+import com.abhai.deadshock.utils.Sounds;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.FillTransition;
@@ -56,7 +60,7 @@ public class Menu {
             "\n3 попытки на прохождение уровня(потом пересоздаются противники);" +
             "\nКаждая регенерация отнимает 20 монет");
 
-    MenuBox menuBox;
+    public MenuBox menuBox;
 
     private SubMenu mainMenu;
     private SubMenu optionsMenu;
@@ -68,16 +72,16 @@ public class Menu {
 
     private MenuItem continueGame;
 
-    Slider musicSlider;
+    public Slider musicSlider;
     public Slider voiceSlider;
     public Slider fxSlider;
 
     private boolean start = true;
-    boolean booleanNewGame = false;
+    public boolean booleanNewGame = false;
     boolean isShown = true;
 
 
-    Menu() {
+    public Menu() {
         music.setCycleCount(MediaPlayer.INDEFINITE);
         music.play();
 
@@ -470,7 +474,6 @@ public class Menu {
 
         voiceSlider.valueProperty().addListener((ov, old_val, new_val) -> {
             voiceText.setText(String.valueOf(new_val.intValue()));
-            Sounds.feelsBetter.setVolume(new_val.doubleValue() / 100);
         });
     }
 
@@ -499,10 +502,10 @@ public class Menu {
         ft.setToValue(1);
         ft.play();
         music.pause();
-        Game.booker.animation.stop();
+        Game.booker.stopAnimation();
         for (Enemy enemy : Game.enemies)
-            if (enemy.animation != null)
-                enemy.animation.stop();
+            if (enemy instanceof Animatable animatable)
+                animatable.stopAnimation();
         if (Sounds.elizabethMediaPlayer != null)
             Sounds.elizabethMediaPlayer.pause();
         if (!Game.appRoot.getChildren().contains(menuBox))
@@ -514,7 +517,7 @@ public class Menu {
         isShown = true;
     }
 
-    void update() {
+    public void update() {
         if (Controller.isPressed(KeyCode.ESCAPE) && (Game.vendingMachine == null || !Game.vendingMachine.isShown())) {
             Game.keys.remove(KeyCode.ESCAPE);
             if (!isShown) {
@@ -558,7 +561,7 @@ public class Menu {
         addListener();
     }
 
-    void checkMusicForContinueGame(String text) {
+    public void checkMusicForContinueGame(String text) {
         if (text.contains("rock")) {
             tempMusic = rock;
             musicText.setText("Выбрано : РОК");

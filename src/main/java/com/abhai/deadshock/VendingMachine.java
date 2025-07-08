@@ -1,7 +1,9 @@
 package com.abhai.deadshock;
 
+import com.abhai.deadshock.characters.Animatable;
 import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.levels.Level;
+import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.weapons.Weapon;
 import javafx.animation.FadeTransition;
 import javafx.event.EventHandler;
@@ -118,7 +120,7 @@ class VendingMachine extends Pane {
         }
     }
 
-    void openMachineMenu() {
+    public void openMachineMenu() {
         isShown = true;
 
         if (Game.levelNumber == Level.FIRST_LEVEL) {
@@ -132,8 +134,8 @@ class VendingMachine extends Pane {
         moneyText.setText(String.valueOf(Game.booker.getMoney()));
 
         for (Enemy enemy : Game.enemies)
-            if (enemy.animation != null)
-                enemy.animation.stop();
+            if (enemy instanceof Animatable animatable)
+                animatable.stopAnimation();
 
         ft.setByValue(0);
         ft.setToValue(1);
@@ -158,7 +160,7 @@ class VendingMachine extends Pane {
         setButton(btnMachineGunBullets, btnPistolBullets);
     }
 
-    void setMarikLevel() {
+    public void setMarikLevel() {
         Game.appRoot.getChildren().remove(moneyText);
     }
 
@@ -383,7 +385,7 @@ class VendingMachine extends Pane {
         text.setOnMouseClicked( event -> Game.appRoot.getChildren().remove(text));
     }
 
-    ImageView getVendingMachine() {
+    public ImageView getVendingMachine() {
         return vendingMachine;
     }
 

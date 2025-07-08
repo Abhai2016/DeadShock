@@ -1,9 +1,9 @@
-package com.abhai.deadshock.weapons;
+package com.abhai.deadshock.weapons.bullets;
 
 import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.Sounds;
+import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.levels.BlockType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;

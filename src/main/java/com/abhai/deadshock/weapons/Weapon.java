@@ -1,9 +1,11 @@
 package com.abhai.deadshock.weapons;
 
-import com.abhai.deadshock.characters.SpriteAnimation;
+import com.abhai.deadshock.utils.SpriteAnimation;
 import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.Sounds;
+import com.abhai.deadshock.utils.Sounds;
+import com.abhai.deadshock.weapons.bullets.Bullet;
+import com.abhai.deadshock.weapons.bullets.RpgBullet;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -20,8 +22,8 @@ import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
 public class Weapon extends Pane {
     private String name = "";
 
-    ImageView explosion;
-    SpriteAnimation explosionAnimation;
+    public ImageView explosion;
+    public SpriteAnimation explosionAnimation;
 
     private Path imagePath = Paths.get("resources", "images", "weapons", "weapons.png");
     private ImageView gun = new ImageView(new Image(imagePath.toUri().toString()));

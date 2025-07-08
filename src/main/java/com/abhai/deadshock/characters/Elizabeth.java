@@ -3,7 +3,7 @@ package com.abhai.deadshock.characters;
 import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.Sounds;
+import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.Supply;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;

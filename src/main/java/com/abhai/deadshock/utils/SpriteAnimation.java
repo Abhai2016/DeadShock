@@ -1,4 +1,4 @@
-package com.abhai.deadshock.characters;
+package com.abhai.deadshock.utils;
 
 import javafx.animation.Animation;
 import javafx.animation.Interpolator;

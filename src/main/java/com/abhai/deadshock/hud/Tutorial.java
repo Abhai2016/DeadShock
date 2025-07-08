@@ -1,6 +1,7 @@
-package com.abhai.deadshock;
+package com.abhai.deadshock.hud;
 
 
+import com.abhai.deadshock.Game;
 import com.abhai.deadshock.levels.Level;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -8,7 +9,7 @@ import javafx.scene.text.Text;
 
 import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
 
-class Tutorial {
+public class Tutorial {
     private Text moveCharacter = new Text("Чтобы идти влево и вправо, нажимайте A и D соответственно");
     private Text jump = new Text("Для прыжка нажимайте W");
     private Text pickUpWeapon = new Text("Чтобы поднять оружие, нажмите E");
@@ -80,7 +81,7 @@ class Tutorial {
         Game.gameRoot.getChildren().add(text);
     }
 
-    void addMenuText() {
+    public void addMenuText() {
         menu.setFont( Font.font("Aria", 28) );
         menu.setFill(Color.WHITE);
         menu.setTranslateX(50);
@@ -88,11 +89,11 @@ class Tutorial {
         Game.appRoot.getChildren().add(menu);
     }
 
-    void deleteMenuText() {
+    public void deleteMenuText() {
         Game.appRoot.getChildren().remove(menu);
     }
 
-    void deleteText() {
+    public void deleteText() {
         switch (Game.levelNumber) {
             case Level.FIRST_LEVEL -> Game.gameRoot.getChildren().removeAll(moveCharacter, jump, pickUpWeapon, shoot, reload, changeTrack, changeMusic, getMoneyFromEnemy, turnOnVendingMachine, shootEnergetic, reloadEnergetic);
             case Level.SECOND_LEVEL -> Game.gameRoot.getChildren().removeAll(takeMedicine, switchWeapon, switchEnergetic, saves);

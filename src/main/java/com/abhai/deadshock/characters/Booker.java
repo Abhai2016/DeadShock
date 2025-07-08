@@ -1,12 +1,13 @@
 package com.abhai.deadshock.characters;
 
+import com.abhai.deadshock.Game;
+import com.abhai.deadshock.Supply;
 import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.levels.BlockType;
 import com.abhai.deadshock.levels.Level;
-import com.abhai.deadshock.Game;
-import com.abhai.deadshock.Sounds;
-import com.abhai.deadshock.Supply;
+import com.abhai.deadshock.utils.Sounds;
+import com.abhai.deadshock.utils.SpriteAnimation;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -30,7 +31,7 @@ import java.nio.file.Paths;
 import static javafx.scene.input.KeyEvent.KEY_PRESSED;
 
 
-public class Booker extends Pane {
+public class Booker extends Pane implements Animatable {
     private final byte CHARACTER_SPEED = 4;
     private Path imagePath = Paths.get("resources", "images", "characters", "booker.png");
     private ImageView imgView = new ImageView(new Image(imagePath.toUri().toString()));
@@ -65,16 +66,16 @@ public class Booker extends Pane {
     private int priceForGeneration = 0;
     private double stunnedInterval = 0;
 
-    private byte rand = 0;
-
     private SpriteAnimation withoutGun = new SpriteAnimation(imgView, Duration.seconds(0.5), count, columns, 0, 94, 65, height);
     private SpriteAnimation withPistol = new SpriteAnimation(imgView, Duration.seconds(0.5), count, columns, 3, 318, 65, height);
     private SpriteAnimation withMachineGun = new SpriteAnimation(imgView, Duration.seconds(0.5), count, columns, 0, 173, 65, height);
     private SpriteAnimation withRPG = new SpriteAnimation(imgView, Duration.seconds(0.5), count, columns, 0, 250, 85, height);
     public SpriteAnimation animation = withoutGun;
 
-    private Text gameOver = new Text("Игра окончена!");
+    Path soundPath = Paths.get("resources", "sounds", "voices", "booker", "shit.mp3");
+    private MediaPlayer voice = new MediaPlayer(new Media(soundPath.toUri().toString()));
 
+    private Text gameOver = new Text("Игра окончена!");
 
 
     public Booker() {
@@ -114,12 +115,12 @@ public class Booker extends Pane {
             }
 
             for (Enemy enemy : Game.enemies)
-                if (getBoundsInParent().intersects(enemy.getBoundsInParent()) && !enemy.pickUpSupply) {
+                if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
                     setTranslateX(getTranslateX() - getScaleX());
                     HP -= enemyDogfight;
                     Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
-                    if (enemy.name.equals("camper"))
-                        velocity = velocity.add( - getScaleX() * 15, 0);
+                    if (enemy.isCamper())
+                        velocity = velocity.add(-getScaleX() * 15, 0);
                     return;
                 }
 
@@ -161,15 +162,15 @@ public class Booker extends Pane {
                 }
 
             for (Enemy enemy : Game.enemies)
-                if (getBoundsInParent().intersects(enemy.getBoundsInParent()) && !enemy.pickUpSupply) {
+                if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
                     HP -= enemyDogfight;
                     Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
                     if (y > 0) {
                         setTranslateY(getTranslateY() - 1);
-                        if (enemy.name.equals("camper"))
-                            enemy.HP -= characterDogFight * 3;
+                        if (enemy.isCamper())
+                            enemy.setHP(enemy.getHP() - characterDogFight * 3);
                         else
-                            enemy.HP -= characterDogFight;
+                            enemy.setHP(enemy.getHP() - characterDogFight);
                         if (booleanVelocityY) {
                             velocity = velocity.add(0, -22);
                             booleanVelocityY = false;
@@ -230,7 +231,7 @@ public class Booker extends Pane {
     }
 
     public void setHP(int value) {
-        HP = (byte)value;
+        HP = (byte) value;
     }
 
     public int getSalt() {
@@ -238,7 +239,7 @@ public class Booker extends Pane {
     }
 
     public void setSalt(long value) {
-        salt = (byte)value;
+        salt = (byte) value;
     }
 
     public boolean isBooleanVelocityX() {
@@ -262,7 +263,7 @@ public class Booker extends Pane {
     }
 
     public void setMoney(long value) {
-        money = (int)value;
+        money = (int) value;
     }
 
     public void setCanChangeAnimation(boolean value) {
@@ -324,8 +325,7 @@ public class Booker extends Pane {
                     takeMedicine();
                     Game.gameRoot.getChildren().remove(supply);
                     Game.supplies.remove(supply);
-                }
-                else if (supply.getSupply().equals("ammo")) {
+                } else if (supply.getSupply().equals("ammo")) {
                     Sounds.great.play(Game.menu.voiceSlider.getValue() / 100);
                     Game.weapon.setBullets(Game.weapon.getBullets() + Game.booker.getBulletCount());
                     Game.gameRoot.getChildren().remove(supply);
@@ -341,13 +341,17 @@ public class Booker extends Pane {
                 HP += 1;
             else
                 break;
-        rand = (byte) (Math.random() * 2);
-        if (rand == 0) {
-            Sounds.feelsBetter.setVolume(Game.menu.voiceSlider.getValue() / 100);
-            Sounds.feelsBetter.play();
+
+        switch ((int) (Math.random() * 2)) {
+            case 0: {
+                Sounds.feelsBetter.setVolume(Game.menu.voiceSlider.getValue() / 100);
+                Sounds.feelsBetter.play();
+            }
+            case 1: {
+                Sounds.feelingBetter.setVolume(Game.menu.voiceSlider.getValue() / 100);
+                Sounds.feelingBetter.play(Game.menu.voiceSlider.getValue() / 100);
+            }
         }
-        else
-            Sounds.feelingBetter.play(Game.menu.voiceSlider.getValue() / 100);
     }
 
     public void setDifficultyLevel() {
@@ -421,11 +425,11 @@ public class Booker extends Pane {
 
         imgView.setViewport(new Rectangle2D(offSetX, offSetY, this.width, height));
 
-        animation.stop();
+        stopAnimation();
     }
 
     public void changeAnimation(String weaponName) {
-        animation.stop();
+        stopAnimation();
         switch (weaponName) {
             case "pistol":
                 if (!canJump)
@@ -457,19 +461,19 @@ public class Booker extends Pane {
 
     private void playBookerVoice() {
         if (!Game.enemies.isEmpty() && Game.levelNumber == Level.FIRST_LEVEL)
-            if (Game.enemies.get(0).isCanSeeBooker() && playVoice) {
-                Path soundPath = Paths.get("resources", "sounds", "voices", "booker", "shit.mp3");
-                Sounds.feelsBetter = new MediaPlayer(new Media(soundPath.toUri().toString()));
-                Sounds.feelsBetter.setVolume(Game.menu.voiceSlider.getValue() / 100);
-                Sounds.feelsBetter.play();
+            if (getTranslateX() == Game.enemies.getFirst().getTranslateX() - Block.BLOCK_SIZE * 15 && playVoice) {
+                voice.setVolume(Game.menu.voiceSlider.getValue() / 100);
+                voice.play();
                 playVoice = false;
             }
 
         if (Game.enemies.isEmpty() && !playVoice && Game.levelNumber == Level.FIRST_LEVEL) {
-            Path soundPath = Paths.get("resources", "sounds", "voices", "booker", "cretins.mp3");
-            Sounds.feelsBetter = new MediaPlayer(new Media(soundPath.toUri().toString()));
-            Sounds.feelsBetter.setVolume(Game.menu.voiceSlider.getValue() / 100);
-            Sounds.feelsBetter.play();
+            voice.dispose();
+
+            soundPath = Paths.get("resources", "sounds", "voices", "booker", "cretins.mp3");
+            voice = new MediaPlayer(new Media(soundPath.toUri().toString()));
+            voice.setVolume(Game.menu.voiceSlider.getValue() / 100);
+            voice.play();
             playVoice = true;
         }
 
@@ -510,8 +514,9 @@ public class Booker extends Pane {
             countLives--;
             money -= priceForGeneration;
 
-            for(Enemy enemy : Game.enemies)
-                enemy.animation.stop();
+            for (Enemy enemy : Game.enemies)
+                if (enemy instanceof Animatable animatable)
+                    animatable.stopAnimation();
 
             if (countLives < 0) {
                 gameOver.setText("Вы мертвы!");
@@ -637,22 +642,22 @@ public class Booker extends Pane {
             velocity = velocity.add(0, 0.5);
         else
             booleanVelocityY = true;
-        moveY((int)velocity.getY());
+        moveY((int) velocity.getY());
 
         if (velocity.getX() < 0)
-            velocity = velocity.add(0.5,0);
+            velocity = velocity.add(0.5, 0);
         else if (velocity.getX() > 0)
             velocity = velocity.add(-0.5, 0);
         else
             booleanVelocityX = true;
-        moveX((int)velocity.getX());
+        moveX((int) velocity.getX());
 
         if (stunnedInterval == 180)
             velocity = velocity.add(0, -20);
 
         if (!stunned) {
             if (!canJump)
-                animation.stop();
+                stopAnimation();
             else
                 animation.play();
 
@@ -678,5 +683,10 @@ public class Booker extends Pane {
             else
                 playVideoDeath();
         }
+    }
+
+    @Override
+    public void stopAnimation() {
+        animation.stop();
     }
 }

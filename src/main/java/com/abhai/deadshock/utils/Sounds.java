@@ -1,4 +1,4 @@
-package com.abhai.deadshock;
+package com.abhai.deadshock.utils;
 
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
@@ -8,8 +8,8 @@ import java.nio.file.Paths;
 
 public class Sounds {
     //Booker
-    public static MediaPlayer feelsBetter = new MediaPlayer(new Media(Paths.get("resources", "sounds", "voices",
-            "booker", "feelsBetter.mp3").toUri().toString()));
+    public static AudioClip feelsBetter = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "booker", "feelsBetter.mp3").toUri().toString());
     public static AudioClip great = new AudioClip(Paths.get("resources", "sounds", "voices",
             "booker", "great.mp3").toUri().toString());
     public static AudioClip willWork = new AudioClip(Paths.get("resources", "sounds", "voices",
@@ -28,6 +28,8 @@ public class Sounds {
             "booker", "energetic.mp3").toUri().toString());
     public static AudioClip newEnergetic = new AudioClip(Paths.get("resources", "sounds", "voices",
             "booker", "newEnergetic.mp3").toUri().toString());
+    public static AudioClip fuck = new AudioClip(
+            Paths.get("resources", "sounds", "voices", "booker", "fuck.mp3").toUri().toString());
 
 
     //Elizabeth
@@ -50,6 +52,8 @@ public class Sounds {
             "elizabeth", "haveNothing.mp3").toUri().toString());
     public static AudioClip tryToFind = new AudioClip(Paths.get("resources", "sounds", "voices",
             "elizabeth", "tryToFind.mp3").toUri().toString());
+    public static AudioClip ohBooker = new AudioClip(
+            Paths.get("resources", "sounds", "voices", "elizabeth", "booker.mp3").toUri().toString());
 
 
     //Enemies
@@ -146,11 +150,11 @@ public class Sounds {
     public static AudioClip closeCombat = new AudioClip(Paths.get("resources", "sounds", "voices",
             "booker", "closeCombat.mp3").toUri().toString());
 
-    static AudioClip audioClipOpenMenu = new AudioClip(Paths.get("resources", "sounds", "fx",
+    public static AudioClip audioClipOpenMenu = new AudioClip(Paths.get("resources", "sounds", "fx",
             "vendingMachine", "openMenu.mp3").toUri().toString());
-    static AudioClip audioClipChangeItem = new AudioClip(Paths.get("resources", "sounds", "fx",
+    public static AudioClip audioClipChangeItem = new AudioClip(Paths.get("resources", "sounds", "fx",
             "vendingMachine", "changeItem.mp3").toUri().toString());
-    static AudioClip audioClipPurchase = new AudioClip(Paths.get("resources", "sounds", "fx",
+    public static AudioClip audioClipPurchase = new AudioClip(Paths.get("resources", "sounds", "fx",
             "vendingMachine", "purchase.mp3").toUri().toString());
 
     public static AudioClip devilKissShot = new AudioClip(Paths.get("resources", "sounds", "fx",

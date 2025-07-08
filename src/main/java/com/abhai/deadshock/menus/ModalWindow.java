@@ -1,5 +1,6 @@
-package com.abhai.deadshock;
+package com.abhai.deadshock.menus;
 
+import com.abhai.deadshock.Game;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -14,7 +15,7 @@ import javafx.stage.Stage;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-class ModalWindow {
+public class ModalWindow {
 
     static void createNewWindows(String title) {
         Stage stage = new Stage();

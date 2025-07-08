@@ -1,10 +1,10 @@
 package com.abhai.deadshock.characters.enemies;
 
-import com.abhai.deadshock.characters.SpriteAnimation;
+import com.abhai.deadshock.utils.SpriteAnimation;
 import com.abhai.deadshock.CutScenes;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.levels.Level;
-import com.abhai.deadshock.Sounds;
+import com.abhai.deadshock.utils.Sounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
