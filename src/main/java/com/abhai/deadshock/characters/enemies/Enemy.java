@@ -36,7 +36,7 @@ public class Enemy extends Pane {
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
     }
 
-    protected void deathVoice() {
+    protected void playDeathVoice() {
         switch ((int) (Math.random() * 2)) {
             case 0:
                 Sounds.death.play(Game.menu.fxSlider.getValue() / 100);

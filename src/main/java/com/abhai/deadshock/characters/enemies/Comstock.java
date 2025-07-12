@@ -14,8 +14,9 @@ import javafx.util.Duration;
 
 public class Comstock extends Enemy implements Animatable {
     private static final int SPEED = 3;
+    protected static final double JUMP_SPEED = -25;
     protected static final int COUNT_OF_SPRITES = 10;
-    protected static final double ANIMATION_DURATION = 0.5;
+    protected static final double ANIMATION_SPEED = 0.5;
 
     private int seeInterval = 0;
 
@@ -28,7 +29,7 @@ public class Comstock extends Enemy implements Animatable {
     protected EnemyWeapon enemyWeapon;
 
     Comstock() {
-        animation = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_DURATION),
+        animation = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED),
                 COUNT_OF_SPRITES, COUNT_OF_SPRITES, 0, 0, WIDTH, HEIGHT);
     }
 
@@ -46,7 +47,7 @@ public class Comstock extends Enemy implements Animatable {
         Game.gameRoot.getChildren().add(this);
     }
 
-    protected boolean intersects(Block block) {
+    protected boolean intersectsWithBlock(Block block) {
         return getBoundsInParent().intersects(block.getBoundsInParent()) && !block.getType().equals(BlockType.INVISIBLE);
     }
 
@@ -55,94 +56,20 @@ public class Comstock extends Enemy implements Animatable {
         return "comstock.png";
     }
 
-    private void moveX(int x) {
-        for (int i = 0; i < Math.abs(x); i++) {
-            if (Game.booker.getTranslateX() != getTranslateX()) {
-                if (x > 0) {
-                    setTranslateX(getTranslateX() + 1);
-                    setScaleX(1);
-                } else {
-                    setTranslateX(getTranslateX() - 1);
-                    setScaleX(-1);
-                }
-            } else
-                setTranslateX(getTranslateX() + 1);
-
-            for (Block block : Game.blocks)
-                if (intersects(block)) {
-                    setTranslateX(getTranslateX() - getScaleX());
-                    jump();
-                    return;
-                }
-
-            for (Enemy enemy : Game.enemies)
-                if (this != enemy)
-                    if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
-                        if (x > 0)
-                            setTranslateX(getTranslateX() - 1);
-                        else
-                            setTranslateX(getTranslateX() + 1);
-                        animation.stop();
-                        return;
-                    }
-
-            if (Game.booker.getBoundsInParent().intersects(getBoundsInParent())) {
-                setTranslateX(getTranslateX() - getScaleX());
-                if (Game.booker.isBooleanVelocityX()) {
-                    Game.booker.setHP(Game.booker.getHP() - Game.booker.getEnemyDogfight());
-                    Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
-                    Game.booker.velocity = Game.booker.velocity.add(getScaleX() * 15, 0);
-                    Game.booker.setBooleanVelocityX(false);
-                }
-            }
-        }
+    @Override
+    public void stopAnimation() {
+        animation.stop();
     }
 
-    private void moveY(int y) {
-        for (int i = 0; i < Math.abs(y); i++) {
-            if (y > 0) {
-                setTranslateY(getTranslateY() + 1);
-                canJump = false;
-            } else
-                setTranslateY(getTranslateY() - 1);
-
-            for (Block block : Game.blocks) {
-                if (intersects(block))
-                    if (y > 0) {
-                        setTranslateY(getTranslateY() - 1);
-                        canJump = true;
-                        return;
-                    } else {
-                        setTranslateY(getTranslateY() + 1);
-                        velocity = new Point2D(0, 10);
-                        return;
-                    }
-            }
-
-            for (Enemy enemy : Game.enemies)
-                if (this != enemy)
-                    if (getBoundsInParent().intersects(enemy.getBoundsInParent()))
-                        if (y > 0 && getTranslateY() < enemy.getTranslateY()) {
-                            setTranslateY(getTranslateY() - 1);
-                            if (booleanVelocity) {
-                                if (Game.difficultyLevelText.equals("marik") || Game.difficultyLevelText.equals("easy"))
-                                    HP -= Game.booker.getCharacterDogFight();
-                                velocity = velocity.add(getScaleX() * 5, -24);
-                                booleanVelocity = false;
-                                return;
-                            }
-                        } else {
-                            setTranslateY(getTranslateY() + 1);
-                            return;
-                        }
-
-            if (getBoundsInParent().intersects(Game.booker.getBoundsInParent()))
-                if (y > 0) {
+    private boolean intersectsWithBooker(char coordinate) {
+        if (getBoundsInParent().intersects(Game.booker.getBoundsInParent())) {
+            if (coordinate == 'Y') {
+                if (velocity.getY() > 0) {
                     setTranslateY(getTranslateY() - 1);
                     if (booleanVelocity) {
                         Game.booker.setHP(Game.booker.getHP() - Game.booker.getEnemyDogfight());
                         Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
-                        velocity = velocity.add(getScaleX() * 5, -24);
+                        velocity = velocity.add(getScaleX() * 5, JUMP_SPEED);
                         booleanVelocity = false;
                     }
                 } else {
@@ -150,17 +77,113 @@ public class Comstock extends Enemy implements Animatable {
                     if (Game.booker.isBooleanVelocityY()) {
                         HP -= Game.booker.getCharacterDogFight();
                         Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
-                        Game.booker.velocity = Game.booker.velocity.add(0, -22);
+                        Game.booker.velocity = Game.booker.velocity.add(0, JUMP_SPEED);
                         Game.booker.setBooleanVelocityY(false);
                     }
                 }
+            } else {
+                setTranslateX(getTranslateX() - getScaleX());
+                if (Game.booker.isBooleanVelocityX()) {
+                    Game.booker.setHP(Game.booker.getHP() - Game.booker.getEnemyDogfight());
+                    Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
+                    Game.booker.velocity = Game.booker.velocity.add(getScaleX() * GRAVITY * 2, 0);
+                    Game.booker.setBooleanVelocityX(false);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private boolean intersectsWithEnemies(char coordinate) {
+        for (Enemy enemy : Game.enemies) {
+            if (this != enemy) {
+                if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
+                    if (coordinate == 'Y') {
+                        if (Game.difficultyLevelText.equals("marik") || Game.difficultyLevelText.equals("easy"))
+                            HP -= Game.booker.getCharacterDogFight();
+                        if (velocity.getY() > 0) {
+                            setTranslateY(getTranslateY() - 1);
+                            if (booleanVelocity) {
+                                velocity = velocity.add(getScaleX() * 5, JUMP_SPEED);
+                                booleanVelocity = false;
+                            }
+                        } else {
+                            setTranslateY(getTranslateY() + 1);
+                        }
+                    } else {
+                        setTranslateX(getTranslateX() - getScaleX());
+                        stopAnimation();
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean intersectsWithBlocks(char coordinate) {
+        for (Block block : Game.blocks) {
+            if (intersectsWithBlock(block)) {
+                if (coordinate == 'Y') {
+                    if (velocity.getY() > 0) {
+                        setTranslateY(getTranslateY() - 1);
+                        canJump = true;
+                    } else {
+                        setTranslateY(getTranslateY() + 1);
+                        velocity = new Point2D(0, GRAVITY);
+                    }
+                } else {
+                    setTranslateX(getTranslateX() - getScaleX());
+                    if (canJump) {
+                        velocity = velocity.add(0, JUMP_SPEED);
+                        canJump = false;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void moveY() {
+        if (velocity.getY() < GRAVITY) {
+            velocity = velocity.add(0, ANIMATION_SPEED);
+        } else {
+            booleanVelocity = true;
+        }
+
+        for (int i = 0; i < Math.abs(velocity.getY()); i++) {
+            if (velocity.getY() > 0)
+                setTranslateY(getTranslateY() + 1);
+            else
+                setTranslateY(getTranslateY() - 1);
+
+            if (intersectsWithEnemies('Y'))
+                return;
+            if (intersectsWithBlocks('Y'))
+                return;
+            if (intersectsWithBooker('Y'))
+                return;
         }
     }
 
-    void jump() {
-        if (canJump) {
-            velocity = velocity.add(0, -24);
-            canJump = false;
+    private void moveX(int x) {
+        for (int i = 0; i < Math.abs(x); i++) {
+            if (x > 0 || getTranslateX() == Game.booker.getTranslateX()) {
+                setTranslateX(getTranslateX() + 1);
+                setScaleX(1);
+            } else {
+                setTranslateX(getTranslateX() - 1);
+                setScaleX(-1);
+            }
+
+            if (intersectsWithEnemies('X'))
+                return;
+            if (intersectsWithBlocks('X'))
+                return;
+            if (intersectsWithBooker('X'))
+                return;
         }
     }
 
@@ -300,11 +323,11 @@ public class Comstock extends Enemy implements Animatable {
         voiceInterval = 0;
     }
 
-    private void playDeath() {
+    private void die() {
         canSeeBooker = false;
         toDelete = true;
         stopAnimation();
-        deathVoice();
+        playDeathVoice();
         Game.booker.setMoney(Game.booker.getMoney() + Game.booker.getMoneyForKillingEnemy());
     }
 
@@ -313,6 +336,8 @@ public class Comstock extends Enemy implements Animatable {
             toDelete = true;
             return;
         }
+
+        enemyWeapon.update();
 
         if (canSeeBooker)
             voiceInterval++;
@@ -353,27 +378,17 @@ public class Comstock extends Enemy implements Animatable {
 
     @Override
     public void update() {
-        moveY((int) velocity.getY());
-        if (HP > 0) {
-            if (velocity.getY() < 10)
-                velocity = velocity.add(0, 0.6);
-            else
-                booleanVelocity = true;
+        if (HP < 1) {
+            die();
+            return;
+        }
 
-            if (!hypnotized) {
-                enemyWeapon.update();
-                if (booleanVelocity)
-                    behave();
-            } else
-                stopAnimation();
+        moveY();
+        if (!hypnotized) {
+            behave();
         } else {
-            playDeath();
-            //pickUpSupply();
+            stopAnimation();
         }
     }
-
-    @Override
-    public void stopAnimation() {
-        animation.stop();
-    }
 }
+

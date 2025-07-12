@@ -19,9 +19,9 @@ public class Camper extends Enemy {
         Game.gameRoot.getChildren().add(this);
     }
 
-    private void moveY(double y) {
-        for (int i = 0; i < Math.abs(y); i++) {
-            if (y > 0)
+    private void moveY() {
+        for (int i = 0; i < Math.abs(velocity.getY()); i++) {
+            if (velocity.getY() > 0)
                 setTranslateY(getTranslateY() + 1);
             else
                 setTranslateY(getTranslateY() - 1);
@@ -34,7 +34,7 @@ public class Camper extends Enemy {
         }
     }
 
-    private void playCamperVoice() {
+    private void playVoice() {
         Sounds.audioClipCamper.play(Game.menu.fxSlider.getValue() / 100);
         switch ((int) (Math.random() * 3)) {
             case 0 -> Sounds.bookerHit.play(Game.menu.fxSlider.getValue() / 100);
@@ -45,7 +45,7 @@ public class Camper extends Enemy {
         voiceInterval = 0;
     }
 
-    private void camperBehave() {
+    private void behave() {
         if (Sounds.audioClipCamper.isPlaying()) {
             moveInterval++;
             if (moveInterval < 10)
@@ -68,12 +68,12 @@ public class Camper extends Enemy {
             voiceInterval = 0;
 
         if (voiceInterval > 180)
-            playCamperVoice();
+            playVoice();
     }
 
-    private void playDeath() {
+    private void die() {
         toDelete = true;
-        deathVoice();
+        playDeathVoice();
         Game.booker.setMoney(Game.booker.getMoney() + 5);
         Game.elizabeth.countMedicine++;
     }
@@ -85,12 +85,13 @@ public class Camper extends Enemy {
 
     @Override
     public void update() {
-        moveY(velocity.getY());
+        if (HP < 1) {
+            die();
+            return;
+        }
 
-        if (HP <= 0)
-            playDeath();
-
+        moveY();
         if (!hypnotized)
-            camperBehave();
+            behave();
     }
 }

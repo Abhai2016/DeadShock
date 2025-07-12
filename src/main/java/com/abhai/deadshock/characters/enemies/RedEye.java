@@ -3,15 +3,12 @@ package com.abhai.deadshock.characters.enemies;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.weapons.RedEyeWeapon;
-import javafx.geometry.Point2D;
 
 public class RedEye extends Comstock {
 
     public RedEye(long x, long y) {
-        type = EnemyType.RED_EYE;
         HP = 125;
-
-        velocity = new Point2D(0, 10);
+        type = EnemyType.RED_EYE;
         enemyWeapon = new RedEyeWeapon();
 
         setTranslateX(x);
@@ -22,7 +19,7 @@ public class RedEye extends Comstock {
     }
 
     @Override
-    protected boolean intersects(Block block) {
+    protected boolean intersectsWithBlock(Block block) {
         return getBoundsInParent().intersects(block.getBoundsInParent());
     }
 
