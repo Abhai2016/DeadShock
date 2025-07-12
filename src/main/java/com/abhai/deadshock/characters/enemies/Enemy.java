@@ -3,21 +3,50 @@ package com.abhai.deadshock.characters.enemies;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.utils.Sounds;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
+import java.nio.file.Paths;
+
 public class Enemy extends Pane {
-    protected ImageView imageView;
-    protected Point2D velocity;
+    protected static final int GRAVITY = 10;
+    protected static final int WIDTH = 62;
+    protected static final int HEIGHT = 65;
+
     protected EnemyType type;
+    protected Point2D velocity;
+    protected ImageView imageView;
 
-    protected boolean toDelete = false;
-    protected boolean hypnotized = false;
+    protected boolean toDelete;
+    protected boolean hypnotized;
 
-    protected int HP = 100;
-    protected int voiceInterval = 0;
+    protected int HP;
+    protected int voiceInterval;
 
     Enemy() {
+        toDelete = false;
+        hypnotized = false;
+        voiceInterval = 0;
+
+        velocity = new Point2D(0, GRAVITY);
+        imageView = new ImageView(new Image(
+                Paths.get("resources", "images", "characters", getImageName()).toUri().toString()));
+        imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
+    }
+
+    protected void deathVoice() {
+        switch ((int) (Math.random() * 2)) {
+            case 0:
+                Sounds.death.play(Game.menu.fxSlider.getValue() / 100);
+            case 1:
+                Sounds.death2.play(Game.menu.fxSlider.getValue() / 100);
+        }
+    }
+
+    protected String getImageName() {
+        return "";
     }
 
     public boolean isToDelete() {
@@ -38,15 +67,6 @@ public class Enemy extends Pane {
 
     public boolean isCamper() {
         return type.equals(EnemyType.CAMPER);
-    }
-
-    protected void deathVoice() {
-        switch ((int) (Math.random() * 2)) {
-            case 0:
-                Sounds.death.play(Game.menu.fxSlider.getValue() / 100);
-            case 1:
-                Sounds.death2.play(Game.menu.fxSlider.getValue() / 100);
-        }
     }
 
     public void playHitVoice() {

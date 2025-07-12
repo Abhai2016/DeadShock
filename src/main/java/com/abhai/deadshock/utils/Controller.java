@@ -5,7 +5,7 @@ import javafx.scene.input.KeyCode;
 
 public class Controller {
 
-    static void update() {
+    public static void update() {
         if ( isPressed(KeyCode.D) && Game.booker.getTranslateX() < Game.gameRoot.getWidth() - Game.booker.getWidth()
                 && !Game.booker.isStunned()) {
             if (Game.booker.isCanChangeAnimation())

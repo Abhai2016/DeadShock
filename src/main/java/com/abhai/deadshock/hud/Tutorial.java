@@ -37,7 +37,7 @@ public class Tutorial {
             "   для этого поднимите ящик с патронами с выбранным оружием РПГ");
 
 
-    Tutorial() {
+    public Tutorial() {
         switch(Game.levelNumber) {
             case Level.FIRST_LEVEL:
                 setText(moveCharacter, 100);

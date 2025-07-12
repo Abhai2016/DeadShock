@@ -486,6 +486,7 @@ public class Booker extends Pane implements Animatable {
     private void playDeath() {
         Game.timer.stop();
         Game.menu.music.pause();
+        stopAnimation();
         if (money >= priceForGeneration) {
             Text textMoney = new Text("  С каждой смертью вы теряете " + priceForGeneration + " монет, если\nваши монеты закончатся - игра будет окончена!");
 
@@ -566,6 +567,7 @@ public class Booker extends Pane implements Animatable {
     private void playVideoDeath() {
         Game.timer.stop();
         Game.menu.music.pause();
+        stopAnimation();
         if (Sounds.elizabethMediaPlayer != null)
             Sounds.elizabethMediaPlayer.stop();
         if (money >= priceForGeneration) {

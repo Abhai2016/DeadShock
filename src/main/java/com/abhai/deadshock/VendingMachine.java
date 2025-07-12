@@ -26,7 +26,7 @@ import java.nio.file.Paths;
 import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
 import static javafx.scene.input.KeyEvent.KEY_PRESSED;
 
-class VendingMachine extends Pane {
+public class VendingMachine extends Pane {
     private final int BUTTON_HEIGHT = 53;
     private final int BUTTON_WIDTH = 356;
 

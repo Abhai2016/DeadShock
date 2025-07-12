@@ -32,7 +32,7 @@ public class HUD extends Pane {
     private Rectangle salt = new Rectangle(100, 12, Color.BLUE);
 
 
-    HUD() {
+    public HUD() {
         HP.setTranslateX(51);
         HP.setTranslateY(12);
 

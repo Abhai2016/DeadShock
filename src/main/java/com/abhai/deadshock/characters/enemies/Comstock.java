@@ -10,15 +10,12 @@ import com.abhai.deadshock.utils.SpriteAnimation;
 import com.abhai.deadshock.weapons.ComstockWeapon;
 import com.abhai.deadshock.weapons.EnemyWeapon;
 import javafx.geometry.Point2D;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
-import java.nio.file.Paths;
-
 public class Comstock extends Enemy implements Animatable {
-    private static final int ENEMY_SPEED = 3;
+    private static final int SPEED = 3;
+    protected static final int COUNT_OF_SPRITES = 10;
+    protected static final double ANIMATION_DURATION = 0.5;
 
     private int seeInterval = 0;
 
@@ -31,20 +28,16 @@ public class Comstock extends Enemy implements Animatable {
     protected EnemyWeapon enemyWeapon;
 
     Comstock() {
+        animation = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_DURATION),
+                COUNT_OF_SPRITES, COUNT_OF_SPRITES, 0, 0, WIDTH, HEIGHT);
     }
 
     public Comstock(long x, long y) {
-        setWidth(62);
-        setHeight(65);
+        this();
 
+        HP = 100;
         type = EnemyType.COMSTOCK;
-        velocity = new Point2D(0, 10);
         enemyWeapon = new ComstockWeapon();
-        imageView = new ImageView(new Image(
-                Paths.get("resources", "images", "characters", "comstock.png").toUri().toString()));
-        imageView.setViewport(new Rectangle2D(0, 0, getWidth(), getHeight()));
-        animation = new SpriteAnimation(
-                imageView, Duration.seconds(0.5), 10, 10, 0, 0, 62, 65);
 
         setTranslateX(x);
         setTranslateY(y);
@@ -55,6 +48,11 @@ public class Comstock extends Enemy implements Animatable {
 
     protected boolean intersects(Block block) {
         return getBoundsInParent().intersects(block.getBoundsInParent()) && !block.getType().equals(BlockType.INVISIBLE);
+    }
+
+    @Override
+    protected String getImageName() {
+        return "comstock.png";
     }
 
     private void moveX(int x) {
@@ -116,7 +114,7 @@ public class Comstock extends Enemy implements Animatable {
                         return;
                     } else {
                         setTranslateY(getTranslateY() + 1);
-                        velocity = new Point2D(0, 8);
+                        velocity = new Point2D(0, 10);
                         return;
                     }
             }
@@ -230,7 +228,7 @@ public class Comstock extends Enemy implements Animatable {
             booleanVoice = true;
             playVoiceFoundPlayer();
         }
-        moveX(ENEMY_SPEED);
+        moveX(SPEED);
         animation.play();
     }
 
@@ -304,6 +302,7 @@ public class Comstock extends Enemy implements Animatable {
 
     private void playDeath() {
         canSeeBooker = false;
+        toDelete = true;
         stopAnimation();
         deathVoice();
         Game.booker.setMoney(Game.booker.getMoney() + Game.booker.getMoneyForKillingEnemy());
@@ -323,7 +322,7 @@ public class Comstock extends Enemy implements Animatable {
         if (Game.booker.getTranslateX() > getTranslateX() - 720 && Game.booker.getTranslateX() < getTranslateX()) {
             if (canSeeBooker) {
                 losingBooker();
-                moveX(-ENEMY_SPEED);
+                moveX(-SPEED);
                 animation.play();
                 enemyWeapon.shoot(getScaleX(), getTranslateX(), getTranslateY());
             } else
@@ -331,7 +330,7 @@ public class Comstock extends Enemy implements Animatable {
         } else if (Game.booker.getTranslateX() < getTranslateX() + 650 && Game.booker.getTranslateX() > getTranslateX()) {
             if (canSeeBooker) {
                 losingBooker();
-                moveX(ENEMY_SPEED);
+                moveX(SPEED);
                 animation.play();
                 enemyWeapon.shoot(getScaleX(), getTranslateX(), getTranslateY());
             } else
@@ -356,7 +355,7 @@ public class Comstock extends Enemy implements Animatable {
     public void update() {
         moveY((int) velocity.getY());
         if (HP > 0) {
-            if (velocity.getY() < 8)
+            if (velocity.getY() < 10)
                 velocity = velocity.add(0, 0.6);
             else
                 booleanVelocity = true;

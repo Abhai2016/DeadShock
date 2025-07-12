@@ -3,29 +3,20 @@ package com.abhai.deadshock.characters.enemies;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.utils.Sounds;
-import javafx.geometry.Point2D;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-
-import java.nio.file.Paths;
 
 public class Camper extends Enemy {
-    private int moveInterval = 0;
+    private int moveInterval;
 
     public Camper(long x, long y) {
-        setWidth(33);
-        setHeight(65);
-
-        imageView = new ImageView(new Image(
-                Paths.get("resources", "images", "characters", "camper.png").toUri().toString()));
-        velocity = new Point2D(0, 10);
-
-        type = EnemyType.CAMPER;
         HP = 500;
+        moveInterval = 0;
+        type = EnemyType.CAMPER;
 
         setTranslateX(x);
         setTranslateY(y);
+
         getChildren().add(imageView);
+        Game.gameRoot.getChildren().add(this);
     }
 
     private void moveY(double y) {
@@ -81,10 +72,15 @@ public class Camper extends Enemy {
     }
 
     private void playDeath() {
+        toDelete = true;
         deathVoice();
         Game.booker.setMoney(Game.booker.getMoney() + 5);
         Game.elizabeth.countMedicine++;
-        toDelete = true;
+    }
+
+    @Override
+    protected String getImageName() {
+        return "camper.png";
     }
 
     @Override
@@ -94,7 +90,7 @@ public class Camper extends Enemy {
         if (HP <= 0)
             playDeath();
 
-        if (!hypnotized && HP > 0)
+        if (!hypnotized)
             camperBehave();
     }
 }

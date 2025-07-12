@@ -1,10 +1,10 @@
 package com.abhai.deadshock.weapons.bullets;
 
+import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.levels.Block;
-import com.abhai.deadshock.Game;
-import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.levels.BlockType;
+import com.abhai.deadshock.utils.Sounds;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 public class EnemyBullet extends Bullet {
     private byte damage;
 
-    EnemyBullet(String enemyName, double scaleX, double x, double y) {
+    public EnemyBullet(String enemyName, double scaleX, double x, double y) {
         Path imagePath = Paths.get("resources", "images", "weapons", "bullet.png");
         bullet = new ImageView(new Image(imagePath.toUri().toString()));
 
@@ -41,7 +41,7 @@ public class EnemyBullet extends Bullet {
                 break;
         }
 
-        switch(enemyName) {
+        switch (enemyName) {
             case "comstock":
                 setTranslateY(y + 9);
                 if (direction)
@@ -62,7 +62,6 @@ public class EnemyBullet extends Bullet {
     }
 
 
-
     @Override
     public void update() {
         if (direction)
@@ -80,7 +79,7 @@ public class EnemyBullet extends Bullet {
             Game.gameRoot.getChildren().remove(this);
             delete = true;
             Game.booker.setHP(Game.booker.getHP() - damage);
-            byte rand = (byte)(Math.random() * 3);
+            byte rand = (byte) (Math.random() * 3);
             switch (rand) {
                 case 0:
                     Sounds.bookerHit.play(Game.menu.voiceSlider.getValue() / 100);
@@ -105,10 +104,10 @@ public class EnemyBullet extends Bullet {
             if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
                 if (Game.difficultyLevelText.equals("marik") || Game.difficultyLevelText.equals("easy")) {
                     enemy.setHP(enemy.getHP() - Game.weapon.getDamage());
-                    Game.gameRoot.getChildren().remove(this);
-                    delete = true;
-                    return;
                 }
+                Game.gameRoot.getChildren().remove(this);
+                delete = true;
+                return;
             }
     }
 }
