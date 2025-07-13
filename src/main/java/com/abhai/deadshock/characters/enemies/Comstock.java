@@ -4,7 +4,6 @@ import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.Animatable;
 import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.levels.BlockType;
-import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.utils.SpriteAnimation;
 import com.abhai.deadshock.weapons.ComstockWeapon;
@@ -12,25 +11,40 @@ import com.abhai.deadshock.weapons.EnemyWeapon;
 import javafx.geometry.Point2D;
 import javafx.util.Duration;
 
+import java.util.function.BooleanSupplier;
+
 public class Comstock extends Enemy implements Animatable {
     private static final int SPEED = 3;
+    private static final int VOICE_INTERVAL = 500;
+
     protected static final double JUMP_SPEED = -25;
     protected static final int COUNT_OF_SPRITES = 10;
     protected static final double ANIMATION_SPEED = 0.5;
 
-    private int seeInterval = 0;
+    private int seeInterval;
+    private boolean canJump;
+    private boolean canSeeBooker;
+    private boolean booleanVoice;
+    private boolean booleanVelocity;
 
-    private boolean canSeeBooker = false;
-    private boolean booleanVoice = true;
-    private boolean booleanVelocity = true;
-    private boolean canJump = true;
+    private final BooleanSupplier onTheLeft;
+    private final BooleanSupplier onTheRight;
 
-    protected SpriteAnimation animation;
     protected EnemyWeapon enemyWeapon;
+    protected SpriteAnimation animation;
 
     Comstock() {
+        canJump = true;
+        seeInterval = 0;
+        booleanVoice = true;
+        canSeeBooker = false;
+        booleanVelocity = true;
         animation = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED),
                 COUNT_OF_SPRITES, COUNT_OF_SPRITES, 0, 0, WIDTH, HEIGHT);
+        onTheLeft = () ->
+                Game.booker.getTranslateX() > getTranslateX() - 720 && Game.booker.getTranslateX() < getTranslateX();
+        onTheRight = () ->
+                Game.booker.getTranslateX() < getTranslateX() + 650 && Game.booker.getTranslateX() > getTranslateX();
     }
 
     public Comstock(long x, long y) {
@@ -153,6 +167,11 @@ public class Comstock extends Enemy implements Animatable {
             booleanVelocity = true;
         }
 
+        if (getTranslateY() > Game.scene.getHeight()) {
+            toDelete = true;
+            return;
+        }
+
         for (int i = 0; i < Math.abs(velocity.getY()); i++) {
             if (velocity.getY() > 0)
                 setTranslateY(getTranslateY() + 1);
@@ -169,6 +188,7 @@ public class Comstock extends Enemy implements Animatable {
     }
 
     private void moveX(int x) {
+        animation.play();
         for (int i = 0; i < Math.abs(x); i++) {
             if (x > 0 || getTranslateX() == Game.booker.getTranslateX()) {
                 setTranslateX(getTranslateX() + 1);
@@ -187,127 +207,80 @@ public class Comstock extends Enemy implements Animatable {
         }
     }
 
-    //TODO separate supply logic from enemies
-    /*private void createSupply(int randSupply) {
-        if (randSupply == 0)
-            Game.elizabeth.countMedicine++;
-        else {
-            switch ((int) (Math.random() * 2)) {
-                case 0:
-                    Sounds.audioClipAmmo.play(Game.menu.voiceSlider.getValue() / 100);
-                case 1:
-                    Sounds.audioClipAmmo2.play(Game.menu.voiceSlider.getValue() / 100);
+    private void canSeeBooker(BooleanSupplier booleanSupplier) {
+        if (!canSeeBooker) {
+            if (booleanSupplier.getAsBoolean()) {
+                moveX(SPEED);
+                if (Game.booker.getTranslateY() >= getTranslateY()) {
+                    canSeeBooker = true;
+                    playVoiceFoundBooker();
+                }
             }
-            if (Game.elizabeth.getAmmo() != null)
-                Game.gameRoot.getChildren().remove(Game.elizabeth.getAmmo());
-            Game.elizabeth.setAmmo(new Supply(Game.elizabeth.getTranslateX(), Game.elizabeth.getTranslateY(), type));
-        }
+        } else {
+            if (getTranslateY() <= Game.booker.getTranslateY()) {
+                enemyWeapon.shoot(getScaleX(), getTranslateX(), getTranslateY());
+            } else {
+                losingBooker();
+            }
 
-        Game.gameRoot.getChildren().remove(this);
-        toDelete = true;
+            if (booleanSupplier.equals(onTheLeft))
+                moveX(-SPEED);
+            else
+                moveX(SPEED);
+        }
     }
 
-    private void pickUpSupply() {
-        boolean pickUpSupply = true;
-        if (pickUpSupply) {
-            if (Game.booker.getBoundsInParent().intersects(getBoundsInParent())) {
-                if (supply.getSupply().equals("medicine")) {
-                    Sounds.feelsBetter.setVolume(Game.menu.voiceSlider.getValue() / 100);
-                    Sounds.feelsBetter.play();
-                    for (int count = 0; count < Game.booker.getMedicineCount(); count++)
-                        if (Game.booker.getHP() < 100)
-                            Game.booker.setHP(Game.booker.getHP() + 1);
-                        else
-                            break;
-                } else {
-                    Sounds.great.play(Game.menu.voiceSlider.getValue() / 100);
-                    Game.weapon.setBullets(Game.weapon.getBullets() + Game.booker.getBulletCount());
-                }
-                Game.gameRoot.getChildren().remove(this);
-                pickUpSupply = false;
-                toDelete = true;
-            }
+    private void cannotSeeBooker() {
+        stopAnimation();
 
-            if (Game.difficultyLevelText.equals("high") || Game.difficultyLevelText.equals("hardcore"))
-                for (Enemy enemy : Game.enemies)
-                    if (enemy != this && enemy.getBoundsInParent().intersects(getBoundsInParent())) {
-                        if (supply.getSupply().equals("medicine")) {
-                            for (int count = 0; count < Game.booker.getMedicineCount(); count++)
-                                if (enemy.HP < 100)
-                                    enemy.HP++;
-                                else
-                                    break;
-                        }
-                        Game.gameRoot.getChildren().remove(this);
-                        pickUpSupply = false;
-                        toDelete = true;
-                    }
+        if (canSeeBooker) {
+            losingBooker();
+        } else {
+            moveX(SPEED);
         }
-    }*/
-
-    private void lookingForBooker() {
-        if (Game.booker.getTranslateY() > getTranslateY()) {
-            canSeeBooker = true;
-            booleanVoice = true;
-            playVoiceFoundPlayer();
-        }
-        moveX(SPEED);
-        animation.play();
     }
 
     private void losingBooker() {
-        if (Game.booker.getTranslateY() < getTranslateY() || Game.booker.getTranslateX() == getTranslateX())
-            if ((Game.levelNumber == Level.THIRD_LEVEL && Game.booker.getTranslateY()
-                    < getTranslateY() - Block.BLOCK_SIZE * 2) || Game.booker.stayingOnLittlePlatform) {
-                seeInterval++;
-                if (seeInterval > 180) {
-                    booleanVoice = true;
-                    canSeeBooker = false;
-                    seeInterval = 0;
-                    playVoiceLostPlayer();
-                }
-            } else
-                seeInterval = 0;
+        seeInterval++;
+        if (seeInterval > VOICE_INTERVAL) {
+            booleanVoice = true;
+            seeInterval = 0;
+            playVoiceLostBooker();
+            canSeeBooker = false;
+        }
     }
 
-    private void playVoiceLostPlayer() {
+    private void playVoiceLostBooker() {
         if (booleanVoice) {
             switch ((int) (Math.random() * 6)) {
-                case 0 -> Sounds.lostHim.play(Game.menu.voiceSlider.getValue() / 100);
-                case 1 -> Sounds.heHasGone3.play(Game.menu.voiceSlider.getValue() / 100);
-                case 2 -> Sounds.wereHere.play(Game.menu.voiceSlider.getValue() / 100);
-                case 3 -> Sounds.heHasGone.play(Game.menu.voiceSlider.getValue() / 100);
+                case 0 -> Sounds.heHasGone.play(Game.menu.voiceSlider.getValue() / 100);
+                case 1 -> Sounds.heHasGone2.play(Game.menu.voiceSlider.getValue() / 100);
+                case 2 -> Sounds.heHasGone3.play(Game.menu.voiceSlider.getValue() / 100);
+                case 3 -> Sounds.lostHim.play(Game.menu.voiceSlider.getValue() / 100);
                 case 4 -> Sounds.lostHim2.play(Game.menu.voiceSlider.getValue() / 100);
-                case 5 -> Sounds.heHasGone2.play(Game.menu.voiceSlider.getValue() / 100);
+                case 5 -> Sounds.wereHere.play(Game.menu.voiceSlider.getValue() / 100);
             }
             booleanVoice = false;
         }
     }
 
-    private void playVoiceFoundPlayer() {
+    private void playVoiceFoundBooker() {
         if (booleanVoice) {
-            if (Game.levelNumber == Level.FIRST_LEVEL) {
-                switch ((int) (Math.random() * 6)) {
-                    case 0 -> Sounds.wontGoAway.play(Game.menu.voiceSlider.getValue() / 100);
-                    case 1 -> Sounds.audioClipFire.play(Game.menu.voiceSlider.getValue() / 100);
-                    case 2 -> Sounds.heIsHere.play(Game.menu.voiceSlider.getValue() / 100);
-                    case 3 -> Sounds.getDownWeapon.play(Game.menu.voiceSlider.getValue() / 100);
-                    case 4 -> Sounds.die.play(Game.menu.voiceSlider.getValue() / 100);
-                    case 5 -> Sounds.attack.play(Game.menu.voiceSlider.getValue() / 100);
-                }
-            } else {
-                switch ((int) (Math.random() * 2)) {
-                    case 0:
-                        Sounds.theyAreHere.play(Game.menu.voiceSlider.getValue() / 100);
-                    case 1:
-                        Sounds.takeThem.play(Game.menu.voiceSlider.getValue() / 100);
-                }
+            switch ((int) (Math.random() * 8)) {
+                case 0 -> Sounds.wontGoAway.play(Game.menu.voiceSlider.getValue() / 100);
+                case 1 -> Sounds.audioClipFire.play(Game.menu.voiceSlider.getValue() / 100);
+                case 2 -> Sounds.heIsHere.play(Game.menu.voiceSlider.getValue() / 100);
+                case 3 -> Sounds.getDownWeapon.play(Game.menu.voiceSlider.getValue() / 100);
+                case 4 -> Sounds.die.play(Game.menu.voiceSlider.getValue() / 100);
+                case 5 -> Sounds.attack.play(Game.menu.voiceSlider.getValue() / 100);
+                case 6 -> Sounds.theyAreHere.play(Game.menu.voiceSlider.getValue() / 100);
+                case 7 -> Sounds.takeThem.play(Game.menu.voiceSlider.getValue() / 100);
             }
-            booleanVoice = false;
         }
+        booleanVoice = false;
     }
 
-    private void playEnemyVoice() {
+    private void playAttackVoice() {
         switch ((int) (Math.random() * 10)) {
             case 0 -> Sounds.canYouShoot.play(Game.menu.voiceSlider.getValue() / 100);
             case 1 -> Sounds.dieAlready.play(Game.menu.voiceSlider.getValue() / 100);
@@ -324,56 +297,25 @@ public class Comstock extends Enemy implements Animatable {
     }
 
     private void die() {
-        canSeeBooker = false;
         toDelete = true;
         stopAnimation();
         playDeathVoice();
-        Game.booker.setMoney(Game.booker.getMoney() + Game.booker.getMoneyForKillingEnemy());
+        Game.booker.addMoneyForKillingEnemy();
     }
 
     private void behave() {
-        if (getTranslateY() > Game.scene.getHeight()) {
-            toDelete = true;
-            return;
-        }
-
-        enemyWeapon.update();
-
         if (canSeeBooker)
             voiceInterval++;
-        else
-            voiceInterval = 0;
 
-        if (Game.booker.getTranslateX() > getTranslateX() - 720 && Game.booker.getTranslateX() < getTranslateX()) {
-            if (canSeeBooker) {
-                losingBooker();
-                moveX(-SPEED);
-                animation.play();
-                enemyWeapon.shoot(getScaleX(), getTranslateX(), getTranslateY());
-            } else
-                lookingForBooker();
-        } else if (Game.booker.getTranslateX() < getTranslateX() + 650 && Game.booker.getTranslateX() > getTranslateX()) {
-            if (canSeeBooker) {
-                losingBooker();
-                moveX(SPEED);
-                animation.play();
-                enemyWeapon.shoot(getScaleX(), getTranslateX(), getTranslateY());
-            } else
-                lookingForBooker();
-        } else if (Game.booker.getTranslateX() == getTranslateX()) {
-            animation.stop();
-            if (canSeeBooker)
-                losingBooker();
-            else
-                lookingForBooker();
-        } else if (canSeeBooker && Game.booker.getTranslateX() != getTranslateX()) {
-            canSeeBooker = false;
-            booleanVoice = true;
-            playVoiceLostPlayer();
-        }
+        if (voiceInterval > VOICE_INTERVAL)
+            playAttackVoice();
 
-        if (voiceInterval > 240)
-            playEnemyVoice();
+        if (getTranslateX() > Game.booker.getTranslateX())
+            canSeeBooker(onTheLeft);
+        if (getTranslateX() < Game.booker.getTranslateX())
+            canSeeBooker(onTheRight);
+        if (getTranslateX() == Game.booker.getTranslateX())
+            cannotSeeBooker();
     }
 
     @Override

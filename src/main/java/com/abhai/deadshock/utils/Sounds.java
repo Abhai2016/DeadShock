@@ -121,16 +121,16 @@ public class Sounds {
     public static AudioClip keepShooting = new AudioClip(Paths.get("resources", "sounds", "voices",
             "enemies", "keepShooting.mp3").toUri().toString());
 
+    public static AudioClip noAmmo = new AudioClip(Paths.get("resources", "sounds", "voices",
+            "enemies", "noAmmo.mp3").toUri().toString());
     public static AudioClip noAmmo2 = new AudioClip(Paths.get("resources", "sounds", "voices",
             "enemies", "noAmmo2.mp3").toUri().toString());
     public static AudioClip needAmmo = new AudioClip(Paths.get("resources", "sounds", "voices",
             "enemies", "needAmmo.mp3").toUri().toString());
     public static AudioClip needAmmo2 = new AudioClip(Paths.get("resources", "sounds", "voices",
-            "enemies", "needAmmo.mp3").toUri().toString());
+            "enemies", "needAmmo2.mp3").toUri().toString());
     public static AudioClip reloading = new AudioClip(Paths.get("resources", "sounds", "voices",
             "enemies", "reloading.mp3").toUri().toString());
-    public static AudioClip noAmmo = new AudioClip(Paths.get("resources", "sounds", "voices",
-            "enemies", "noAmmo.mp3").toUri().toString());
 
 
     //fx

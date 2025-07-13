@@ -41,7 +41,7 @@ public class Camper extends Enemy {
             case 1 -> Sounds.bookerHit2.play(Game.menu.fxSlider.getValue() / 100);
             case 2 -> Sounds.bookerHit3.play(Game.menu.fxSlider.getValue() / 100);
         }
-        Game.booker.setHP(Game.booker.getHP() - 10);
+        Game.booker.minusHPForCamperScream();
         voiceInterval = 0;
     }
 
@@ -74,7 +74,7 @@ public class Camper extends Enemy {
     private void die() {
         toDelete = true;
         playDeathVoice();
-        Game.booker.setMoney(Game.booker.getMoney() + 5);
+        Game.booker.addMoneyForKillingEnemy();
         Game.elizabeth.countMedicine++;
     }
 

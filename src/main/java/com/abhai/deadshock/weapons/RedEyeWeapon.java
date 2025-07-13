@@ -12,18 +12,15 @@ public class RedEyeWeapon extends EnemyWeapon {
 
     @Override
     public void shoot(double scaleX, double x, double y) {
+        shootInterval++;
+        if (clip == 0)
+            reload(30);
+
         if (shootInterval > 20 && clip > 0) {
             Sounds.machineGunShot.play(Game.menu.fxSlider.getValue() / 100);
             clip--;
             shootInterval = 0;
             Game.enemyBullets.add(new EnemyBullet("red_eye", scaleX, x, y));
         }
-    }
-
-    @Override
-    public void update() {
-        shootInterval++;
-        if (clip == 0)
-            reload(30);
     }
 }

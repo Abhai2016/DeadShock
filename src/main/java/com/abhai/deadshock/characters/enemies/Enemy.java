@@ -11,9 +11,9 @@ import javafx.scene.layout.Pane;
 import java.nio.file.Paths;
 
 public class Enemy extends Pane {
-    protected static final int GRAVITY = 10;
     protected static final int WIDTH = 62;
     protected static final int HEIGHT = 65;
+    protected static final int GRAVITY = 10;
 
     protected EnemyType type;
     protected Point2D velocity;
@@ -38,10 +38,8 @@ public class Enemy extends Pane {
 
     protected void playDeathVoice() {
         switch ((int) (Math.random() * 2)) {
-            case 0:
-                Sounds.death.play(Game.menu.fxSlider.getValue() / 100);
-            case 1:
-                Sounds.death2.play(Game.menu.fxSlider.getValue() / 100);
+            case 0 -> Sounds.death.play(Game.menu.fxSlider.getValue() / 100);
+            case 1 -> Sounds.death2.play(Game.menu.fxSlider.getValue() / 100);
         }
     }
 

@@ -639,6 +639,14 @@ public class Booker extends Pane implements Animatable {
         });
     }
 
+    public void addMoneyForKillingEnemy() {
+        money += moneyForKillingEnemy;
+    }
+
+    public void minusHPForCamperScream() {
+        HP -= 10;
+    }
+
     public void update() {
         if (velocity.getY() < 8)
             velocity = velocity.add(0, 0.5);

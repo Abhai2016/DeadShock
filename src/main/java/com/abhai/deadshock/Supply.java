@@ -104,4 +104,62 @@ public class Supply extends Pane {
         }
 
     }
+
+    //TODO implement supply logic after killing an enemy
+    /*private void createSupply(int randSupply) {
+        if (randSupply == 0)
+            Game.elizabeth.countMedicine++;
+        else {
+            switch ((int) (Math.random() * 2)) {
+                case 0:
+                    Sounds.audioClipAmmo.play(Game.menu.voiceSlider.getValue() / 100);
+                case 1:
+                    Sounds.audioClipAmmo2.play(Game.menu.voiceSlider.getValue() / 100);
+            }
+            if (Game.elizabeth.getAmmo() != null)
+                Game.gameRoot.getChildren().remove(Game.elizabeth.getAmmo());
+            Game.elizabeth.setAmmo(new Supply(Game.elizabeth.getTranslateX(), Game.elizabeth.getTranslateY(), type));
+        }
+
+        Game.gameRoot.getChildren().remove(this);
+        toDelete = true;
+    }
+
+    private void pickUpSupply() {
+        boolean pickUpSupply = true;
+        if (pickUpSupply) {
+            if (Game.booker.getBoundsInParent().intersects(getBoundsInParent())) {
+                if (supply.getSupply().equals("medicine")) {
+                    Sounds.feelsBetter.setVolume(Game.menu.voiceSlider.getValue() / 100);
+                    Sounds.feelsBetter.play();
+                    for (int count = 0; count < Game.booker.getMedicineCount(); count++)
+                        if (Game.booker.getHP() < 100)
+                            Game.booker.setHP(Game.booker.getHP() + 1);
+                        else
+                            break;
+                } else {
+                    Sounds.great.play(Game.menu.voiceSlider.getValue() / 100);
+                    Game.weapon.setBullets(Game.weapon.getBullets() + Game.booker.getBulletCount());
+                }
+                Game.gameRoot.getChildren().remove(this);
+                pickUpSupply = false;
+                toDelete = true;
+            }
+
+            if (Game.difficultyLevelText.equals("high") || Game.difficultyLevelText.equals("hardcore"))
+                for (Enemy enemy : Game.enemies)
+                    if (enemy != this && enemy.getBoundsInParent().intersects(getBoundsInParent())) {
+                        if (supply.getSupply().equals("medicine")) {
+                            for (int count = 0; count < Game.booker.getMedicineCount(); count++)
+                                if (enemy.HP < 100)
+                                    enemy.HP++;
+                                else
+                                    break;
+                        }
+                        Game.gameRoot.getChildren().remove(this);
+                        pickUpSupply = false;
+                        toDelete = true;
+                    }
+        }
+    }*/
 }
