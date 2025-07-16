@@ -487,11 +487,8 @@ public class Menu {
         addListener();
         music.play();
         if (Game.levelNumber > Level.FIRST_LEVEL)
-            if (Sounds.elizabethMediaPlayer != null)
-                Sounds.elizabethMediaPlayer.play();
-        if (Game.boss != null)
-            if (Game.boss.getMediaPlayer() != null)
-                Game.boss.getMediaPlayer().play();
+            if (Sounds.whereAreYouFrom.getStatus() == MediaPlayer.Status.PAUSED)
+                Sounds.whereAreYouFrom.play();
         Game.timer.start();
         isShown = false;
     }
@@ -506,13 +503,10 @@ public class Menu {
         for (Enemy enemy : Game.enemies)
             if (enemy instanceof Animatable animatable)
                 animatable.stopAnimation();
-        if (Sounds.elizabethMediaPlayer != null)
-            Sounds.elizabethMediaPlayer.pause();
+        if (Sounds.whereAreYouFrom.getStatus() == MediaPlayer.Status.PLAYING)
+            Sounds.whereAreYouFrom.pause();
         if (!Game.appRoot.getChildren().contains(menuBox))
             Game.appRoot.getChildren().add(menuBox);
-        if (Game.boss != null)
-            if (Game.boss.getMediaPlayer() != null)
-                Game.boss.getMediaPlayer().pause();
         Game.timer.stop();
         isShown = true;
     }

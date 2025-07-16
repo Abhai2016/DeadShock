@@ -33,7 +33,12 @@ public class Sounds {
 
 
     //Elizabeth
-    public static MediaPlayer elizabethMediaPlayer;
+    public static MediaPlayer whereAreYouFrom = new MediaPlayer(new Media(Paths.get("resources",
+            "sounds", "voices", "elizabeth", "whereAreYouFrom.mp3").toUri().toString()));
+    public static MediaPlayer freedom = new MediaPlayer(new Media(Paths.get("resources", "sounds",
+            "voices", "elizabeth", "freedom.mp3").toUri().toString()));
+    public static MediaPlayer ohBooker = new MediaPlayer(new Media(Paths.get("resources", "sounds",
+            "voices", "elizabeth", "booker.mp3").toUri().toString()));
     public static AudioClip audioClipAmmo = new AudioClip(Paths.get("resources", "sounds", "voices",
             "elizabeth", "ammo.mp3").toUri().toString());
     public static AudioClip audioClipAmmo2 = new AudioClip(Paths.get("resources", "sounds", "voices",
@@ -52,8 +57,6 @@ public class Sounds {
             "elizabeth", "haveNothing.mp3").toUri().toString());
     public static AudioClip tryToFind = new AudioClip(Paths.get("resources", "sounds", "voices",
             "elizabeth", "tryToFind.mp3").toUri().toString());
-    public static AudioClip ohBooker = new AudioClip(
-            Paths.get("resources", "sounds", "voices", "elizabeth", "booker.mp3").toUri().toString());
 
 
     //Enemies
@@ -179,4 +182,6 @@ public class Sounds {
             "boss", "hit2.mp3").toUri().toString());
     public static AudioClip bossHit3 = new AudioClip(Paths.get("resources", "sounds", "fx",
             "boss", "hit3.mp3").toUri().toString());
+    public static MediaPlayer bossDeath = new MediaPlayer(new Media(Paths.get("resources",
+            "sounds", "fx", "boss", "death.mp3").toUri().toString()));
 }

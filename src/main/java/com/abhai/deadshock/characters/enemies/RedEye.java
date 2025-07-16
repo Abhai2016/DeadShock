@@ -1,6 +1,5 @@
 package com.abhai.deadshock.characters.enemies;
 
-import com.abhai.deadshock.Game;
 import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.weapons.RedEyeWeapon;
 
@@ -13,9 +12,6 @@ public class RedEye extends Comstock {
 
         setTranslateX(x);
         setTranslateY(y);
-
-        getChildren().add(imageView);
-        Game.gameRoot.getChildren().add(this);
     }
 
     @Override

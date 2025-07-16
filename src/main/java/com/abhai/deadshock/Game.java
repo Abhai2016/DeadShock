@@ -1,8 +1,8 @@
 package com.abhai.deadshock;
 
-import com.abhai.deadshock.characters.*;
+import com.abhai.deadshock.characters.Booker;
+import com.abhai.deadshock.characters.Elizabeth;
 import com.abhai.deadshock.characters.enemies.*;
-import com.abhai.deadshock.characters.enemies.EnemyData;
 import com.abhai.deadshock.energetics.Energetic;
 import com.abhai.deadshock.hud.HUD;
 import com.abhai.deadshock.hud.Tutorial;
@@ -12,10 +12,9 @@ import com.abhai.deadshock.menus.Menu;
 import com.abhai.deadshock.utils.Controller;
 import com.abhai.deadshock.utils.Options;
 import com.abhai.deadshock.utils.Saves;
-import com.abhai.deadshock.utils.Sounds;
+import com.abhai.deadshock.weapons.Weapon;
 import com.abhai.deadshock.weapons.bullets.Bullet;
 import com.abhai.deadshock.weapons.bullets.EnemyBullet;
-import com.abhai.deadshock.weapons.Weapon;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.animation.AnimationTimer;
@@ -26,6 +25,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -37,6 +37,9 @@ import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
 
 
 public class Game extends Application {
+    private static Path savesPath = Paths.get("resources", "data", "saves.dat");
+    private static Path optionsPath = Paths.get("resources", "data", "options.dat");
+
     public static ArrayList<Supply> supplies = new ArrayList<>();
     public static ArrayList<Block> blocks = new ArrayList<>();
     public static ArrayList<Bullet> bullets = new ArrayList<>();
@@ -101,10 +104,10 @@ public class Game extends Application {
         loadOptions();
         createEnemies();
 
-        booker.translateXProperty().addListener( ((observable, oldValue, newValue) -> {
+        booker.translateXProperty().addListener(((observable, oldValue, newValue) -> {
             int offset = newValue.intValue();
             if (offset > 600 && offset < gameRoot.getWidth() - 680) {
-                gameRoot.setLayoutX( - (offset - 600) );
+                gameRoot.setLayoutX(-(offset - 600));
                 level.getBackground().setLayoutX((offset - 600) / 1.5);
             }
         }));
@@ -149,7 +152,7 @@ public class Game extends Application {
                     weapon.setBullets(saves.getPistolBullets());
                 }
                 energetic = new Energetic(saves.isCanChooseDevilKiss(), saves.isCanChooseElectricity());
-                boss = new Boss(BLOCK_SIZE * 299, BLOCK_SIZE * 13);
+                boss = new Boss(BLOCK_SIZE * 295, BLOCK_SIZE * 11);
             }
             case Level.BOSS_LEVEL -> {
                 weapon = new Weapon(saves.isCanChoosePistol(), saves.isCanChooseMachineGun(), saves.isCanChooseRPG());
@@ -176,7 +179,7 @@ public class Game extends Application {
                     weapon.setBullets(saves.getPistolBullets());
                 }
                 energetic = new Energetic(saves.isCanChooseDevilKiss(), saves.isCanChooseElectricity(), saves.isCanChooseHypnosis());
-                boss = new Boss(BLOCK_SIZE * 10, BLOCK_SIZE * 14);
+                boss = new Boss(BLOCK_SIZE * 10, BLOCK_SIZE * 12 - 5);
             }
         }
         elizabeth = new Elizabeth();
@@ -205,7 +208,69 @@ public class Game extends Application {
         }
     }
 
+    static void saveSaves(ObjectMapper mapper) {
+        try (FileWriter fileWriter = new FileWriter(savesPath.toFile())) {
+            if (savesPath.toFile().exists()) {
+                savesPath.toFile().delete();
+            }
+
+            if (!savesPath.toFile().exists()) {
+                savesPath.toFile().createNewFile();
+            }
+
+            Saves saves = new Saves();
+            saves.setDifficultyLevel(Game.difficultyLevelText);
+            saves.setLevelNumber(Game.levelNumber);
+            saves.setMoney(Game.booker.getMoney());
+            saves.setSalt(Game.booker.getSalt());
+
+            saves.setPistolClip(Weapon.WeaponData.pistolClip);
+            saves.setPistolBullets(Weapon.WeaponData.pistolBullets);
+            saves.setMachineGunClip(Weapon.WeaponData.machineGunClip);
+            saves.setMachineGunBullets(Weapon.WeaponData.machineGunBullets);
+            saves.setRpgClip(Weapon.WeaponData.rpgClip);
+            saves.setRpgBullets(Weapon.WeaponData.rpgBullets);
+
+            saves.setCanChoosePistol(Game.weapon.isCanChoosePistol());
+            saves.setCanChooseMachineGun(Game.weapon.isCanChooseMachineGun());
+            saves.setCanChooseRPG(Game.weapon.isCanChooseRPG());
+            saves.setCanChooseDevilKiss(Game.energetic.isCanChooseDevilKiss());
+            saves.setCanChooseElectricity(Game.energetic.isCanChooseElectricity());
+            saves.setCanChooseHypnosis(Game.energetic.isCanChooseHypnosis());
+
+            fileWriter.write(mapper.writeValueAsString(saves));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void saveOptions(ObjectMapper mapper) {
+        try (FileWriter fileWriter = new FileWriter(optionsPath.toFile())) {
+            if (optionsPath.toFile().exists()) {
+                optionsPath.toFile().delete();
+            }
+
+            if (!optionsPath.toFile().exists()) {
+                optionsPath.toFile().createNewFile();
+            }
+
+            Options options = new Options();
+            options.setFxVolume(Game.menu.fxSlider.getValue());
+            options.setMusicVolume(Game.menu.musicSlider.getValue());
+            options.setVoiceVolume(Game.menu.voiceSlider.getValue());
+            options.setTrack(Game.menu.music.getMedia().getSource());
+
+            fileWriter.write(mapper.writeValueAsString(options));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void clearData() {
+        for (Block block : Game.blocks)
+            Game.gameRoot.getChildren().remove(block);
+        Game.blocks.clear();
+
         Game.gameRoot.setLayoutX(0);
         if (level != null)
             level.getBackground().setLayoutX(0);
@@ -217,7 +282,7 @@ public class Game extends Application {
             Game.gameRoot.getChildren().remove(enemyBullet);
         Game.enemyBullets.clear();
 
-        for(Bullet bullet : Game.bullets)
+        for (Bullet bullet : Game.bullets)
             Game.gameRoot.getChildren().remove(bullet);
         Game.bullets.clear();
 
@@ -238,7 +303,7 @@ public class Game extends Application {
             Game.gameRoot.getChildren().remove(enemyBullet);
         Game.enemyBullets.clear();
 
-        for(Bullet bullet : Game.bullets)
+        for (Bullet bullet : Game.bullets)
             Game.gameRoot.getChildren().remove(bullet);
         Game.bullets.clear();
 
@@ -306,7 +371,8 @@ public class Game extends Application {
         try {
             ObjectMapper mapper = new ObjectMapper();
             Path enemiesPath = Paths.get("resources", "data", "enemies.dat");
-            Map<String, EnemyData[]> jsonEnemies = mapper.readValue(enemiesPath.toFile(), new TypeReference<>() {});
+            Map<String, EnemyData[]> jsonEnemies = mapper.readValue(enemiesPath.toFile(), new TypeReference<>() {
+            });
             EnemyData[] enemiesByLevel = new EnemyData[]{};
 
             switch (levelNumber) {
@@ -328,6 +394,25 @@ public class Game extends Application {
     }
 
     public static void nothing() {
+    }
+
+    public static void setBossLevel() {
+        booker.setTranslateX(100);
+        booker.setTranslateY(500);
+        if (elizabeth != null)
+            elizabeth.setTranslateX(100);
+        gameRoot.getChildren().remove(weapon);
+        gameRoot.getChildren().remove(energetic);
+        clearData();
+
+        tutorial.deleteText();
+        levelNumber++;
+        level.changeLevel();
+        level.createLevels();
+
+        ObjectMapper mapper = new ObjectMapper();
+        saveSaves(mapper);
+        saveOptions(mapper);
     }
 
     private static void update() {
@@ -369,23 +454,8 @@ public class Game extends Application {
         hud.update();
         weapon.update();
 
-        if (booker.getTranslateX() > BLOCK_SIZE * 295 && levelNumber != Level.THIRD_LEVEL)
+        if (booker.getTranslateX() > BLOCK_SIZE * 295)
             cutScene = new CutScenes();
-
-        if (booker.getTranslateX() > BLOCK_SIZE * 285 && levelNumber == Level.THIRD_LEVEL) {
-            if (boss.getTrompInterval() == 0) {
-                Sounds.ohBooker.setVolume(Game.menu.voiceSlider.getValue() / 100);
-                Sounds.ohBooker.play();
-
-                Sounds.elizabethMediaPlayer.setOnEndOfMedia(() -> {
-                    Sounds.fuck.setVolume(Game.menu.voiceSlider.getValue() / 100);
-                    Sounds.fuck.play();
-                });
-            }
-            boss.setTrompInterval(boss.getTrompInterval() + 1);
-            if (boss.getTrompInterval() > 90)
-                cutScene = new CutScenes();
-        }
     }
 
     @Override

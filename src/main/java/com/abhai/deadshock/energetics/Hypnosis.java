@@ -52,7 +52,7 @@ public class Hypnosis {
 
     void setHypnosis() {
         if (Game.levelNumber == Level.BOSS_LEVEL)
-            Game.boss.setHypnosis(true);
+            Game.boss.setHypnotized(true);
         for(Enemy enemy : Game.enemies)
             enemy.setHypnotized(true);
         hypnosis = true;
@@ -107,7 +107,7 @@ public class Hypnosis {
 
         if (interval > maxInterval) {
             if (Game.levelNumber == Level.BOSS_LEVEL)
-                Game.boss.setHypnosis(false);
+                Game.boss.setHypnotized(false);
             for (Enemy enemy : Game.enemies)
                 enemy.setHypnotized(false);
             hypnosis = false;

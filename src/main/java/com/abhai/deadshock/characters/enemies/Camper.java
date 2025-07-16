@@ -14,9 +14,6 @@ public class Camper extends Enemy {
 
         setTranslateX(x);
         setTranslateY(y);
-
-        getChildren().add(imageView);
-        Game.gameRoot.getChildren().add(this);
     }
 
     private void moveY() {
@@ -46,6 +43,9 @@ public class Camper extends Enemy {
     }
 
     private void behave() {
+        if (getBoundsInParent().intersects(Game.booker.getBoundsInParent()))
+            closeCombat();
+
         if (Sounds.audioClipCamper.isPlaying()) {
             moveInterval++;
             if (moveInterval < 10)
@@ -67,7 +67,7 @@ public class Camper extends Enemy {
         } else
             voiceInterval = 0;
 
-        if (voiceInterval > 180)
+        if (voiceInterval > 200)
             playVoice();
     }
 

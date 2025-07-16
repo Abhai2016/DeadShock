@@ -39,6 +39,7 @@ public class Comstock extends Enemy implements Animatable {
         booleanVoice = true;
         canSeeBooker = false;
         booleanVelocity = true;
+
         animation = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED),
                 COUNT_OF_SPRITES, COUNT_OF_SPRITES, 0, 0, WIDTH, HEIGHT);
         onTheLeft = () ->
@@ -56,9 +57,6 @@ public class Comstock extends Enemy implements Animatable {
 
         setTranslateX(x);
         setTranslateY(y);
-
-        getChildren().add(imageView);
-        Game.gameRoot.getChildren().add(this);
     }
 
     protected boolean intersectsWithBlock(Block block) {
@@ -81,7 +79,7 @@ public class Comstock extends Enemy implements Animatable {
                 if (velocity.getY() > 0) {
                     setTranslateY(getTranslateY() - 1);
                     if (booleanVelocity) {
-                        Game.booker.setHP(Game.booker.getHP() - Game.booker.getEnemyDogfight());
+                        Game.booker.closeCombat();
                         Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
                         velocity = velocity.add(getScaleX() * 5, JUMP_SPEED);
                         booleanVelocity = false;
@@ -95,15 +93,8 @@ public class Comstock extends Enemy implements Animatable {
                         Game.booker.setBooleanVelocityY(false);
                     }
                 }
-            } else {
-                setTranslateX(getTranslateX() - getScaleX());
-                if (Game.booker.isBooleanVelocityX()) {
-                    Game.booker.setHP(Game.booker.getHP() - Game.booker.getEnemyDogfight());
-                    Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
-                    Game.booker.velocity = Game.booker.velocity.add(getScaleX() * GRAVITY * 2, 0);
-                    Game.booker.setBooleanVelocityX(false);
-                }
-            }
+            } else
+                closeCombat();
             return true;
         }
         return false;
@@ -122,9 +113,8 @@ public class Comstock extends Enemy implements Animatable {
                                 velocity = velocity.add(getScaleX() * 5, JUMP_SPEED);
                                 booleanVelocity = false;
                             }
-                        } else {
+                        } else
                             setTranslateY(getTranslateY() + 1);
-                        }
                     } else {
                         setTranslateX(getTranslateX() - getScaleX());
                         stopAnimation();
@@ -219,9 +209,8 @@ public class Comstock extends Enemy implements Animatable {
         } else {
             if (getTranslateY() <= Game.booker.getTranslateY()) {
                 enemyWeapon.shoot(getScaleX(), getTranslateX(), getTranslateY());
-            } else {
+            } else
                 losingBooker();
-            }
 
             if (booleanSupplier.equals(onTheLeft))
                 moveX(-SPEED);
@@ -233,11 +222,10 @@ public class Comstock extends Enemy implements Animatable {
     private void cannotSeeBooker() {
         stopAnimation();
 
-        if (canSeeBooker) {
+        if (canSeeBooker)
             losingBooker();
-        } else {
+        else
             moveX(SPEED);
-        }
     }
 
     private void losingBooker() {

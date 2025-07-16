@@ -1,17 +1,12 @@
 package com.abhai.deadshock.characters.enemies;
 
-import com.abhai.deadshock.utils.SpriteAnimation;
 import com.abhai.deadshock.CutScenes;
 import com.abhai.deadshock.Game;
+import com.abhai.deadshock.characters.Animatable;
 import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.utils.Sounds;
-import javafx.geometry.Point2D;
+import com.abhai.deadshock.utils.SpriteAnimation;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -19,78 +14,53 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
 
-public class Boss extends Pane {
-    private final byte BOSS_SPEED = 1;
+public class Boss extends Enemy implements Animatable {
+    private static final int SPEED = 1;
+    private static final int WIDTH = 95;
+    private static final int HEIGHT = 100;
+    private static final int JUMP_SPEED = 20;
+    private static final int ANIMATION_SPEED = 1;
+    private static final int COUNT_OF_SPRITES = 3;
 
-    private MediaPlayer mediaPlayer;
-    private Path imagePath = Paths.get("resources", "images", "characters", "bigDaddy.png");
-    private ImageView imgView = new ImageView(new Image(imagePath.toUri().toString()));
-    private Point2D velocity = new Point2D(0, 0);
-    public SpriteAnimation animation = new SpriteAnimation(imgView, Duration.seconds(2), 3, 3, 0, 100, 93, 100);
+    private int stunInterval;
+    private int velocityInterval;
 
-    private int stunInterval = 0;
-    private int velocityInterval = 0;
-    private int trompInterval = 0;
-    private double HP = 5000;
-    private boolean moveRight = false;
-    private boolean booleanVelocityX = true;
-    private boolean hypnosis = false;
-    public boolean alive = true;
-
-    private Rectangle rectHP = new Rectangle(500, 5, Color.RED);
-    private Text name = new Text("Большой папочка");
-
+    private final Text name;
+    private final Rectangle rectHP;
+    private final SpriteAnimation animation;
 
     public Boss(int x, int y) {
-        imgView.setFitWidth(92);
-        imgView.setFitHeight(100);
-        imgView.setViewport(new Rectangle2D(0, 0, 92, 100));
+        HP = 5000;
+        stunInterval = 0;
+        velocityInterval = 0;
 
-        setTranslateX(x - imgView.getFitWidth());
-        setTranslateY(y - imgView.getFitHeight());
-
+        name = new Text("Большой папочка");
+        rectHP = new Rectangle(500, 5, Color.RED);
+        imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
+        animation = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED),
+                COUNT_OF_SPRITES, COUNT_OF_SPRITES, 0, 0, WIDTH, HEIGHT);
         if (Game.levelNumber == Level.BOSS_LEVEL)
-            setBoss();
+            initHp();
 
-        getChildren().add(imgView);
-        Game.gameRoot.getChildren().add(this);
+        setScaleX(-1);
+        setTranslateX(x);
+        setTranslateY(y);
     }
 
-    public void setHP(double value) {
-        HP = value;
+    @Override
+    protected String getImageName() {
+        return "bigDaddy.png";
     }
 
-    public double getHP() {
-        return HP;
+    @Override
+    public void stopAnimation() {
+        animation.stop();
     }
 
-    public void setHypnosis(boolean value) {
-        hypnosis = value;
-    }
-
-    public void setTrompInterval(int value) {
-        trompInterval = value;
-    }
-
-    public int getTrompInterval() {
-        return trompInterval;
-    }
-
-    public MediaPlayer getMediaPlayer() {
-        return mediaPlayer;
-    }
-
-    public void setBoss() {
-        imgView.setViewport(new Rectangle2D(0, 0, 100, 100));
-        imgView.setFitWidth(100);
-        setTranslateX(BLOCK_SIZE * 14);
-        setTranslateY(BLOCK_SIZE * 14 - imgView.getFitHeight());
-        name.setFont( Font.font("Aria", 28) );
+    private void initHp() {
+        name.setFont(Font.font("Aria", 28));
         name.setFill(Color.WHITE);
         name.setTranslateX(Game.appRoot.getWidth() / 2 - 95);
         name.setTranslateY(30);
@@ -101,132 +71,139 @@ public class Boss extends Pane {
         Game.appRoot.getChildren().add(rectHP);
     }
 
-    private void moveX(int x) {
+    public void changeLevel() {
+        setTranslateX(BLOCK_SIZE * 10);
+        setTranslateY(BLOCK_SIZE * 12 - 5);
+        initHp();
+        stunInterval = 0;
+        Game.setBossLevel();
+    }
+
+    private void moveX(double x) {
+        animation.play();
         for (int i = 0; i < Math.abs(x); i++) {
-            if (x > 0 && getTranslateX() < BLOCK_SIZE * 37 + imgView.getFitWidth()) {
-                setScaleX(-1);
-                setTranslateX(getTranslateX() + 1);
-            } else if (getTranslateX() > 1){
-                setTranslateX(getTranslateX() - 1);
+            if (x > 0 && getTranslateX() < BLOCK_SIZE * 37) {
                 setScaleX(1);
+                setTranslateX(getTranslateX() + 1);
+            } else if (getTranslateX() > 1) {
+                setTranslateX(getTranslateX() - 1);
+                setScaleX(-1);
             }
 
-            if (getBoundsInParent().intersects(Game.booker.getBoundsInParent())) {
-                setTranslateX(getTranslateX() + getScaleX());
-                if (Game.booker.isBooleanVelocityX()) {
-                    if (!Game.difficultyLevelText.equals("marik"))
-                        Game.booker.setHP(Game.booker.getHP() - Game.booker.getEnemyDogfight() / 2);
-                    else
-                        Game.booker.setHP(Game.booker.getHP() - 5);
-                    Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
-                    Game.booker.velocity = Game.booker.velocity.add(- getScaleX() * 15, 0);
-                    Game.booker.setBooleanVelocityX(false);
-                }
+            if (getBoundsInParent().intersects(Game.booker.getBoundsInParent()))
+                closeCombat();
+        }
+    }
+
+    private void checkOnLevelChange() {
+        stopAnimation();
+        if (stunInterval == 0) {
+            Sounds.ohBooker.setVolume(Game.menu.voiceSlider.getValue() / 100);
+            Sounds.ohBooker.play();
+
+            Sounds.ohBooker.setOnEndOfMedia(() -> {
+                Sounds.fuck.play(Game.menu.voiceSlider.getValue() / 100);
+            });
+        }
+
+        stunInterval++;
+        if (stunInterval < 50)
+            imageView.setViewport(new Rectangle2D(WIDTH * 2, 0, WIDTH, HEIGHT));
+
+        if (stunInterval > 75) {
+            Sounds.bossTromp.play(Game.menu.fxSlider.getValue() / 100);
+            imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
+        }
+
+        if (stunInterval > 100)
+            changeLevel();
+    }
+
+    private void stun() {
+        stopAnimation();
+        imageView.setViewport(new Rectangle2D(WIDTH * 2, 0, WIDTH, HEIGHT));
+        stunInterval++;
+
+        if (stunInterval > 800) {
+            imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
+            Sounds.bossTromp.play(Game.menu.fxSlider.getValue() / 100);
+            Game.booker.setStunned(true);
+            if (Game.booker.velocity.getY() > 0)
+                Game.booker.velocity = Game.booker.velocity.add(0, -JUMP_SPEED);
+            stunInterval = 0;
+            Game.energetic.setHypnosisForBooker();
+        }
+    }
+
+    private void velocityJump() {
+        velocityInterval++;
+        if (velocityInterval > 100) {
+            if (Game.booker.getTranslateX() < getTranslateX())
+                velocity = velocity.add(-JUMP_SPEED, 0);
+            else
+                velocity = velocity.add(JUMP_SPEED, 0);
+
+            switch ((int) (Math.random() * 3)) {
+                case 0 -> Sounds.bossHit.play(Game.menu.voiceSlider.getValue() / 100);
+                case 1 -> Sounds.bossHit2.play(Game.menu.fxSlider.getValue() / 100);
+                case 2 -> Sounds.bossHit3.play(Game.menu.fxSlider.getValue() / 100);
             }
+            velocityInterval = 0;
         }
     }
 
     private void behave() {
-        if (stunInterval > 900) {
-            imgView.setViewport(new Rectangle2D(0, 0, 92, 100));
-            Sounds.bossTromp.play(Game.menu.fxSlider.getValue() / 100);
-            Game.booker.setStunned(true);
-            if (Game.booker.velocity.getY() > 0)
-                Game.booker.velocity = Game.booker.velocity.add(0, -20);
-            stunInterval = 0;
-            Game.energetic.setHypnosisForBooker();
-        } else if (stunInterval > 780) {
-            animation.stop();
-            imgView.setViewport(new Rectangle2D(176, 0, 92, 100));
-            stunInterval++;
-        } else {
-            if (Game.booker.getTranslateY() < getTranslateY() - imgView.getFitHeight() * 1.5)
-                if (!moveRight) {
-                    moveX(-BOSS_SPEED);
-                    animation.play();
-                } else {
-                    moveX(BOSS_SPEED);
-                    animation.play();
-                }
-            else {
-                if (Game.booker.getTranslateX() < getTranslateX()) {
-                    moveX(-BOSS_SPEED);
-                    animation.play();
-                } else {
-                    moveX(BOSS_SPEED);
-                    animation.play();
-                }
-
-                if (booleanVelocityX) {
-                    animation.stop();
-                    if (Game.booker.getTranslateX() < getTranslateX())
-                        velocity = velocity.add(-17, 0);
-                    else
-                        velocity = velocity.add(17, 0);
-
-                    int rand = (int) (Math.random() * 3);
-                    if (rand == 0)
-                        Sounds.bossHit.play(Game.menu.voiceSlider.getValue() / 100);
-                    else if (rand == 1)
-                        Sounds.bossHit2.play(Game.menu.voiceSlider.getValue() / 100);
-                    else
-                        Sounds.bossHit3.play(Game.menu.voiceSlider.getValue() / 100);
-
-                    booleanVelocityX = false;
-                } else
-                    velocityInterval++;
-            }
+        if (stunInterval > 700) {
+            stun();
+            return;
         }
+
+        if (velocity.getX() < 0)
+            velocity = velocity.add(ANIMATION_SPEED, 0);
+        else if (velocity.getX() > 0)
+            velocity = velocity.add(-ANIMATION_SPEED, 0);
+
+        if (Game.booker.getTranslateX() < getTranslateX())
+            moveX(-SPEED);
+        if (Game.booker.getTranslateX() > getTranslateX())
+            moveX(SPEED);
+        if (Game.booker.getTranslateX() == getTranslateX())
+            stopAnimation();
+
+        moveX(velocity.getX());
+        rectHP.setWidth(HP / 10);
+
+        if (!Game.booker.isStunned() && Game.booker.getTranslateY() < getTranslateY())
+            stunInterval++;
+        else
+            velocityJump();
+    }
+
+    private void die() {
+        toDelete = true;
+        stopAnimation();
+        rectHP.setWidth(0);
+        getTransforms().add(new Rotate(-90));
+        setTranslateY(getTranslateY() + HEIGHT);
+
+        Sounds.bossDeath.setVolume(Game.menu.fxSlider.getValue() / 100);
+        Sounds.bossDeath.play();
+        Sounds.bossDeath.setOnEndOfMedia(() -> Game.cutScene = new CutScenes());
     }
 
     public void update() {
-        if (HP > 0) {
-            if (Game.levelNumber == Level.THIRD_LEVEL) {
-                if (trompInterval > 0 && trompInterval < 60)
-                    imgView.setViewport(new Rectangle2D(176, 0, 92, 100));
-                else if (trompInterval > 60) {
-                    Sounds.bossTromp.play(Game.menu.fxSlider.getValue() / 100);
-                    imgView.setViewport(new Rectangle2D(0, 0, 92, 100));
-                }
-            } else {
-                    if (!hypnosis) {
-                        behave();
+        if (HP < 1) {
+            if (!toDelete)
+                die();
+            return;
+        }
 
-                        if (!Game.booker.isStunned() && Game.booker.getTranslateY() < getTranslateY())
-                            stunInterval++;
+        if (Game.levelNumber == Level.THIRD_LEVEL && Game.booker.getTranslateX() > BLOCK_SIZE * 285)
+            checkOnLevelChange();
 
-                        if (velocityInterval > 120) {
-                            booleanVelocityX = true;
-                            velocityInterval = 0;
-                        }
-
-                        if (getTranslateX() < imgView.getFitWidth())
-                            moveRight = true;
-                        else if (getTranslateX() > BLOCK_SIZE * 37 - imgView.getFitWidth())
-                            moveRight = false;
-
-                        if (velocity.getX() < 0)
-                            velocity = velocity.add(0.4, 0);
-                        else if (velocity.getX() > 0)
-                            velocity = velocity.add(-0.4, 0);
-                        moveX((int) velocity.getX());
-                    } else
-                        animation.stop();
-                    rectHP.setWidth(HP / 10);
-                }
-        } else
-            if (alive) {
-                animation.stop();
-                rectHP.setWidth(0);
-                getTransforms().add(new Rotate(90));
-
-                Path soundPath = Paths.get("resources", "sounds", "fx", "boss", "death.mp3");
-                mediaPlayer = new MediaPlayer(new Media(soundPath.toUri().toString()));
-                mediaPlayer.setVolume(Game.menu.fxSlider.getValue() / 100);
-                mediaPlayer.play();
-
-                mediaPlayer.setOnEndOfMedia( () -> Game.cutScene = new CutScenes());
-                alive = false;
-            }
+        if (!hypnotized && Game.levelNumber == Level.BOSS_LEVEL)
+            behave();
+        else
+            stopAnimation();
     }
 }

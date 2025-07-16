@@ -107,23 +107,14 @@ public class Elizabeth extends Pane {
     private void playVoice() {
         if (Game.levelNumber == Level.SECOND_LEVEL)
             if (startLevel && getTranslateX() > 100) {
-                Path freedomSoundPath = Paths.get("resources", "sounds", "voices", "elizabeth", "freedom.mp3");
-                Sounds.elizabethMediaPlayer = new MediaPlayer(new Media(freedomSoundPath.toUri().toString()));
-                Sounds.elizabethMediaPlayer.setVolume(Game.menu.voiceSlider.getValue() / 100);
-                Sounds.elizabethMediaPlayer.play();
+                Sounds.freedom.setVolume(Game.menu.voiceSlider.getValue() / 100);
+                Sounds.freedom.play();
                 startLevel = false;
             } else if (getTranslateX() > Block.BLOCK_SIZE * 150 && playVoiceWhereYouFrom) {
                 canMove = false;
-                Path soundPath = Paths.get("resources", "sounds", "voices", "elizabeth", "whereAreYouFrom.mp3");
-                Sounds.elizabethMediaPlayer = new MediaPlayer(new Media(
-                        soundPath.toUri().toString()));
-                Sounds.elizabethMediaPlayer.setVolume(Game.menu.voiceSlider.getValue() / 100);
-                Sounds.elizabethMediaPlayer.play();
-                Sounds.elizabethMediaPlayer.setOnEndOfMedia( () -> {
-                    canMove = true;
-                    Sounds.elizabethMediaPlayer = null;
-                });
-
+                Sounds.whereAreYouFrom.setVolume(Game.menu.voiceSlider.getValue() / 100);
+                Sounds.whereAreYouFrom.play();
+                Sounds.whereAreYouFrom.setOnEndOfMedia( () -> canMove = true);
                 playVoiceWhereYouFrom = false;
             }
     }

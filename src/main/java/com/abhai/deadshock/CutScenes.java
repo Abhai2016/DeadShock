@@ -1,13 +1,10 @@
 package com.abhai.deadshock;
 
-import com.abhai.deadshock.characters.enemies.Boss;
 import com.abhai.deadshock.characters.Elizabeth;
+import com.abhai.deadshock.characters.enemies.Boss;
 import com.abhai.deadshock.hud.Tutorial;
 import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.levels.Level;
-import com.abhai.deadshock.utils.Options;
-import com.abhai.deadshock.utils.Saves;
-import com.abhai.deadshock.weapons.Weapon;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.animation.FadeTransition;
 import javafx.scene.input.KeyCode;
@@ -16,7 +13,6 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.util.Duration;
 
-import java.io.FileWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -24,8 +20,6 @@ public class CutScenes {
     private MediaPlayer video;
     private MediaView videoView;
 
-    private Path savesPath = Paths.get("resources", "data", "saves.dat");
-    private Path optionsPath = Paths.get("resources", "data", "options.dat");
     private boolean actionPerformed = false;
 
     public CutScenes() {
@@ -36,17 +30,13 @@ public class CutScenes {
 
         Game.menu.music.pause();
         Game.timer.stop();
-
-        for (Block block : Game.blocks)
-            Game.gameRoot.getChildren().remove(block);
-        Game.blocks.clear();
         Game.clearData();
 
         Game.stage.setWidth(1235);
         switch (Game.levelNumber) {
             case Level.FIRST_LEVEL -> {
                 playVideo("elizabeth.mp4");
-                video.setOnEndOfMedia( () -> {
+                video.setOnEndOfMedia(() -> {
                     if (!actionPerformed) {
                         actionPerformed = true;
                         endCutScene1();
@@ -63,14 +53,14 @@ public class CutScenes {
             }
             case Level.SECOND_LEVEL -> {
                 playVideo("comstock.mp4");
-                video.setOnEndOfMedia( () -> {
+                video.setOnEndOfMedia(() -> {
                     if (!actionPerformed) {
                         actionPerformed = true;
                         endCutScene2();
                     }
                 });
                 Game.scene.setOnKeyPressed(event -> {
-                    if (event.getCode() == KeyCode.ESCAPE  || event.getCode() == KeyCode.ENTER
+                    if (event.getCode() == KeyCode.ESCAPE || event.getCode() == KeyCode.ENTER
                             && !actionPerformed) {
                         actionPerformed = true;
                         endCutScene2();
@@ -78,18 +68,17 @@ public class CutScenes {
                     }
                 });
             }
-            case Level.THIRD_LEVEL -> bossLevel();
             case Level.BOSS_LEVEL -> {
                 Game.stage.setWidth(1230);
                 playVideo("end.mp4");
-                video.setOnEndOfMedia( () -> {
+                video.setOnEndOfMedia(() -> {
                     if (!actionPerformed) {
                         actionPerformed = true;
                         endCutScene3();
                     }
                 });
                 Game.scene.setOnKeyPressed(event -> {
-                    if (event.getCode() == KeyCode.ESCAPE  || event.getCode() == KeyCode.ENTER
+                    if (event.getCode() == KeyCode.ESCAPE || event.getCode() == KeyCode.ENTER
                             && !actionPerformed) {
                         actionPerformed = true;
                         endCutScene3();
@@ -139,8 +128,8 @@ public class CutScenes {
         Game.stage.setWidth(1280);
 
         ObjectMapper mapper = new ObjectMapper();
-        saveSaves(mapper);
-        saveOptions(mapper);
+        Game.saveSaves(mapper);
+        Game.saveOptions(mapper);
     }
 
     private void endCutScene2() {
@@ -162,29 +151,11 @@ public class CutScenes {
         Game.vendingMachine.changeLevel();
         Game.energetic.changeLevel();
         Game.stage.setWidth(1280);
-        Game.boss = new Boss(Block.BLOCK_SIZE * 299, Block.BLOCK_SIZE * 13);
+        Game.boss = new Boss(Block.BLOCK_SIZE * 295, Block.BLOCK_SIZE * 11);
 
         ObjectMapper mapper = new ObjectMapper();
-        saveSaves(mapper);
-        saveOptions(mapper);
-    }
-
-    private void bossLevel() {
-        Game.tutorial.deleteText();
-        Game.boss.setTrompInterval(0);
-        Game.levelNumber++;
-        Game.level.changeLevel();
-        Game.level.createLevels();
-
-        Game.timer.start();
-        Game.menu.music.play();
-        Game.menu.addListener();
-        Game.stage.setWidth(1280);
-        Game.boss.setBoss();
-
-        ObjectMapper mapper = new ObjectMapper();
-        saveSaves(mapper);
-        saveOptions(mapper);
+        Game.saveSaves(mapper);
+        Game.saveOptions(mapper);
     }
 
     private void endCutScene3() {
@@ -193,63 +164,5 @@ public class CutScenes {
         videoView = null;
         Game.stage.setWidth(1280);
         System.exit(0);
-    }
-
-    private void saveSaves(ObjectMapper mapper) {
-        try (FileWriter fileWriter = new FileWriter(savesPath.toFile())) {
-            if (savesPath.toFile().exists()) {
-                savesPath.toFile().delete();
-            }
-
-            if (!savesPath.toFile().exists()) {
-                savesPath.toFile().createNewFile();
-            }
-
-            Saves saves = new Saves();
-            saves.setDifficultyLevel(Game.difficultyLevelText);
-            saves.setLevelNumber(Game.levelNumber);
-            saves.setMoney(Game.booker.getMoney());
-            saves.setSalt(Game.booker.getSalt());
-
-            saves.setPistolClip(Weapon.WeaponData.pistolClip);
-            saves.setPistolBullets(Weapon.WeaponData.pistolBullets);
-            saves.setMachineGunClip(Weapon.WeaponData.machineGunClip);
-            saves.setMachineGunBullets(Weapon.WeaponData.machineGunBullets);
-            saves.setRpgClip(Weapon.WeaponData.rpgClip);
-            saves.setRpgBullets(Weapon.WeaponData.rpgBullets);
-
-            saves.setCanChoosePistol(Game.weapon.isCanChoosePistol());
-            saves.setCanChooseMachineGun(Game.weapon.isCanChooseMachineGun());
-            saves.setCanChooseRPG(Game.weapon.isCanChooseRPG());
-            saves.setCanChooseDevilKiss(Game.energetic.isCanChooseDevilKiss());
-            saves.setCanChooseElectricity(Game.energetic.isCanChooseElectricity());
-            saves.setCanChooseHypnosis(Game.energetic.isCanChooseHypnosis());
-
-            fileWriter.write(mapper.writeValueAsString(saves));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void saveOptions(ObjectMapper mapper) {
-        try (FileWriter fileWriter = new FileWriter(optionsPath.toFile())) {
-            if (optionsPath.toFile().exists()) {
-                optionsPath.toFile().delete();
-            }
-
-            if (!optionsPath.toFile().exists()) {
-                optionsPath.toFile().createNewFile();
-            }
-
-            Options options = new Options();
-            options.setFxVolume(Game.menu.fxSlider.getValue());
-            options.setMusicVolume(Game.menu.musicSlider.getValue());
-            options.setVoiceVolume(Game.menu.voiceSlider.getValue());
-            options.setTrack(Game.menu.music.getMedia().getSource());
-
-            fileWriter.write(mapper.writeValueAsString(options));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

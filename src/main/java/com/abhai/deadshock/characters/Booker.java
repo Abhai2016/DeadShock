@@ -193,7 +193,7 @@ public class Booker extends Pane implements Animatable {
                 }
                 if (getBoundsInParent().intersects(Game.boss.getBoundsInParent())) {
                     setTranslateY(getTranslateY() - 1);
-                    if (Game.boss.alive) {
+                    if (Game.boss.getHP() > 1) {
                         Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
                         if (!Game.difficultyLevelText.equals("marik"))
                             HP -= enemyDogfight;
@@ -288,6 +288,10 @@ public class Booker extends Pane implements Animatable {
 
     public int getCharacterDogFight() {
         return characterDogFight;
+    }
+
+    public void closeCombat() {
+        HP -= enemyDogfight;
     }
 
     public int getBulletCount() {
@@ -568,8 +572,8 @@ public class Booker extends Pane implements Animatable {
         Game.timer.stop();
         Game.menu.music.pause();
         stopAnimation();
-        if (Sounds.elizabethMediaPlayer != null)
-            Sounds.elizabethMediaPlayer.stop();
+        if (Sounds.whereAreYouFrom.getStatus() == MediaPlayer.Status.PLAYING)
+            Sounds.whereAreYouFrom.pause();
         if (money >= priceForGeneration) {
             Game.stage.setWidth(1230);
             countLives--;
@@ -625,7 +629,7 @@ public class Booker extends Pane implements Animatable {
 
     private void gameOver() {
         if (Game.levelNumber == Level.BOSS_LEVEL)
-            Game.boss.animation.stop();
+            Game.boss.stopAnimation();
 
         gameOver.setFont(Font.font("Arial", FontWeight.BOLD, 28));
         gameOver.setFill(Color.RED);
@@ -644,7 +648,7 @@ public class Booker extends Pane implements Animatable {
     }
 
     public void minusHPForCamperScream() {
-        HP -= 10;
+        HP -= enemyDogfight;
     }
 
     public void update() {

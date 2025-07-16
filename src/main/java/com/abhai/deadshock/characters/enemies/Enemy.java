@@ -34,6 +34,19 @@ public class Enemy extends Pane {
         imageView = new ImageView(new Image(
                 Paths.get("resources", "images", "characters", getImageName()).toUri().toString()));
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
+
+        getChildren().add(imageView);
+        Game.gameRoot.getChildren().add(this);
+    }
+
+    protected void closeCombat() {
+        setTranslateX(getTranslateX() - getScaleX());
+        if (Game.booker.isBooleanVelocityX()) {
+            Game.booker.closeCombat();
+            Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
+            Game.booker.velocity = Game.booker.velocity.add(getScaleX() * GRAVITY * 2, 0);
+            Game.booker.setBooleanVelocityX(false);
+        }
     }
 
     protected void playDeathVoice() {
