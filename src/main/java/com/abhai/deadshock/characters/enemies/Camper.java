@@ -75,7 +75,7 @@ public class Camper extends Enemy {
         toDelete = true;
         playDeathVoice();
         Game.booker.addMoneyForKillingEnemy();
-        Game.elizabeth.countMedicine++;
+        Game.elizabeth.addMedicineForKillingEnemy();
     }
 
     @Override

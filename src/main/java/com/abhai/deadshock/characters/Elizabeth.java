@@ -1,61 +1,89 @@
 package com.abhai.deadshock.characters;
 
+import com.abhai.deadshock.Game;
 import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.levels.Level;
-import com.abhai.deadshock.Game;
 import com.abhai.deadshock.utils.Sounds;
-import com.abhai.deadshock.Supply;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
+import javafx.geometry.Rectangle2D;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+public class Elizabeth extends Character {
+    private int moveInterval;
+    private int medicineCount;
+    private int supplyInterval;
+    private int medicineInterval;
+    private int emptySupplyInterval;
 
-public class Elizabeth extends Pane {
-    private Path imagePath = Paths.get("resources", "images", "characters", "elizabeth.png");
-    Image imgElizabeth = new Image(imagePath.toUri().toString());
-    private Path imageMedicinePath = Paths.get("resources", "images", "characters", "elizabethWithMedicine.png");
-    private Image imgElizabethMedicine = new Image(imageMedicinePath.toUri().toString());
-    ImageView imgView = new ImageView(imgElizabeth);
-
-    private Supply ammo;
-
-    private int medicineInterval = 0;
-
-    private int supplyInterval = 0;
-    private int emptySupplyInterval = 0;
-    private int moveInterval = 0;
-    private int rand = 0;
-    public int y = 0;
-
-    public int countMedicine = 0;
-    private boolean setY = true;
-    private boolean startLevel = true;
-    private boolean playVoiceWhereYouFrom = true;
-    boolean canMove = true;
-    boolean giveSupply = false;
-
+    private boolean canMove;
+    private boolean startLevel;
+    private boolean giveSupply;
+    private boolean playVoiceWhereYouFrom;
 
     public Elizabeth() {
-        imgView.setFitWidth(46);
-        imgView.setFitHeight(74);
-        setTranslateX(50);
-        setTranslateY(400);
-        y = (short) getTranslateY();
+        moveInterval = 0;
+        medicineCount = 0;
+        supplyInterval = 0;
+        medicineInterval = 0;
+        emptySupplyInterval = 0;
 
-        getChildren().add(imgView);
-        Game.gameRoot.getChildren().add(this);
+        canMove = true;
+        startLevel = true;
+        giveSupply = false;
+        playVoiceWhereYouFrom = true;
+
+        imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
     }
 
-    public Supply getAmmo() {
-        return ammo;
+    @Override
+    protected String getImageName() {
+        return "elizabeth.png";
     }
 
-    public void setAmmo(Supply ammo) {
-        this.ammo = ammo;
+    public void addMedicineForKillingEnemy() {
+        medicineCount++;
+    }
+
+    public void giveMedicine() {
+        giveSupply = false;
+        canMove = true;
+        medicineCount--;
+        imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
+    }
+
+    public void reinitialize() {
+        setTranslateX(START_X);
+        setTranslateY(START_Y);
+        canMove = true;
+        giveSupply = false;
+        medicineCount = 0;
+        imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
+    }
+
+    public boolean isGiveSupply() {
+        return giveSupply;
+    }
+
+    private boolean intersectsWithBlocks(char typeOfCoordinate, double coordinate) {
+        for (Block block : Game.blocks)
+            if (getBoundsInParent().intersects(block.getBoundsInParent())) {
+                if (typeOfCoordinate == 'X') {
+                    setTranslateX(getTranslateX() - getScaleX());
+                    moveY(-2);
+                } else {
+                    if (coordinate > 0)
+                        setTranslateY(getTranslateY() - 1);
+                    else
+                        setTranslateY(getTranslateY() + 1);
+                }
+                return true;
+            }
+
+        if (Game.levelNumber == Level.BOSS_LEVEL)
+            if (getBoundsInParent().intersects(Game.level.getImgView().getBoundsInParent())) {
+                setTranslateY(getTranslateY() - 1);
+                return true;
+            }
+
+        return false;
     }
 
     private void moveX(int x) {
@@ -68,13 +96,8 @@ public class Elizabeth extends Pane {
                 setScaleX(-1);
             }
 
-            for (Block block : Game.blocks)
-                if (getBoundsInParent().intersects(block.getBoundsInParent())) {
-                    setTranslateX(getTranslateX() - getScaleX());
-                    moveY(-5);
-                    y = (short) getTranslateY();
-                    return;
-                }
+            if (intersectsWithBlocks('X', x))
+                return;
         }
     }
 
@@ -85,141 +108,110 @@ public class Elizabeth extends Pane {
             else
                 setTranslateY(getTranslateY() - 1);
 
-            for (Block block : Game.blocks)
-                if (getBoundsInParent().intersects(block.getBoundsInParent()))
-                    if (y > 0) {
-                        setTranslateY(getTranslateY() - 1);
-                        return;
-                    } else {
-                        setTranslateY(getTranslateY() + 1);
-                        return;
-                    }
+            if (intersectsWithBlocks('Y', y))
+                return;
 
             if (getTranslateY() == 0)
                 setTranslateY(getTranslateY() + 1);
-
-            if (Game.levelNumber == Level.BOSS_LEVEL)
-                if (getBoundsInParent().intersects(Game.level.getImgView().getBoundsInParent()))
-                    setTranslateY(getTranslateY() - 1);
         }
     }
 
     private void playVoice() {
         if (Game.levelNumber == Level.SECOND_LEVEL)
             if (startLevel && getTranslateX() > 100) {
-                Sounds.freedom.setVolume(Game.menu.voiceSlider.getValue() / 100);
-                Sounds.freedom.play();
+                Sounds.freedom.play(Game.menu.voiceSlider.getValue() / 100);
                 startLevel = false;
             } else if (getTranslateX() > Block.BLOCK_SIZE * 150 && playVoiceWhereYouFrom) {
                 canMove = false;
                 Sounds.whereAreYouFrom.setVolume(Game.menu.voiceSlider.getValue() / 100);
                 Sounds.whereAreYouFrom.play();
-                Sounds.whereAreYouFrom.setOnEndOfMedia( () -> canMove = true);
+                Sounds.whereAreYouFrom.setOnEndOfMedia(() -> canMove = true);
                 playVoiceWhereYouFrom = false;
             }
     }
 
     private void playSupplyVoice() {
-        rand = (byte) (Math.random() * 3);
-        switch (rand) {
-            case 0:
-                Sounds.bookerCatch.play(Game.menu.voiceSlider.getValue() / 100);
-                break;
-            case 1:
-                Sounds.bookerCatch2.play(Game.menu.voiceSlider.getValue() / 100);
-                break;
-            case 2:
-                Sounds.bookerCatch3.play(Game.menu.voiceSlider.getValue() / 100);
-                break;
+        switch ((int) (Math.random() * 3)) {
+            case 0 -> Sounds.bookerCatch.play(Game.menu.voiceSlider.getValue() / 100);
+            case 1 -> Sounds.bookerCatch2.play(Game.menu.voiceSlider.getValue() / 100);
+            case 2 -> Sounds.bookerCatch3.play(Game.menu.voiceSlider.getValue() / 100);
         }
         supplyInterval = 0;
     }
 
     private void supply() {
-        if (supplyInterval > 240 && countMedicine > 0 && Game.booker.getHP() < 100) {
-            imgView.setImage(imgElizabethMedicine);
-            canMove = false;
-            giveSupply = true;
-
-            playSupplyVoice();
-        } else if (giveSupply && supplyInterval > 240)
-            playSupplyVoice();
-
-
-        if (emptySupplyInterval > 900 && countMedicine == 0)
-            if (Game.booker.getHP() < 100 || Game.weapon.getBullets() == 0) {
-                rand = (byte) (Math.random() * 4);
-                switch (rand) {
-                    case 0:
-                        Sounds.empty.play(Game.menu.voiceSlider.getValue() / 100);
-                        break;
-                    case 1:
-                        Sounds.foundNothing.play(Game.menu.voiceSlider.getValue() / 100);
-                        break;
-                    case 2:
-                        Sounds.haveNothing.play(Game.menu.voiceSlider.getValue() / 100);
-                        break;
-                    case 3:
-                        Sounds.tryToFind.play(Game.menu.voiceSlider.getValue() / 100);
-                        break;
-                }
-                emptySupplyInterval = 0;
-            }
-    }
-
-    private void behave() {
-        if (!canMove) {
-            if (setY) {
-                y = (short) getTranslateY();
-                setY = false;
-            }
-            moveY(5);
-        } else if ((int) getTranslateY() > y)
-            moveY(-5);
-        else setY = true;
-
-        if (canMove) {
-            moveInterval++;
-            if (getTranslateX() < Game.booker.getTranslateX() - 100)
-                moveX(Game.booker.getCHARACTER_SPEED());
-            else if (getTranslateX() > Game.booker.getTranslateX() + 100)
-                moveX(-Game.booker.getCHARACTER_SPEED());
-
-            if (moveInterval > 0) {
-                moveY(1);
-                if (moveInterval > 30)
-                    moveInterval = -30;
-            } else if (moveInterval < 0)
-                moveY(-1);
-        }
+        if (!giveSupply && canMove)
+            supplyInterval++;
 
         if (Game.levelNumber == Level.BOSS_LEVEL)
             medicineInterval++;
 
         if (medicineInterval > 600) {
             medicineInterval = 0;
-            countMedicine++;
+            medicineCount++;
         }
 
-        supply();
+        generateSupply();
+
+        if (giveSupply)
+            repeatSupplyVoice();
+
+        noSupply();
     }
 
-    public void update() {
-        supplyInterval++;
+    private void generateSupply() {
+        if (supplyInterval > 300 && medicineCount > 0 && Game.booker.getHP() < 100) {
+            imageView.setViewport(new Rectangle2D(WIDTH, 0, WIDTH, HEIGHT));
+            canMove = false;
+            giveSupply = true;
+            playSupplyVoice();
+        }
+    }
 
-        if (!giveSupply && canMove)
+    private void repeatSupplyVoice() {
+        if (supplyInterval > 300)
+            playSupplyVoice();
+    }
+
+    private void noSupply() {
+        if (!giveSupply && canMove && medicineCount == 0)
             emptySupplyInterval++;
         else
             emptySupplyInterval = 0;
 
-        behave();
-
-        if (ammo != null) {
-            ammo.update();
-            if (ammo.isDelete())
-                ammo = null;
+        if (emptySupplyInterval > 900) {
+            if (Game.booker.getHP() < 100 || Game.weapon.getBullets() == 0) {
+                switch ((int) (Math.random() * 4)) {
+                    case 0 -> Sounds.empty.play(Game.menu.voiceSlider.getValue() / 100);
+                    case 1 -> Sounds.foundNothing.play(Game.menu.voiceSlider.getValue() / 100);
+                    case 2 -> Sounds.haveNothing.play(Game.menu.voiceSlider.getValue() / 100);
+                    case 3 -> Sounds.tryToFind.play(Game.menu.voiceSlider.getValue() / 100);
+                }
+            }
+            emptySupplyInterval = 0;
         }
+    }
 
-        playVoice();
+    public void update() {
+        if (canMove) {
+            moveInterval++;
+            if (getTranslateX() < Game.booker.getTranslateX() - 100)
+                moveX(SPEED);
+            else if (getTranslateX() > Game.booker.getTranslateX() + 100)
+                moveX(-SPEED);
+
+            if (moveInterval < 50)
+                moveY(1);
+            else if (moveInterval < 100)
+                moveY(-1);
+            else
+                moveInterval = 0;
+        } else
+            moveY(SPEED);
+
+        supply();
+
+        if (startLevel || playVoiceWhereYouFrom)
+            playVoice();
     }
 }

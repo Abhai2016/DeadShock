@@ -79,8 +79,6 @@ public class Booker extends Pane implements Animatable {
 
 
     public Booker() {
-        imgView.setFitWidth(55);
-        imgView.setFitHeight(63);
         imgView.setViewport(new Rectangle2D(offSetX, offSetY, width, height));
         getChildren().add(imgView);
 
@@ -315,13 +313,10 @@ public class Booker extends Pane implements Animatable {
     }
 
     private void takeSupply() {
-        if (Game.elizabeth.giveSupply)
+        if (Game.elizabeth.isGiveSupply())
             if (getBoundsInParent().intersects(Game.elizabeth.getBoundsInParent())) {
                 takeMedicine();
-                Game.elizabeth.giveSupply = false;
-                Game.elizabeth.canMove = true;
-                Game.elizabeth.countMedicine -= 2;
-                Game.elizabeth.imgView.setImage(Game.elizabeth.imgElizabeth);
+                Game.elizabeth.giveMedicine();
             }
         for (Supply supply : Game.supplies)
             if (supply.getBoundsInParent().intersects(getBoundsInParent())) {
@@ -340,11 +335,10 @@ public class Booker extends Pane implements Animatable {
     }
 
     private void takeMedicine() {
-        for (int count = 0; count < medicineCount; count++)
-            if (HP < 100)
-                HP += 1;
-            else
-                break;
+        HP += medicineCount;
+
+        if (HP > 100)
+            HP = 100;
 
         switch ((int) (Math.random() * 2)) {
             case 0: {
@@ -598,14 +592,7 @@ public class Booker extends Pane implements Animatable {
                 Game.level.getBackground().setLayoutX(0);
                 setTranslateX(100);
                 setTranslateY(300);
-                Game.elizabeth.y = (short) Game.elizabeth.getTranslateY();
-                Game.elizabeth.setTranslateX(getTranslateX());
-                Game.elizabeth.setTranslateY(Game.scene.getHeight() - Block.BLOCK_SIZE * 2);
-                Game.elizabeth.canMove = true;
-                Game.elizabeth.giveSupply = false;
-                Game.elizabeth.countMedicine = 0;
-                Path imagePath = Paths.get("resources", "images", "characters", "elizabeth.png");
-                Game.elizabeth.imgView.setImage(new Image(imagePath.toUri().toString()));
+                Game.elizabeth.reinitialize();
 
                 Game.menu.addListener();
                 HP = 100;
