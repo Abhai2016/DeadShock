@@ -7,6 +7,8 @@ import com.abhai.deadshock.utils.Sounds;
 import javafx.geometry.Rectangle2D;
 
 public class Elizabeth extends Character {
+    private static final int WIDTH = 46;
+
     private int moveInterval;
     private int medicineCount;
     private int supplyInterval;
@@ -78,7 +80,7 @@ public class Elizabeth extends Character {
             }
 
         if (Game.levelNumber == Level.BOSS_LEVEL)
-            if (getBoundsInParent().intersects(Game.level.getImgView().getBoundsInParent())) {
+            if (getBoundsInParent().intersects(Game.level.getimageView().getBoundsInParent())) {
                 setTranslateY(getTranslateY() - 1);
                 return true;
             }
@@ -153,8 +155,8 @@ public class Elizabeth extends Character {
 
         generateSupply();
 
-        if (giveSupply)
-            repeatSupplyVoice();
+        if (giveSupply && supplyInterval > 300)
+            playSupplyVoice();
 
         noSupply();
     }
@@ -166,11 +168,6 @@ public class Elizabeth extends Character {
             giveSupply = true;
             playSupplyVoice();
         }
-    }
-
-    private void repeatSupplyVoice() {
-        if (supplyInterval > 300)
-            playSupplyVoice();
     }
 
     private void noSupply() {
@@ -192,7 +189,7 @@ public class Elizabeth extends Character {
         }
     }
 
-    public void update() {
+    private void move() {
         if (canMove) {
             moveInterval++;
             if (getTranslateX() < Game.booker.getTranslateX() - 100)
@@ -208,7 +205,10 @@ public class Elizabeth extends Character {
                 moveInterval = 0;
         } else
             moveY(SPEED);
+    }
 
+    public void update() {
+        move();
         supply();
 
         if (startLevel || playVoiceWhereYouFrom)

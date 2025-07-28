@@ -9,7 +9,6 @@ import java.nio.file.Paths;
 
 public class Character extends Pane {
     protected static final int SPEED = 4;
-    protected static final int WIDTH = 46;
     protected static final int HEIGHT = 69;
     protected static final int START_X = 50;
     protected static final int START_Y = 400;
