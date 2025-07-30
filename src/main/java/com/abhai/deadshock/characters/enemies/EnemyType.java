@@ -1,5 +1,5 @@
 package com.abhai.deadshock.characters.enemies;
 
 public enum EnemyType {
-    COMSTOCK, RED_EYE, CAMPER
+    COMSTOCK, RED_EYE, CAMPER, BOSS
 }

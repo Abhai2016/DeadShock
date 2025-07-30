@@ -17,8 +17,8 @@ public class Comstock extends Enemy implements Animatable {
     private static final int SPEED = 3;
     private static final int VOICE_INTERVAL = 500;
 
+    protected static final int SPRITES_COUNT = 10;
     protected static final double JUMP_SPEED = -25;
-    protected static final int COUNT_OF_SPRITES = 10;
     protected static final double ANIMATION_SPEED = 0.5;
 
     private int seeInterval;
@@ -41,7 +41,7 @@ public class Comstock extends Enemy implements Animatable {
         booleanVelocity = true;
 
         animation = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED),
-                COUNT_OF_SPRITES, COUNT_OF_SPRITES, 0, 0, WIDTH, HEIGHT);
+                SPRITES_COUNT, SPRITES_COUNT, 0, 0, WIDTH, HEIGHT);
         onTheLeft = () ->
                 Game.booker.getTranslateX() > getTranslateX() - 720 && Game.booker.getTranslateX() < getTranslateX();
         onTheRight = () ->
@@ -79,7 +79,7 @@ public class Comstock extends Enemy implements Animatable {
                 if (velocity.getY() > 0) {
                     setTranslateY(getTranslateY() - 1);
                     if (booleanVelocity) {
-                        Game.booker.closeCombat();
+                        Game.booker.closeCombat(false);
                         Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
                         velocity = velocity.add(getScaleX() * 5, JUMP_SPEED);
                         booleanVelocity = false;
@@ -89,8 +89,7 @@ public class Comstock extends Enemy implements Animatable {
                     if (Game.booker.isBooleanVelocityY()) {
                         HP -= Game.booker.getCharacterDogFight();
                         Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
-                        Game.booker.velocity = Game.booker.velocity.add(0, JUMP_SPEED);
-                        Game.booker.setBooleanVelocityY(false);
+                        Game.booker.stun(type);
                     }
                 }
             } else

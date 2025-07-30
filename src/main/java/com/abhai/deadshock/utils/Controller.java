@@ -1,45 +1,28 @@
 package com.abhai.deadshock.utils;
 
 import com.abhai.deadshock.Game;
+import com.abhai.deadshock.characters.Character;
 import javafx.scene.input.KeyCode;
 
 public class Controller {
 
     public static void update() {
-        if ( isPressed(KeyCode.D) && Game.booker.getTranslateX() < Game.gameRoot.getWidth() - Game.booker.getWidth()
+        if (isPressed(KeyCode.D) && Game.booker.getTranslateX() < Game.gameRoot.getWidth() - Game.booker.getWidth()
                 && !Game.booker.isStunned()) {
-            if (Game.booker.isCanChangeAnimation())
-                Game.booker.changeAnimation(Game.weapon.getName());
-            Game.booker.moveX(Game.booker.getCHARACTER_SPEED());
+            Game.booker.moveX(Character.SPEED);
             Game.booker.setScaleX(1);
         }
 
-        if ( isPressed(KeyCode.A) && Game.booker.getTranslateX() > 1 && !Game.booker.isStunned()) {
-            if (Game.booker.isCanChangeAnimation())
-                Game.booker.changeAnimation(Game.weapon.getName());
-            Game.booker.moveX(-Game.booker.getCHARACTER_SPEED());
+        if (isPressed(KeyCode.A) && Game.booker.getTranslateX() > 1 && !Game.booker.isStunned()) {
+            Game.booker.moveX(-Character.SPEED);
             Game.booker.setScaleX(-1);
         }
 
-        if ( isPressed(KeyCode.A) && isPressed(KeyCode.D) && !Game.booker.isStunned())
+        if (isPressed(KeyCode.A) && isPressed(KeyCode.D) && !Game.booker.isStunned())
             Game.booker.stopAnimation();
 
-        if ( !isPressed(KeyCode.A) && !isPressed(KeyCode.D) ) {
-            Game.booker.setCanChangeAnimation(true);
-            switch (Game.weapon.getName()) {
-                case "pistol":
-                    Game.booker.changeViewPort(220, 20, 65);
-                    break;
-                case "machine_gun":
-                    Game.booker.changeViewPort(94, 20, 64);
-                    break;
-                case "rpg":
-                    Game.booker.changeViewPort(285, 20, 85);
-                    break;
-                default:
-                    Game.booker.changeViewPort(0, 20, 55);
-            }
-        }
+        if (!isPressed(KeyCode.A) && !isPressed(KeyCode.D))
+            Game.booker.setIdleAnimation();
 
         if (isPressed(KeyCode.W) && !Game.booker.isStunned())
             Game.booker.jump();
@@ -62,15 +45,14 @@ public class Controller {
                     Game.energetic.pickUp();
 
 
-        if (isPressed(KeyCode.R) && Game.booker.getOffSetY() != 90 && Game.weapon.isCanReload() && !Game.booker.isStunned())
+        if (isPressed(KeyCode.R) && Game.weapon.isCanReload() && !Game.booker.isStunned())
             Game.weapon.reload();
 
         if (!isPressed(KeyCode.R))
             Game.weapon.setCanReload(true);
 
 
-        if (isPressed(KeyCode.J) && Game.booker.getOffSetY() != 90 && Game.weapon.getWeaponClip() > 0
-                && !Game.weapon.isNowReloading() && !Game.booker.isStunned())
+        if (isPressed(KeyCode.J) && Game.weapon.getWeaponClip() > 0 && !Game.weapon.isNowReloading() && !Game.booker.isStunned())
             Game.weapon.shoot();
 
 

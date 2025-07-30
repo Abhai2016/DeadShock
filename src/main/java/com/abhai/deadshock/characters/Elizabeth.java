@@ -7,7 +7,7 @@ import com.abhai.deadshock.utils.Sounds;
 import javafx.geometry.Rectangle2D;
 
 public class Elizabeth extends Character {
-    private static final int WIDTH = 46;
+    private static final int WIDTH = 43;
 
     private int moveInterval;
     private int medicineCount;
@@ -80,7 +80,7 @@ public class Elizabeth extends Character {
             }
 
         if (Game.levelNumber == Level.BOSS_LEVEL)
-            if (getBoundsInParent().intersects(Game.level.getimageView().getBoundsInParent())) {
+            if (getBoundsInParent().intersects(Game.level.getImgView().getBoundsInParent())) {
                 setTranslateY(getTranslateY() - 1);
                 return true;
             }

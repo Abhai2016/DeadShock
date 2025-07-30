@@ -8,8 +8,9 @@ import javafx.scene.layout.Pane;
 import java.nio.file.Paths;
 
 public class Character extends Pane {
-    protected static final int SPEED = 4;
-    protected static final int HEIGHT = 69;
+    public static final int SPEED = 4;
+
+    protected static final int HEIGHT = 65;
     protected static final int START_X = 50;
     protected static final int START_Y = 400;
 

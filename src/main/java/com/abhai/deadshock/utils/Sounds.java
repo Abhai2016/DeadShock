@@ -30,6 +30,10 @@ public class Sounds {
             "booker", "newEnergetic.mp3").toUri().toString());
     public static AudioClip fuck = new AudioClip(
             Paths.get("resources", "sounds", "voices", "booker", "fuck.mp3").toUri().toString());
+    public static AudioClip shit =  new AudioClip(Paths.get("resources", "sounds", "voices",
+            "booker", "shit.mp3").toUri().toString());
+    public static AudioClip cretins =  new AudioClip(Paths.get("resources", "sounds", "voices",
+            "booker", "cretins.mp3").toUri().toString());
 
 
     //Elizabeth

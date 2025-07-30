@@ -1,5 +1,6 @@
 package com.abhai.deadshock;
 
+import com.abhai.deadshock.characters.Character;
 import com.abhai.deadshock.characters.enemies.EnemyType;
 import com.abhai.deadshock.weapons.Weapon;
 import javafx.animation.RotateTransition;
@@ -93,14 +94,14 @@ public class Supply extends Pane {
             rt.setOnFinished(event -> rt.play());
 
             if (getTranslateX() < Game.booker.getTranslateX())
-                setTranslateX(getTranslateX() + Game.booker.getCHARACTER_SPEED() * 1.5);
+                setTranslateX(getTranslateX() + Character.SPEED * 1.5);
             if (getTranslateX() > Game.booker.getTranslateX())
-                setTranslateX(getTranslateX() - Game.booker.getCHARACTER_SPEED() * 1.5);
+                setTranslateX(getTranslateX() - Character.SPEED * 1.5);
 
             if (getTranslateY() < Game.booker.getTranslateY())
-                setTranslateY(getTranslateY() + Game.booker.getCHARACTER_SPEED() * 1.5);
+                setTranslateY(getTranslateY() + Character.SPEED * 1.5);
             if (getTranslateY() > Game.booker.getTranslateY())
-                setTranslateY(getTranslateY() - Game.booker.getCHARACTER_SPEED() * 1.5);
+                setTranslateY(getTranslateY() - Character.SPEED * 1.5);
         }
 
     }

@@ -35,12 +35,14 @@ public class Boss extends Enemy implements Animatable {
         HP = 5000;
         stunInterval = 0;
         velocityInterval = 0;
+        type = EnemyType.BOSS;
 
         name = new Text("Большой папочка");
         rectHP = new Rectangle(500, 5, Color.RED);
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
         animation = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED),
                 COUNT_OF_SPRITES, COUNT_OF_SPRITES, 0, 0, WIDTH, HEIGHT);
+
         if (Game.levelNumber == Level.BOSS_LEVEL)
             initHp();
 
@@ -127,11 +129,8 @@ public class Boss extends Enemy implements Animatable {
         if (stunInterval > 800) {
             imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
             Sounds.bossTromp.play(Game.menu.fxSlider.getValue() / 100);
-            Game.booker.setStunned(true);
-            if (Game.booker.velocity.getY() > 0)
-                Game.booker.velocity = Game.booker.velocity.add(0, -JUMP_SPEED);
+            Game.booker.stun(type);
             stunInterval = 0;
-            Game.energetic.setHypnosisForBooker();
         }
     }
 

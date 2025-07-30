@@ -42,10 +42,8 @@ public class Enemy extends Pane {
     protected void closeCombat() {
         setTranslateX(getTranslateX() - getScaleX());
         if (Game.booker.isBooleanVelocityX()) {
-            Game.booker.closeCombat();
+            Game.booker.closeCombat(true);
             Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
-            Game.booker.velocity = Game.booker.velocity.add(getScaleX() * GRAVITY * 2, 0);
-            Game.booker.setBooleanVelocityX(false);
         }
     }
 

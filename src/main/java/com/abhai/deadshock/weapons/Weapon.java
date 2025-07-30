@@ -55,7 +55,7 @@ public class Weapon extends Pane {
         canChoosePistol = value;
         if (canChoosePistol) {
             name = "pistol";
-            Game.booker.changeAnimation(name);
+            Game.booker.changeWeaponAnimation(name);
         }
         gun.setViewport(new Rectangle2D(400, 80, 56, 18));
         setTranslateX(BLOCK_SIZE * 26);
@@ -72,7 +72,7 @@ public class Weapon extends Pane {
             name = "machine_gun";
         else if (canChoosePistol)
             name = "pistol";
-        Game.booker.changeAnimation(name);
+        Game.booker.changeWeaponAnimation(name);
         gun = new ImageView(new Image(rpgImagePath.toUri().toString()));
         setTranslateX(BLOCK_SIZE * 24);
         setTranslateY(BLOCK_SIZE * 12 - 20);
@@ -97,7 +97,7 @@ public class Weapon extends Pane {
             name = "machine_gun";
         else if (canChoosePistol)
             name = "pistol";
-        Game.booker.changeAnimation(name);
+        Game.booker.changeWeaponAnimation(name);
 
         explosion = new ImageView(new Image(explosionImagePath.toUri().toString()));
         explosion.setFitWidth(128);
@@ -180,12 +180,11 @@ public class Weapon extends Pane {
 
     public void pickUpWeapon() {
         if (!nowReloading) {
-            Game.booker.setCanChangeAnimation(true);
             switch (Game.levelNumber) {
                 case Level.FIRST_LEVEL:
                     Sounds.willWork.play(Game.menu.voiceSlider.getValue() / 100);
                     name = "pistol";
-                    Game.booker.changeAnimation(name);
+                    Game.booker.changeWeaponAnimation(name);
                     canChoosePistol = true;
                     WeaponData.pistolClip = clip = 20;
                     WeaponData.pistolBullets = bullets = 80;
@@ -193,7 +192,7 @@ public class Weapon extends Pane {
                 case Level.SECOND_LEVEL:
                     Sounds.great.play(Game.menu.voiceSlider.getValue() / 100);
                     name = "machine_gun";
-                    Game.booker.changeAnimation(name);
+                    Game.booker.changeWeaponAnimation(name);
                     canChooseMachineGun = true;
                     WeaponData.pistolClip = clip;
                     WeaponData.pistolBullets = bullets;
@@ -216,7 +215,7 @@ public class Weapon extends Pane {
                         WeaponData.machineGunBullets = bullets;
                     }
                     name = "rpg";
-                    Game.booker.changeAnimation(name);
+                    Game.booker.changeWeaponAnimation(name);
                     canChooseRPG = true;
                     WeaponData.rpgClip = clip = 1;
                     WeaponData.rpgBullets = bullets = 30;
@@ -376,8 +375,7 @@ public class Weapon extends Pane {
                     }
                     break;
             }
-            Game.booker.setCanChangeAnimation(true);
-            Game.booker.changeAnimation(name);
+            Game.booker.changeWeaponAnimation(name);
         }
     }
 

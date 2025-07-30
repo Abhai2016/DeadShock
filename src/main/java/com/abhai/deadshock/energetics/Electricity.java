@@ -31,7 +31,7 @@ class Electricity extends Pane {
         animation.play();
 
         if (Game.booker.getScaleX() > 0)
-            setTranslateX(x + Game.booker.getImgView().getFitWidth() - 5);
+            setTranslateX(x + Game.booker.getImageView().getFitWidth() - 5);
         else {
             setScaleX(-1);
             setTranslateX(Game.booker.getTranslateX() - 170);
@@ -56,7 +56,7 @@ class Electricity extends Pane {
 
     private void move() {
         if (Game.booker.getScaleX() > 0) {
-            setTranslateX(Game.booker.getTranslateX() + Game.booker.getImgView().getFitWidth() - 5);
+            setTranslateX(Game.booker.getTranslateX() + Game.booker.getImageView().getFitWidth() - 5);
             setScaleX(1);
         }
         else {
