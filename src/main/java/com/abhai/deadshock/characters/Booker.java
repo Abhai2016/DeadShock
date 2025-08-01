@@ -3,7 +3,6 @@ package com.abhai.deadshock.characters;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.Supply;
 import com.abhai.deadshock.characters.enemies.Enemy;
-import com.abhai.deadshock.characters.enemies.EnemyType;
 import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.levels.BlockType;
 import com.abhai.deadshock.levels.Level;
@@ -12,7 +11,6 @@ import com.abhai.deadshock.utils.SpriteAnimation;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.media.Media;
@@ -24,7 +22,6 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static javafx.scene.input.KeyEvent.KEY_PRESSED;
@@ -32,11 +29,13 @@ import static javafx.scene.input.KeyEvent.KEY_PRESSED;
 public class Booker extends Character implements Animatable {
     public static final int WIDTH = 60;
 
+    private static final int GRAVITY = 8;
     private static final int JUMP_SPEED = -23;
     private static final int SPRITES_COUNT = 6;
     private static final int RPG_OFFSET_Y = 215;
     private static final int NO_GUN_OFFSET_Y = 70;
     private static final int PISTOL_OFFSET_Y = 282;
+    private static final int STUNNED_INTERVAL = 200;
     private static final int IDLE_RPG_OFFSET_X = 246;
     private static final double ANIMATION_SPEED = 0.5;
     private static final int MACHINE_GUN_OFFSET_Y = 144;
@@ -44,6 +43,7 @@ public class Booker extends Character implements Animatable {
     private static final int IDLE_MACHINE_OFFSET_X = 185;
     private static final int IDLE_WITH_NO_GUN_OFFSET_X = 42;
 
+    private boolean dead;
     private boolean start;
     private boolean stunned;
     private boolean canJump;
@@ -55,13 +55,12 @@ public class Booker extends Character implements Animatable {
     private int salt;
     private int money;
     private int livesCount;
-    private int bulletCount;
-    private int enemyDogfight;
-    private int medicineCount;
     private int stunnedInterval;
-    private int characterDogFight;
+    private int closeCombatDamage;
     private int priceForGeneration;
     private int moneyForKillingEnemy;
+    private int bulletsForKillingEnemy;
+    private int medicineForKillingEnemy;
 
     private Point2D velocity;
     private SpriteAnimation withRPG;
@@ -74,7 +73,11 @@ public class Booker extends Character implements Animatable {
     private Text gameOverText;
     private Text continueText;
 
+    private final MediaPlayer videoDeath;
+    private final MediaView videoView;
+
     public Booker() {
+        dead = false;
         start = true;
         canJump = true;
         stunned = false;
@@ -83,18 +86,20 @@ public class Booker extends Character implements Animatable {
         booleanVelocityY = true;
         velocity = new Point2D(0, 0);
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
+        videoDeath = new MediaPlayer(new Media(
+                Paths.get("resources", "videos", "death.mp4").toUri().toString()));
+        videoView = new MediaView(videoDeath);
 
         HP = 100;
         money = 0;
         salt = 100;
         livesCount = 0;
-        bulletCount = 0;
-        enemyDogfight = 0;
-        medicineCount = 0;
         stunnedInterval = 0;
-        characterDogFight = 0;
+        closeCombatDamage = 0;
         priceForGeneration = 0;
         moneyForKillingEnemy = 0;
+        bulletsForKillingEnemy = 0;
+        medicineForKillingEnemy = 0;
 
         initializeDeathText();
         initializeAnimations();
@@ -108,6 +113,332 @@ public class Booker extends Character implements Animatable {
     @Override
     protected String getImageName() {
         return "booker.png";
+    }
+
+
+    public int getHP() {
+        return HP;
+    }
+
+    public int getSalt() {
+        return salt;
+    }
+
+    public int getMoney() {
+        return money;
+    }
+
+    public void setHP(int value) {
+        HP = value;
+    }
+
+    public boolean isStunned() {
+        return stunned;
+    }
+
+    public void setSalt(int value) {
+        salt = value;
+    }
+
+    public void setMoney(int value) {
+        money = value;
+    }
+
+    public double getStunnedInterval() {
+        return stunnedInterval;
+    }
+
+    public void setCanPlayVoice(boolean value) {
+        canPlayVoice = value;
+    }
+
+    public int getBulletsForKillingEnemy() {
+        return bulletsForKillingEnemy;
+    }
+
+
+    public void stun() {
+        stunned = true;
+        velocity = velocity.add(0, JUMP_SPEED);
+        Game.energetic.setHypnosisForBooker();
+    }
+
+    private void die() {
+        dead = true;
+        if (Game.difficultyLevelText.equals("hardcore"))
+            gameOver();
+        else {
+            stopAnimation();
+            Game.timer.stop();
+            Game.menu.music.pause();
+
+            for (Enemy enemy : Game.enemies)
+                if (enemy instanceof Animatable animatable)
+                    animatable.stopAnimation();
+
+            if (money < priceForGeneration)
+                gameOver();
+            else {
+                livesCount--;
+                money -= priceForGeneration;
+
+                if (Game.levelNumber > Level.FIRST_LEVEL)
+                    playVideoDeath();
+                else {
+                    Game.appRoot.getChildren().add(gameOverText);
+
+                    if (start)
+                        Game.appRoot.getChildren().add(moneyText);
+
+                    if (livesCount < 0) {
+                        continueText.setText("Для того, что начать уровень заново нажмите ввод");
+                        continueText.setTranslateX(Game.scene.getWidth() / 4);
+                    }
+                    Game.appRoot.getChildren().add(continueText);
+                    addEventListenerOnDeathText();
+                }
+            }
+        }
+    }
+
+    private void behave() {
+        moveY(velocity.getY());
+        moveX(velocity.getX());
+
+        if (stunned) {
+            stunnedInterval++;
+            Game.energetic.updateHypnosisForBooker();
+
+            if (stunnedInterval > STUNNED_INTERVAL) {
+                stunnedInterval = 0;
+                stunned = false;
+                Game.energetic.deleteHypnosis();
+                velocity = velocity.add(0, JUMP_SPEED);
+            }
+        } else {
+            if (!canJump)
+                stopAnimation();
+            else
+                animation.play();
+
+            if (!Game.supplies.isEmpty() || (Game.levelNumber > Level.FIRST_LEVEL && Game.elizabeth.isGiveSupply()))
+                takeSupply();
+
+            if (Game.levelNumber < Level.THIRD_LEVEL)
+                playVoice();
+        }
+    }
+
+    private void gameOver() {
+        gameOverText.setFont(Font.font("Arial", FontWeight.BOLD, 28));
+        gameOverText.setFill(Color.RED);
+        gameOverText.setTranslateX(Game.scene.getWidth() / 2 - 100);
+        gameOverText.setTranslateY(Game.scene.getHeight() / 2);
+        Game.appRoot.getChildren().add(gameOverText);
+
+        Game.scene.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ESCAPE) {
+                Game.appRoot.getChildren().remove(gameOverText);
+                Game.menu.newGame();
+            }
+        });
+    }
+
+    private void playVoice() {
+        if (!Game.enemies.isEmpty() && Game.levelNumber == Level.FIRST_LEVEL)
+            if (getTranslateX() > Game.enemies.getFirst().getTranslateX() - Block.BLOCK_SIZE * 15 && canPlayVoice) {
+                Sounds.shit.play(Game.menu.voiceSlider.getValue() / 100);
+                canPlayVoice = false;
+                return;
+            }
+
+        if (Game.enemies.isEmpty() && !canPlayVoice && Game.levelNumber == Level.FIRST_LEVEL) {
+            Sounds.cretins.play(Game.menu.voiceSlider.getValue() / 100);
+            canPlayVoice = true;
+            return;
+        }
+
+        if (Game.enemies.isEmpty() && Game.levelNumber == Level.SECOND_LEVEL && canPlayVoice) {
+            Sounds.letsGo.play(Game.menu.voiceSlider.getValue() / 100);
+            canPlayVoice = false;
+        }
+    }
+
+    public void moveX(double x) {
+        if (velocity.getX() < 0)
+            velocity = velocity.add(ANIMATION_SPEED, 0);
+        else if (velocity.getX() > 0)
+            velocity = velocity.add(-ANIMATION_SPEED, 0);
+        else
+            booleanVelocityX = true;
+
+        for (int i = 0; i < Math.abs(x); i++) {
+            if (x > 0 && Game.booker.getTranslateX() < Game.gameRoot.getWidth() - WIDTH)
+                setTranslateX(getTranslateX() + 1);
+            else if (Game.booker.getTranslateX() > 1)
+                setTranslateX(getTranslateX() - 1);
+
+            if (intersectsWithBlocks('X', x))
+                return;
+
+            if (Game.levelNumber == Level.BOSS_LEVEL && Game.boss.getHP() < 1 &&
+                    getBoundsInParent().intersects(Game.boss.getBoundsInParent()))
+                setTranslateX(getTranslateX() - getScaleX());
+        }
+    }
+
+    private void moveY(double y) {
+        if (velocity.getY() < GRAVITY)
+            velocity = velocity.add(0, ANIMATION_SPEED);
+        else
+            booleanVelocityY = true;
+
+        for (int i = 0; i < Math.abs(y); i++) {
+            if (y > 0) {
+                setTranslateY(getTranslateY() + 1);
+                canJump = false;
+            } else
+                setTranslateY(getTranslateY() - 1);
+
+            if (intersectsWithBlocks('Y', y))
+                return;
+
+            if (intersectsWithEnemies())
+                return;
+        }
+    }
+
+    private void takeSupply() {
+        if (Game.elizabeth.isGiveSupply())
+            if (getBoundsInParent().intersects(Game.elizabeth.getBoundsInParent())) {
+                takeMedicine();
+                Game.elizabeth.giveMedicine();
+            }
+
+        for (Supply supply : Game.supplies)
+            if (supply.getBoundsInParent().intersects(getBoundsInParent())) {
+                if (supply.getSupply().equals("medicine") && Game.booker.getHP() < 100) {
+                    takeMedicine();
+                    Game.gameRoot.getChildren().remove(supply);
+                    Game.supplies.remove(supply);
+                } else if (supply.getSupply().equals("ammo")) {
+                    Sounds.great.play(Game.menu.voiceSlider.getValue() / 100);
+                    Game.weapon.setBullets(Game.weapon.getBullets() + bulletsForKillingEnemy);
+                    Game.gameRoot.getChildren().remove(supply);
+                    Game.supplies.remove(supply);
+                }
+                break;
+            }
+    }
+
+    private void takeMedicine() {
+        HP += medicineForKillingEnemy;
+
+        if (HP > 100)
+            HP = 100;
+
+        switch ((int) (Math.random() * 2)) {
+            case 0 -> Sounds.feelsBetter.play(Game.menu.voiceSlider.getValue() / 100);
+            case 1 -> Sounds.feelingBetter.play(Game.menu.voiceSlider.getValue() / 100);
+        }
+    }
+
+    private void playVideoDeath() {
+        videoView.getMediaPlayer().setVolume(Game.menu.voiceSlider.getValue() / 100);
+        Game.appRoot.getChildren().add(videoView);
+
+        videoDeath.play();
+        videoDeath.setOnEndOfMedia(() -> {
+            Game.timer.start();
+            Game.menu.music.play();
+            Game.appRoot.getChildren().remove(videoView);
+
+            Game.gameRoot.setLayoutX(0);
+            Game.level.getBackground().setLayoutX(0);
+            setTranslateX(100);
+            setTranslateY(300);
+            Game.elizabeth.reinitialize();
+
+            Game.menu.addListener();
+            HP = 100;
+            velocity = new Point2D(0, 0);
+            Game.stage.setWidth(1280);
+            stunnedInterval = 0;
+            stunned = false;
+            Game.energetic.deleteHypnosis();
+
+            if (livesCount < 0) {
+                canPlayVoice = true;
+                livesCount = 2;
+                Game.clearData();
+                Game.createEnemies();
+                salt = 100;
+            }
+        });
+    }
+
+    public void setIdleAnimation() {
+        switch (Game.weapon.getName()) {
+            case "pistol" -> imageView.setViewport(new Rectangle2D(IDLE_PISTOL_OFFSET_X, 0, WIDTH, HEIGHT));
+            case "machine_gun" -> imageView.setViewport(new Rectangle2D(IDLE_MACHINE_OFFSET_X, 0, WIDTH, HEIGHT));
+            case "rpg" -> imageView.setViewport(new Rectangle2D(IDLE_RPG_OFFSET_X, 0, WIDTH, HEIGHT));
+            default -> imageView.setViewport(new Rectangle2D(IDLE_WITH_NO_GUN_OFFSET_X, 0, WIDTH, HEIGHT));
+        }
+        stopAnimation();
+    }
+
+    public void setDifficultyLevel() {
+        int money = 0;
+        switch (Game.difficultyLevelText) {
+            case "marik" -> {
+                money = 1000000;
+                livesCount = 4;
+                priceForGeneration = 0;
+                closeCombatDamage = 100;
+                moneyForKillingEnemy = 0;
+                bulletsForKillingEnemy = 30;
+                medicineForKillingEnemy = 30;
+            }
+            case "easy" -> {
+                money = 300;
+                livesCount = 4;
+                closeCombatDamage = 75;
+                priceForGeneration = 15;
+                moneyForKillingEnemy = 10;
+                bulletsForKillingEnemy = 20;
+                medicineForKillingEnemy = 20;
+            }
+            case "normal" -> {
+                money = 150;
+                livesCount = 2;
+                closeCombatDamage = 50;
+                priceForGeneration = 20;
+                moneyForKillingEnemy = 5;
+                bulletsForKillingEnemy = 15;
+                medicineForKillingEnemy = 15;
+            }
+            case "high" -> {
+                money = 100;
+                livesCount = 1;
+                closeCombatDamage = 40;
+                priceForGeneration = 25;
+                moneyForKillingEnemy = 3;
+                bulletsForKillingEnemy = 10;
+                medicineForKillingEnemy = 10;
+            }
+            case "hardcore" -> {
+                money = 100;
+                livesCount = 0;
+                closeCombatDamage = 25;
+                priceForGeneration = 0;
+                moneyForKillingEnemy = 2;
+                bulletsForKillingEnemy = 10;
+                medicineForKillingEnemy = 10;
+            }
+        }
+
+        if (Game.levelNumber == Level.FIRST_LEVEL)
+            this.money = money;
     }
 
     private void initializeDeathText() {
@@ -144,363 +475,51 @@ public class Booker extends Character implements Animatable {
         animation = withoutGun;
     }
 
-    public void moveX(int x) {
-        for (int i = 0; i < Math.abs(x); i++) {
-            if (x > 0) {
-                setTranslateX(getTranslateX() + 1);
-            } else if (getTranslateX() > 1)
-                setTranslateX(getTranslateX() - 1);
-
-            for (Block block : Game.blocks) {
-                if (getBoundsInParent().intersects(block.getBoundsInParent()) && !block.getType().equals(BlockType.INVISIBLE))
-                    if (x > 0) {
-                        setTranslateX(getTranslateX() - 1);
-                        return;
-                    } else {
-                        setTranslateX(getTranslateX() + 1);
-                        return;
-                    }
+    public void jump(boolean enemyJump) {
+        if (enemyJump) {
+            if (booleanVelocityY) {
+                velocity = velocity.add(0, JUMP_SPEED);
+                booleanVelocityY = false;
             }
-
-            for (Enemy enemy : Game.enemies)
-                if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
-                    setTranslateX(getTranslateX() - getScaleX());
-                    HP -= enemyDogfight;
-                    Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
-                    if (enemy.isCamper())
-                        velocity = velocity.add(-getScaleX() * 15, 0);
-                    return;
-                }
-
-            if (Game.boss != null)
-                if (getBoundsInParent().intersects(Game.boss.getBoundsInParent()))
-                    setTranslateX(getTranslateX() - getScaleX());
-        }
-    }
-
-    private void moveY(int y) {
-        for (int i = 0; i < Math.abs(y); i++) {
-            if (y > 0) {
-                setTranslateY(getTranslateY() + 1);
-                canJump = false;
-            } else
-                setTranslateY(getTranslateY() - 1);
-
-            if (!stunned)
-                for (Block block : Game.blocks) {
-                    if (getBoundsInParent().intersects(block.getBoundsInParent()) && !block.getType().equals(BlockType.INVISIBLE))
-                        if (y > 0) {
-                            setTranslateY(getTranslateY() - 1);
-                            canJump = true;
-                            return;
-                        } else {
-                            setTranslateY(getTranslateY() + 1);
-                            velocity = new Point2D(0, 8);
-                            return;
-                        }
-                }
-
-            for (Enemy enemy : Game.enemies)
-                if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
-                    HP -= enemyDogfight;
-                    Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
-                    if (y > 0) {
-                        setTranslateY(getTranslateY() - 1);
-                        if (enemy.isCamper())
-                            enemy.setHP(enemy.getHP() - characterDogFight * 3);
-                        else
-                            enemy.setHP(enemy.getHP() - characterDogFight);
-                        if (booleanVelocityY) {
-                            velocity = velocity.add(0, -22);
-                            booleanVelocityY = false;
-                        }
-                    } else
-                        setTranslateY(getTranslateY() + 1);
-                    return;
-                }
-
-            if (Game.levelNumber == Level.BOSS_LEVEL) {
-                if (getBoundsInParent().intersects(Game.level.getImgView().getBoundsInParent())) {
-                    setTranslateY(getTranslateY() - 1);
-                    if (stunnedInterval > 180) {
-                        stunnedInterval = 0;
-                        stunned = false;
-                        Game.energetic.deleteHypnosis();
-                    }
-                    if (!stunned)
-                        canJump = true;
-                }
-                if (getBoundsInParent().intersects(Game.boss.getBoundsInParent())) {
-                    setTranslateY(getTranslateY() - 1);
-                    if (Game.boss.getHP() > 1) {
-                        Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
-                        if (!Game.difficultyLevelText.equals("marik"))
-                            HP -= enemyDogfight;
-                        else
-                            HP -= 5;
-                        if (booleanVelocityY) {
-                            velocity = velocity.add(0, -20);
-                            booleanVelocityY = false;
-                        }
-                    } else
-                        canJump = true;
-                    return;
-                }
-            }
-        }
-    }
-
-    public void jump() {
-        if (canJump) {
+        } else if (canJump) {
             velocity = velocity.add(0, JUMP_SPEED);
             canJump = false;
         }
     }
 
-    public void stun(EnemyType enemyType) {
-        if (enemyType.equals(EnemyType.BOSS)) {
-            stunned = true;
-            Game.energetic.setHypnosisForBooker();
-        } else
-            booleanVelocityY = false;
+    public void closeCombat(double scaleX) {
+        HP -= closeCombatDamage / 10;
 
-        if (velocity.getY() > 0)
-            velocity = velocity.add(0, JUMP_SPEED);
-    }
-
-    public int getHP() {
-        return HP;
-    }
-
-    public void setHP(int value) {
-        HP = value;
-    }
-
-    public int getSalt() {
-        return salt;
-    }
-
-    public void setSalt(int value) {
-        salt = value;
-    }
-
-    public boolean isBooleanVelocityX() {
-        return booleanVelocityX;
-    }
-
-    public void setBooleanVelocityX(boolean value) {
-        booleanVelocityX = value;
-    }
-
-    public boolean isBooleanVelocityY() {
-        return booleanVelocityY;
-    }
-
-    public void setBooleanVelocityY(boolean value) {
-        booleanVelocityY = value;
-    }
-
-    public int getMoney() {
-        return money;
-    }
-
-    public void setMoney(int value) {
-        money = value;
-    }
-
-    public ImageView getImageView() {
-        return imageView;
-    }
-
-    public int getCharacterDogFight() {
-        return characterDogFight;
-    }
-
-    public void closeCombat(boolean jump) {
-        HP -= enemyDogfight;
-
-        if (jump) {
-            velocity = velocity.add(getScaleX() * JUMP_SPEED, 0);
+        if (booleanVelocityX) {
+            Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
+            velocity = velocity.add(scaleX * -JUMP_SPEED, 0);
             booleanVelocityX = false;
         }
     }
 
-    public int getBulletCount() {
-        return bulletCount;
-    }
-
-    public boolean isStunned() {
-        return stunned;
-    }
-
-    public void setStunned(boolean value) {
-        stunned = value;
-    }
-
-    public double getStunnedInterval() {
-        return stunnedInterval;
-    }
-
-    private void takeSupply() {
-        if (Game.elizabeth.isGiveSupply())
-            if (getBoundsInParent().intersects(Game.elizabeth.getBoundsInParent())) {
-                takeMedicine();
-                Game.elizabeth.giveMedicine();
-            }
-        for (Supply supply : Game.supplies)
-            if (supply.getBoundsInParent().intersects(getBoundsInParent())) {
-                if (supply.getSupply().equals("medicine") && Game.booker.getHP() < 100) {
-                    takeMedicine();
-                    Game.gameRoot.getChildren().remove(supply);
-                    Game.supplies.remove(supply);
-                } else if (supply.getSupply().equals("ammo")) {
-                    Sounds.great.play(Game.menu.voiceSlider.getValue() / 100);
-                    Game.weapon.setBullets(Game.weapon.getBullets() + Game.booker.getBulletCount());
-                    Game.gameRoot.getChildren().remove(supply);
-                    Game.supplies.remove(supply);
-                }
-                break;
-            }
-    }
-
-    private void takeMedicine() {
-        HP += medicineCount;
-
-        if (HP > 100)
-            HP = 100;
-
-        switch ((int) (Math.random() * 2)) {
-            case 0 -> Sounds.feelsBetter.play(Game.menu.voiceSlider.getValue() / 100);
-            case 1 -> Sounds.feelingBetter.play(Game.menu.voiceSlider.getValue() / 100);
-        }
-    }
-
-    public void setDifficultyLevel() {
-        switch (Game.difficultyLevelText) {
-            case "marik":
-                if (Game.levelNumber == Level.FIRST_LEVEL)
-                    money = 1000000;
-                medicineCount = 30;
-                bulletCount = 30;
-                enemyDogfight = 0;
-                moneyForKillingEnemy = 0;
-                characterDogFight = 100;
-                priceForGeneration = 0;
-                livesCount = 4;
-                break;
-            case "easy":
-                if (Game.levelNumber == Level.FIRST_LEVEL)
-                    money = 300;
-                medicineCount = 20;
-                bulletCount = 20;
-                enemyDogfight = 5;
-                moneyForKillingEnemy = 10;
-                characterDogFight = 75;
-                livesCount = 4;
-                priceForGeneration = 15;
-                break;
-            case "normal":
-                if (Game.levelNumber == Level.FIRST_LEVEL)
-                    money = 150;
-                medicineCount = 15;
-                bulletCount = 15;
-                enemyDogfight = 10;
-                moneyForKillingEnemy = 5;
-                characterDogFight = 50;
-                livesCount = 2;
-                priceForGeneration = 20;
-                break;
-            case "high":
-                if (Game.levelNumber == Level.FIRST_LEVEL)
-                    money = 100;
-                medicineCount = 10;
-                bulletCount = 10;
-                enemyDogfight = 15;
-                moneyForKillingEnemy = 3;
-                characterDogFight = 50;
-                livesCount = 1;
-                priceForGeneration = 25;
-                break;
-            case "hardcore":
-                if (Game.levelNumber == Level.FIRST_LEVEL)
-                    money = 100;
-                medicineCount = 10;
-                bulletCount = 10;
-                enemyDogfight = 20;
-                moneyForKillingEnemy = 2;
-                characterDogFight = 50;
-                livesCount = 0;
-                priceForGeneration = 0;
-                break;
-        }
-    }
-
-    public void setIdleAnimation() {
-        switch (Game.weapon.getName()) {
-            case "pistol" -> imageView.setViewport(new Rectangle2D(IDLE_PISTOL_OFFSET_X, 0, WIDTH, HEIGHT));
-            case "machine_gun" -> imageView.setViewport(new Rectangle2D(IDLE_MACHINE_OFFSET_X, 0, WIDTH, HEIGHT));
-            case "rpg" -> imageView.setViewport(new Rectangle2D(IDLE_RPG_OFFSET_X, 0, WIDTH, HEIGHT));
-            default -> imageView.setViewport(new Rectangle2D(IDLE_WITH_NO_GUN_OFFSET_X, 0, WIDTH, HEIGHT));
-        }
-        stopAnimation();
-    }
-
-    public void changeWeaponAnimation(String weaponName) {
-        stopAnimation();
-        switch (weaponName) {
-            case "pistol" -> animation = withPistol;
-            case "machine_gun" -> animation = withMachineGun;
-            case "rpg" -> animation = withRPG;
-            default -> animation = withoutGun;
-        }
-        animation.play();
-    }
-
-    private void playBookerVoice() {
-        if (!Game.enemies.isEmpty() && Game.levelNumber == Level.FIRST_LEVEL)
-            if (getTranslateX() == Game.enemies.getFirst().getTranslateX() - Block.BLOCK_SIZE * 15 && canPlayVoice) {
-                Sounds.shit.play(Game.menu.voiceSlider.getValue() / 100);
-                canPlayVoice = false;
+    private boolean intersectsWithEnemies() {
+        for (Enemy enemy : Game.enemies)
+            if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
+                Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
+                setTranslateY(getTranslateY() - 1);
+                enemy.setHP(enemy.getHP() - closeCombatDamage);
+                jump(true);
+                return true;
             }
 
-        if (Game.enemies.isEmpty() && !canPlayVoice && Game.levelNumber == Level.FIRST_LEVEL) {
-            Sounds.cretins.play(Game.menu.voiceSlider.getValue() / 100);
-            canPlayVoice = true;
-        }
-
-        if (Game.enemies.isEmpty() && Game.levelNumber == Level.SECOND_LEVEL && canPlayVoice) {
-            Sounds.letsGo.play(Game.menu.voiceSlider.getValue() / 100);
-            canPlayVoice = false;
-        }
-    }
-
-    private void playDeath() {
-        stopAnimation();
-        Game.timer.stop();
-        Game.menu.music.pause();
-        Game.appRoot.getChildren().add(gameOverText);
-
-        if (money < priceForGeneration) {
-            gameOver();
-        } else {
-            livesCount--;
-            money -= priceForGeneration;
-
-            for (Enemy enemy : Game.enemies)
-                if (enemy instanceof Animatable animatable)
-                    animatable.stopAnimation();
-
-            if (start)
-                Game.appRoot.getChildren().add(moneyText);
-
-            if (livesCount < 0) {
-                continueText.setText("Для того, что начать уровень заново нажмите ввод");
-                continueText.setTranslateX(Game.scene.getWidth() / 4);
+        if (Game.levelNumber == Level.BOSS_LEVEL) {
+            if (getBoundsInParent().intersects(Game.boss.getBoundsInParent())) {
+                setTranslateY(getTranslateY() - 1);
+                if (Game.boss.getHP() > 1) {
+                    Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
+                    HP -= closeCombatDamage / 10;
+                    jump(true);
+                } else
+                    canJump = true;
+                return true;
             }
-            Game.appRoot.getChildren().add(continueText);
-
-            addEventListenerOnDeathText();
         }
+        return false;
     }
 
     private void addEventListenerOnDeathText() {
@@ -541,126 +560,55 @@ public class Booker extends Character implements Animatable {
         Game.scene.addEventFilter(KEY_PRESSED, removeDeathText);
     }
 
-    private void playVideoDeath() {
+    public void changeWeaponAnimation(String weaponName) {
         stopAnimation();
-        Game.timer.stop();
-        Game.menu.music.pause();
-
-        if (Sounds.whereAreYouFrom.getStatus() == MediaPlayer.Status.PLAYING)
-            Sounds.whereAreYouFrom.pause();
-
-        if (money < priceForGeneration) {
-            gameOver();
-        } else {
-            livesCount--;
-            money -= priceForGeneration;
-
-            Path videoPath = Paths.get("resources", "videos", "death.mp4");
-            MediaPlayer video = new MediaPlayer(new Media(videoPath.toUri().toString()));
-            MediaView videoView = new MediaView(video);
-            videoView.getMediaPlayer().setVolume(Game.menu.voiceSlider.getValue() / 100);
-            Game.appRoot.getChildren().add(videoView);
-
-            video.play();
-
-            video.setOnEndOfMedia(() -> {
-                Game.timer.start();
-                Game.menu.music.play();
-                Game.appRoot.getChildren().remove(videoView);
-
-                Game.gameRoot.setLayoutX(0);
-                Game.level.getBackground().setLayoutX(0);
-                setTranslateX(100);
-                setTranslateY(300);
-                Game.elizabeth.reinitialize();
-
-                Game.menu.addListener();
-                HP = 100;
-                velocity = new Point2D(0, 0);
-                Game.stage.setWidth(1280);
-                stunnedInterval = 0;
-                stunned = false;
-                Game.energetic.deleteHypnosis();
-
-                if (livesCount < 0) {
-                    canPlayVoice = true;
-                    livesCount = 2;
-                    Game.clearData();
-                    Game.createEnemies();
-                    salt = 100;
-                }
-            });
+        switch (weaponName) {
+            case "pistol" -> animation = withPistol;
+            case "machine_gun" -> animation = withMachineGun;
+            case "rpg" -> animation = withRPG;
+            default -> animation = withoutGun;
         }
-    }
-
-    private void gameOver() {
-        if (Game.levelNumber == Level.BOSS_LEVEL)
-            Game.boss.stopAnimation();
-
-        gameOverText.setFont(Font.font("Arial", FontWeight.BOLD, 28));
-        gameOverText.setFill(Color.RED);
-        gameOverText.setTranslateX(Game.scene.getWidth() / 2 - 100);
-        gameOverText.setTranslateY(Game.scene.getHeight() / 2);
-
-        Game.scene.setOnKeyPressed(event -> {
-            Game.appRoot.getChildren().remove(gameOverText);
-            Game.menu.newGame();
-        });
+        animation.play();
     }
 
     public void addMoneyForKillingEnemy() {
         money += moneyForKillingEnemy;
     }
 
-    public void minusHPForCamperScream() {
-        HP -= enemyDogfight;
+    private boolean intersectsWithBlocks(char typeOfCoordinate, double coordinate) {
+        if (Game.levelNumber == Level.BOSS_LEVEL)
+            if (getBoundsInParent().intersects(Game.level.getImgView().getBoundsInParent())) {
+                setTranslateY(getTranslateY() - 1);
+                if (!stunned)
+                    canJump = true;
+                return true;
+            }
+
+        if (!stunned) {
+            for (Block block : Game.blocks)
+                if (getBoundsInParent().intersects(block.getBoundsInParent()) && !block.getType().equals(BlockType.INVISIBLE)) {
+                    if (typeOfCoordinate == 'X')
+                        if (coordinate > 0)
+                            setTranslateX(getTranslateX() - 1);
+                        else
+                            setTranslateX(getTranslateX() + 1);
+                    else if (coordinate > 0) {
+                        setTranslateY(getTranslateY() - 1);
+                        canJump = true;
+                    } else {
+                        setTranslateY(getTranslateY() + 1);
+                        velocity = new Point2D(0, 8);
+                    }
+                    return true;
+                }
+        }
+        return false;
     }
 
     public void update() {
-        if (velocity.getY() < 8)
-            velocity = velocity.add(0, ANIMATION_SPEED);
-        else
-            booleanVelocityY = true;
-        moveY((int) velocity.getY());
-
-        if (velocity.getX() < 0)
-            velocity = velocity.add(ANIMATION_SPEED, 0);
-        else if (velocity.getX() > 0)
-            velocity = velocity.add(-ANIMATION_SPEED, 0);
-        else
-            booleanVelocityX = true;
-        moveX((int) velocity.getX());
-
-        if (stunnedInterval == 180)
-            velocity = velocity.add(0, -20);
-
-        if (!stunned) {
-            if (!canJump)
-                stopAnimation();
-            else
-                animation.play();
-
-            if (Game.levelNumber > Level.FIRST_LEVEL)
-                takeSupply();
-
-            if (getTranslateY() > Game.scene.getHeight())
-                HP = 0;
-
-            playBookerVoice();
-        } else {
-            stunnedInterval++;
-            Game.energetic.updateHypnosisForBooker();
-        }
-
-        if (HP <= 0) {
-            if (Game.difficultyLevelText.equals("hardcore")) {
-                gameOver();
-                return;
-            }
-            if (Game.levelNumber == Level.FIRST_LEVEL)
-                playDeath();
-            else
-                playVideoDeath();
-        }
+        if ((HP < 1 || getTranslateY() > Game.scene.getHeight()) && !dead) {
+            die();
+        } else
+            behave();
     }
 }

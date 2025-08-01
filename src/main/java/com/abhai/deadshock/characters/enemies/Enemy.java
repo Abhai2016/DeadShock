@@ -39,29 +39,6 @@ public class Enemy extends Pane {
         Game.gameRoot.getChildren().add(this);
     }
 
-    protected void closeCombat() {
-        setTranslateX(getTranslateX() - getScaleX());
-        if (Game.booker.isBooleanVelocityX()) {
-            Game.booker.closeCombat(true);
-            Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
-        }
-    }
-
-    protected void playDeathVoice() {
-        switch ((int) (Math.random() * 2)) {
-            case 0 -> Sounds.death.play(Game.menu.fxSlider.getValue() / 100);
-            case 1 -> Sounds.death2.play(Game.menu.fxSlider.getValue() / 100);
-        }
-    }
-
-    protected String getImageName() {
-        return "";
-    }
-
-    public boolean isToDelete() {
-        return toDelete;
-    }
-
     public int getHP() {
         return HP;
     }
@@ -70,12 +47,17 @@ public class Enemy extends Pane {
         HP = value;
     }
 
+    protected String getImageName() {
+        return "";
+    }
+
     public void setHypnotized(boolean value) {
         hypnotized = value;
     }
 
-    public boolean isCamper() {
-        return type.equals(EnemyType.CAMPER);
+
+    public void update() {
+
     }
 
     public void playHitVoice() {
@@ -86,7 +68,19 @@ public class Enemy extends Pane {
         }
     }
 
-    public void update() {
+    protected void closeCombat() {
+        setTranslateX(getTranslateX() - getScaleX());
+        Game.booker.closeCombat(getScaleX());
+    }
 
+    protected void playDeathVoice() {
+        switch ((int) (Math.random() * 2)) {
+            case 0 -> Sounds.death.play(Game.menu.fxSlider.getValue() / 100);
+            case 1 -> Sounds.death2.play(Game.menu.fxSlider.getValue() / 100);
+        }
+    }
+
+    public boolean isToDelete() {
+        return toDelete;
     }
 }

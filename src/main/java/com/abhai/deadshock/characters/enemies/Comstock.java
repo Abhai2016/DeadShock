@@ -59,10 +59,6 @@ public class Comstock extends Enemy implements Animatable {
         setTranslateY(y);
     }
 
-    protected boolean intersectsWithBlock(Block block) {
-        return getBoundsInParent().intersects(block.getBoundsInParent()) && !block.getType().equals(BlockType.INVISIBLE);
-    }
-
     @Override
     protected String getImageName() {
         return "comstock.png";
@@ -73,80 +69,12 @@ public class Comstock extends Enemy implements Animatable {
         animation.stop();
     }
 
-    private boolean intersectsWithBooker(char coordinate) {
-        if (getBoundsInParent().intersects(Game.booker.getBoundsInParent())) {
-            if (coordinate == 'Y') {
-                if (velocity.getY() > 0) {
-                    setTranslateY(getTranslateY() - 1);
-                    if (booleanVelocity) {
-                        Game.booker.closeCombat(false);
-                        Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
-                        velocity = velocity.add(getScaleX() * 5, JUMP_SPEED);
-                        booleanVelocity = false;
-                    }
-                } else {
-                    setTranslateY(getTranslateY() + 1);
-                    if (Game.booker.isBooleanVelocityY()) {
-                        HP -= Game.booker.getCharacterDogFight();
-                        Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
-                        Game.booker.stun(type);
-                    }
-                }
-            } else
-                closeCombat();
-            return true;
-        }
-        return false;
-    }
 
-    private boolean intersectsWithEnemies(char coordinate) {
-        for (Enemy enemy : Game.enemies) {
-            if (this != enemy) {
-                if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
-                    if (coordinate == 'Y') {
-                        if (Game.difficultyLevelText.equals("marik") || Game.difficultyLevelText.equals("easy"))
-                            HP -= Game.booker.getCharacterDogFight();
-                        if (velocity.getY() > 0) {
-                            setTranslateY(getTranslateY() - 1);
-                            if (booleanVelocity) {
-                                velocity = velocity.add(getScaleX() * 5, JUMP_SPEED);
-                                booleanVelocity = false;
-                            }
-                        } else
-                            setTranslateY(getTranslateY() + 1);
-                    } else {
-                        setTranslateX(getTranslateX() - getScaleX());
-                        stopAnimation();
-                    }
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean intersectsWithBlocks(char coordinate) {
-        for (Block block : Game.blocks) {
-            if (intersectsWithBlock(block)) {
-                if (coordinate == 'Y') {
-                    if (velocity.getY() > 0) {
-                        setTranslateY(getTranslateY() - 1);
-                        canJump = true;
-                    } else {
-                        setTranslateY(getTranslateY() + 1);
-                        velocity = new Point2D(0, GRAVITY);
-                    }
-                } else {
-                    setTranslateX(getTranslateX() - getScaleX());
-                    if (canJump) {
-                        velocity = velocity.add(0, JUMP_SPEED);
-                        canJump = false;
-                    }
-                }
-                return true;
-            }
-        }
-        return false;
+    private void die() {
+        toDelete = true;
+        stopAnimation();
+        playDeathVoice();
+        Game.booker.addMoneyForKillingEnemy();
     }
 
     private void moveY() {
@@ -176,6 +104,21 @@ public class Comstock extends Enemy implements Animatable {
         }
     }
 
+    private void behave() {
+        if (canSeeBooker)
+            voiceInterval++;
+
+        if (voiceInterval > VOICE_INTERVAL)
+            playAttackVoice();
+
+        if (getTranslateX() > Game.booker.getTranslateX())
+            canSeeBooker(onTheLeft);
+        if (getTranslateX() < Game.booker.getTranslateX())
+            canSeeBooker(onTheRight);
+        if (getTranslateX() == Game.booker.getTranslateX())
+            cannotSeeBooker();
+    }
+
     private void moveX(int x) {
         animation.play();
         for (int i = 0; i < Math.abs(x); i++) {
@@ -196,26 +139,30 @@ public class Comstock extends Enemy implements Animatable {
         }
     }
 
-    private void canSeeBooker(BooleanSupplier booleanSupplier) {
-        if (!canSeeBooker) {
-            if (booleanSupplier.getAsBoolean()) {
-                moveX(SPEED);
-                if (Game.booker.getTranslateY() >= getTranslateY()) {
-                    canSeeBooker = true;
-                    playVoiceFoundBooker();
-                }
-            }
-        } else {
-            if (getTranslateY() <= Game.booker.getTranslateY()) {
-                enemyWeapon.shoot(getScaleX(), getTranslateX(), getTranslateY());
-            } else
-                losingBooker();
-
-            if (booleanSupplier.equals(onTheLeft))
-                moveX(-SPEED);
-            else
-                moveX(SPEED);
+    private void losingBooker() {
+        seeInterval++;
+        if (seeInterval > VOICE_INTERVAL) {
+            booleanVoice = true;
+            seeInterval = 0;
+            playVoiceLostBooker();
+            canSeeBooker = false;
         }
+    }
+
+    private void playAttackVoice() {
+        switch ((int) (Math.random() * 10)) {
+            case 0 -> Sounds.canYouShoot.play(Game.menu.voiceSlider.getValue() / 100);
+            case 1 -> Sounds.dieAlready.play(Game.menu.voiceSlider.getValue() / 100);
+            case 2 -> Sounds.dontSpareBullets.play(Game.menu.voiceSlider.getValue() / 100);
+            case 3 -> Sounds.keepShooting2.play(Game.menu.voiceSlider.getValue() / 100);
+            case 4 -> Sounds.killMe.play(Game.menu.voiceSlider.getValue() / 100);
+            case 5 -> Sounds.allYouCan.play(Game.menu.voiceSlider.getValue() / 100);
+            case 6 -> Sounds.whoAreYou.play(Game.menu.voiceSlider.getValue() / 100);
+            case 7 -> Sounds.stupid.play(Game.menu.voiceSlider.getValue() / 100);
+            case 8 -> Sounds.giveHimBullets.play(Game.menu.voiceSlider.getValue() / 100);
+            case 9 -> Sounds.keepShooting.play(Game.menu.voiceSlider.getValue() / 100);
+        }
+        voiceInterval = 0;
     }
 
     private void cannotSeeBooker() {
@@ -225,16 +172,6 @@ public class Comstock extends Enemy implements Animatable {
             losingBooker();
         else
             moveX(SPEED);
-    }
-
-    private void losingBooker() {
-        seeInterval++;
-        if (seeInterval > VOICE_INTERVAL) {
-            booleanVoice = true;
-            seeInterval = 0;
-            playVoiceLostBooker();
-            canSeeBooker = false;
-        }
     }
 
     private void playVoiceLostBooker() {
@@ -267,42 +204,94 @@ public class Comstock extends Enemy implements Animatable {
         booleanVoice = false;
     }
 
-    private void playAttackVoice() {
-        switch ((int) (Math.random() * 10)) {
-            case 0 -> Sounds.canYouShoot.play(Game.menu.voiceSlider.getValue() / 100);
-            case 1 -> Sounds.dieAlready.play(Game.menu.voiceSlider.getValue() / 100);
-            case 2 -> Sounds.dontSpareBullets.play(Game.menu.voiceSlider.getValue() / 100);
-            case 3 -> Sounds.keepShooting2.play(Game.menu.voiceSlider.getValue() / 100);
-            case 4 -> Sounds.killMe.play(Game.menu.voiceSlider.getValue() / 100);
-            case 5 -> Sounds.allYouCan.play(Game.menu.voiceSlider.getValue() / 100);
-            case 6 -> Sounds.whoAreYou.play(Game.menu.voiceSlider.getValue() / 100);
-            case 7 -> Sounds.stupid.play(Game.menu.voiceSlider.getValue() / 100);
-            case 8 -> Sounds.giveHimBullets.play(Game.menu.voiceSlider.getValue() / 100);
-            case 9 -> Sounds.keepShooting.play(Game.menu.voiceSlider.getValue() / 100);
+    protected boolean intersectsWithBlock(Block block) {
+        return getBoundsInParent().intersects(block.getBoundsInParent()) && !block.getType().equals(BlockType.INVISIBLE);
+    }
+
+    private boolean intersectsWithBlocks(char coordinate) {
+        for (Block block : Game.blocks) {
+            if (intersectsWithBlock(block)) {
+                if (coordinate == 'Y') {
+                    if (velocity.getY() > 0) {
+                        setTranslateY(getTranslateY() - 1);
+                        canJump = true;
+                    } else {
+                        setTranslateY(getTranslateY() + 1);
+                        velocity = new Point2D(0, GRAVITY);
+                    }
+                } else {
+                    setTranslateX(getTranslateX() - getScaleX());
+                    if (canJump) {
+                        velocity = velocity.add(0, JUMP_SPEED);
+                        canJump = false;
+                    }
+                }
+                return true;
+            }
         }
-        voiceInterval = 0;
+        return false;
     }
 
-    private void die() {
-        toDelete = true;
-        stopAnimation();
-        playDeathVoice();
-        Game.booker.addMoneyForKillingEnemy();
+    private boolean intersectsWithBooker(char coordinate) {
+        if (getBoundsInParent().intersects(Game.booker.getBoundsInParent())) {
+            if (coordinate == 'Y') {
+                setTranslateY(getTranslateY() - 1);
+                if (booleanVelocity) {
+                    Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
+                    velocity = velocity.add(getScaleX() * 5, JUMP_SPEED);
+                    booleanVelocity = false;
+                }
+            } else
+                closeCombat();
+            return true;
+        }
+        return false;
     }
 
-    private void behave() {
-        if (canSeeBooker)
-            voiceInterval++;
+    private boolean intersectsWithEnemies(char coordinate) {
+        for (Enemy enemy : Game.enemies) {
+            if (this != enemy) {
+                if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
+                    if (coordinate == 'Y') {
+                        if (velocity.getY() > 0) {
+                            setTranslateY(getTranslateY() - 1);
+                            if (booleanVelocity) {
+                                velocity = velocity.add(getScaleX() * 5, JUMP_SPEED);
+                                booleanVelocity = false;
+                            }
+                        } else
+                            setTranslateY(getTranslateY() + 1);
+                    } else {
+                        setTranslateX(getTranslateX() - getScaleX());
+                        stopAnimation();
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-        if (voiceInterval > VOICE_INTERVAL)
-            playAttackVoice();
+    private void canSeeBooker(BooleanSupplier booleanSupplier) {
+        if (!canSeeBooker) {
+            if (booleanSupplier.getAsBoolean()) {
+                moveX(SPEED);
+                if (Game.booker.getTranslateY() >= getTranslateY()) {
+                    canSeeBooker = true;
+                    playVoiceFoundBooker();
+                }
+            }
+        } else {
+            if (getTranslateY() <= Game.booker.getTranslateY()) {
+                enemyWeapon.shoot(getScaleX(), getTranslateX(), getTranslateY());
+            } else
+                losingBooker();
 
-        if (getTranslateX() > Game.booker.getTranslateX())
-            canSeeBooker(onTheLeft);
-        if (getTranslateX() < Game.booker.getTranslateX())
-            canSeeBooker(onTheRight);
-        if (getTranslateX() == Game.booker.getTranslateX())
-            cannotSeeBooker();
+            if (booleanSupplier.equals(onTheLeft))
+                moveX(-SPEED);
+            else
+                moveX(SPEED);
+        }
     }
 
     @Override

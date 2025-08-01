@@ -122,6 +122,7 @@ public class CutScenes {
         Game.menu.music.play();
         Game.menu.addListener();
         Game.elizabeth = new Elizabeth();
+        Game.booker.setCanPlayVoice(true);
         Game.tutorial = new Tutorial();
         Game.vendingMachine.changeLevel();
         Game.energetic.changeLevel();

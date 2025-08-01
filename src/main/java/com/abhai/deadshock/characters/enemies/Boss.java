@@ -61,6 +61,32 @@ public class Boss extends Enemy implements Animatable {
         animation.stop();
     }
 
+
+    private void die() {
+        toDelete = true;
+        stopAnimation();
+        rectHP.setWidth(0);
+        getTransforms().add(new Rotate(-90));
+        setTranslateY(getTranslateY() + HEIGHT);
+
+        Sounds.bossDeath.setVolume(Game.menu.fxSlider.getValue() / 100);
+        Sounds.bossDeath.play();
+        Sounds.bossDeath.setOnEndOfMedia(() -> Game.cutScene = new CutScenes());
+    }
+
+    private void stun() {
+        stopAnimation();
+        imageView.setViewport(new Rectangle2D(WIDTH * 2, 0, WIDTH, HEIGHT));
+        stunInterval++;
+
+        if (stunInterval > 800) {
+            imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
+            Sounds.bossTromp.play(Game.menu.fxSlider.getValue() / 100);
+            Game.booker.stun();
+            stunInterval = 0;
+        }
+    }
+
     private void initHp() {
         name.setFont(Font.font("Aria", 28));
         name.setFill(Color.WHITE);
@@ -73,12 +99,56 @@ public class Boss extends Enemy implements Animatable {
         Game.appRoot.getChildren().add(rectHP);
     }
 
+    private void behave() {
+        if (stunInterval > 700) {
+            stun();
+            return;
+        }
+
+        if (velocity.getX() < 0)
+            velocity = velocity.add(ANIMATION_SPEED, 0);
+        else if (velocity.getX() > 0)
+            velocity = velocity.add(-ANIMATION_SPEED, 0);
+
+        if (Game.booker.getTranslateX() < getTranslateX())
+            moveX(-SPEED);
+        if (Game.booker.getTranslateX() > getTranslateX())
+            moveX(SPEED);
+        if (Game.booker.getTranslateX() == getTranslateX())
+            stopAnimation();
+
+        moveX(velocity.getX());
+        rectHP.setWidth((double) HP / 10);
+
+        if (!Game.booker.isStunned() && Game.booker.getTranslateY() < getTranslateY())
+            stunInterval++;
+        else
+            velocityJump();
+    }
+
     public void changeLevel() {
         setTranslateX(BLOCK_SIZE * 10);
         setTranslateY(BLOCK_SIZE * 12 - 5);
         initHp();
         stunInterval = 0;
         Game.setBossLevel();
+    }
+
+    private void velocityJump() {
+        velocityInterval++;
+        if (velocityInterval > 100) {
+            if (Game.booker.getTranslateX() < getTranslateX())
+                velocity = velocity.add(-JUMP_SPEED, 0);
+            else
+                velocity = velocity.add(JUMP_SPEED, 0);
+
+            switch ((int) (Math.random() * 3)) {
+                case 0 -> Sounds.bossHit.play(Game.menu.voiceSlider.getValue() / 100);
+                case 1 -> Sounds.bossHit2.play(Game.menu.fxSlider.getValue() / 100);
+                case 2 -> Sounds.bossHit3.play(Game.menu.fxSlider.getValue() / 100);
+            }
+            velocityInterval = 0;
+        }
     }
 
     private void moveX(double x) {
@@ -92,8 +162,10 @@ public class Boss extends Enemy implements Animatable {
                 setScaleX(-1);
             }
 
-            if (getBoundsInParent().intersects(Game.booker.getBoundsInParent()))
+            if (getBoundsInParent().intersects(Game.booker.getBoundsInParent())) {
                 closeCombat();
+                return;
+            }
         }
     }
 
@@ -119,75 +191,6 @@ public class Boss extends Enemy implements Animatable {
 
         if (stunInterval > 100)
             changeLevel();
-    }
-
-    private void stun() {
-        stopAnimation();
-        imageView.setViewport(new Rectangle2D(WIDTH * 2, 0, WIDTH, HEIGHT));
-        stunInterval++;
-
-        if (stunInterval > 800) {
-            imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
-            Sounds.bossTromp.play(Game.menu.fxSlider.getValue() / 100);
-            Game.booker.stun(type);
-            stunInterval = 0;
-        }
-    }
-
-    private void velocityJump() {
-        velocityInterval++;
-        if (velocityInterval > 100) {
-            if (Game.booker.getTranslateX() < getTranslateX())
-                velocity = velocity.add(-JUMP_SPEED, 0);
-            else
-                velocity = velocity.add(JUMP_SPEED, 0);
-
-            switch ((int) (Math.random() * 3)) {
-                case 0 -> Sounds.bossHit.play(Game.menu.voiceSlider.getValue() / 100);
-                case 1 -> Sounds.bossHit2.play(Game.menu.fxSlider.getValue() / 100);
-                case 2 -> Sounds.bossHit3.play(Game.menu.fxSlider.getValue() / 100);
-            }
-            velocityInterval = 0;
-        }
-    }
-
-    private void behave() {
-        if (stunInterval > 700) {
-            stun();
-            return;
-        }
-
-        if (velocity.getX() < 0)
-            velocity = velocity.add(ANIMATION_SPEED, 0);
-        else if (velocity.getX() > 0)
-            velocity = velocity.add(-ANIMATION_SPEED, 0);
-
-        if (Game.booker.getTranslateX() < getTranslateX())
-            moveX(-SPEED);
-        if (Game.booker.getTranslateX() > getTranslateX())
-            moveX(SPEED);
-        if (Game.booker.getTranslateX() == getTranslateX())
-            stopAnimation();
-
-        moveX(velocity.getX());
-        rectHP.setWidth(HP / 10);
-
-        if (!Game.booker.isStunned() && Game.booker.getTranslateY() < getTranslateY())
-            stunInterval++;
-        else
-            velocityJump();
-    }
-
-    private void die() {
-        toDelete = true;
-        stopAnimation();
-        rectHP.setWidth(0);
-        getTransforms().add(new Rotate(-90));
-        setTranslateY(getTranslateY() + HEIGHT);
-
-        Sounds.bossDeath.setVolume(Game.menu.fxSlider.getValue() / 100);
-        Sounds.bossDeath.play();
-        Sounds.bossDeath.setOnEndOfMedia(() -> Game.cutScene = new CutScenes());
     }
 
     public void update() {

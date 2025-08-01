@@ -6,6 +6,7 @@ import com.abhai.deadshock.utils.Sounds;
 
 public class Camper extends Enemy {
     private int moveInterval;
+    private static final int DAMAGE = 5;
 
     public Camper(long x, long y) {
         HP = 500;
@@ -14,6 +15,13 @@ public class Camper extends Enemy {
 
         setTranslateX(x);
         setTranslateY(y);
+    }
+
+    private void die() {
+        toDelete = true;
+        playDeathVoice();
+        Game.booker.addMoneyForKillingEnemy();
+        Game.elizabeth.addMedicineForKillingEnemy();
     }
 
     private void moveY() {
@@ -31,19 +39,8 @@ public class Camper extends Enemy {
         }
     }
 
-    private void playVoice() {
-        Sounds.audioClipCamper.play(Game.menu.fxSlider.getValue() / 100);
-        switch ((int) (Math.random() * 3)) {
-            case 0 -> Sounds.bookerHit.play(Game.menu.fxSlider.getValue() / 100);
-            case 1 -> Sounds.bookerHit2.play(Game.menu.fxSlider.getValue() / 100);
-            case 2 -> Sounds.bookerHit3.play(Game.menu.fxSlider.getValue() / 100);
-        }
-        Game.booker.minusHPForCamperScream();
-        voiceInterval = 0;
-    }
-
     private void behave() {
-        if (getBoundsInParent().intersects(Game.booker.getBoundsInParent()))
+        if (getBoundsInParent().intersects(Game.booker.getBoundsInParent()) && getTranslateY() == Game.booker.getTranslateY())
             closeCombat();
 
         if (Sounds.audioClipCamper.isPlaying()) {
@@ -71,11 +68,15 @@ public class Camper extends Enemy {
             playVoice();
     }
 
-    private void die() {
-        toDelete = true;
-        playDeathVoice();
-        Game.booker.addMoneyForKillingEnemy();
-        Game.elizabeth.addMedicineForKillingEnemy();
+    private void playVoice() {
+        Sounds.audioClipCamper.play(Game.menu.fxSlider.getValue() / 100);
+        switch ((int) (Math.random() * 3)) {
+            case 0 -> Sounds.bookerHit.play(Game.menu.fxSlider.getValue() / 100);
+            case 1 -> Sounds.bookerHit2.play(Game.menu.fxSlider.getValue() / 100);
+            case 2 -> Sounds.bookerHit3.play(Game.menu.fxSlider.getValue() / 100);
+        }
+        Game.booker.setHP(Game.booker.getHP() - DAMAGE);
+        voiceInterval = 0;
     }
 
     @Override

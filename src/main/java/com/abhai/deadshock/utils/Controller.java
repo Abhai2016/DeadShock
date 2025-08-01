@@ -25,7 +25,7 @@ public class Controller {
             Game.booker.setIdleAnimation();
 
         if (isPressed(KeyCode.W) && !Game.booker.isStunned())
-            Game.booker.jump();
+            Game.booker.jump(false);
 
         if (isPressed(KeyCode.Q) && Game.energetic.isCanChangeEnergetic())
             Game.energetic.changeEnergetic();

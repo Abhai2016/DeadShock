@@ -75,17 +75,17 @@ public class Supply extends Pane {
             switch (enemyType) {
                 case EnemyType.COMSTOCK -> {
                     if (Game.weapon.getName().equals("pistol"))
-                        Game.weapon.setBullets(Game.weapon.getBullets() + Game.booker.getBulletCount());
+                        Game.weapon.setBullets(Game.weapon.getBullets() + Game.booker.getBulletsForKillingEnemy());
                     else
-                        Weapon.WeaponData.pistolBullets += Game.booker.getBulletCount();
+                        Weapon.WeaponData.pistolBullets += Game.booker.getBulletsForKillingEnemy();
                     Game.gameRoot.getChildren().remove(this);
                     delete = true;
                 }
                 case EnemyType.RED_EYE -> {
                     if (Game.weapon.getName().equals("machine_gun"))
-                        Game.weapon.setBullets(Game.weapon.getBullets() + Game.booker.getBulletCount());
+                        Game.weapon.setBullets(Game.weapon.getBullets() + Game.booker.getBulletsForKillingEnemy());
                     else
-                        Weapon.WeaponData.machineGunBullets += Game.booker.getBulletCount();
+                        Weapon.WeaponData.machineGunBullets += Game.booker.getBulletsForKillingEnemy();
                     Game.gameRoot.getChildren().remove(this);
                     delete = true;
                 }

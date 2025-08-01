@@ -40,52 +40,76 @@ public class Elizabeth extends Character {
         return "elizabeth.png";
     }
 
-    public void addMedicineForKillingEnemy() {
-        medicineCount++;
+
+    private void move() {
+        if (canMove) {
+            moveInterval++;
+            if (getTranslateX() < Game.booker.getTranslateX() - 100)
+                moveX(SPEED);
+            else if (getTranslateX() > Game.booker.getTranslateX() + 100)
+                moveX(-SPEED);
+
+            if (moveInterval < 50)
+                moveY(1);
+            else if (moveInterval < 100)
+                moveY(-1);
+            else
+                moveInterval = 0;
+        } else
+            moveY(SPEED);
     }
 
-    public void giveMedicine() {
-        giveSupply = false;
-        canMove = true;
-        medicineCount--;
-        imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
-    }
-
-    public void reinitialize() {
-        setTranslateX(START_X);
-        setTranslateY(START_Y);
-        canMove = true;
-        giveSupply = false;
-        medicineCount = 0;
-        imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
-    }
-
-    public boolean isGiveSupply() {
-        return giveSupply;
-    }
-
-    private boolean intersectsWithBlocks(char typeOfCoordinate, double coordinate) {
-        for (Block block : Game.blocks)
-            if (getBoundsInParent().intersects(block.getBoundsInParent())) {
-                if (typeOfCoordinate == 'X') {
-                    setTranslateX(getTranslateX() - getScaleX());
-                    moveY(-2);
-                } else {
-                    if (coordinate > 0)
-                        setTranslateY(getTranslateY() - 1);
-                    else
-                        setTranslateY(getTranslateY() + 1);
-                }
-                return true;
-            }
+    private void supply() {
+        if (!giveSupply && canMove)
+            supplyInterval++;
 
         if (Game.levelNumber == Level.BOSS_LEVEL)
-            if (getBoundsInParent().intersects(Game.level.getImgView().getBoundsInParent())) {
-                setTranslateY(getTranslateY() - 1);
-                return true;
-            }
+            medicineInterval++;
 
-        return false;
+        if (medicineInterval > 600) {
+            medicineInterval = 0;
+            medicineCount++;
+        }
+
+        generateSupply();
+
+        if (giveSupply && supplyInterval > 300)
+            playSupplyVoice();
+
+        noSupply();
+    }
+
+    private void noSupply() {
+        if (!giveSupply && canMove && medicineCount == 0)
+            emptySupplyInterval++;
+        else
+            emptySupplyInterval = 0;
+
+        if (emptySupplyInterval > 900) {
+            if (Game.booker.getHP() < 100 || Game.weapon.getBullets() == 0) {
+                switch ((int) (Math.random() * 4)) {
+                    case 0 -> Sounds.empty.play(Game.menu.voiceSlider.getValue() / 100);
+                    case 1 -> Sounds.foundNothing.play(Game.menu.voiceSlider.getValue() / 100);
+                    case 2 -> Sounds.haveNothing.play(Game.menu.voiceSlider.getValue() / 100);
+                    case 3 -> Sounds.tryToFind.play(Game.menu.voiceSlider.getValue() / 100);
+                }
+            }
+            emptySupplyInterval = 0;
+        }
+    }
+
+    private void playVoice() {
+        if (Game.levelNumber == Level.SECOND_LEVEL)
+            if (startLevel && getTranslateX() > 100) {
+                Sounds.freedom.play(Game.menu.voiceSlider.getValue() / 100);
+                startLevel = false;
+            } else if (getTranslateX() > Block.BLOCK_SIZE * 150 && playVoiceWhereYouFrom) {
+                canMove = false;
+                Sounds.whereAreYouFrom.setVolume(Game.menu.voiceSlider.getValue() / 100);
+                Sounds.whereAreYouFrom.play();
+                Sounds.whereAreYouFrom.setOnEndOfMedia(() -> canMove = true);
+                playVoiceWhereYouFrom = false;
+            }
     }
 
     private void moveX(int x) {
@@ -118,47 +142,20 @@ public class Elizabeth extends Character {
         }
     }
 
-    private void playVoice() {
-        if (Game.levelNumber == Level.SECOND_LEVEL)
-            if (startLevel && getTranslateX() > 100) {
-                Sounds.freedom.play(Game.menu.voiceSlider.getValue() / 100);
-                startLevel = false;
-            } else if (getTranslateX() > Block.BLOCK_SIZE * 150 && playVoiceWhereYouFrom) {
-                canMove = false;
-                Sounds.whereAreYouFrom.setVolume(Game.menu.voiceSlider.getValue() / 100);
-                Sounds.whereAreYouFrom.play();
-                Sounds.whereAreYouFrom.setOnEndOfMedia(() -> canMove = true);
-                playVoiceWhereYouFrom = false;
-            }
+    public void giveMedicine() {
+        giveSupply = false;
+        canMove = true;
+        medicineCount--;
+        imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
     }
 
-    private void playSupplyVoice() {
-        switch ((int) (Math.random() * 3)) {
-            case 0 -> Sounds.bookerCatch.play(Game.menu.voiceSlider.getValue() / 100);
-            case 1 -> Sounds.bookerCatch2.play(Game.menu.voiceSlider.getValue() / 100);
-            case 2 -> Sounds.bookerCatch3.play(Game.menu.voiceSlider.getValue() / 100);
-        }
-        supplyInterval = 0;
-    }
-
-    private void supply() {
-        if (!giveSupply && canMove)
-            supplyInterval++;
-
-        if (Game.levelNumber == Level.BOSS_LEVEL)
-            medicineInterval++;
-
-        if (medicineInterval > 600) {
-            medicineInterval = 0;
-            medicineCount++;
-        }
-
-        generateSupply();
-
-        if (giveSupply && supplyInterval > 300)
-            playSupplyVoice();
-
-        noSupply();
+    public void reinitialize() {
+        setTranslateX(START_X);
+        setTranslateY(START_Y);
+        canMove = true;
+        giveSupply = false;
+        medicineCount = 0;
+        imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
     }
 
     private void generateSupply() {
@@ -170,41 +167,45 @@ public class Elizabeth extends Character {
         }
     }
 
-    private void noSupply() {
-        if (!giveSupply && canMove && medicineCount == 0)
-            emptySupplyInterval++;
-        else
-            emptySupplyInterval = 0;
-
-        if (emptySupplyInterval > 900) {
-            if (Game.booker.getHP() < 100 || Game.weapon.getBullets() == 0) {
-                switch ((int) (Math.random() * 4)) {
-                    case 0 -> Sounds.empty.play(Game.menu.voiceSlider.getValue() / 100);
-                    case 1 -> Sounds.foundNothing.play(Game.menu.voiceSlider.getValue() / 100);
-                    case 2 -> Sounds.haveNothing.play(Game.menu.voiceSlider.getValue() / 100);
-                    case 3 -> Sounds.tryToFind.play(Game.menu.voiceSlider.getValue() / 100);
-                }
-            }
-            emptySupplyInterval = 0;
+    private void playSupplyVoice() {
+        switch ((int) (Math.random() * 3)) {
+            case 0 -> Sounds.bookerCatch.play(Game.menu.voiceSlider.getValue() / 100);
+            case 1 -> Sounds.bookerCatch2.play(Game.menu.voiceSlider.getValue() / 100);
+            case 2 -> Sounds.bookerCatch3.play(Game.menu.voiceSlider.getValue() / 100);
         }
+        supplyInterval = 0;
     }
 
-    private void move() {
-        if (canMove) {
-            moveInterval++;
-            if (getTranslateX() < Game.booker.getTranslateX() - 100)
-                moveX(SPEED);
-            else if (getTranslateX() > Game.booker.getTranslateX() + 100)
-                moveX(-SPEED);
+    public boolean isGiveSupply() {
+        return giveSupply;
+    }
 
-            if (moveInterval < 50)
-                moveY(1);
-            else if (moveInterval < 100)
-                moveY(-1);
-            else
-                moveInterval = 0;
-        } else
-            moveY(SPEED);
+    public void addMedicineForKillingEnemy() {
+        medicineCount++;
+    }
+
+    private boolean intersectsWithBlocks(char typeOfCoordinate, double coordinate) {
+        for (Block block : Game.blocks)
+            if (getBoundsInParent().intersects(block.getBoundsInParent())) {
+                if (typeOfCoordinate == 'X') {
+                    setTranslateX(getTranslateX() - getScaleX());
+                    moveY(-2);
+                } else {
+                    if (coordinate > 0)
+                        setTranslateY(getTranslateY() - 1);
+                    else
+                        setTranslateY(getTranslateY() + 1);
+                }
+                return true;
+            }
+
+        if (Game.levelNumber == Level.BOSS_LEVEL)
+            if (getBoundsInParent().intersects(Game.level.getImgView().getBoundsInParent())) {
+                setTranslateY(getTranslateY() - 1);
+                return true;
+            }
+
+        return false;
     }
 
     public void update() {
