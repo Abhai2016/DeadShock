@@ -55,10 +55,10 @@ public class Camper extends Enemy {
 
         if (Game.booker.getTranslateX() > getTranslateX() - 750 && Game.booker.getTranslateX() < getTranslateX()) {
             voiceInterval++;
-            setScaleX(1);
+            setScaleX(-1);
         } else if (Game.booker.getTranslateX() < getTranslateX() + 650 && Game.booker.getTranslateX() > getTranslateX()) {
             voiceInterval++;
-            setScaleX(-1);
+            setScaleX(1);
         } else if (Game.booker.getTranslateX() == getTranslateX()) {
             voiceInterval++;
         } else

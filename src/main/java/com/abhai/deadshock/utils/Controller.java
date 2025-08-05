@@ -8,31 +8,30 @@ public class Controller {
 
     public static void update() {
         if (isPressed(KeyCode.D) && Game.booker.getTranslateX() < Game.gameRoot.getWidth() - Game.booker.getWidth()
-                && !Game.booker.isStunned()) {
+                && !Game.booker.isHypnotized()) {
             Game.booker.moveX(Character.SPEED);
             Game.booker.setScaleX(1);
         }
 
-        if (isPressed(KeyCode.A) && Game.booker.getTranslateX() > 1 && !Game.booker.isStunned()) {
+        if (isPressed(KeyCode.A) && Game.booker.getTranslateX() > 1 && !Game.booker.isHypnotized()) {
             Game.booker.moveX(-Character.SPEED);
             Game.booker.setScaleX(-1);
         }
 
-        if (isPressed(KeyCode.A) && isPressed(KeyCode.D) && !Game.booker.isStunned())
+        if (isPressed(KeyCode.A) && isPressed(KeyCode.D) && !Game.booker.isHypnotized())
             Game.booker.stopAnimation();
 
         if (!isPressed(KeyCode.A) && !isPressed(KeyCode.D))
             Game.booker.setIdleAnimation();
 
-        if (isPressed(KeyCode.W) && !Game.booker.isStunned())
+        if (isPressed(KeyCode.W) && !Game.booker.isHypnotized())
             Game.booker.jump(false);
 
-        if (isPressed(KeyCode.Q) && Game.energetic.isCanChangeEnergetic())
-            Game.energetic.changeEnergetic();
-
-        if (!isPressed(KeyCode.Q) && Game.energetic.getCountEnergetics() > 1)
-            Game.energetic.setCanChangeEnergetic(true);
-
+        if (Game.energetic.getCountEnergetics() > 0)
+            if (isPressed(KeyCode.Q))
+                Game.energetic.changeEnergetic();
+            else
+                Game.energetic.setCanChangeEnergetic(true);
 
         if (isPressed(KeyCode.E))
             if (Game.booker.getBoundsInParent().intersects(Game.weapon.getBoundsInParent()))
@@ -45,36 +44,33 @@ public class Controller {
                     Game.energetic.pickUp();
 
 
-        if (isPressed(KeyCode.R) && Game.weapon.isCanReload() && !Game.booker.isStunned())
+        if (isPressed(KeyCode.R) && Game.weapon.isCanReload() && !Game.booker.isHypnotized())
             Game.weapon.reload();
 
         if (!isPressed(KeyCode.R))
             Game.weapon.setCanReload(true);
 
 
-        if (isPressed(KeyCode.J) && Game.weapon.getWeaponClip() > 0 && !Game.weapon.isNowReloading() && !Game.booker.isStunned())
+        if (isPressed(KeyCode.J) && Game.weapon.getWeaponClip() > 0 && !Game.weapon.isNowReloading() && !Game.booker.isHypnotized())
             Game.weapon.shoot();
 
-
-        if (isPressed(KeyCode.L) && Game.energetic.getType() != null && !Game.booker.isStunned()
-                && Game.booker.getSalt() >= Game.energetic.getPriceForUsing() && Game.energetic.isShoot())
+        if (isPressed(KeyCode.L) && !Game.booker.isHypnotized() && Game.booker.getSalt() >= Game.energetic.getSaltPrice())
             Game.energetic.shoot();
 
-
         if (!isPressed(KeyCode.L))
-            Game.energetic.setShoot(true);
+            Game.energetic.setCanShoot(true);
 
 
         if (!isPressed(KeyCode.J))
             Game.weapon.setSingleShot(true);
 
-        if (isPressed(KeyCode.DIGIT1) && !Game.weapon.isNowReloading() && !Game.booker.isStunned())
+        if (isPressed(KeyCode.DIGIT1) && !Game.weapon.isNowReloading() && !Game.booker.isHypnotized())
             Game.weapon.changeWeapon("pistol");
 
-        if (isPressed(KeyCode.DIGIT2) && !Game.weapon.isNowReloading() && !Game.booker.isStunned())
+        if (isPressed(KeyCode.DIGIT2) && !Game.weapon.isNowReloading() && !Game.booker.isHypnotized())
             Game.weapon.changeWeapon("machine_gun");
 
-        if (isPressed(KeyCode.DIGIT3) && !Game.weapon.isNowReloading() && !Game.booker.isStunned())
+        if (isPressed(KeyCode.DIGIT3) && !Game.weapon.isNowReloading() && !Game.booker.isHypnotized())
             Game.weapon.changeWeapon("rpg");
     }
 

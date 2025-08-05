@@ -39,23 +39,6 @@ public class Enemy extends Pane {
         Game.gameRoot.getChildren().add(this);
     }
 
-    public int getHP() {
-        return HP;
-    }
-
-    public void setHP(int value) {
-        HP = value;
-    }
-
-    protected String getImageName() {
-        return "";
-    }
-
-    public void setHypnotized(boolean value) {
-        hypnotized = value;
-    }
-
-
     public void update() {
 
     }
@@ -68,9 +51,13 @@ public class Enemy extends Pane {
         }
     }
 
+    public int getHP() {
+        return HP;
+    }
+
     protected void closeCombat() {
-        setTranslateX(getTranslateX() - getScaleX());
         Game.booker.closeCombat(getScaleX());
+        setTranslateX(getTranslateX() - getScaleX());
     }
 
     protected void playDeathVoice() {
@@ -80,7 +67,27 @@ public class Enemy extends Pane {
         }
     }
 
+    public EnemyType getType() {
+        return type;
+    }
+
+    public void setHP(int value) {
+        HP = value;
+    }
+
+    protected String getImageName() {
+        return "";
+    }
+
     public boolean isToDelete() {
         return toDelete;
+    }
+
+    public boolean isHypnotized() {
+        return hypnotized;
+    }
+
+    public void setHypnotized(boolean value) {
+        hypnotized = value;
     }
 }

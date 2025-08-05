@@ -1,65 +1,61 @@
 package com.abhai.deadshock.energetics;
 
-import com.abhai.deadshock.characters.enemies.Enemy;
-import com.abhai.deadshock.utils.SpriteAnimation;
 import com.abhai.deadshock.Game;
+import com.abhai.deadshock.characters.Booker;
+import com.abhai.deadshock.characters.enemies.Enemy;
+import com.abhai.deadshock.characters.enemies.EnemyType;
 import com.abhai.deadshock.utils.Sounds;
-import com.abhai.deadshock.levels.Level;
+import com.abhai.deadshock.utils.SpriteAnimation;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 class Electricity extends Pane {
-    private ImageView imgView;
-    private SpriteAnimation animation;
-    private Path soundPath = Paths.get("resources", "sounds", "fx", "energetics", "electricity.mp3");
-    private MediaPlayer mediaPlayerElectricity = new MediaPlayer(new Media(soundPath.toUri().toString()));
-    private boolean delete = false;
+    private static final int LIFE_INTERVAL = 550;
 
-    Electricity(double x, double y) {
-        Path imagePath = Paths.get("resources", "images", "energetics", "electricityShot.png");
-        imgView = new ImageView(new Image(imagePath.toUri().toString()));
-        imgView.setViewport( new Rectangle2D(0, 0, 172, 63) );
-        animation = new SpriteAnimation(imgView, Duration.seconds(0.5), 10, 1, 0, 0, 172, 63);
-        animation.play();
+    private int interval;
+    private boolean active;
+    private final SpriteAnimation animation;
 
-        if (Game.booker.getScaleX() > 0)
-            setTranslateX(x + Game.booker.getWidth());
-        else {
-            setScaleX(-1);
-            setTranslateX(Game.booker.getTranslateX() - 170);
-        }
-
-        setTranslateY(y - 10);
-
-        mediaPlayerElectricity.setVolume(Game.menu.fxSlider.getValue() / 100);
-        mediaPlayerElectricity.play();
-        mediaPlayerElectricity.setOnEndOfMedia( () -> {
-            delete = true;
-            Game.gameRoot.getChildren().remove(this);
-        });
-
-        getChildren().add(imgView);
-        Game.gameRoot.getChildren().add(this);
+    Electricity() {
+        interval = 0;
+        active = false;
+        ImageView imageView = new ImageView(new Image(
+                Paths.get("resources", "images", "energetics", "electricityShot.png").toUri().toString()));
+        imageView.setViewport(new Rectangle2D(0, 0, 172, 63));
+        animation = new SpriteAnimation(imageView,
+                Duration.seconds(0.5), 10, 1, 0, 0, 172, 63);
+        getChildren().add(imageView);
     }
 
-    boolean isDelete() {
-        return delete;
+    public void use() {
+        if (!active) {
+            interval = 0;
+            active = true;
+            animation.play();
+
+            if (Game.booker.getScaleX() > 0)
+                setTranslateX(Game.booker.getTranslateX() + Booker.WIDTH);
+            else {
+                setScaleX(-1);
+                setTranslateX(Game.booker.getTranslateX() - 170);
+            }
+
+            Game.gameRoot.getChildren().add(this);
+            setTranslateY(Game.booker.getTranslateY() - 10);
+            Sounds.electricity.play(Game.menu.fxSlider.getValue() / 100);
+        }
     }
 
     private void move() {
         if (Game.booker.getScaleX() > 0) {
-            setTranslateX(Game.booker.getTranslateX() + Game.booker.getWidth());
+            setTranslateX(Game.booker.getTranslateX() + Booker.WIDTH);
             setScaleX(1);
-        }
-        else {
+        } else {
             setScaleX(-1);
             setTranslateX(Game.booker.getTranslateX() - 170);
         }
@@ -67,18 +63,33 @@ class Electricity extends Pane {
         setTranslateY(Game.booker.getTranslateY() - 10);
     }
 
-    public boolean update() {
+    public void delete() {
+        active = false;
+        Game.gameRoot.getChildren().remove(this);
+    }
+
+    private void intersectsWithEnemies() {
         for (Enemy enemy : Game.enemies)
             if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
-                enemy.setHP(0);
-                Sounds.electricityDeath.play(Game.menu.fxSlider.getValue() / 100);
-                return true;
+                if (enemy.getType() == EnemyType.BOSS)
+                    enemy.setHP(enemy.getHP() - Game.weapon.getDamage() / 2);
+                else {
+                    enemy.setHP(0);
+                    Sounds.electricityDeath.play(Game.menu.fxSlider.getValue() / 100);
+                    return;
+                }
             }
+    }
 
-        if (Game.levelNumber == Level.BOSS_LEVEL)
-            if (getBoundsInParent().intersects(Game.boss.getBoundsInParent()))
-                Game.boss.setHP(Game.boss.getHP() - Game.weapon.getDamage() / 2);
-        move();
-        return false;
+    public void update() {
+        if (active) {
+            move();
+
+            interval++;
+            if (interval >= LIFE_INTERVAL)
+                delete();
+
+            intersectsWithEnemies();
+        }
     }
 }

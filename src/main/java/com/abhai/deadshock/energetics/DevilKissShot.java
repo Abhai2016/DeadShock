@@ -1,69 +1,85 @@
 package com.abhai.deadshock.energetics;
 
-import com.abhai.deadshock.characters.enemies.Enemy;
-import com.abhai.deadshock.utils.SpriteAnimation;
-import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.levels.Level;
+import com.abhai.deadshock.characters.enemies.Enemy;
+import com.abhai.deadshock.characters.enemies.EnemyType;
+import com.abhai.deadshock.levels.Block;
+import com.abhai.deadshock.utils.SpriteAnimation;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 class DevilKissShot extends Pane {
-    private ImageView imgView;
-    private SpriteAnimation animation;
+    private static final int SPEED = 5;
+
+    private boolean toDelete;
     private boolean direction;
+    private final SpriteAnimation animation;
 
-    DevilKissShot(double x, double y) {
-        Path imagePath = Paths.get("resources", "images", "energetics", "devilKissShot.png");
-        imgView = new ImageView(new Image(imagePath.toUri().toString()));
-        imgView.setViewport( new Rectangle2D(0, 0, 64, 30) );
-        animation = new SpriteAnimation(imgView, Duration.seconds(0.5), 8, 8, 0, 0, 64, 30);
-        animation.play();
-
-        setTranslateX(x - 24);
-        setTranslateY(y);
-
-        if (Game.booker.getScaleX() > 0) {
-            direction = true;
-            setTranslateX(getTranslateX() + 40);
-        } else
-            setScaleX(-1);
-
-        getChildren().add(imgView);
-        Game.gameRoot.getChildren().add(this);
+    DevilKissShot() {
+        toDelete = false;
+        ImageView imageView = new ImageView(new Image(
+                Paths.get("resources", "images", "energetics", "devilKissShot.png").toUri().toString()));
+        imageView.setViewport(new Rectangle2D(0, 0, 64, 30));
+        getChildren().add(imageView);
+        animation = new SpriteAnimation(imageView, Duration.seconds(0.5), 8, 8, 0, 0, 64, 30);
     }
 
-
-    public boolean update() {
-        if (direction)
-            setTranslateX(getTranslateX() + 5);
-        else
-            setTranslateX(getTranslateX() - 5);
-
-        for (Enemy enemy : Game.enemies)
-            if (getBoundsInParent().intersects(enemy.getBoundsInParent()))
-                enemy.setHP(0);
-
+    private void intersectsWithWorld() {
         for (Block block : Game.blocks)
-            if (getBoundsInParent().intersects(block.getBoundsInParent()))
-                return true;
-
-        if (Game.levelNumber == Level.BOSS_LEVEL)
-            if (getBoundsInParent().intersects(Game.boss.getBoundsInParent())) {
-                Game.boss.setHP(Game.boss.getHP() - Game.weapon.getRpgDamage());
-                return true;
+            if (getBoundsInParent().intersects(block.getBoundsInParent())) {
+                toDelete = true;
+                return;
             }
 
         if (getTranslateX() > Game.booker.getTranslateX() + 680
                 || getTranslateX() < Game.booker.getTranslateX() - 600)
-            return true;
+            toDelete = true;
+    }
 
-        return false;
+    public void init(double x, double y) {
+        toDelete = false;
+        animation.play();
+
+        if (Game.booker.getScaleX() > 0) {
+            setScaleX(1);
+            direction = true;
+            setTranslateX(x + 16);
+        } else {
+            setScaleX(-1);
+            direction = false;
+            setTranslateX(x - 24);
+        }
+
+        setTranslateY(y);
+        Game.gameRoot.getChildren().add(this);
+    }
+
+    private void intersectsWithEnemies() {
+        for (Enemy enemy : Game.enemies)
+            if (getBoundsInParent().intersects(enemy.getBoundsInParent()))
+                if (enemy.getType() == EnemyType.BOSS) {
+                    enemy.setHP(enemy.getHP() - Game.weapon.getRpgDamage());
+                    toDelete = true;
+                } else
+                    enemy.setHP(0);
+    }
+
+    public boolean isToDelete() {
+        return toDelete;
+    }
+
+    public void update() {
+        if (direction)
+            setTranslateX(getTranslateX() + SPEED);
+        else
+            setTranslateX(getTranslateX() - SPEED);
+
+        intersectsWithWorld();
+        intersectsWithEnemies();
     }
 }

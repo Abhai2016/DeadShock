@@ -1,65 +1,52 @@
 package com.abhai.deadshock.energetics;
 
-import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.Game;
+import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.levels.Level;
+import com.abhai.deadshock.utils.Sounds;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
-
 public class Hypnosis {
-    private Rectangle intervalRect = new Rectangle(300, 3, Color.WHITE);
-    private Text intervalText = new Text("Длительность гипноза");
+    private final Text intervalText;
+    private final Rectangle intervalRect;
 
-    private double interval = 0;
-    private double maxInterval = 0;
-    private boolean hypnosis = false;
+    private double interval;
+    private boolean hypnotized;
+    protected double maxInterval;
 
+    public Hypnosis() {
+        interval = 0;
+        hypnotized = false;
+        setDifficultyLevel();
 
-    Hypnosis() {
-        switch(Game.difficultyLevelText) {
-            case "marik":
-                maxInterval = 600;
-                break;
-            case "easy":
-                maxInterval = 450;
-                break;
-            case "normal":
-                maxInterval = 300;
-                break;
-            case "high":
-                maxInterval = 150;
-                break;
-            case "hardcore":
-                maxInterval = 150;
-                break;
-        }
-        intervalText.setFont( Font.font("Aria", 28) );
+        intervalText = new Text("Длительность гипноза");
+        intervalText.setFont(Font.font("Aria", 28));
         intervalText.setFill(Color.WHITE);
         intervalText.setVisible(false);
         Game.appRoot.getChildren().add(intervalText);
 
+        intervalRect = new Rectangle(300, 3, Color.WHITE);
         intervalRect.setVisible(false);
         Game.appRoot.getChildren().add(intervalRect);
     }
 
-    boolean isHypnosis() {
-        return hypnosis;
+    public void delete() {
+        hypnotized = false;
+        intervalRect.setWidth(300);
+        intervalRect.setVisible(false);
+        intervalText.setVisible(false);
     }
 
-    void setHypnosis() {
-        if (Game.levelNumber == Level.BOSS_LEVEL)
-            Game.boss.setHypnotized(true);
-        for(Enemy enemy : Game.enemies)
-            enemy.setHypnotized(true);
-        hypnosis = true;
+    public void hypnotize() {
         interval = 0;
+        hypnotized = true;
+        hypnotizeTheTarget();
 
         intervalRect.setWidth(300);
-        if (Game.levelNumber != BLOCK_SIZE) {
+        if (Game.levelNumber != Level.BOSS_LEVEL) {
             intervalRect.setTranslateX(Game.appRoot.getWidth() / 2 - intervalRect.getWidth() / 2);
             intervalRect.setTranslateY(40);
         } else {
@@ -72,50 +59,48 @@ public class Hypnosis {
         if (Game.levelNumber != Level.BOSS_LEVEL) {
             intervalText.setTranslateX(Game.appRoot.getWidth() / 2 - intervalRect.getWidth() / 2 + 25);
             intervalText.setTranslateY(30);
-        }
-        else {
+        } else {
             intervalText.setTranslateX(Game.appRoot.getWidth() / 2 - intervalRect.getWidth() / 2 + 25);
             intervalText.setTranslateY(70);
         }
         intervalText.setVisible(true);
     }
 
-    void setHypnosisForBooker() {
-        intervalRect.setWidth(300);
-        intervalRect.setTranslateX(Game.appRoot.getWidth() / 2 - intervalRect.getWidth() / 2 + 20);
-        intervalRect.setTranslateY(80);
-        intervalRect.setVisible(true);
-
-        intervalText.setTranslateX(Game.appRoot.getWidth() / 2 - intervalRect.getWidth() / 2 + 25);
-        intervalText.setTranslateY(70);
-        intervalText.setVisible(true);
+    protected void setDifficultyLevel() {
+        switch (Game.difficultyLevelText) {
+            case "marik" -> maxInterval = 550;
+            case "easy" -> maxInterval = 450;
+            case "normal" -> maxInterval = 350;
+            case "high" -> maxInterval = 250;
+            case "hardcore" -> maxInterval = 150;
+        }
     }
 
-    void updateHypnosis() {
-        intervalRect.setWidth(300 - Game.booker.getStunnedInterval() / 180 * 300);
+    protected void hypnotizeTheTarget() {
+        for (Enemy enemy : Game.enemies)
+            enemy.setHypnotized(true);
+        Sounds.hypnosis.play(Game.menu.fxSlider.getValue() / 100);
     }
 
-    void deleteDeleteHypnosis() {
-        intervalRect.setWidth(300);
-        intervalRect.setVisible(false);
-        intervalText.setVisible(false);
+    protected void unhypnotizeTheTarget() {
+        for (Enemy enemy : Game.enemies)
+            enemy.setHypnotized(false);
     }
 
     public void update() {
-        interval++;
-        intervalRect.setWidth((maxInterval - interval) / maxInterval * 300);
+        if (hypnotized) {
+            interval++;
+            intervalRect.setWidth((maxInterval - interval) / maxInterval * 300);
 
-        if (interval > maxInterval) {
-            if (Game.levelNumber == Level.BOSS_LEVEL)
-                Game.boss.setHypnotized(false);
-            for (Enemy enemy : Game.enemies)
-                enemy.setHypnotized(false);
-            hypnosis = false;
-            interval = 0;
+            if (interval > maxInterval) {
+                interval = 0;
+                hypnotized = false;
+                unhypnotizeTheTarget();
 
-            intervalRect.setWidth(300);
-            intervalRect.setVisible(false);
-            intervalText.setVisible(false);
+                intervalRect.setWidth(300);
+                intervalRect.setVisible(false);
+                intervalText.setVisible(false);
+            }
         }
     }
 }

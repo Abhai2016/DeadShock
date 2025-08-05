@@ -30,7 +30,7 @@ public class CutScenes {
 
         Game.menu.music.pause();
         Game.timer.stop();
-        Game.clearData();
+        Game.clearData(false);
 
         Game.stage.setWidth(1235);
         switch (Game.levelNumber) {
@@ -152,7 +152,7 @@ public class CutScenes {
         Game.vendingMachine.changeLevel();
         Game.energetic.changeLevel();
         Game.stage.setWidth(1280);
-        Game.boss = new Boss(Block.BLOCK_SIZE * 295, Block.BLOCK_SIZE * 11);
+        Game.enemies.add(new Boss());
 
         ObjectMapper mapper = new ObjectMapper();
         Game.saveSaves(mapper);

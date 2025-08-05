@@ -59,17 +59,6 @@ public class Comstock extends Enemy implements Animatable {
         setTranslateY(y);
     }
 
-    @Override
-    protected String getImageName() {
-        return "comstock.png";
-    }
-
-    @Override
-    public void stopAnimation() {
-        animation.stop();
-    }
-
-
     private void die() {
         toDelete = true;
         stopAnimation();
@@ -142,10 +131,10 @@ public class Comstock extends Enemy implements Animatable {
     private void losingBooker() {
         seeInterval++;
         if (seeInterval > VOICE_INTERVAL) {
-            booleanVoice = true;
             seeInterval = 0;
-            playVoiceLostBooker();
+            booleanVoice = true;
             canSeeBooker = false;
+            playVoiceLostBooker();
         }
     }
 
@@ -204,8 +193,18 @@ public class Comstock extends Enemy implements Animatable {
         booleanVoice = false;
     }
 
+    @Override
+    public void stopAnimation() {
+        animation.stop();
+    }
+
     protected boolean intersectsWithBlock(Block block) {
         return getBoundsInParent().intersects(block.getBoundsInParent()) && !block.getType().equals(BlockType.INVISIBLE);
+    }
+
+    @Override
+    protected String getImageName() {
+        return "comstock.png";
     }
 
     private boolean intersectsWithBlocks(char coordinate) {
@@ -302,11 +301,10 @@ public class Comstock extends Enemy implements Animatable {
         }
 
         moveY();
-        if (!hypnotized) {
+        if (!hypnotized)
             behave();
-        } else {
+        else
             stopAnimation();
-        }
     }
 }
 

@@ -35,12 +35,6 @@ public class Elizabeth extends Character {
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
     }
 
-    @Override
-    protected String getImageName() {
-        return "elizabeth.png";
-    }
-
-
     private void move() {
         if (canMove) {
             moveInterval++;
@@ -67,8 +61,8 @@ public class Elizabeth extends Character {
             medicineInterval++;
 
         if (medicineInterval > 600) {
-            medicineInterval = 0;
             medicineCount++;
+            medicineInterval = 0;
         }
 
         generateSupply();
@@ -101,14 +95,14 @@ public class Elizabeth extends Character {
     private void playVoice() {
         if (Game.levelNumber == Level.SECOND_LEVEL)
             if (startLevel && getTranslateX() > 100) {
-                Sounds.freedom.play(Game.menu.voiceSlider.getValue() / 100);
                 startLevel = false;
+                Sounds.freedom.play(Game.menu.voiceSlider.getValue() / 100);
             } else if (getTranslateX() > Block.BLOCK_SIZE * 150 && playVoiceWhereYouFrom) {
                 canMove = false;
+                playVoiceWhereYouFrom = false;
+                Sounds.whereAreYouFrom.setOnEndOfMedia(() -> canMove = true);
                 Sounds.whereAreYouFrom.setVolume(Game.menu.voiceSlider.getValue() / 100);
                 Sounds.whereAreYouFrom.play();
-                Sounds.whereAreYouFrom.setOnEndOfMedia(() -> canMove = true);
-                playVoiceWhereYouFrom = false;
             }
     }
 
@@ -143,27 +137,27 @@ public class Elizabeth extends Character {
     }
 
     public void giveMedicine() {
-        giveSupply = false;
         canMove = true;
         medicineCount--;
+        giveSupply = false;
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
     }
 
     public void reinitialize() {
+        canMove = true;
+        medicineCount = 0;
+        giveSupply = false;
         setTranslateX(START_X);
         setTranslateY(START_Y);
-        canMove = true;
-        giveSupply = false;
-        medicineCount = 0;
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
     }
 
     private void generateSupply() {
         if (supplyInterval > 300 && medicineCount > 0 && Game.booker.getHP() < 100) {
-            imageView.setViewport(new Rectangle2D(WIDTH, 0, WIDTH, HEIGHT));
             canMove = false;
             giveSupply = true;
             playSupplyVoice();
+            imageView.setViewport(new Rectangle2D(WIDTH, 0, WIDTH, HEIGHT));
         }
     }
 
@@ -178,6 +172,11 @@ public class Elizabeth extends Character {
 
     public boolean isGiveSupply() {
         return giveSupply;
+    }
+
+    @Override
+    protected String getImageName() {
+        return "elizabeth.png";
     }
 
     public void addMedicineForKillingEnemy() {

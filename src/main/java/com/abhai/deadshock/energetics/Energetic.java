@@ -1,7 +1,7 @@
 package com.abhai.deadshock.energetics;
 
-import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.Game;
+import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.utils.Sounds;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -9,295 +9,263 @@ import javafx.scene.layout.Pane;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 
 import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
 
 public class Energetic extends Pane {
-    private ArrayList<DevilKissShot> devilKissShots = new ArrayList<>();
-    private Electricity electricity;
-    private Path devilKissImagePath = Paths.get("resources", "images", "energetics", "devilKiss.png");
-    private Path electricityImagePath = Paths.get("resources", "images", "energetics", "electricity.png");
-    private Path hypnosisImagePath = Paths.get("resources", "images", "energetics", "hypnosis.png");
-    private ImageView imgView = new ImageView(new Image(devilKissImagePath.toUri().toString()));
+    public static class Builder {
+        private boolean canChooseDevilKiss;
+        private boolean canChooseElectricity;
+        private boolean canChooseHypnosis;
+
+        public Builder canChooseDevilKiss(boolean canChooseDevilKiss) {
+            this.canChooseDevilKiss = canChooseDevilKiss;
+            return this;
+        }
+
+        public Builder canChooseElectricity(boolean canChooseElectricity) {
+            this.canChooseElectricity = canChooseElectricity;
+            return this;
+        }
+
+        public Builder canChooseHypnosis(boolean canChooseHypnosis) {
+            this.canChooseHypnosis = canChooseHypnosis;
+            return this;
+        }
+
+        public Energetic build() {
+            return new Energetic(this);
+        }
+    }
+
+    private static final int HYPNOSIS_X = BLOCK_SIZE * 40;
+    private static final int DEVIL_KISS_X = BLOCK_SIZE * 50;
+    private static final int ELECTRICITY_X = BLOCK_SIZE * 42;
+    private static final int HYPNOSIS_Y = BLOCK_SIZE * 14 - 27;
+    private static final int DEVIL_KISS_Y = BLOCK_SIZE * 9 + 18;
+    private static final int ELECTRICITY_Y = BLOCK_SIZE * 9 - 30;
+    private static final Path hypnosisImagePath = Paths.get("resources",
+            "images", "energetics", "hypnosis.png");
+    private static final Path devilKissImagePath = Paths.get("resources",
+            "images", "energetics", "devilKiss.png");
+    private static final Path electricityImagePath = Paths.get("resources",
+            "images", "energetics", "electricity.png");
+
+    private boolean canShoot;
+    private boolean canChangeEnergetic;
+    private boolean canChooseDevilKiss;
+    private boolean canChooseElectricity;
+    private boolean canChooseHypnosis;
+
+    private int saltPrice;
+    private int countEnergetics;
+
     private EnergeticType type;
-    private Hypnosis hypnosis = new Hypnosis();
+    private ImageView imageView;
+    private final Hypnosis hypnosis;
+    private final DevilKiss devilKiss;
+    private final Electricity electricity;
 
-    private boolean shoot = true;
-    private boolean canChangeEnergetic = false;
-    private boolean canChooseDevilKiss = false;
-    private boolean canChooseElectricity = false;
-    private boolean canChooseHypnosis = false;
-    private byte countEnergetics = 0;
-    private byte priceForUsing = 0;
+    public Energetic(Builder builder) {
+        saltPrice = 0;
+        canShoot = true;
+        countEnergetics = 0;
+        hypnosis = new Hypnosis();
+        canChangeEnergetic = false;
+        devilKiss = new DevilKiss();
+        electricity = new Electricity();
+        canChooseHypnosis = builder.canChooseHypnosis;
+        canChooseDevilKiss = builder.canChooseDevilKiss;
+        canChooseElectricity = builder.canChooseElectricity;
 
+        initializePositionAndState();
 
-    public Energetic() {
-        setTranslateX(BLOCK_SIZE * 50);
-        setTranslateY(BLOCK_SIZE * 9 + 18);
+        if (Game.levelNumber != Level.BOSS_LEVEL) {
+            getChildren().add(imageView);
+            Game.gameRoot.getChildren().add(this);
+        }
+    }
 
-        getChildren().add(imgView);
+    public void clear() {
+        hypnosis.delete();
+        devilKiss.delete();
+        electricity.delete();
+    }
+
+    public void shoot() {
+        if (canShoot && countEnergetics > 0) {
+            switch (type) {
+                case EnergeticType.DEVIL_KISS -> devilKiss.shoot();
+                case EnergeticType.ELECTRICITY -> electricity.use();
+                case EnergeticType.HYPNOSIS -> hypnosis.hypnotize();
+            }
+            canShoot = false;
+            Game.booker.minusSaltForUsingEnergetic(saltPrice);
+        }
+    }
+
+    public void pickUp() {
+        switch (Game.levelNumber) {
+            case Level.FIRST_LEVEL -> {
+                countEnergetics++;
+                canChooseDevilKiss = true;
+                type = EnergeticType.DEVIL_KISS;
+                Game.hud.getDevilKiss().setVisible(true);
+                Sounds.energetic.play(Game.menu.voiceSlider.getValue() / 100);
+            }
+            case Level.SECOND_LEVEL -> {
+                countEnergetics++;
+                canChangeEnergetic = true;
+                canChooseElectricity = true;
+                type = EnergeticType.ELECTRICITY;
+                Game.hud.getElectricity().setVisible(true);
+                Sounds.newEnergetic.play(Game.menu.voiceSlider.getValue() / 100);
+            }
+            case Level.THIRD_LEVEL -> {
+                countEnergetics++;
+                canChooseHypnosis = true;
+                canChangeEnergetic = true;
+                type = EnergeticType.HYPNOSIS;
+                Game.hud.getHypnosis().setVisible(true);
+                Sounds.newEnergetic.play(Game.menu.voiceSlider.getValue() / 100);
+            }
+        }
+        setTranslateY(0);
+        Game.gameRoot.getChildren().remove(this);
+    }
+
+    public void changeLevel() {
+        if (Game.levelNumber == Level.SECOND_LEVEL) {
+            imageView.setImage(new Image(electricityImagePath.toUri().toString()));
+            setTranslateX(ELECTRICITY_X);
+            setTranslateY(ELECTRICITY_Y);
+        } else if (Game.levelNumber == Level.THIRD_LEVEL) {
+            imageView.setImage(new Image(hypnosisImagePath.toUri().toString()));
+            setTranslateX(HYPNOSIS_X);
+            setTranslateY(HYPNOSIS_Y);
+        }
         Game.gameRoot.getChildren().add(this);
     }
 
+    public void changeEnergetic() {
+        if (canChangeEnergetic) {
+            switch (type) {
+                case EnergeticType.DEVIL_KISS -> {
+                    if (canChooseElectricity) {
+                        type = EnergeticType.ELECTRICITY;
+                        Game.hud.getElectricity().setVisible(true);
+                        Sounds.changeToElectricity.play(Game.menu.fxSlider.getValue() / 100);
+                    } else if (canChooseHypnosis) {
+                        type = EnergeticType.HYPNOSIS;
+                        Game.hud.getHypnosis().setVisible(true);
+                        Sounds.changeToHypnosis.play(Game.menu.fxSlider.getValue() / 100);
+                    }
+                }
+                case EnergeticType.ELECTRICITY -> {
+                    if (canChooseHypnosis) {
+                        type = EnergeticType.HYPNOSIS;
+                        Game.hud.getHypnosis().setVisible(true);
+                        Sounds.changeToHypnosis.play(Game.menu.fxSlider.getValue() / 100);
+                    } else if (canChooseDevilKiss) {
+                        type = EnergeticType.DEVIL_KISS;
+                        Game.hud.getElectricity().setVisible(false);
+                        Sounds.changeToDevilKiss.play(Game.menu.fxSlider.getValue() / 100);
+                    }
+                }
+                case EnergeticType.HYPNOSIS -> {
+                    if (canChooseDevilKiss) {
+                        type = EnergeticType.DEVIL_KISS;
+                        Game.hud.getHypnosis().setVisible(false);
+                        Game.hud.getElectricity().setVisible(false);
+                        Sounds.changeToDevilKiss.play(Game.menu.fxSlider.getValue() / 100);
+                    } else if (canChooseElectricity) {
+                        type = EnergeticType.ELECTRICITY;
+                        Game.hud.getHypnosis().setVisible(false);
+                        Sounds.changeToElectricity.play(Game.menu.fxSlider.getValue() / 100);
+                    }
+                }
+            }
+            canChangeEnergetic = false;
+        }
+    }
 
-    public Energetic(boolean value) {
-        canChooseDevilKiss = value;
-        if (canChooseDevilKiss) {
-            type = EnergeticType.DEVIL_KISS;
-            countEnergetics++;
-            Game.hud.getDevilKiss().setVisible(true);
+    public void setDifficultyLevel() {
+        switch (Game.difficultyLevelText) {
+            case "marik" -> saltPrice = 10;
+            case "easy" -> saltPrice = 15;
+            case "normal" -> saltPrice = 20;
+            case "high" -> saltPrice = 25;
+            case "hardcore" -> saltPrice = 30;
+        }
+    }
+
+    private void initializePositionAndState() {
+        switch (Game.levelNumber) {
+            case Level.FIRST_LEVEL -> {
+                imageView = new ImageView(new Image(devilKissImagePath.toUri().toString()));
+                setTranslateX(DEVIL_KISS_X);
+                setTranslateY(DEVIL_KISS_Y);
+            }
+            case Level.SECOND_LEVEL -> {
+                imageView = new ImageView(new Image(electricityImagePath.toUri().toString()));
+                setTranslateX(ELECTRICITY_X);
+                setTranslateY(ELECTRICITY_Y);
+            }
+            case Level.THIRD_LEVEL -> {
+                imageView = new ImageView(new Image(hypnosisImagePath.toUri().toString()));
+                setTranslateX(HYPNOSIS_X);
+                setTranslateY(HYPNOSIS_Y);
+            }
         }
 
-        imgView.setImage(new Image(electricityImagePath.toUri().toString()));
-        setTranslateX(BLOCK_SIZE * 42);
-        setTranslateY(BLOCK_SIZE * 9 - 30);
-
-        getChildren().add(imgView);
-        Game.gameRoot.getChildren().add(this);
-    }
-
-
-    public Energetic(boolean devilKiss, boolean electricity) {
-        canChooseDevilKiss = devilKiss;
-        canChooseElectricity = electricity;
         if (canChooseDevilKiss) {
+            countEnergetics++;
             type = EnergeticType.DEVIL_KISS;
             Game.hud.getDevilKiss().setVisible(true);
-            countEnergetics++;
         }
         if (canChooseElectricity) {
+            countEnergetics++;
             type = EnergeticType.ELECTRICITY;
             Game.hud.getElectricity().setVisible(true);
-            countEnergetics++;
-        }
-
-        imgView.setImage(new Image(hypnosisImagePath.toUri().toString()));
-        setTranslateX(BLOCK_SIZE * 40);
-        setTranslateY(BLOCK_SIZE * 14 - 27);
-
-        getChildren().add(imgView);
-        Game.gameRoot.getChildren().add(this);
-    }
-
-
-    public Energetic(boolean devilKiss, boolean electricity, boolean hypnosis) {
-        canChooseDevilKiss = devilKiss;
-        canChooseElectricity = electricity;
-        canChooseHypnosis = hypnosis;
-        if (canChooseDevilKiss) {
-            type = EnergeticType.DEVIL_KISS;
-            Game.hud.getDevilKiss().setVisible(true);
-            countEnergetics++;
-        }
-        if (canChooseElectricity) {
-            type = EnergeticType.ELECTRICITY;
-            Game.hud.getElectricity().setVisible(true);
-            countEnergetics++;
         }
         if (canChooseHypnosis) {
+            countEnergetics++;
             type = EnergeticType.HYPNOSIS;
             Game.hud.getHypnosis().setVisible(true);
-            countEnergetics++;
         }
     }
 
-
-    public EnergeticType getType() {
-        return type;
+    public int getSaltPrice() {
+        return saltPrice;
     }
 
-    public void setShoot(boolean value) {
-        shoot = value;
+    public int getCountEnergetics() {
+        return countEnergetics;
+    }
+
+    public void setCanShoot(boolean value) {
+        canShoot = value;
+    }
+
+    public boolean canChooseHypnosis() {
+        return canChooseHypnosis;
+    }
+
+    public boolean canChooseDevilKiss() {
+        return canChooseDevilKiss;
+    }
+
+    public boolean canChooseElectricity() {
+        return canChooseElectricity;
     }
 
     public void setCanChangeEnergetic(boolean value) {
         canChangeEnergetic = value;
     }
 
-    public boolean isCanChangeEnergetic() {
-        return canChangeEnergetic;
-    }
-
-    public boolean isCanChooseElectricity() {
-        return canChooseElectricity;
-    }
-
-    public byte getCountEnergetics() {
-        return countEnergetics;
-    }
-
-    public boolean isShoot() {
-        return shoot;
-    }
-
-    public byte getPriceForUsing() {
-        return priceForUsing;
-    }
-
-    public boolean isCanChooseDevilKiss() {
-        return canChooseDevilKiss;
-    }
-
-    public boolean isCanChooseHypnosis() {
-        return canChooseHypnosis;
-    }
-
-    public void pickUp() {
-        if (Game.booker.getBoundsInParent().intersects(getBoundsInParent())) {
-            switch (Game.levelNumber) {
-                case Level.FIRST_LEVEL:
-                    Sounds.energetic.play(Game.menu.voiceSlider.getValue() / 100);
-                    type = EnergeticType.DEVIL_KISS;
-                    countEnergetics++;
-                    Game.hud.getDevilKiss().setVisible(true);
-                    canChooseDevilKiss = true;
-                    break;
-                case Level.SECOND_LEVEL:
-                    Sounds.newEnergetic.play(Game.menu.voiceSlider.getValue() / 100);
-                    type = EnergeticType.ELECTRICITY;
-                    countEnergetics++;
-                    canChangeEnergetic = true;
-                    Game.hud.getElectricity().setVisible(true);
-                    canChooseElectricity = true;
-                    break;
-                case Level.THIRD_LEVEL:
-                    Sounds.newEnergetic.play(Game.menu.voiceSlider.getValue() / 100);
-                    type = EnergeticType.HYPNOSIS;
-                    countEnergetics++;
-                    canChangeEnergetic = true;
-                    Game.hud.getHypnosis().setVisible(true);
-                    canChooseHypnosis = true;
-                    break;
-            }
-            setTranslateY(0);
-            setVisible(false);
-        }
-    }
-
-    public void setDifficultyLevel() {
-        switch (Game.difficultyLevelText) {
-            case "marik":
-                priceForUsing = 10;
-                break;
-            case "easy":
-                priceForUsing = 15;
-                break;
-            case "normal":
-                priceForUsing = 20;
-                break;
-            case "high":
-                priceForUsing = 25;
-                break;
-            case "hardcore":
-                priceForUsing = 30;
-                break;
-        }
-    }
-
-    public void changeLevel() {
-        if (Game.levelNumber == Level.SECOND_LEVEL) {
-            imgView.setImage(new Image(electricityImagePath.toUri().toString()));
-            setTranslateX(BLOCK_SIZE * 42);
-            setTranslateY(BLOCK_SIZE * 9 - 30);
-        } else if (Game.levelNumber == Level.THIRD_LEVEL) {
-            imgView.setImage(new Image(hypnosisImagePath.toUri().toString()));
-            setTranslateX(BLOCK_SIZE * 40);
-            setTranslateY(BLOCK_SIZE * 14 - 27);
-        }
-        setVisible(true);
-    }
-
-    public void changeEnergetic() {
-        if (canChangeEnergetic) {
-            switch (type) {
-                case EnergeticType.DEVIL_KISS:
-                    if (canChooseElectricity) {
-                        type = EnergeticType.ELECTRICITY;
-                        Sounds.changeToElectricity.play(Game.menu.fxSlider.getValue() / 100);
-                        Game.hud.getElectricity().setVisible(true);
-                    } else if (canChooseHypnosis) {
-                        type = EnergeticType.HYPNOSIS;
-                        Sounds.changeToHypnosis.play(Game.menu.fxSlider.getValue() / 100);
-                        Game.hud.getHypnosis().setVisible(true);
-                    }
-                    break;
-                case EnergeticType.ELECTRICITY:
-                    if (canChooseHypnosis) {
-                        type = EnergeticType.HYPNOSIS;
-                        Sounds.changeToHypnosis.play(Game.menu.fxSlider.getValue() / 100);
-                        Game.hud.getHypnosis().setVisible(true);
-                    } else if (canChooseDevilKiss) {
-                        type = EnergeticType.DEVIL_KISS;
-                        Sounds.changeToDevilKiss.play(Game.menu.fxSlider.getValue() / 100);
-                        Game.hud.getElectricity().setVisible(false);
-                    }
-                    break;
-                case EnergeticType.HYPNOSIS:
-                    if (canChooseDevilKiss) {
-                        type = EnergeticType.DEVIL_KISS;
-                        Sounds.changeToDevilKiss.play(Game.menu.fxSlider.getValue() / 100);
-                        Game.hud.getElectricity().setVisible(false);
-                        Game.hud.getHypnosis().setVisible(false);
-                    } else if (canChooseElectricity) {
-                        type = EnergeticType.ELECTRICITY;
-                        Sounds.changeToElectricity.play(Game.menu.fxSlider.getValue() / 100);
-                        Game.hud.getHypnosis().setVisible(false);
-                    }
-            }
-            canChangeEnergetic = false;
-        }
-    }
-
-    public void shoot() {
-        switch (type) {
-            case EnergeticType.DEVIL_KISS:
-                devilKissShots.add(new DevilKissShot(Game.booker.getTranslateX(), Game.booker.getTranslateY() + 5));
-                Sounds.devilKissShot.play(Game.menu.fxSlider.getValue() / 100);
-                break;
-            case EnergeticType.ELECTRICITY:
-                if (electricity != null) {
-                    Game.gameRoot.getChildren().remove(electricity);
-                    electricity = null;
-                }
-                electricity = new Electricity(Game.booker.getTranslateX(), Game.booker.getTranslateY());
-                break;
-            case EnergeticType.HYPNOSIS:
-                hypnosis.setHypnosis();
-                Sounds.hypnosis.play(Game.menu.fxSlider.getValue() / 100);
-                break;
-        }
-        Game.booker.setSalt(Game.booker.getSalt() - priceForUsing);
-        shoot = false;
-    }
-
-    public void setHypnosisForBooker() {
-        hypnosis.setHypnosisForBooker();
-    }
-
-    public void updateHypnosisForBooker() {
-        hypnosis.updateHypnosis();
-    }
-
-    public void deleteHypnosis() {
-        hypnosis.deleteDeleteHypnosis();
-    }
-
     public void update() {
-        if (!devilKissShots.isEmpty())
-            for (DevilKissShot devilKissShot : devilKissShots)
-                if (devilKissShot.update()) {
-                    Game.energetic.devilKissShots.remove(devilKissShot);
-                    Game.gameRoot.getChildren().remove(devilKissShot);
-                    return;
-                }
-        if (electricity != null) {
-            electricity.update();
-            if (electricity.isDelete())
-                electricity = null;
-        }
-
-        if (hypnosis.isHypnosis())
-            hypnosis.update();
+        devilKiss.update();
+        electricity.update();
+        hypnosis.update();
     }
 }

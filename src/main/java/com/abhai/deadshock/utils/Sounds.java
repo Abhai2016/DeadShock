@@ -166,6 +166,8 @@ public class Sounds {
 
     public static AudioClip devilKissShot = new AudioClip(Paths.get("resources", "sounds", "fx",
             "energetics", "devilKissShot.mp3").toUri().toString());
+    public static AudioClip electricity = new AudioClip(Paths.get("resources", "sounds", "fx",
+            "energetics", "electricity.mp3").toUri().toString());
     public static AudioClip electricityDeath = new AudioClip(Paths.get("resources", "sounds", "fx",
             "energetics", "electricityDeath.mp3").toUri().toString());
     public static AudioClip hypnosis = new AudioClip(Paths.get("resources", "sounds", "fx",
