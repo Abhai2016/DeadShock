@@ -106,7 +106,7 @@ public class CutScenes {
     }
 
     private void endCutScene1() {
-        Game.tutorial.deleteText();
+        Tutorial.delete();
         Game.levelNumber++;
         Game.level.changeLevel();
         Game.weapon.changeLevel(Game.levelNumber);
@@ -123,7 +123,7 @@ public class CutScenes {
         Game.menu.addListener();
         Game.elizabeth = new Elizabeth();
         Game.booker.setCanPlayVoice(true);
-        Game.tutorial = new Tutorial();
+        Tutorial.init();
         Game.vendingMachine.changeLevel();
         Game.energetic.changeLevel();
         Game.stage.setWidth(1280);
@@ -138,7 +138,7 @@ public class CutScenes {
         Game.appRoot.getChildren().remove(videoView);
         videoView = null;
 
-        Game.tutorial.deleteText();
+        Tutorial.delete();
         Game.levelNumber++;
         Game.level.changeLevel();
         Game.level.createLevels();
@@ -148,7 +148,7 @@ public class CutScenes {
         Game.timer.start();
         Game.menu.music.play();
         Game.menu.addListener();
-        Game.tutorial = new Tutorial();
+        Tutorial.init();
         Game.vendingMachine.changeLevel();
         Game.energetic.changeLevel();
         Game.stage.setWidth(1280);

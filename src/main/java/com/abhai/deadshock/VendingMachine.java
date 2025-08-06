@@ -2,6 +2,7 @@ package com.abhai.deadshock;
 
 import com.abhai.deadshock.characters.Animatable;
 import com.abhai.deadshock.characters.enemies.Enemy;
+import com.abhai.deadshock.hud.Tutorial;
 import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.weapons.Weapon;
@@ -49,7 +50,7 @@ public class VendingMachine extends Pane {
     private String chosenElementMenu = "bigMedicine";
     private boolean isShown = false;
 
-    private EventHandler<KeyEvent> closeMenu = new EventHandler<>() {
+    private EventHandler<KeyEvent> eventHandler = new EventHandler<>() {
         @Override
         public void handle(KeyEvent event) {
             if (isShown) {
@@ -62,7 +63,8 @@ public class VendingMachine extends Pane {
                     ft.setToValue(0);
                     ft.play();
                     moneyText.setVisible(false);
-                    Game.tutorial.deleteMenuText();
+                    if (Game.levelNumber == Level.FIRST_LEVEL)
+                        Tutorial.deleteVendingMachineMenu();
                     Game.scene.removeEventFilter(KEY_PRESSED, this);
                     isShown = false;
                     event.consume();
@@ -123,11 +125,10 @@ public class VendingMachine extends Pane {
     public void openMachineMenu() {
         isShown = true;
 
-        if (Game.levelNumber == Level.FIRST_LEVEL) {
-            Game.tutorial.addMenuText();
-        }
+        if (Game.levelNumber == Level.FIRST_LEVEL)
+            Tutorial.setVendingMachineMenu();
 
-        Game.tutorial.deleteText();
+        Tutorial.delete();
         Game.timer.stop();
         Game.menu.music.pause();
         Sounds.audioClipOpenMenu.play(Game.menu.fxSlider.getValue() / 100);
@@ -142,7 +143,6 @@ public class VendingMachine extends Pane {
         ft.play();
 
         moneyText.setVisible(true);
-        Game.scene.addEventFilter(KEY_PRESSED, closeMenu);
     }
 
     void createButtons() {
@@ -258,7 +258,7 @@ public class VendingMachine extends Pane {
             }
         }
 
-        Game.scene.addEventFilter(KEY_PRESSED, closeMenu);
+        Game.scene.addEventFilter(KEY_PRESSED, eventHandler);
     }
 
     private void keyAction() {
@@ -271,7 +271,7 @@ public class VendingMachine extends Pane {
                         Game.booker.setHP(Game.booker.getHP() + 80);
                         Game.hud.update();
                         moneyText.setText(String.valueOf(Game.booker.getMoney()));
-                        moneyText.setTranslateX(Game.hud.getTextMoney().getTranslateX() + 470);
+                        moneyText.setTranslateX(Game.hud.getMoneyText().getTranslateX() + 470);
                     } else if (Game.booker.getHP() == 100)
                         full("У вас полная жизнь! Для продолжения кликните по этому сообщению");
                     else {
@@ -280,7 +280,7 @@ public class VendingMachine extends Pane {
                         Game.booker.setHP(100);
                         Game.hud.update();
                         moneyText.setText(String.valueOf(Game.booker.getMoney()));
-                        moneyText.setTranslateX(Game.hud.getTextMoney().getTranslateX() + 470);
+                        moneyText.setTranslateX(Game.hud.getMoneyText().getTranslateX() + 470);
                     }
                 } else
                     full("У вас недостаточно средств! Для продолжения кликните по этому сообщению");
@@ -295,14 +295,14 @@ public class VendingMachine extends Pane {
                         Game.booker.setHP(Game.booker.getHP() + 20);
                         Game.hud.update();
                         moneyText.setText(String.valueOf(Game.booker.getMoney()));
-                        moneyText.setTranslateX(Game.hud.getTextMoney().getTranslateX() + 470);
+                        moneyText.setTranslateX(Game.hud.getMoneyText().getTranslateX() + 470);
                     } else {
                         Sounds.audioClipPurchase.play(Game.menu.fxSlider.getValue() / 100);
                         Game.booker.setMoney(Game.booker.getMoney() - 14);
                         Game.booker.setHP(100);
                         Game.hud.update();
                         moneyText.setText(String.valueOf(Game.booker.getMoney()));
-                        moneyText.setTranslateX(Game.hud.getTextMoney().getTranslateX() + 470);
+                        moneyText.setTranslateX(Game.hud.getMoneyText().getTranslateX() + 470);
                     }
                 } else
                     full("У вас недостаточно средств! Для продолжения кликните по этому сообщению");
@@ -315,7 +315,7 @@ public class VendingMachine extends Pane {
                         Game.booker.setMoney(Game.booker.getMoney() - 67);
                         Game.hud.update();
                         moneyText.setText(String.valueOf(Game.booker.getMoney()));
-                        moneyText.setTranslateX(Game.hud.getTextMoney().getTranslateX() + 470);
+                        moneyText.setTranslateX(Game.hud.getMoneyText().getTranslateX() + 470);
                     } else
                         full("У вас полные соли! Для продолжения кликните по этому сообщению");
                 } else
@@ -329,14 +329,14 @@ public class VendingMachine extends Pane {
                         Game.booker.setSalt(Game.booker.getSalt() + 25);
                         Game.hud.update();
                         moneyText.setText(String.valueOf(Game.booker.getMoney()));
-                        moneyText.setTranslateX(Game.hud.getTextMoney().getTranslateX() + 470);
+                        moneyText.setTranslateX(Game.hud.getMoneyText().getTranslateX() + 470);
                     } else if (Game.booker.getSalt() != 100) {
                         Sounds.audioClipPurchase.play(Game.menu.fxSlider.getValue() / 100);
                         Game.booker.setMoney(Game.booker.getMoney() - 19);
                         Game.booker.setSalt(100);
                         Game.hud.update();
                         moneyText.setText(String.valueOf(Game.booker.getMoney()));
-                        moneyText.setTranslateX(Game.hud.getTextMoney().getTranslateX() + 470);
+                        moneyText.setTranslateX(Game.hud.getMoneyText().getTranslateX() + 470);
                     } else
                         full("У вас полные соли! Для продолжения кликните по этому сообщению");
                 } else
@@ -352,7 +352,7 @@ public class VendingMachine extends Pane {
                     Game.booker.setMoney(Game.booker.getMoney() - 8);
                     Game.hud.update();
                     moneyText.setText(String.valueOf(Game.booker.getMoney()));
-                    moneyText.setTranslateX(Game.hud.getTextMoney().getTranslateX() + 470);
+                    moneyText.setTranslateX(Game.hud.getMoneyText().getTranslateX() + 470);
                 } else
                     full("У вас недостаточно средств! Для продолжения кликните по этому сообщению");
                 break;
@@ -366,7 +366,7 @@ public class VendingMachine extends Pane {
                     Game.booker.setMoney(Game.booker.getMoney() - 8);
                     Game.hud.update();
                     moneyText.setText(String.valueOf(Game.booker.getMoney()));
-                    moneyText.setTranslateX(Game.hud.getTextMoney().getTranslateX() + 470);
+                    moneyText.setTranslateX(Game.hud.getMoneyText().getTranslateX() + 470);
                 } else
                     full("У вас недостаточно средств! Для продолжения кликните по этому сообщению");
                 break;
@@ -391,9 +391,5 @@ public class VendingMachine extends Pane {
 
     public boolean isShown() {
         return isShown;
-    }
-
-    public void setIsShown(boolean isShown) {
-        this.isShown = isShown;
     }
 }

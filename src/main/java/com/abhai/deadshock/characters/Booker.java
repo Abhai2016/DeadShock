@@ -121,6 +121,11 @@ public class Booker extends Character implements Animatable {
         return money;
     }
 
+    public void addMoneyForKillingEnemy() {
+        money += moneyForKillingEnemy;
+        Game.hud.updateMoneyTextPosition();
+    }
+
     public void setHP(int value) {
         HP = value;
     }
@@ -135,14 +140,11 @@ public class Booker extends Character implements Animatable {
 
     public void setMoney(int value) {
         money = value;
+        Game.hud.updateMoneyTextPosition();
     }
 
     public void setCanPlayVoice(boolean value) {
         canPlayVoice = value;
-    }
-
-    public void addMoneyForKillingEnemy() {
-        money += moneyForKillingEnemy;
     }
 
     public int getBulletsForKillingEnemy() {
@@ -173,6 +175,7 @@ public class Booker extends Character implements Animatable {
             else {
                 livesCount--;
                 money -= priceForGeneration;
+                Game.hud.updateMoneyTextPosition();
 
                 if (Game.levelNumber > Level.FIRST_LEVEL)
                     playVideoDeath();

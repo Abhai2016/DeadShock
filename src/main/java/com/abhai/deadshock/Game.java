@@ -24,6 +24,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -60,7 +61,6 @@ public class Game extends Application {
     public static Elizabeth elizabeth;
     public static VendingMachine vendingMachine;
 
-    static Tutorial tutorial;
     public static CutScenes cutScene;
     public static Energetic energetic;
 
@@ -102,7 +102,7 @@ public class Game extends Application {
 
         createEnemies();
         loadOptions();
-        tutorial = new Tutorial();
+        Tutorial.init();
 
         booker.translateXProperty().addListener(((observable, oldValue, newValue) -> {
             int offset = newValue.intValue();
@@ -374,11 +374,7 @@ public class Game extends Application {
             weapon = null;
         }
 
-        if (tutorial != null) {
-            tutorial.deleteMenuText();
-            tutorial.deleteText();
-            tutorial = null;
-        }
+        Tutorial.delete();
 
         if (energetic != null) {
             gameRoot.getChildren().remove(energetic);
@@ -437,7 +433,7 @@ public class Game extends Application {
         gameRoot.getChildren().remove(energetic);
         clearData(true);
 
-        tutorial.deleteText();
+        Tutorial.delete();
         levelNumber++;
         level.changeLevel();
         level.createLevels();
@@ -489,16 +485,13 @@ public class Game extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        stage = primaryStage;
         scene = new Scene(appRoot, 1280, 720);
-
+        stage = primaryStage;
         initContent();
-        Path iconPath = Paths.get("resources", "images", "icons", "icon.jpg");
-        stage.getIcons().add(new Image(iconPath.toUri().toString()));
+
+        stage.getIcons().add(new Image(Paths.get("resources", "images", "icons", "icon.jpg").toUri().toString()));
         stage.setTitle("DeadShock");
         stage.setResizable(false);
-        stage.setWidth(scene.getWidth());
-        stage.setHeight(scene.getHeight());
         stage.setScene(scene);
         stage.show();
     }
