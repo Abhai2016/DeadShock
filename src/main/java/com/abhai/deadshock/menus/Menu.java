@@ -37,7 +37,7 @@ import static javafx.scene.input.KeyEvent.KEY_PRESSED;
 
 
 public class Menu {
-    private Path controlsImagePath = Paths.get("resources", "images", "controls.png");
+    private Path controlsImagePath = Paths.get("resources", "images", "menu", "controls.png");
     private ImageView controls = new ImageView(new Image(controlsImagePath.toUri().toString()));
     private Pane description = new Pane();
 
@@ -103,7 +103,7 @@ public class Menu {
     }
 
     private void createCover() {
-        Path coverImagePath = Paths.get("resources", "images", "backgrounds", "cover.jpg");
+        Path coverImagePath = Paths.get("resources", "images", "menu", "cover.jpg");
         ImageView cover = new ImageView(new Image(coverImagePath.toUri().toString()));
         Text textCover = new Text("Для продолжения нажмите ввод");
         textCover.setFont(Font.font("Arial", FontWeight.BOLD, 28));
@@ -258,7 +258,7 @@ public class Menu {
                     start = false;
                 } else {
                     Game.clearDataForNewGame();
-                    Game.initContent();
+                    Game.initContentForNewGame();
                 }
                 startGame();
             }
@@ -268,7 +268,6 @@ public class Menu {
     private void startGame() {
         menuBox.setSubMenu(mainMenu);
         description.setVisible(false);
-
         Game.booker.setDifficultyLevel();
         Game.energetic.setDifficultyLevel();
         Game.weapon.setDamage();
@@ -289,7 +288,7 @@ public class Menu {
 
     public void newGame() {
         Game.clearDataForNewGame();
-        Game.initContent();
+        Game.initContentForNewGame();
 
         continueGame.setOnMouseClicked( event -> Game.nothing() );
         Game.scene.setOnKeyPressed( event -> Game.nothing());
@@ -710,7 +709,7 @@ public class Menu {
         MenuBox(SubMenu sm) {
             subMenu = sm;
 
-            Path menuImagePath = Paths.get("resources", "images", "backgrounds", "menu.png");
+            Path menuImagePath = Paths.get("resources", "images", "menu", "menu.png");
             ImageView imgView = new ImageView(new Image(menuImagePath.toUri().toString()));
             getChildren().addAll(imgView, subMenu);
         }

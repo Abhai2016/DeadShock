@@ -10,61 +10,53 @@ import java.nio.file.Paths;
 
 public class Block extends Pane {
     public static final int BLOCK_SIZE = 48;
+    private static final int LITTLE_BLOCK_HEIGHT = 24;
+
     private BlockType type;
+    private final ImageView blockImage;
 
-    public Block(BlockType type, int x, int y) {
-        this.type = type;
-        ImageView block = new ImageView(new Image(Paths.get("resources", "images", "blocks", "blocks.jpg")
-                .toUri().toString()));
-        block.setFitWidth(BLOCK_SIZE);
-        block.setFitHeight(BLOCK_SIZE);
-
-        setTranslateX(x);
-        setTranslateY(y);
-
-        switch (type) {
-            case BlockType.LITTLE_BRICK -> {
-                block.setFitHeight(BLOCK_SIZE / 2);
-                block.setViewport( new Rectangle2D(360, 344, 82, 41) );
-            }
-            case BlockType.LAND -> block.setViewport( new Rectangle2D(140, 78, 82, 82) );
-            case BlockType.BOX -> block.setViewport( new Rectangle2D(250, 208, 82, 82) );
-            case BlockType.METAL -> block.setViewport( new Rectangle2D(360, 208, 82, 82) );
-            case BlockType.STONE -> block.setViewport( new Rectangle2D(250, 78, 82, 82) );
-            case BlockType.NEW_LAND -> block = new ImageView(new Image(
-                    Paths.get("resources", "images", "blocks", "newLandBlock.png").toUri().toString()));
-            case BlockType.LITTLE_LAND -> {
-                block.setFitHeight(BLOCK_SIZE / 2);
-                block.setViewport( new Rectangle2D(140, 344, 82, 41) );
-            }
-            case BlockType.LITTLE_BOX -> {
-                block.setFitHeight(BLOCK_SIZE / 2);
-                block.setViewport( new Rectangle2D(250, 414, 82, 41) );
-            }
-            case BlockType.LITTLE_METAL -> {
-                block.setFitHeight(BLOCK_SIZE / 2);
-                block.setViewport( new Rectangle2D(360, 414, 82, 41) );
-            }
-            case BlockType.LITTLE_STONE -> {
-                block.setFitHeight(BLOCK_SIZE / 2);
-                block.setViewport( new Rectangle2D(250, 344, 82, 41) );
-            }
-        }
-
-        if (!type.equals(BlockType.INVISIBLE)) {
-            getChildren().add(block);
-        }
-
-        Game.blocks.add(this);
-        Game.gameRoot.getChildren().add(this);
+    public Block() {
+        blockImage = new ImageView(new Image(Paths.get("resources", "images", "levels", "blocks.jpg").toUri().toString()));
     }
 
+    public void deleteFromScene() {
+        Game.gameRoot.getChildren().remove(this);
+    }
 
     public BlockType getType() {
         return type;
     }
 
-    public void setBlockType(BlockType type) {
+    public void init(BlockType type, int x, int y) {
         this.type = type;
+        setTranslateX(x);
+        setTranslateY(y);
+
+        if (type.equals(BlockType.LITTLE_METAL) || type.equals(BlockType.LITTLE_BOX) || type.equals(BlockType.LITTLE_BRICK)
+                || type.equals(BlockType.LITTLE_LAND) || type.equals(BlockType.LITTLE_STONE))
+            blockImage.setFitHeight(LITTLE_BLOCK_HEIGHT);
+        else
+            blockImage.setFitHeight(BLOCK_SIZE);
+
+        switch (type) {
+            case BlockType.LAND -> blockImage.setViewport(new Rectangle2D(66, 0, BLOCK_SIZE, BLOCK_SIZE));
+            case BlockType.BOX -> blockImage.setViewport(new Rectangle2D(132, 77, BLOCK_SIZE, BLOCK_SIZE));
+            case BlockType.STONE -> blockImage.setViewport(new Rectangle2D(132, 0, BLOCK_SIZE, BLOCK_SIZE));
+            case BlockType.METAL -> blockImage.setViewport(new Rectangle2D(198, 76, BLOCK_SIZE, BLOCK_SIZE));
+            case BlockType.BRICK ->  blockImage.setViewport(new Rectangle2D(198, 0, BLOCK_SIZE, BLOCK_SIZE));
+            case BlockType.NEW_LAND -> blockImage.setViewport(new Rectangle2D(0, 235, BLOCK_SIZE, BLOCK_SIZE));
+            case BlockType.LITTLE_BOX -> blockImage.setViewport(new Rectangle2D(132, 200, BLOCK_SIZE, LITTLE_BLOCK_HEIGHT));
+            case BlockType.LITTLE_LAND -> blockImage.setViewport(new Rectangle2D(66, 158, BLOCK_SIZE, LITTLE_BLOCK_HEIGHT));
+            case BlockType.LITTLE_BRICK -> blockImage.setViewport(new Rectangle2D(198, 158, BLOCK_SIZE, LITTLE_BLOCK_HEIGHT));
+            case BlockType.LITTLE_METAL -> blockImage.setViewport(new Rectangle2D(198, 200, BLOCK_SIZE, LITTLE_BLOCK_HEIGHT));
+            case BlockType.LITTLE_STONE -> blockImage.setViewport(new Rectangle2D(132, 158, BLOCK_SIZE, LITTLE_BLOCK_HEIGHT));
+        }
+
+        if (!type.equals(BlockType.INVISIBLE) && !getChildren().contains(blockImage))
+            getChildren().add(blockImage);
+        else if (type.equals(BlockType.INVISIBLE))
+            getChildren().remove(blockImage);
+
+        Game.gameRoot.getChildren().add(this);
     }
 }

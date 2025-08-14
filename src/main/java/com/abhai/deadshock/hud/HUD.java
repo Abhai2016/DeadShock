@@ -34,7 +34,6 @@ public class HUD extends Pane {
 
     private Text moneyText;
     private Text bulletText;
-
     private Pane bulletPane;
 
     private Rectangle HP;
@@ -57,10 +56,9 @@ public class HUD extends Pane {
     }
 
     private void initializeMoneyPane() {
-        Image moneyImage = new Image(Paths.get("resources",
-                "images", "hud", "money.png").toUri().toString());
-        money = new ImageView(moneyImage);
-        money.setTranslateY(Game.scene.getHeight() - moneyImage.getHeight());
+        money = new ImageView(new Image(Paths.get("resources",
+                "images", "hud", "money.png").toUri().toString()));
+        money.setTranslateY(Game.scene.getHeight() - money.getImage().getHeight());
 
         moneyText = new Text();
         moneyText.setFill(Color.PALEGOLDENROD);

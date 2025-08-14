@@ -44,12 +44,9 @@ public class Energetic extends Pane {
     private static final int HYPNOSIS_Y = BLOCK_SIZE * 14 - 27;
     private static final int DEVIL_KISS_Y = BLOCK_SIZE * 9 + 18;
     private static final int ELECTRICITY_Y = BLOCK_SIZE * 9 - 30;
-    private static final Path hypnosisImagePath = Paths.get("resources",
-            "images", "energetics", "hypnosis.png");
-    private static final Path devilKissImagePath = Paths.get("resources",
-            "images", "energetics", "devilKiss.png");
-    private static final Path electricityImagePath = Paths.get("resources",
-            "images", "energetics", "electricity.png");
+    private static final Path hypnosisImagePath = Paths.get("resources", "images", "energetics", "hypnosis.png");
+    private static final Path devilKissImagePath = Paths.get("resources", "images", "energetics", "devilKiss.png");
+    private static final Path electricityImagePath = Paths.get("resources", "images", "energetics", "electricity.png");
 
     private boolean canShoot;
     private boolean canChangeEnergetic;
@@ -84,6 +81,25 @@ public class Energetic extends Pane {
             getChildren().add(imageView);
             Game.gameRoot.getChildren().add(this);
         }
+    }
+
+    public void reset() {
+        canShoot = true;
+        countEnergetics = 0;
+        canChangeEnergetic = false;
+        canChooseHypnosis = false;
+        canChooseDevilKiss = false;
+        canChooseElectricity = false;
+
+        getChildren().remove(imageView);
+        Game.hud.getHypnosis().setVisible(false);
+        Game.hud.getDevilKiss().setVisible(false);
+        Game.hud.getElectricity().setVisible(false);
+        Game.gameRoot.getChildren().remove(this);
+
+        initializePositionAndState();
+        getChildren().add(imageView);
+        Game.gameRoot.getChildren().add(this);
     }
 
     public void clear() {

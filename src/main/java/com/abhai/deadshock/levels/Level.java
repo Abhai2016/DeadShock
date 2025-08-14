@@ -1,16 +1,16 @@
 package com.abhai.deadshock.levels;
 
-
-import com.abhai.deadshock.Supply;
+import com.abhai.deadshock.Game;
+import com.abhai.deadshock.utils.ObjectPool;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import com.abhai.deadshock.Game;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Map;
 
 import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
@@ -21,132 +21,110 @@ public class Level {
     public static final int THIRD_LEVEL = 3;
     public static final int BOSS_LEVEL = 4;
 
-    Path firstLevelImagePath = Paths.get("resources", "images", "backgrounds", "firstLevel.jpg");
-    Path secondLevelImagePath = Paths.get("resources", "images", "backgrounds", "secondLevel.jpg");
-    Path thirdLevelImagePath = Paths.get("resources", "images", "backgrounds", "thirdLevel.jpg");
-    Path bossLevelImagePath = Paths.get("resources", "images", "backgrounds", "bossLevel.jpg");
-    Path bottomBlockImagePath = Paths.get("resources", "images", "blocks", "bottomBlock.png");
+    private static final Path levelsDataPath = Paths.get("resources", "data", "levels.dat");
+    private static final Path firstLevelImagePath = Paths.get("resources", "images", "levels", "backgrounds", "firstLevel.jpg");
+    private static final Path secondLevelImagePath = Paths.get("resources", "images", "levels", "backgrounds", "secondLevel.jpg");
+    private static final Path thirdLevelImagePath = Paths.get("resources", "images", "levels", "backgrounds", "thirdLevel.jpg");
+    private static final Path bossLevelImagePath = Paths.get("resources", "images", "levels", "backgrounds", "bossLevel.jpg");
 
-    private ImageView background;
-    private ImageView imgView;
-
+    private ImageView statue;
+    private final ImageView background;
+    private final ArrayList<Block> blocks;
+    private final ObjectPool<Block> blockPool;
 
     public Level() {
-        switch (Game.levelNumber) {
-            case FIRST_LEVEL -> {
-                background = new ImageView(new Image(firstLevelImagePath.toUri().toString()));
-                background.setFitHeight(BLOCK_SIZE * 15);
-                Path statueImagePath = Paths.get("resources", "images", "statue.jpg");
-                imgView = new ImageView(new Image(statueImagePath.toUri().toString()));
-                imgView.setFitWidth(223);
-                imgView.setTranslateX(BLOCK_SIZE * 300 - imgView.getFitWidth());
-                Game.gameRoot.getChildren().addAll(background, imgView);
-            }
-            case SECOND_LEVEL -> {
-                background = new ImageView(new Image(secondLevelImagePath.toUri().toString()));
-                background.setFitHeight(BLOCK_SIZE * 15);
-                Game.gameRoot.getChildren().add(background);
-            }
-            case THIRD_LEVEL -> {
-                background = new ImageView(new Image(thirdLevelImagePath.toUri().toString()));
-                background.setFitHeight(BLOCK_SIZE * 15);
-                Game.gameRoot.getChildren().add(background);
+        blocks = new ArrayList<>();
+        background = new ImageView();
+        blockPool = new ObjectPool<>(Block::new, 350, 500);
 
-                Game.supplies.add(new Supply(0, 7920, 576));
-                Game.supplies.add(new Supply(0, 8016, 576));
-                Game.supplies.add(new Supply(1, 8592, 576));
-                Game.supplies.add(new Supply(1, 8496, 576));
-                Game.supplies.add(new Supply(0, 12144, 624));
-                Game.supplies.add(new Supply(1, 12048, 624));
+        initializeBackground();
 
-                for (Supply supply : Game.supplies)
-                    Game.gameRoot.getChildren().add(supply);
-            }
-            case BOSS_LEVEL -> {
-                background = new ImageView(new Image(bossLevelImagePath.toUri().toString()));
-                Game.gameRoot.getChildren().add(background);
-                imgView = new ImageView(new Image(bottomBlockImagePath.toUri().toString()));
-                imgView.setTranslateY(BLOCK_SIZE * 14);
-                Game.gameRoot.getChildren().add(imgView);
-            }
-        }
+        Game.gameRoot.getChildren().add(background);
+        if (Game.levelNumber == FIRST_LEVEL && !Game.gameRoot.getChildren().contains(statue))
+            Game.gameRoot.getChildren().add(statue);
+
+        createLevel();
     }
 
     public void changeLevel() {
-        if (Game.levelNumber == Level.SECOND_LEVEL) {
-            background.setImage(new Image(secondLevelImagePath.toUri().toString()));
-            Game.gameRoot.getChildren().remove(imgView);
-        } else if (Game.levelNumber == Level.THIRD_LEVEL) {
-            background.setImage(new Image(thirdLevelImagePath.toUri().toString()));
-            Game.supplies.add(new Supply(0, 7920, 576));
-            Game.supplies.add(new Supply(0, 8016, 576));
-            Game.supplies.add(new Supply(1, 8592, 576));
-            Game.supplies.add(new Supply(1, 8496, 576));
-            Game.supplies.add(new Supply(0, 12144, 624));
-            Game.supplies.add(new Supply(1, 12048, 624));
-            for (Supply supply : Game.supplies)
-                Game.gameRoot.getChildren().add(supply);
-        } else {
-            background.setImage(new Image(bossLevelImagePath.toUri().toString()));
-            imgView = new ImageView(new Image(bottomBlockImagePath.toUri().toString()));
-            imgView.setTranslateY(BLOCK_SIZE * 14);
-            Game.gameRoot.getChildren().add(imgView);
-        }
+        initializeBackground();
+        createLevel();
     }
 
-    private String[] getLevel() throws IOException {
-        Path levelsPath = Paths.get("resources", "data", "levels.dat");
-        Map<String, String[]> levelData = new ObjectMapper().readValue(levelsPath.toFile(), new TypeReference<>() {});
-
-        switch (Game.levelNumber) {
-            case SECOND_LEVEL -> {
-                return levelData.get("secondLevel");
-            }
-            case THIRD_LEVEL -> {
-                return levelData.get("thirdLevel");
-            }
-            case BOSS_LEVEL -> {
-                return levelData.get("bossLevel");
-            }
-            default -> {
-                return levelData.get("firstLevel");
-            }
-        }
-    }
-
-    public void createLevels() {
+    private void createLevel() {
         String[] level = new String[0];
 
         try {
-            level = getLevel();
+            Map<String, String[]> levelData = new ObjectMapper().readValue(levelsDataPath.toFile(), new TypeReference<>() {});
+            switch (Game.levelNumber) {
+                case FIRST_LEVEL -> level = levelData.get("firstLevel");
+                case SECOND_LEVEL -> level = levelData.get("secondLevel");
+                case THIRD_LEVEL -> level =  levelData.get("thirdLevel");
+                case BOSS_LEVEL -> level = levelData.get("bossLevel");
+            }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getLocalizedMessage());
         }
+
+        if (!blocks.isEmpty())
+            resetBlocks();
 
         for (int i = 0; i < level.length; i++) {
             String line = level[i];
             for (int j = 0; j < line.length(); j++)
                 switch (line.charAt(j)) {
-                case '1' -> new Block(BlockType.LITTLE_BRICK, j * BLOCK_SIZE, i * BLOCK_SIZE);
-                case '2' -> new Block(BlockType.LAND, j * BLOCK_SIZE, i * BLOCK_SIZE);
-                case '3' -> new Block(BlockType.BOX, j * BLOCK_SIZE, i * BLOCK_SIZE);
-                case '4' -> new Block(BlockType.METAL, j * BLOCK_SIZE, i * BLOCK_SIZE);
-                case '5' -> new Block(BlockType.STONE, j * BLOCK_SIZE, i * BLOCK_SIZE);
-                case '6' -> new Block(BlockType.NEW_LAND, j * BLOCK_SIZE, i * BLOCK_SIZE);
-                case '7' -> new Block(BlockType.LITTLE_LAND, j * BLOCK_SIZE, i * BLOCK_SIZE);
-                case '8' -> new Block(BlockType.LITTLE_BOX, j * BLOCK_SIZE, i * BLOCK_SIZE);
-                case '9' -> new Block(BlockType.LITTLE_METAL, j * BLOCK_SIZE, i * BLOCK_SIZE);
-                case '_' -> new Block(BlockType.LITTLE_STONE, j * BLOCK_SIZE, i * BLOCK_SIZE);
-                case '-' -> new Block(BlockType.INVISIBLE, j * BLOCK_SIZE, i * BLOCK_SIZE);
-            }
+                    case '1' -> initBlock(BlockType.LITTLE_BRICK, j * BLOCK_SIZE, i * BLOCK_SIZE);
+                    case '2' -> initBlock(BlockType.LAND, j * BLOCK_SIZE, i * BLOCK_SIZE);
+                    case '3' -> initBlock(BlockType.BOX, j * BLOCK_SIZE, i * BLOCK_SIZE);
+                    case '4' -> initBlock(BlockType.METAL, j * BLOCK_SIZE, i * BLOCK_SIZE);
+                    case '5' -> initBlock(BlockType.STONE, j * BLOCK_SIZE, i * BLOCK_SIZE);
+                    case '6' -> initBlock(BlockType.NEW_LAND, j * BLOCK_SIZE, i * BLOCK_SIZE);
+                    case '7' -> initBlock(BlockType.LITTLE_LAND, j * BLOCK_SIZE, i * BLOCK_SIZE);
+                    case '8' -> initBlock(BlockType.LITTLE_BOX, j * BLOCK_SIZE, i * BLOCK_SIZE);
+                    case '9' -> initBlock(BlockType.LITTLE_METAL, j * BLOCK_SIZE, i * BLOCK_SIZE);
+                    case '_' -> initBlock(BlockType.LITTLE_STONE, j * BLOCK_SIZE, i * BLOCK_SIZE);
+                    case '-' -> initBlock(BlockType.INVISIBLE, j * BLOCK_SIZE, i * BLOCK_SIZE);
+                    case '*' -> initBlock(BlockType.BRICK, j * BLOCK_SIZE, i * BLOCK_SIZE);
+                }
         }
     }
 
-    public ImageView getBackground() {
-        return background;
+    private void resetBlocks() {
+        for (Block block : blocks) {
+            block.deleteFromScene();
+            blockPool.put(block);
+        }
+        blocks.clear();
     }
 
-    public ImageView getImgView() {
-        return imgView;
+    private void initializeBackground() {
+        switch (Game.levelNumber) {
+            case FIRST_LEVEL -> {
+                background.setImage(new Image(firstLevelImagePath.toUri().toString()));
+                statue = new ImageView(new Image(Paths.get("resources", "images", "levels", "statue.jpg").toUri().toString()));
+                statue.setTranslateX(BLOCK_SIZE * 300 - statue.getImage().getWidth());
+                Game.gameRoot.getChildren().add(statue);
+            }
+            case SECOND_LEVEL -> {
+                background.setImage(new Image(secondLevelImagePath.toUri().toString()));
+                Game.gameRoot.getChildren().remove(statue);
+            }
+            case THIRD_LEVEL -> background.setImage(new Image(thirdLevelImagePath.toUri().toString()));
+            case BOSS_LEVEL -> background.setImage(new Image(bossLevelImagePath.toUri().toString()));
+        }
+    }
+
+    public ArrayList<Block> getBlocks() {
+        return blocks;
+    }
+
+    private void initBlock(BlockType type, int x, int y) {
+        Block block = blockPool.get();
+        block.init(type, x, y);
+        blocks.add(block);
+    }
+
+    public void setBackgroundLayoutX(double x) {
+        background.setLayoutX(x);
     }
 }

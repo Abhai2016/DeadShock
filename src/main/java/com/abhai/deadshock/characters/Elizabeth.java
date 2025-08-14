@@ -184,7 +184,7 @@ public class Elizabeth extends Character {
     }
 
     private boolean intersectsWithBlocks(char typeOfCoordinate, double coordinate) {
-        for (Block block : Game.blocks)
+        for (Block block : Game.level.getBlocks())
             if (getBoundsInParent().intersects(block.getBoundsInParent())) {
                 if (typeOfCoordinate == 'X') {
                     setTranslateX(getTranslateX() - getScaleX());
@@ -197,13 +197,6 @@ public class Elizabeth extends Character {
                 }
                 return true;
             }
-
-        if (Game.levelNumber == Level.BOSS_LEVEL)
-            if (getBoundsInParent().intersects(Game.level.getImgView().getBoundsInParent())) {
-                setTranslateY(getTranslateY() - 1);
-                return true;
-            }
-
         return false;
     }
 

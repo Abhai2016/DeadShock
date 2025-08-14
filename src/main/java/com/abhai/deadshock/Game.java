@@ -6,7 +6,6 @@ import com.abhai.deadshock.characters.enemies.*;
 import com.abhai.deadshock.energetics.Energetic;
 import com.abhai.deadshock.hud.HUD;
 import com.abhai.deadshock.hud.Tutorial;
-import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.menus.Menu;
 import com.abhai.deadshock.utils.Controller;
@@ -24,7 +23,6 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -42,7 +40,6 @@ public class Game extends Application {
     private static Path optionsPath = Paths.get("resources", "data", "options.dat");
 
     public static ArrayList<Supply> supplies = new ArrayList<>();
-    public static ArrayList<Block> blocks = new ArrayList<>();
     public static ArrayList<Bullet> bullets = new ArrayList<>();
     public static ArrayList<EnemyBullet> enemyBullets = new ArrayList<>();
     public static ArrayList<Enemy> enemies = new ArrayList<>();
@@ -89,7 +86,6 @@ public class Game extends Application {
             } else {
                 levelNumber = Level.FIRST_LEVEL;
                 level = new Level();
-                level.createLevels();
                 vendingMachine = new VendingMachine();
                 booker = new Booker();
                 weapon = new Weapon();
@@ -108,10 +104,26 @@ public class Game extends Application {
             int offset = newValue.intValue();
             if (offset > 600 && offset < gameRoot.getWidth() - 680) {
                 gameRoot.setLayoutX(-(offset - 600));
-                level.getBackground().setLayoutX((offset - 600) / 1.5);
+                level.setBackgroundLayoutX((offset - 600) / 1.5);
             }
         }));
 
+        if (levelNumber != Level.BOSS_LEVEL)
+            vendingMachine.createButtons();
+    }
+
+    //TODO add cache for enemies
+    public static void initContentForNewGame() {
+        levelNumber = Level.FIRST_LEVEL;
+        level.changeLevel();
+        vendingMachine = new VendingMachine();
+        weapon = new Weapon();
+
+        booker.reset();
+        energetic.reset();
+        weapon.setDamage();
+        createEnemies();
+        Tutorial.init();
         if (levelNumber != Level.BOSS_LEVEL)
             vendingMachine.createButtons();
     }
@@ -122,7 +134,6 @@ public class Game extends Application {
         levelNumber = saves.getLevelNumber();
 
         level = new Level();
-        level.createLevels();
         if (levelNumber != Level.BOSS_LEVEL)
             vendingMachine = new VendingMachine();
         hud = new HUD();
@@ -191,9 +202,8 @@ public class Game extends Application {
             ObjectMapper mapper = new ObjectMapper();
             Path optionsPath = Paths.get("resources", "data", "options.dat");
 
-            if (menu == null) {
+            if (menu == null)
                 menu = new Menu();
-            }
 
             if (optionsPath.toFile().exists()) {
                 Options options = mapper.readValue(optionsPath.toFile(), Options.class);
@@ -276,8 +286,7 @@ public class Game extends Application {
         } else if (enemies.getFirst() instanceof Boss boss)
             boss.reset();
 
-        if (level != null)
-            level.getBackground().setLayoutX(0);
+        level.setBackgroundLayoutX(0);
         for (EnemyBullet enemyBullet : enemyBullets)
             gameRoot.getChildren().remove(enemyBullet);
         enemyBullets.clear();
@@ -290,13 +299,8 @@ public class Game extends Application {
     }
 
     public static void clearData(boolean forBossLevel) {
-        for (Block block : blocks)
-            gameRoot.getChildren().remove(block);
-        blocks.clear();
-
         gameRoot.setLayoutX(0);
-        if (level != null)
-            level.getBackground().setLayoutX(0);
+        level.setBackgroundLayoutX(0);
 
         if (forBossLevel) {
             for (Enemy enemy : enemies)
@@ -321,12 +325,8 @@ public class Game extends Application {
     }
 
     public static void clearDataForNewGame() {
-        appRoot.getChildren().remove(gameRoot);
         gameRoot.setLayoutX(0);
-
-        if (level != null)
-            level.getBackground().setLayoutX(0);
-
+        level.setBackgroundLayoutX(0);
         gameRoot.getChildren().removeAll(enemies);
         enemies.clear();
 
@@ -339,35 +339,18 @@ public class Game extends Application {
         bullets.clear();
 
         if (levelNumber > Level.FIRST_LEVEL) {
-            for (Block block : blocks)
-                gameRoot.getChildren().remove(block);
-            blocks.clear();
-
             gameRoot.getChildren().remove(elizabeth);
             elizabeth = null;
 
             Path savesPath = Paths.get("resources", "data", "saves.dat");
-            if (savesPath.toFile().exists()) {
+            if (savesPath.toFile().exists())
                 savesPath.toFile().delete();
-            }
 
             gameRoot.getChildren().remove(vendingMachine);
             vendingMachine = null;
-
-            gameRoot.getChildren().remove(level.getImgView());
         }
 
         keys.clear();
-
-        if (booker != null) {
-            gameRoot.getChildren().remove(booker);
-            booker = null;
-        }
-
-        if (hud != null) {
-            appRoot.getChildren().remove(hud);
-            hud = null;
-        }
 
         if (weapon != null) {
             gameRoot.getChildren().remove(weapon);
@@ -376,19 +359,8 @@ public class Game extends Application {
 
         Tutorial.delete();
 
-        if (energetic != null) {
-            gameRoot.getChildren().remove(energetic);
-            energetic = null;
-        }
-
         if (menu != null)
             appRoot.getChildren().remove(menu.menuBox);
-
-        if (levelNumber == Level.THIRD_LEVEL) {
-            for (Supply supply : supplies)
-                gameRoot.getChildren().remove(supply);
-            supplies.clear();
-        }
     }
 
     public static void createEnemies() {
@@ -436,7 +408,6 @@ public class Game extends Application {
         Tutorial.delete();
         levelNumber++;
         level.changeLevel();
-        level.createLevels();
 
         ObjectMapper mapper = new ObjectMapper();
         saveSaves(mapper);

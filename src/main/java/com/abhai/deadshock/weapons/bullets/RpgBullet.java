@@ -93,7 +93,7 @@ public class RpgBullet extends Bullet {
                     return;
                 }
 
-            for (Block block : Game.blocks)
+            for (Block block : Game.level.getBlocks())
                 if (getBoundsInParent().intersects(block.getBoundsInParent()) && !block.getType().equals(BlockType.INVISIBLE)) {
                     createExplosion();
                     return;

@@ -93,7 +93,7 @@ public class EnemyBullet extends Bullet {
             }
         }
 
-        for (Block block : Game.blocks)
+        for (Block block : Game.level.getBlocks())
             if (getBoundsInParent().intersects(block.getBoundsInParent()) && !block.getType().equals(BlockType.INVISIBLE)) {
                 Game.gameRoot.getChildren().remove(this);
                 delete = true;

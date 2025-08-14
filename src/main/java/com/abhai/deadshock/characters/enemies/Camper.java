@@ -31,7 +31,7 @@ public class Camper extends Enemy {
             else
                 setTranslateY(getTranslateY() - 1);
 
-            for (Block block : Game.blocks)
+            for (Block block : Game.level.getBlocks())
                 if (getBoundsInParent().intersects(block.getBoundsInParent())) {
                     setTranslateY(getTranslateY() - 1);
                     return;

@@ -3,6 +3,7 @@ package com.abhai.deadshock.characters;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.Supply;
 import com.abhai.deadshock.characters.enemies.Boss;
+import com.abhai.deadshock.characters.enemies.Comstock;
 import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.characters.enemies.EnemyType;
 import com.abhai.deadshock.levels.Block;
@@ -117,6 +118,11 @@ public class Booker extends Character implements Animatable {
         return salt;
     }
 
+    public void setMoney(int value) {
+        money = value;
+        Game.hud.updateMoneyTextPosition();
+    }
+
     public int getMoney() {
         return money;
     }
@@ -130,17 +136,12 @@ public class Booker extends Character implements Animatable {
         HP = value;
     }
 
-    public boolean isHypnotized() {
-        return hypnotized;
-    }
-
     public void setSalt(int value) {
         salt = value;
     }
 
-    public void setMoney(int value) {
-        money = value;
-        Game.hud.updateMoneyTextPosition();
+    public boolean isHypnotized() {
+        return hypnotized;
     }
 
     public void setCanPlayVoice(boolean value) {
@@ -166,9 +167,12 @@ public class Booker extends Character implements Animatable {
             Game.menu.music.pause();
             Game.energetic.clear();
 
-            for (Enemy enemy : Game.enemies)
+            for (Enemy enemy : Game.enemies) {
                 if (enemy instanceof Animatable animatable)
                     animatable.stopAnimation();
+                if (enemy instanceof Comstock comstock)
+                    comstock.setCanSeeBooker(false);
+            }
 
             if (money < priceForGeneration)
                 gameOver();
@@ -188,12 +192,33 @@ public class Booker extends Character implements Animatable {
                     if (livesCount < 0) {
                         continueText.setText("Для того, что начать уровень заново нажмите ввод");
                         continueText.setTranslateX(Game.scene.getWidth() / 4);
+                    } else {
+                        continueText.setText("Для продолжения нажмите ввод");
+                        continueText.setTranslateX(Game.scene.getWidth() / 3);
                     }
                     Game.appRoot.getChildren().add(continueText);
                     addEventListenerOnDeathText();
                 }
             }
         }
+    }
+
+    public void reset() {
+        dead = false;
+        start = true;
+        canJump = true;
+        hypnotized = false;
+        canPlayVoice = true;
+        animation = withoutGun;
+        booleanVelocityX = true;
+        booleanVelocityY = true;
+        velocity = new Point2D(0, 0);
+        imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
+
+        HP = 100;
+        salt = 100;
+        setTranslateX(100);
+        setTranslateY(200);
     }
 
     private void behave() {
@@ -259,49 +284,6 @@ public class Booker extends Character implements Animatable {
         velocity = velocity.add(0, JUMP_SPEED);
     }
 
-    public void moveX(double x) {
-        if (velocity.getX() < 0)
-            velocity = velocity.add(ANIMATION_SPEED, 0);
-        else if (velocity.getX() > 0)
-            velocity = velocity.add(-ANIMATION_SPEED, 0);
-        else
-            booleanVelocityX = true;
-
-        for (int i = 0; i < Math.abs(x); i++) {
-            if (x > 0 && Game.booker.getTranslateX() < Game.gameRoot.getWidth() - WIDTH)
-                setTranslateX(getTranslateX() + 1);
-            else if (Game.booker.getTranslateX() > 1)
-                setTranslateX(getTranslateX() - 1);
-
-            if (intersectsWithBlocks('X', x))
-                return;
-
-            if (intersectsWithEnemies('X'))
-                return;
-        }
-    }
-
-    private void moveY(double y) {
-        if (velocity.getY() < GRAVITY)
-            velocity = velocity.add(0, ANIMATION_SPEED);
-        else
-            booleanVelocityY = true;
-
-        for (int i = 0; i < Math.abs(y); i++) {
-            if (y > 0) {
-                setTranslateY(getTranslateY() + 1);
-                canJump = false;
-            } else
-                setTranslateY(getTranslateY() - 1);
-
-            if (intersectsWithBlocks('Y', y))
-                return;
-
-            if (intersectsWithEnemies('Y'))
-                return;
-        }
-    }
-
     private void takeSupply() {
         if (Game.elizabeth.isGiveSupply())
             if (getBoundsInParent().intersects(Game.elizabeth.getBoundsInParent())) {
@@ -325,6 +307,28 @@ public class Booker extends Character implements Animatable {
             }
     }
 
+    public void moveX(double x) {
+        if (velocity.getX() < 0)
+            velocity = velocity.add(ANIMATION_SPEED, 0);
+        else if (velocity.getX() > 0)
+            velocity = velocity.add(-ANIMATION_SPEED, 0);
+        else
+            booleanVelocityX = true;
+
+        for (int i = 0; i < Math.abs(x); i++) {
+            if (x > 0 && Game.booker.getTranslateX() < Game.gameRoot.getWidth() - WIDTH)
+                setTranslateX(getTranslateX() + 1);
+            else if (Game.booker.getTranslateX() > 1)
+                setTranslateX(getTranslateX() - 1);
+
+            if (intersectsWithBlocks('X', x))
+                return;
+
+            if (intersectsWithEnemies('X'))
+                return;
+        }
+    }
+
     private void takeMedicine() {
         if (HP + medicineForKillingEnemy > 100)
             HP = 100;
@@ -334,6 +338,27 @@ public class Booker extends Character implements Animatable {
         switch ((int) (Math.random() * 2)) {
             case 0 -> Sounds.feelsBetter.play(Game.menu.voiceSlider.getValue() / 100);
             case 1 -> Sounds.feelingBetter.play(Game.menu.voiceSlider.getValue() / 100);
+        }
+    }
+
+    private void moveY(double y) {
+        if (velocity.getY() < GRAVITY)
+            velocity = velocity.add(0, ANIMATION_SPEED);
+        else
+            booleanVelocityY = true;
+
+        for (int i = 0; i < Math.abs(y); i++) {
+            if (y > 0) {
+                setTranslateY(getTranslateY() + 1);
+                canJump = false;
+            } else
+                setTranslateY(getTranslateY() - 1);
+
+            if (intersectsWithBlocks('Y', y))
+                return;
+
+            if (intersectsWithEnemies('Y'))
+                return;
         }
     }
 
@@ -359,25 +384,33 @@ public class Booker extends Character implements Animatable {
             if (Sounds.whereAreYouFrom.getStatus() == MediaPlayer.Status.PAUSED)
                 Sounds.whereAreYouFrom.play();
 
-            setTranslateX(100);
-            setTranslateY(300);
-            Game.gameRoot.setLayoutX(0);
-            Game.elizabeth.reinitialize();
-            Game.level.getBackground().setLayoutX(0);
-
-            HP = 100;
-            dead = false;
-            hypnotized = false;
-            Game.menu.addListener();
-            velocity = new Point2D(0, 0);
-
-            if (livesCount < 0) {
-                salt = 100;
-                livesCount = 2;
-                Game.resetLevel();
-                canPlayVoice = true;
-            }
+            resetDeathData();
         });
+    }
+
+    private void resetDeathData() {
+        setTranslateX(100);
+        setTranslateY(200);
+
+        HP = 100;
+        dead = false;
+        Game.menu.addListener();
+        Game.gameRoot.setLayoutX(0);
+        Game.level.setBackgroundLayoutX(0);
+        velocity = new Point2D(0, 0);
+
+        if (livesCount < 0) {
+            salt = 100;
+            switch (Game.difficultyLevelText) {
+                case "marik" -> livesCount = 4;
+                case "easy" -> livesCount = 4;
+                case  "normal" -> livesCount = 2;
+                case "high" -> livesCount = 1;
+                case "hardcore" -> livesCount = 0;
+            }
+            Game.resetLevel();
+            canPlayVoice = true;
+        }
     }
 
     public void setIdleAnimation() {
@@ -442,6 +475,8 @@ public class Booker extends Character implements Animatable {
 
         if (Game.levelNumber == Level.FIRST_LEVEL)
             this.money = money;
+
+        Game.hud.updateMoneyTextPosition();
     }
 
     private void initializeDeathText() {
@@ -500,6 +535,39 @@ public class Booker extends Character implements Animatable {
         }
     }
 
+    private void addEventListenerOnDeathText() {
+        EventHandler<KeyEvent> removeDeathText = new EventHandler<>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.ENTER) {
+                    Game.timer.start();
+                    Game.menu.music.play();
+                    Game.appRoot.getChildren().removeAll(gameOverText, continueText);
+
+                    if (start) {
+                        Game.appRoot.getChildren().remove(moneyText);
+                        start = false;
+                    }
+
+                    resetDeathData();
+                    Game.scene.removeEventFilter(KEY_PRESSED, this);
+                }
+            }
+        };
+        Game.scene.addEventFilter(KEY_PRESSED, removeDeathText);
+    }
+
+    public void changeWeaponAnimation(String weaponName) {
+        stopAnimation();
+        switch (weaponName) {
+            case "pistol" -> animation = withPistol;
+            case "machine_gun" -> animation = withMachineGun;
+            case "rpg" -> animation = withRPG;
+            default -> animation = withoutGun;
+        }
+        animation.play();
+    }
+
     private boolean intersectsWithEnemies(char typeOfCoordinate) {
         for (Enemy enemy : Game.enemies)
             if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
@@ -521,67 +589,16 @@ public class Booker extends Character implements Animatable {
         return false;
     }
 
-    private void addEventListenerOnDeathText() {
-        EventHandler<KeyEvent> removeDeathText = new EventHandler<>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.ENTER) {
-                    Game.timer.start();
-                    Game.menu.music.play();
-                    Game.appRoot.getChildren().removeAll(gameOverText, continueText);
-
-                    if (start) {
-                        Game.appRoot.getChildren().remove(moneyText);
-                        start = false;
-                    }
-
-                    setTranslateX(100);
-                    setTranslateY(200);
-
-                    HP = 100;
-                    dead = false;
-                    Game.menu.addListener();
-                    Game.gameRoot.setLayoutX(0);
-                    velocity = new Point2D(0, 0);
-                    Game.level.getBackground().setLayoutX(0);
-
-                    if (livesCount < 0) {
-                        salt = 100;
-                        livesCount = 1;
-                        Game.resetLevel();
-                        canPlayVoice = true;
-                    }
-
-                    Game.scene.removeEventFilter(KEY_PRESSED, this);
-                }
-            }
-        };
-        Game.scene.addEventFilter(KEY_PRESSED, removeDeathText);
-    }
-
-    public void changeWeaponAnimation(String weaponName) {
-        stopAnimation();
-        switch (weaponName) {
-            case "pistol" -> animation = withPistol;
-            case "machine_gun" -> animation = withMachineGun;
-            case "rpg" -> animation = withRPG;
-            default -> animation = withoutGun;
-        }
-        animation.play();
-    }
-
     private boolean intersectsWithBlocks(char typeOfCoordinate, double coordinate) {
-        if (Game.levelNumber == Level.BOSS_LEVEL)
-            if (getBoundsInParent().intersects(Game.level.getImgView().getBoundsInParent())) {
-                setTranslateY(getTranslateY() - 1);
-                if (!hypnotized)
-                    canJump = true;
-                return true;
-            }
-
-        if (!hypnotized) {
-            for (Block block : Game.blocks)
-                if (getBoundsInParent().intersects(block.getBoundsInParent()) && !block.getType().equals(BlockType.INVISIBLE)) {
+        if (hypnotized) {
+            for (Block block : Game.level.getBlocks())
+                if (block.getType().equals(BlockType.METAL) && getBoundsInParent().intersects(block.getBoundsInParent())) {
+                    setTranslateY(getTranslateY() - 1);
+                    return true;
+                }
+        } else {
+            for (Block block : Game.level.getBlocks())
+                if (!block.getType().equals(BlockType.INVISIBLE) && getBoundsInParent().intersects(block.getBoundsInParent())) {
                     if (typeOfCoordinate == 'X')
                         if (coordinate > 0)
                             setTranslateX(getTranslateX() - 1);

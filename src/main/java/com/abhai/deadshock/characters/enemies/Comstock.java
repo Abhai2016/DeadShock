@@ -208,7 +208,7 @@ public class Comstock extends Enemy implements Animatable {
     }
 
     private boolean intersectsWithBlocks(char coordinate) {
-        for (Block block : Game.blocks) {
+        for (Block block : Game.level.getBlocks()) {
             if (intersectsWithBlock(block)) {
                 if (coordinate == 'Y') {
                     if (velocity.getY() > 0) {
@@ -291,6 +291,10 @@ public class Comstock extends Enemy implements Animatable {
             else
                 moveX(SPEED);
         }
+    }
+
+    public void setCanSeeBooker(boolean canSeeBooker) {
+        this.canSeeBooker = canSeeBooker;
     }
 
     @Override

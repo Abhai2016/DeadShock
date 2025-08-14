@@ -30,7 +30,7 @@ class DevilKissShot extends Pane {
     }
 
     private void intersectsWithWorld() {
-        for (Block block : Game.blocks)
+        for (Block block : Game.level.getBlocks())
             if (getBoundsInParent().intersects(block.getBoundsInParent())) {
                 toDelete = true;
                 return;

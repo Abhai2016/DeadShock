@@ -89,8 +89,8 @@ public class VendingMachine extends Pane {
 
         switch (Game.levelNumber) {
             case Level.FIRST_LEVEL:
-                vendingMachine.setTranslateX(BLOCK_SIZE * 187 + 15);
-                vendingMachine.setTranslateY(BLOCK_SIZE * 3 - 6);
+                vendingMachine.setTranslateX(BLOCK_SIZE * 188);
+                vendingMachine.setTranslateY(BLOCK_SIZE * 2 - 6);
                 vendingMachineMenu.setViewport( new Rectangle2D(0, 0, 920, 597) );
                 break;
             case Level.SECOND_LEVEL:

@@ -46,7 +46,7 @@ public class Tutorial {
                 setText(reloadEnergetic, BLOCK_SIZE * 43, SMALL_OFFSET_Y);
                 setText(shootEnergetic, BLOCK_SIZE * 43, SMALLER_OFFSET_Y);
                 setText(getMoneyFromEnemy, BLOCK_SIZE * 95, DEFAULT_OFFSET_Y);
-                setText(turnOnVendingMachine, BLOCK_SIZE * 181, SMALLER_OFFSET_Y);
+                setText(turnOnVendingMachine, BLOCK_SIZE * 182, SMALLEST_OFFSET_Y);
             }
             case Level.SECOND_LEVEL -> {
                 setText(saves, BLOCK_SIZE, 200);
