@@ -35,6 +35,7 @@ public class Hypnosis {
 
     public void delete() {
         hypnotized = false;
+        unhypnotizeTheTarget();
         intervalRect.setWidth(300);
         intervalRect.setVisible(false);
         intervalText.setVisible(false);

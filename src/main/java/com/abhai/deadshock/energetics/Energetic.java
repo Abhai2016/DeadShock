@@ -58,8 +58,8 @@ public class Energetic extends Pane {
     private int countEnergetics;
 
     private EnergeticType type;
-    private ImageView imageView;
     private final Hypnosis hypnosis;
+    private final ImageView imageView;
     private final DevilKiss devilKiss;
     private final Electricity electricity;
 
@@ -96,6 +96,7 @@ public class Energetic extends Pane {
         Game.hud.getDevilKiss().setVisible(false);
         Game.hud.getElectricity().setVisible(false);
 
+        clear();
         initializePositionAndState();
 
         if (!Game.gameRoot.getChildren().contains(this))

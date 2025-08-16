@@ -100,7 +100,6 @@ public class CutScenes {
     }
 
     private void endCutScene1() {
-        Game.elizabeth.init();
         Game.booker.setCanPlayVoice(true);
         initLevel();
     }
@@ -132,11 +131,11 @@ public class CutScenes {
         Game.menu.music.play();
         Game.menu.addListener();
         Tutorial.init();
+        Game.elizabeth.init();
         Game.vendingMachine.changeLevel();
         Game.energetic.changeLevel();
         Game.stage.setWidth(1280);
         Game.gameRoot.getChildren().add(Game.booker);
-        Game.gameRoot.getChildren().add(Game.elizabeth);
 
         Game.saveSaves();
         Game.saveOptions();

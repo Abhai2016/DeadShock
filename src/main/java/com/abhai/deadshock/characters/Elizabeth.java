@@ -27,6 +27,7 @@ public class Elizabeth extends Character {
     public void init() {
         setTranslateX(START_X);
         setTranslateY(START_Y);
+        Game.gameRoot.getChildren().add(this);
     }
 
     public void reset() {
@@ -41,6 +42,7 @@ public class Elizabeth extends Character {
         giveSupply = false;
         playVoiceWhereYouFrom = true;
 
+        Game.gameRoot.getChildren().remove(this);
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
     }
 

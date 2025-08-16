@@ -122,9 +122,7 @@ public class Game extends Application {
     }
 
     //TODO add cache for all classes i refactored
-    //TODO fix a bug with electricity after the death or new game
     //TODO fix a bug with vendingMachine where buttons to buy or esc don't work after the death/levelReset/changeLevel, etc.
-    //TODO booker keeps be hypnotized after the death on boss level
     //TODO fix a bug with a weapon
     public static void initContentForNewGame() {
         levelNumber = Level.FIRST_LEVEL;
@@ -150,6 +148,7 @@ public class Game extends Application {
 
         booker = new Booker();
         elizabeth = new Elizabeth();
+        elizabeth.init();
         booker.setMoney(saves.getMoney());
         booker.setSalt(saves.getSalt());
         Energetic.Builder builder = new Energetic.Builder();
