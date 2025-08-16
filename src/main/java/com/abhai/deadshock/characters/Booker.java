@@ -95,8 +95,9 @@ public class Booker extends Character implements Animatable {
         bulletsForKillingEnemy = 0;
         medicineForKillingEnemy = 0;
 
-        initializeDeathText();
-        initializeAnimations();
+        initDeathText();
+        initAnimations();
+        Game.gameRoot.getChildren().add(this);
     }
 
     @Override
@@ -279,6 +280,32 @@ public class Booker extends Character implements Animatable {
         }
     }
 
+    private void deathReset() {
+        setTranslateX(100);
+        setTranslateY(200);
+
+        HP = 100;
+        dead = false;
+        Game.menu.addListener();
+        Game.gameRoot.setLayoutX(0);
+        if (Game.levelNumber > Level.FIRST_LEVEL)
+            Game.elizabeth.resetAfterBookersDeath();
+        Game.level.setBackgroundLayoutX(0);
+        velocity = new Point2D(0, 0);
+
+        if (livesCount < 0) {
+            salt = 100;
+            switch (Game.difficultyLevelText) {
+                case "marik", "easy" -> livesCount = 4;
+                case  "normal" -> livesCount = 2;
+                case "high" -> livesCount = 1;
+                case "hardcore" -> livesCount = 0;
+            }
+            Game.resetLevel();
+            canPlayVoice = true;
+        }
+    }
+
     public void unhypnotize() {
         hypnotized = false;
         velocity = velocity.add(0, JUMP_SPEED);
@@ -341,6 +368,28 @@ public class Booker extends Character implements Animatable {
         }
     }
 
+    private void initDeathText() {
+        gameOverText = new Text("Вы мертвы!");
+        gameOverText.setFont(Font.font("Arial", FontWeight.BOLD, 28));
+        gameOverText.setFill(Color.RED);
+        gameOverText.setTranslateX(Game.scene.getWidth() / 2 - 75);
+        gameOverText.setTranslateY(Game.scene.getHeight() / 2);
+
+        continueText = new Text("Для продолжения нажмите ввод");
+        continueText.setFont(Font.font("Arial", FontWeight.BOLD, 28));
+        continueText.setFill(Color.WHITE);
+        continueText.setTranslateX(Game.scene.getWidth() / 3);
+        continueText.setTranslateY(Game.scene.getHeight() / 2 + 40);
+
+
+        moneyText = new Text("  С каждой смертью вы теряете " + priceForGeneration +
+                " монет, если\nваши монеты закончатся - игра будет окончена!");
+        moneyText.setFont(Font.font("Arial", FontWeight.BOLD, 28));
+        moneyText.setFill(Color.RED);
+        moneyText.setTranslateX(Game.scene.getWidth() / 4);
+        moneyText.setTranslateY(Game.scene.getHeight() / 1.5 - 30);
+    }
+
     private void moveY(double y) {
         if (velocity.getY() < GRAVITY)
             velocity = velocity.add(0, ANIMATION_SPEED);
@@ -360,6 +409,18 @@ public class Booker extends Character implements Animatable {
             if (intersectsWithEnemies('Y'))
                 return;
         }
+    }
+
+    private void initAnimations() {
+        withoutGun = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED),
+                SPRITES_COUNT, SPRITES_COUNT, 0, NO_GUN_OFFSET_Y, WIDTH, HEIGHT);
+        withPistol = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED),
+                SPRITES_COUNT, SPRITES_COUNT, 0, PISTOL_OFFSET_Y, WIDTH, HEIGHT);
+        withMachineGun = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED),
+                SPRITES_COUNT, SPRITES_COUNT, 0, MACHINE_GUN_OFFSET_Y, WIDTH, HEIGHT);
+        withRPG = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED),
+                SPRITES_COUNT, SPRITES_COUNT, 0, RPG_OFFSET_Y, WIDTH, HEIGHT);
+        animation = withoutGun;
     }
 
     private void playVideoDeath() {
@@ -384,33 +445,8 @@ public class Booker extends Character implements Animatable {
             if (Sounds.whereAreYouFrom.getStatus() == MediaPlayer.Status.PAUSED)
                 Sounds.whereAreYouFrom.play();
 
-            resetDeathData();
+            deathReset();
         });
-    }
-
-    private void resetDeathData() {
-        setTranslateX(100);
-        setTranslateY(200);
-
-        HP = 100;
-        dead = false;
-        Game.menu.addListener();
-        Game.gameRoot.setLayoutX(0);
-        Game.elizabeth.reinitialize();
-        Game.level.setBackgroundLayoutX(0);
-        velocity = new Point2D(0, 0);
-
-        if (livesCount < 0) {
-            salt = 100;
-            switch (Game.difficultyLevelText) {
-                case "marik", "easy" -> livesCount = 4;
-                case  "normal" -> livesCount = 2;
-                case "high" -> livesCount = 1;
-                case "hardcore" -> livesCount = 0;
-            }
-            Game.resetLevel();
-            canPlayVoice = true;
-        }
     }
 
     public void setIdleAnimation() {
@@ -479,40 +515,6 @@ public class Booker extends Character implements Animatable {
         Game.hud.updateMoneyTextPosition();
     }
 
-    private void initializeDeathText() {
-        gameOverText = new Text("Вы мертвы!");
-        gameOverText.setFont(Font.font("Arial", FontWeight.BOLD, 28));
-        gameOverText.setFill(Color.RED);
-        gameOverText.setTranslateX(Game.scene.getWidth() / 2 - 75);
-        gameOverText.setTranslateY(Game.scene.getHeight() / 2);
-
-        continueText = new Text("Для продолжения нажмите ввод");
-        continueText.setFont(Font.font("Arial", FontWeight.BOLD, 28));
-        continueText.setFill(Color.WHITE);
-        continueText.setTranslateX(Game.scene.getWidth() / 3);
-        continueText.setTranslateY(Game.scene.getHeight() / 2 + 40);
-
-
-        moneyText = new Text("  С каждой смертью вы теряете " + priceForGeneration +
-                " монет, если\nваши монеты закончатся - игра будет окончена!");
-        moneyText.setFont(Font.font("Arial", FontWeight.BOLD, 28));
-        moneyText.setFill(Color.RED);
-        moneyText.setTranslateX(Game.scene.getWidth() / 4);
-        moneyText.setTranslateY(Game.scene.getHeight() / 1.5 - 30);
-    }
-
-    private void initializeAnimations() {
-        withoutGun = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED),
-                SPRITES_COUNT, SPRITES_COUNT, 0, NO_GUN_OFFSET_Y, WIDTH, HEIGHT);
-        withPistol = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED),
-                SPRITES_COUNT, SPRITES_COUNT, 0, PISTOL_OFFSET_Y, WIDTH, HEIGHT);
-        withMachineGun = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED),
-                SPRITES_COUNT, SPRITES_COUNT, 0, MACHINE_GUN_OFFSET_Y, WIDTH, HEIGHT);
-        withRPG = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED),
-                SPRITES_COUNT, SPRITES_COUNT, 0, RPG_OFFSET_Y, WIDTH, HEIGHT);
-        animation = withoutGun;
-    }
-
     public void jump(boolean enemyJump) {
         if (enemyJump) {
             if (booleanVelocityY) {
@@ -549,7 +551,7 @@ public class Booker extends Character implements Animatable {
                         start = false;
                     }
 
-                    resetDeathData();
+                    deathReset();
                     Game.scene.removeEventFilter(KEY_PRESSED, this);
                 }
             }

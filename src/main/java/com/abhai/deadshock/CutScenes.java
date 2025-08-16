@@ -1,6 +1,5 @@
 package com.abhai.deadshock;
 
-import com.abhai.deadshock.characters.Elizabeth;
 import com.abhai.deadshock.hud.Tutorial;
 import com.abhai.deadshock.levels.Level;
 import javafx.animation.FadeTransition;
@@ -22,8 +21,6 @@ public class CutScenes {
     public CutScenes() {
         Game.booker.setTranslateX(100);
         Game.booker.setTranslateY(500);
-        if (Game.elizabeth != null)
-            Game.elizabeth.setTranslateX(100);
 
         Game.menu.music.pause();
         Game.timer.stop();
@@ -103,7 +100,7 @@ public class CutScenes {
     }
 
     private void endCutScene1() {
-        Game.elizabeth = new Elizabeth();
+        Game.elizabeth.init();
         Game.booker.setCanPlayVoice(true);
         initLevel();
     }
@@ -138,9 +135,8 @@ public class CutScenes {
         Game.vendingMachine.changeLevel();
         Game.energetic.changeLevel();
         Game.stage.setWidth(1280);
-        if (!Game.gameRoot.getChildren().contains(Game.elizabeth))
-            Game.gameRoot.getChildren().add(Game.elizabeth);
         Game.gameRoot.getChildren().add(Game.booker);
+        Game.gameRoot.getChildren().add(Game.elizabeth);
 
         Game.saveSaves();
         Game.saveOptions();

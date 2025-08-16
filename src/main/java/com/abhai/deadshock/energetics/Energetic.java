@@ -69,6 +69,7 @@ public class Energetic extends Pane {
         countEnergetics = 0;
         hypnosis = new Hypnosis();
         canChangeEnergetic = false;
+        imageView = new ImageView();
         devilKiss = new DevilKiss();
         electricity = new Electricity();
         canChooseHypnosis = builder.canChooseHypnosis;
@@ -91,15 +92,14 @@ public class Energetic extends Pane {
         canChooseDevilKiss = false;
         canChooseElectricity = false;
 
-        getChildren().remove(imageView);
         Game.hud.getHypnosis().setVisible(false);
         Game.hud.getDevilKiss().setVisible(false);
         Game.hud.getElectricity().setVisible(false);
-        Game.gameRoot.getChildren().remove(this);
 
         initializePositionAndState();
-        getChildren().add(imageView);
-        Game.gameRoot.getChildren().add(this);
+
+        if (!Game.gameRoot.getChildren().contains(this))
+            Game.gameRoot.getChildren().add(this);
     }
 
     public void clear() {
@@ -218,17 +218,17 @@ public class Energetic extends Pane {
     private void initializePositionAndState() {
         switch (Game.levelNumber) {
             case Level.FIRST_LEVEL -> {
-                imageView = new ImageView(new Image(devilKissImagePath.toUri().toString()));
+                imageView.setImage(new Image(devilKissImagePath.toUri().toString()));
                 setTranslateX(DEVIL_KISS_X);
                 setTranslateY(DEVIL_KISS_Y);
             }
             case Level.SECOND_LEVEL -> {
-                imageView = new ImageView(new Image(electricityImagePath.toUri().toString()));
+                imageView.setImage(new Image(electricityImagePath.toUri().toString()));
                 setTranslateX(ELECTRICITY_X);
                 setTranslateY(ELECTRICITY_Y);
             }
             case Level.THIRD_LEVEL -> {
-                imageView = new ImageView(new Image(hypnosisImagePath.toUri().toString()));
+                imageView.setImage(new Image(hypnosisImagePath.toUri().toString()));
                 setTranslateX(HYPNOSIS_X);
                 setTranslateY(HYPNOSIS_Y);
             }

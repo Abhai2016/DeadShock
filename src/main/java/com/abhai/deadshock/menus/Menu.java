@@ -579,7 +579,8 @@ public class Menu {
     private void checkTrack() {
         if (music.getMedia().getSource().contains("01.mp3")) {
             music.stop();
-            music = new MediaPlayer(new Media(tempMusic.resolve("02.mp3").toUri().toString()));
+            tempMusic = tempMusic.resolve("02.mp3");
+            music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
             music.setVolume(musicSlider.getValue() / 100);
             music.play();
             addMediaListener();
@@ -587,7 +588,8 @@ public class Menu {
         }
         if (music.getMedia().getSource().contains("02.mp3")) {
             music.stop();
-            music = new MediaPlayer(new Media(tempMusic.resolve("03.mp3").toUri().toString()));
+            tempMusic = tempMusic.resolve("03.mp3");
+            music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
             music.setVolume(musicSlider.getValue() / 100);
             music.play();
             addMediaListener();
@@ -595,7 +597,8 @@ public class Menu {
         }
         if (music.getMedia().getSource().contains("03.mp3")) {
             music.stop();
-            music = new MediaPlayer(new Media(tempMusic.resolve("04.mp3").toUri().toString()));
+            tempMusic = tempMusic.resolve("04.mp3");
+            music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
             music.setVolume(musicSlider.getValue() / 100);
             music.play();
             addMediaListener();
@@ -603,7 +606,8 @@ public class Menu {
         }
         if (music.getMedia().getSource().contains("04.mp3")) {
             music.stop();
-            music = new MediaPlayer(new Media(tempMusic.resolve("05.mp3").toUri().toString()));
+            tempMusic = tempMusic.resolve("05.mp3");
+            music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
             music.setVolume(musicSlider.getValue() / 100);
             music.play();
             addMediaListener();
@@ -611,7 +615,8 @@ public class Menu {
         }
         if (music.getMedia().getSource().contains("05.mp3")) {
             music.stop();
-            music = new MediaPlayer(new Media(tempMusic.resolve("06.mp3").toUri().toString()));
+            tempMusic = tempMusic.resolve("06.mp3");
+            music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
             music.setVolume(musicSlider.getValue() / 100);
             music.play();
             addMediaListener();
@@ -619,7 +624,8 @@ public class Menu {
         }
         if (music.getMedia().getSource().contains("06.mp3")) {
             music.stop();
-            music = new MediaPlayer(new Media(tempMusic.resolve("07.mp3").toUri().toString()));
+            tempMusic = tempMusic.resolve("07.mp3");
+            music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
             music.setVolume(musicSlider.getValue() / 100);
             music.play();
             addMediaListener();
@@ -627,7 +633,8 @@ public class Menu {
         }
         if (music.getMedia().getSource().contains("07.mp3")) {
             music.stop();
-            music = new MediaPlayer(new Media(tempMusic.resolve("01.mp3").toUri().toString()));
+            tempMusic = tempMusic.resolve("01.mp3");
+            music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
             music.setVolume(musicSlider.getValue() / 100);
             music.play();
             addMediaListener();

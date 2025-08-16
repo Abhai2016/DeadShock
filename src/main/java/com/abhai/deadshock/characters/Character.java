@@ -1,6 +1,5 @@
 package com.abhai.deadshock.characters;
 
-import com.abhai.deadshock.Game;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -23,7 +22,6 @@ public class Character extends Pane {
         imageView = new ImageView(new Image(
                 Paths.get("resources", "images", "characters", getImageName()).toUri().toString()));
         getChildren().add(imageView);
-        Game.gameRoot.getChildren().add(this);
     }
 
     protected String getImageName() {

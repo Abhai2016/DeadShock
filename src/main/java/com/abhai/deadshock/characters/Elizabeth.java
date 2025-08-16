@@ -21,6 +21,15 @@ public class Elizabeth extends Character {
     private boolean playVoiceWhereYouFrom;
 
     public Elizabeth() {
+        reset();
+    }
+
+    public void init() {
+        setTranslateX(START_X);
+        setTranslateY(START_Y);
+    }
+
+    public void reset() {
         moveInterval = 0;
         medicineCount = 0;
         supplyInterval = 0;
@@ -143,15 +152,6 @@ public class Elizabeth extends Character {
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
     }
 
-    public void reinitialize() {
-        canMove = true;
-        medicineCount = 0;
-        giveSupply = false;
-        setTranslateX(START_X);
-        setTranslateY(START_Y);
-        imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
-    }
-
     private void generateSupply() {
         if (supplyInterval > 300 && medicineCount > 0 && Game.booker.getHP() < 100) {
             canMove = false;
@@ -168,6 +168,15 @@ public class Elizabeth extends Character {
             case 2 -> Sounds.bookerCatch3.play(Game.menu.voiceSlider.getValue() / 100);
         }
         supplyInterval = 0;
+    }
+
+    public void resetAfterBookersDeath() {
+        canMove = true;
+        medicineCount = 0;
+        giveSupply = false;
+        setTranslateX(START_X);
+        setTranslateY(START_Y);
+        imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
     }
 
     public boolean isGiveSupply() {

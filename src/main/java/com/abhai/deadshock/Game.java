@@ -91,6 +91,7 @@ public class Game extends Application {
                 level = new Level();
                 vendingMachine = new VendingMachine();
                 booker = new Booker();
+                elizabeth = new Elizabeth();
                 weapon = new Weapon();
                 hud = new HUD();
                 energetic = new Energetic.Builder().build();
@@ -130,9 +131,6 @@ public class Game extends Application {
         level.changeLevel();
         vendingMachine = new VendingMachine();
         weapon = new Weapon();
-
-        booker.reset();
-        energetic.reset();
         weapon.setDamage();
         createEnemies();
         Tutorial.init();
@@ -151,6 +149,7 @@ public class Game extends Application {
         hud = new HUD();
 
         booker = new Booker();
+        elizabeth = new Elizabeth();
         booker.setMoney(saves.getMoney());
         booker.setSalt(saves.getSalt());
         Energetic.Builder builder = new Energetic.Builder();
@@ -205,7 +204,6 @@ public class Game extends Application {
                 }
             }
         }
-        elizabeth = new Elizabeth();
     }
 
     static void loadOptions() {
@@ -364,9 +362,6 @@ public class Game extends Application {
         bullets.clear();
 
         if (levelNumber > Level.FIRST_LEVEL) {
-            gameRoot.getChildren().remove(elizabeth);
-            elizabeth = null;
-
             Path savesPath = Paths.get("resources", "data", "saves.dat");
             if (savesPath.toFile().exists())
                 savesPath.toFile().delete();
@@ -386,6 +381,10 @@ public class Game extends Application {
 
         if (menu != null)
             appRoot.getChildren().remove(menu.menuBox);
+
+        booker.reset();
+        energetic.reset();
+        elizabeth.reset();
     }
 
     public static void createEnemies() {
