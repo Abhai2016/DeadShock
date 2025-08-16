@@ -121,7 +121,6 @@ public class Game extends Application {
             vendingMachine.createButtons();
     }
 
-    //TODO add cache for all classes i refactored
     //TODO fix a bug with vendingMachine where buttons to buy or esc don't work after the death/levelReset/changeLevel, etc.
     //TODO fix a bug with a weapon
     public static void initContentForNewGame() {

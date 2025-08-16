@@ -19,10 +19,6 @@ public class Block extends Pane {
         blockImage = new ImageView(new Image(Paths.get("resources", "images", "levels", "blocks.jpg").toUri().toString()));
     }
 
-    public void deleteFromScene() {
-        Game.gameRoot.getChildren().remove(this);
-    }
-
     public BlockType getType() {
         return type;
     }
@@ -58,5 +54,9 @@ public class Block extends Pane {
             getChildren().remove(blockImage);
 
         Game.gameRoot.getChildren().add(this);
+    }
+
+    public void deleteFromScene() {
+        Game.gameRoot.getChildren().remove(this);
     }
 }
