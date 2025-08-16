@@ -396,14 +396,14 @@ public class Booker extends Character implements Animatable {
         dead = false;
         Game.menu.addListener();
         Game.gameRoot.setLayoutX(0);
+        Game.elizabeth.reinitialize();
         Game.level.setBackgroundLayoutX(0);
         velocity = new Point2D(0, 0);
 
         if (livesCount < 0) {
             salt = 100;
             switch (Game.difficultyLevelText) {
-                case "marik" -> livesCount = 4;
-                case "easy" -> livesCount = 4;
+                case "marik", "easy" -> livesCount = 4;
                 case  "normal" -> livesCount = 2;
                 case "high" -> livesCount = 1;
                 case "hardcore" -> livesCount = 0;

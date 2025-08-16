@@ -1,7 +1,7 @@
 package com.abhai.deadshock.levels;
 
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.utils.ObjectPool;
+import com.abhai.deadshock.utils.pools.ObjectPool;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.image.Image;
@@ -48,6 +48,8 @@ public class Level {
 
     public void changeLevel() {
         initializeBackground();
+        if (Game.levelNumber == FIRST_LEVEL && !Game.gameRoot.getChildren().contains(statue))
+            Game.gameRoot.getChildren().add(statue);
         createLevel();
     }
 
@@ -103,7 +105,6 @@ public class Level {
                 background.setImage(new Image(firstLevelImagePath.toUri().toString()));
                 statue = new ImageView(new Image(Paths.get("resources", "images", "levels", "statue.jpg").toUri().toString()));
                 statue.setTranslateX(BLOCK_SIZE * 300 - statue.getImage().getWidth());
-                Game.gameRoot.getChildren().add(statue);
             }
             case SECOND_LEVEL -> {
                 background.setImage(new Image(secondLevelImagePath.toUri().toString()));

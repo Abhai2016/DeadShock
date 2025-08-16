@@ -36,11 +36,18 @@ public class Enemy extends Pane {
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
 
         getChildren().add(imageView);
-        Game.gameRoot.getChildren().add(this);
     }
 
     public void update() {
 
+    }
+
+    public void reset() {
+        toDelete = false;
+        hypnotized = false;
+        voiceInterval = 0;
+        velocity = new Point2D(0, GRAVITY);
+        Game.gameRoot.getChildren().remove(this);
     }
 
     public void playHitVoice() {
@@ -58,6 +65,12 @@ public class Enemy extends Pane {
     protected void closeCombat() {
         Game.booker.closeCombat(getScaleX());
         setTranslateX(getTranslateX() - getScaleX());
+    }
+
+    public void init(int x, int y) {
+        setTranslateX(x);
+        setTranslateY(y);
+        Game.gameRoot.getChildren().add(this);
     }
 
     protected void playDeathVoice() {

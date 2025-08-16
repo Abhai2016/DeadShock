@@ -33,12 +33,15 @@ public class Comstock extends Enemy implements Animatable {
     protected EnemyWeapon enemyWeapon;
     protected SpriteAnimation animation;
 
-    Comstock() {
+    public Comstock() {
+        HP = 100;
+        initWeapon();
         canJump = true;
         seeInterval = 0;
         booleanVoice = true;
         canSeeBooker = false;
         booleanVelocity = true;
+        type = EnemyType.COMSTOCK;
 
         animation = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED),
                 SPRITES_COUNT, SPRITES_COUNT, 0, 0, WIDTH, HEIGHT);
@@ -48,22 +51,23 @@ public class Comstock extends Enemy implements Animatable {
                 Game.booker.getTranslateX() < getTranslateX() + 650 && Game.booker.getTranslateX() > getTranslateX();
     }
 
-    public Comstock(long x, long y) {
-        this();
-
-        HP = 100;
-        type = EnemyType.COMSTOCK;
-        enemyWeapon = new ComstockWeapon();
-
-        setTranslateX(x);
-        setTranslateY(y);
-    }
-
     private void die() {
         toDelete = true;
         stopAnimation();
         playDeathVoice();
         Game.booker.addMoneyForKillingEnemy();
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+
+        HP = 100;
+        canJump = true;
+        seeInterval = 0;
+        booleanVoice = true;
+        canSeeBooker = false;
+        booleanVelocity = true;
     }
 
     private void moveY() {
@@ -291,6 +295,10 @@ public class Comstock extends Enemy implements Animatable {
             else
                 moveX(SPEED);
         }
+    }
+
+    protected void initWeapon() {
+        enemyWeapon = new ComstockWeapon();
     }
 
     public void setCanSeeBooker(boolean canSeeBooker) {

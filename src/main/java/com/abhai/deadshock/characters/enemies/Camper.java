@@ -5,16 +5,13 @@ import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.utils.Sounds;
 
 public class Camper extends Enemy {
-    private int moveInterval;
     private static final int DAMAGE = 5;
+    private int moveInterval;
 
-    public Camper(long x, long y) {
+    public Camper() {
         HP = 500;
         moveInterval = 0;
         type = EnemyType.CAMPER;
-
-        setTranslateX(x);
-        setTranslateY(y);
     }
 
     private void die() {
@@ -77,6 +74,14 @@ public class Camper extends Enemy {
         }
         Game.booker.setHP(Game.booker.getHP() - DAMAGE);
         voiceInterval = 0;
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+
+        HP = 500;
+        moveInterval = 0;
     }
 
     @Override

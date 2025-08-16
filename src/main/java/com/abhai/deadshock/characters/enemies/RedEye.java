@@ -5,13 +5,17 @@ import com.abhai.deadshock.weapons.RedEyeWeapon;
 
 public class RedEye extends Comstock {
 
-    public RedEye(long x, long y) {
+    public RedEye() {
         HP = 125;
+        initWeapon();
         type = EnemyType.RED_EYE;
-        enemyWeapon = new RedEyeWeapon();
+    }
 
-        setTranslateX(x);
-        setTranslateY(y);
+    @Override
+    public void reset() {
+        super.reset();
+
+        HP = 125;
     }
 
     @Override
@@ -22,5 +26,10 @@ public class RedEye extends Comstock {
     @Override
     protected String getImageName() {
         return "redEye.png";
+    }
+
+    @Override
+    protected void initWeapon() {
+        enemyWeapon = new RedEyeWeapon();
     }
 }

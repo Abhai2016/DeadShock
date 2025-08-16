@@ -162,20 +162,19 @@ public class Weapon extends Pane {
         return canChooseRPG;
     }
 
-    public void changeLevel(long level) {
-        if (level == Level.SECOND_LEVEL) {
+    public void changeLevel() {
+        if (Game.levelNumber == Level.SECOND_LEVEL) {
             gun.setViewport(new Rectangle2D(400, 80, 56, 18));
             setTranslateX(BLOCK_SIZE * 26);
             setTranslateY(BLOCK_SIZE * 12 - 20);
-            setVisible(true);
-        } else if (level == Level.THIRD_LEVEL) {
+        } else if (Game.levelNumber == Level.THIRD_LEVEL) {
             getChildren().remove(gun);
             gun = new ImageView(new Image(rpgImagePath.toUri().toString()));
             getChildren().add(gun);
             setTranslateX(BLOCK_SIZE * 24);
             setTranslateY(BLOCK_SIZE * 12 - 20);
-            setVisible(true);
         }
+        Game.gameRoot.getChildren().add(this);
     }
 
     public void pickUpWeapon() {
@@ -224,7 +223,7 @@ public class Weapon extends Pane {
 
             setTranslateX(0);
             setTranslateY(0);
-            setVisible(false);
+            Game.gameRoot.getChildren().remove(this);
         }
     }
 

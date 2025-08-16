@@ -11,6 +11,7 @@ import com.abhai.deadshock.menus.Menu;
 import com.abhai.deadshock.utils.Controller;
 import com.abhai.deadshock.utils.Options;
 import com.abhai.deadshock.utils.Saves;
+import com.abhai.deadshock.utils.pools.ObjectPoolManager;
 import com.abhai.deadshock.weapons.Weapon;
 import com.abhai.deadshock.weapons.bullets.Bullet;
 import com.abhai.deadshock.weapons.bullets.EnemyBullet;
@@ -42,8 +43,10 @@ public class Game extends Application {
     public static ArrayList<Supply> supplies = new ArrayList<>();
     public static ArrayList<Bullet> bullets = new ArrayList<>();
     public static ArrayList<EnemyBullet> enemyBullets = new ArrayList<>();
+    public static ObjectPoolManager<Enemy> enemyPools = new ObjectPoolManager<>();
     public static ArrayList<Enemy> enemies = new ArrayList<>();
     public static HashMap<KeyCode, Boolean> keys = new HashMap<>();
+    public static ObjectMapper mapper = new ObjectMapper();
 
     public static Stage stage;
     public static Scene scene;
@@ -96,6 +99,11 @@ public class Game extends Application {
             e.printStackTrace();
         }
 
+        enemyPools.register(Boss.class, Boss::new, 1, 2);
+        enemyPools.register(Camper.class, Camper::new, 5, 10);
+        enemyPools.register(RedEye.class, RedEye::new, 10, 15);
+        enemyPools.register(Comstock.class, Comstock::new, 15, 20);
+
         createEnemies();
         loadOptions();
         Tutorial.init();
@@ -112,7 +120,11 @@ public class Game extends Application {
             vendingMachine.createButtons();
     }
 
-    //TODO add cache for enemies
+    //TODO add cache for all classes i refactored
+    //TODO fix a bug with electricity after the death or new game
+    //TODO fix a bug with vendingMachine where buttons to buy or esc don't work after the death/levelReset/changeLevel, etc.
+    //TODO booker keeps be hypnotized after the death on boss level
+    //TODO fix a bug with a weapon
     public static void initContentForNewGame() {
         levelNumber = Level.FIRST_LEVEL;
         level.changeLevel();
@@ -166,7 +178,6 @@ public class Game extends Application {
                     weapon.setWeaponClip(saves.getPistolClip());
                     weapon.setBullets(saves.getPistolBullets());
                 }
-                enemies.add(new Boss());
             }
             case Level.BOSS_LEVEL -> {
                 weapon = new Weapon(saves.isCanChoosePistol(), saves.isCanChooseMachineGun(), saves.isCanChooseRPG());
@@ -219,7 +230,7 @@ public class Game extends Application {
         }
     }
 
-    static void saveSaves(ObjectMapper mapper) {
+    static void saveSaves() {
         try (FileWriter fileWriter = new FileWriter(savesPath.toFile())) {
             if (savesPath.toFile().exists()) {
                 savesPath.toFile().delete();
@@ -255,7 +266,7 @@ public class Game extends Application {
         }
     }
 
-    static void saveOptions(ObjectMapper mapper) {
+    static void saveOptions() {
         try (FileWriter fileWriter = new FileWriter(optionsPath.toFile())) {
             if (optionsPath.toFile().exists()) {
                 optionsPath.toFile().delete();
@@ -279,14 +290,15 @@ public class Game extends Application {
 
     public static void resetLevel() {
         gameRoot.setLayoutX(0);
-        if (levelNumber != Level.BOSS_LEVEL) {
-            gameRoot.getChildren().removeAll(enemies);
-            enemies.clear();
-            createEnemies();
-        } else if (enemies.getFirst() instanceof Boss boss)
-            boss.reset();
-
         level.setBackgroundLayoutX(0);
+
+        for (Enemy enemy : enemies) {
+            enemy.reset();
+            enemyPools.put(enemy);
+        }
+        enemies.clear();
+        createEnemies();
+
         for (EnemyBullet enemyBullet : enemyBullets)
             gameRoot.getChildren().remove(enemyBullet);
         enemyBullets.clear();
@@ -302,15 +314,21 @@ public class Game extends Application {
         gameRoot.setLayoutX(0);
         level.setBackgroundLayoutX(0);
 
+        Boss boss = null;
+        for (Enemy enemy : enemies) {
+            if (enemy.getType() != EnemyType.BOSS) {
+                enemy.reset();
+                enemyPools.put(enemy);
+            } else
+                boss = (Boss) enemy;
+        }
+        enemies.clear();
+
         if (forBossLevel) {
-            for (Enemy enemy : enemies)
-                if (enemy.getType() != EnemyType.BOSS) {
-                    gameRoot.getChildren().remove(enemy);
-                    enemies.remove(enemy);
-                }
+            enemies.add(boss);
         } else {
-            gameRoot.getChildren().removeAll(enemies);
-            enemies.clear();
+            gameRoot.getChildren().remove(booker);
+            gameRoot.getChildren().remove(elizabeth);
         }
 
         for (EnemyBullet enemyBullet : enemyBullets)
@@ -321,13 +339,20 @@ public class Game extends Application {
             gameRoot.getChildren().remove(bullet);
         bullets.clear();
 
+        gameRoot.getChildren().remove(weapon);
+        gameRoot.getChildren().remove(energetic);
+
         keys.clear();
     }
 
     public static void clearDataForNewGame() {
         gameRoot.setLayoutX(0);
         level.setBackgroundLayoutX(0);
-        gameRoot.getChildren().removeAll(enemies);
+
+        for (Enemy enemy : enemies) {
+            enemy.reset();
+            enemyPools.put(enemy);
+        }
         enemies.clear();
 
         for (EnemyBullet enemyBullet : enemyBullets)
@@ -364,33 +389,35 @@ public class Game extends Application {
     }
 
     public static void createEnemies() {
-        if (levelNumber == Level.BOSS_LEVEL)
-            enemies.add(new Boss());
-        else {
-            try {
-                ObjectMapper mapper = new ObjectMapper();
-                Path enemiesPath = Paths.get("resources", "data", "enemies.dat");
-                Map<String, EnemyData[]> jsonEnemies = mapper.readValue(enemiesPath.toFile(), new TypeReference<>() {
-                });
-                EnemyData[] enemiesByLevel = new EnemyData[]{};
+        try {
+            Map<String, EnemyData[]> jsonEnemies = mapper.readValue(
+                    Paths.get("resources", "data", "enemies.dat").toFile(), new TypeReference<>() {});
+            EnemyData[] enemiesByLevel = new EnemyData[]{};
 
-                switch (levelNumber) {
-                    case Level.FIRST_LEVEL -> enemiesByLevel = jsonEnemies.get("firstLevel");
-                    case Level.SECOND_LEVEL -> enemiesByLevel = jsonEnemies.get("secondLevel");
-                    case Level.THIRD_LEVEL -> enemiesByLevel = jsonEnemies.get("thirdLevel");
-                }
-
-                for (EnemyData enemy : enemiesByLevel) {
-                    switch (enemy.getType()) {
-                        case "comstock" -> enemies.add(new Comstock(enemy.getX(), enemy.getY()));
-                        case "red_eye" -> enemies.add(new RedEye(enemy.getX(), enemy.getY()));
-                        case "camper" -> enemies.add(new Camper(enemy.getX(), enemy.getY()));
-                    }
-                }
-            } catch (Exception e) {
-                System.out.println(e.getLocalizedMessage());
+            switch (levelNumber) {
+                case Level.FIRST_LEVEL -> enemiesByLevel = jsonEnemies.get("firstLevel");
+                case Level.SECOND_LEVEL -> enemiesByLevel = jsonEnemies.get("secondLevel");
+                case Level.THIRD_LEVEL -> enemiesByLevel = jsonEnemies.get("thirdLevel");
+                case Level.BOSS_LEVEL -> enemiesByLevel = jsonEnemies.get("bossLevel");
             }
+
+            for (EnemyData enemy : enemiesByLevel) {
+                switch (enemy.getType()) {
+                    case "comstock" -> initEnemy(Comstock.class, enemy.getX(), enemy.getY());
+                    case "red_eye" -> initEnemy(RedEye.class, enemy.getX(), enemy.getY());
+                    case "camper" -> initEnemy(Camper.class, enemy.getX(), enemy.getY());
+                    case "boss" -> initEnemy(Boss.class, enemy.getX(), enemy.getY());
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e.getLocalizedMessage());
         }
+    }
+
+    private static void initEnemy(Class<? extends Enemy> enemyClassType, int x, int y) {
+        Enemy enemy = enemyPools.get(enemyClassType);
+        enemy.init(x, y);
+        enemies.add(enemy);
     }
 
     public static void nothing() {
@@ -399,27 +426,24 @@ public class Game extends Application {
     public static void setBossLevel() {
         booker.setTranslateX(100);
         booker.setTranslateY(500);
-        if (elizabeth != null)
-            elizabeth.setTranslateX(100);
-        gameRoot.getChildren().remove(weapon);
-        gameRoot.getChildren().remove(energetic);
+        elizabeth.setTranslateX(100);
         clearData(true);
 
         Tutorial.delete();
         levelNumber++;
         level.changeLevel();
 
-        ObjectMapper mapper = new ObjectMapper();
-        saveSaves(mapper);
-        saveOptions(mapper);
+        saveSaves();
+        saveOptions();
     }
 
     private static void update() {
         for (Enemy enemy : enemies) {
             enemy.update();
             if (enemy.isToDelete()) {
+                enemy.reset();
+                enemyPools.put(enemy);
                 enemies.remove(enemy);
-                gameRoot.getChildren().remove(enemy);
                 break;
             }
         }

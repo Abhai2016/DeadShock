@@ -627,7 +627,7 @@ public class Menu {
         }
         if (music.getMedia().getSource().contains("07.mp3")) {
             music.stop();
-            music = new MediaPlayer(new Media(tempMusic.resolve("08.mp3").toUri().toString()));
+            music = new MediaPlayer(new Media(tempMusic.resolve("01.mp3").toUri().toString()));
             music.setVolume(musicSlider.getValue() / 100);
             music.play();
             addMediaListener();

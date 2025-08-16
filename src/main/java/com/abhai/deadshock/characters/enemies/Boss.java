@@ -4,7 +4,6 @@ import com.abhai.deadshock.CutScenes;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.Animatable;
 import com.abhai.deadshock.energetics.EnemyHypnosis;
-import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.utils.SpriteAnimation;
@@ -25,10 +24,6 @@ public class Boss extends Enemy implements Animatable {
     private static final int JUMP_SPEED = 20;
     private static final int ANIMATION_SPEED = 1;
     private static final int COUNT_OF_SPRITES = 3;
-    private static final int BOSS_LEVEL_INIT_X = BLOCK_SIZE * 10;
-    private static final int BOSS_LEVEL_INIT_Y = BLOCK_SIZE * 12 - 5;
-    private static final int THIRD_LEVEL_INIT_Y = Block.BLOCK_SIZE * 11;
-    private static final int THIRD_LEVEL_INIT_X = Block.BLOCK_SIZE * 295;
 
     private boolean dead;
     private int stunInterval;
@@ -53,17 +48,41 @@ public class Boss extends Enemy implements Animatable {
         animation = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED),
                 COUNT_OF_SPRITES, COUNT_OF_SPRITES, 0, 0, WIDTH, HEIGHT);
 
-        if (Game.levelNumber == Level.BOSS_LEVEL) {
-            initHp();
-            setTranslateX(BOSS_LEVEL_INIT_X);
-            setTranslateY(BOSS_LEVEL_INIT_Y);
-        } else {
-            setTranslateX(THIRD_LEVEL_INIT_X);
-            setTranslateY(THIRD_LEVEL_INIT_Y);
-        }
-
         setScaleX(-1);
     }
+
+    @Override
+    public void reset() {
+        super.reset();
+
+        HP = 5000;
+        dead = false;
+        stunInterval = 0;
+        velocityInterval = 0;
+        imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
+
+        setScaleX(-1);
+        Game.appRoot.getChildren().removeAll(rectHP, name);
+    }
+
+    @Override
+    public void init(int x, int y) {
+        super.init(x, y);
+
+        if (Game.levelNumber == Level.BOSS_LEVEL)
+            initHp();
+    }
+
+    @Override
+    public void stopAnimation() {
+        animation.stop();
+    }
+
+    @Override
+    protected String getImageName() {
+        return "bigDaddy.png";
+    }
+
 
     private void die() {
         dead = true;
@@ -78,19 +97,6 @@ public class Boss extends Enemy implements Animatable {
             Game.cutScene = new CutScenes();
         });
         Sounds.bossDeath.play();
-    }
-
-    public void reset() {
-        HP = 5000;
-        dead = false;
-        stunInterval = 0;
-        velocityInterval = 0;
-        type = EnemyType.BOSS;
-        imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
-
-        setScaleX(-1);
-        setTranslateX(BOSS_LEVEL_INIT_X);
-        setTranslateY(BOSS_LEVEL_INIT_Y);
     }
 
     private void stun() {
@@ -142,7 +148,6 @@ public class Boss extends Enemy implements Animatable {
             stopAnimation();
 
         moveX(velocity.getX());
-        rectHP.setWidth((double) HP / 10);
 
         if (!Game.booker.isHypnotized() && Game.booker.getTranslateY() < getTranslateY())
             stunInterval++;
@@ -219,16 +224,6 @@ public class Boss extends Enemy implements Animatable {
             changeLevel();
     }
 
-    @Override
-    public void stopAnimation() {
-        animation.stop();
-    }
-
-    @Override
-    protected String getImageName() {
-        return "bigDaddy.png";
-    }
-
     public void update() {
         if (HP < 1) {
             if (!dead)
@@ -239,6 +234,7 @@ public class Boss extends Enemy implements Animatable {
         if (Game.levelNumber == Level.THIRD_LEVEL && Game.booker.getTranslateX() > BLOCK_SIZE * 285)
             checkOnLevelChange();
 
+        rectHP.setWidth((double) HP / 10);
         if (!hypnotized && Game.levelNumber == Level.BOSS_LEVEL)
             behave();
         else

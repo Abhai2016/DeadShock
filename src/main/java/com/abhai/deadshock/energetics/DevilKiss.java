@@ -1,7 +1,7 @@
 package com.abhai.deadshock.energetics;
 
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.utils.ObjectPool;
+import com.abhai.deadshock.utils.pools.ObjectPool;
 import com.abhai.deadshock.utils.Sounds;
 
 import java.util.ArrayList;

@@ -1,10 +1,8 @@
 package com.abhai.deadshock;
 
 import com.abhai.deadshock.characters.Elizabeth;
-import com.abhai.deadshock.characters.enemies.Boss;
 import com.abhai.deadshock.hud.Tutorial;
 import com.abhai.deadshock.levels.Level;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.animation.FadeTransition;
 import javafx.scene.input.KeyCode;
 import javafx.scene.media.Media;
@@ -105,55 +103,13 @@ public class CutScenes {
     }
 
     private void endCutScene1() {
-        Tutorial.delete();
-        Game.levelNumber++;
-        Game.level.changeLevel();
-        Game.weapon.changeLevel(Game.levelNumber);
-
-        video.stop();
-        Game.appRoot.getChildren().remove(videoView);
-        videoView = null;
-
-        Game.createEnemies();
-
-        Game.timer.start();
-        Game.menu.music.play();
-        Game.menu.addListener();
         Game.elizabeth = new Elizabeth();
         Game.booker.setCanPlayVoice(true);
-        Tutorial.init();
-        Game.vendingMachine.changeLevel();
-        Game.energetic.changeLevel();
-        Game.stage.setWidth(1280);
-
-        ObjectMapper mapper = new ObjectMapper();
-        Game.saveSaves(mapper);
-        Game.saveOptions(mapper);
+        initLevel();
     }
 
     private void endCutScene2() {
-        video.stop();
-        Game.appRoot.getChildren().remove(videoView);
-        videoView = null;
-
-        Tutorial.delete();
-        Game.levelNumber++;
-        Game.level.changeLevel();
-        Game.weapon.changeLevel(Game.levelNumber);
-        Game.createEnemies();
-
-        Game.timer.start();
-        Game.menu.music.play();
-        Game.menu.addListener();
-        Tutorial.init();
-        Game.vendingMachine.changeLevel();
-        Game.energetic.changeLevel();
-        Game.stage.setWidth(1280);
-        Game.enemies.add(new Boss());
-
-        ObjectMapper mapper = new ObjectMapper();
-        Game.saveSaves(mapper);
-        Game.saveOptions(mapper);
+        initLevel();
     }
 
     private void endCutScene3() {
@@ -162,5 +118,31 @@ public class CutScenes {
         videoView = null;
         Game.stage.setWidth(1280);
         System.exit(0);
+    }
+
+    private void initLevel() {
+        video.stop();
+        Game.appRoot.getChildren().remove(videoView);
+        videoView = null;
+
+        Tutorial.delete();
+        Game.levelNumber++;
+        Game.level.changeLevel();
+        Game.weapon.changeLevel();
+        Game.createEnemies();
+
+        Game.timer.start();
+        Game.menu.music.play();
+        Game.menu.addListener();
+        Tutorial.init();
+        Game.vendingMachine.changeLevel();
+        Game.energetic.changeLevel();
+        Game.stage.setWidth(1280);
+        if (!Game.gameRoot.getChildren().contains(Game.elizabeth))
+            Game.gameRoot.getChildren().add(Game.elizabeth);
+        Game.gameRoot.getChildren().add(Game.booker);
+
+        Game.saveSaves();
+        Game.saveOptions();
     }
 }
