@@ -1,5 +1,6 @@
-package com.abhai.deadshock;
+package com.abhai.deadshock.supplies;
 
+import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.Character;
 import com.abhai.deadshock.characters.enemies.EnemyType;
 import com.abhai.deadshock.weapons.Weapon;
@@ -21,7 +22,7 @@ public class Supply extends Pane {
 
     private RotateTransition rt = new RotateTransition(Duration.seconds(1), ammo);
 
-    private String supply;
+    private SupplyType supply;
     private EnemyType enemyType;
 
     private boolean delete = false;
@@ -29,11 +30,11 @@ public class Supply extends Pane {
     public Supply(int value, double x, double y) {
         switch (value) {
             case 0:
-                supply = "medicine";
+                supply = SupplyType.MEDICINE;
                 getChildren().add(medicine);
                 break;
             case 1:
-                supply = "ammo";
+                supply = SupplyType.AMMO;
                 getChildren().add(ammo);
                 break;
         }
@@ -44,7 +45,7 @@ public class Supply extends Pane {
     public Supply(double x, double y, EnemyType enemyType) {
         this.enemyType = enemyType;
 
-        supply = "ammo";
+        supply = SupplyType.AMMO;
         getChildren().add(ammo);
 
         setTranslateX(x);
@@ -55,12 +56,12 @@ public class Supply extends Pane {
         rt.play();
     }
 
-    public String getSupply() {
+    public SupplyType getSupply() {
         return supply;
     }
 
     public ImageView getImageSupply() {
-        if (supply.equals("medicine"))
+        if (supply.equals(SupplyType.MEDICINE))
             return medicine;
         else
             return ammo;
@@ -74,7 +75,7 @@ public class Supply extends Pane {
         if (getBoundsInParent().intersects(Game.booker.getBoundsInParent()))
             switch (enemyType) {
                 case EnemyType.COMSTOCK -> {
-                    if (Game.weapon.getName().equals("pistol"))
+                    if (Game.weapon.getType().equals("pistol"))
                         Game.weapon.setBullets(Game.weapon.getBullets() + Game.booker.getBulletsForKillingEnemy());
                     else
                         Weapon.WeaponData.pistolBullets += Game.booker.getBulletsForKillingEnemy();
@@ -82,7 +83,7 @@ public class Supply extends Pane {
                     delete = true;
                 }
                 case EnemyType.RED_EYE -> {
-                    if (Game.weapon.getName().equals("machine_gun"))
+                    if (Game.weapon.getType().equals("machine_gun"))
                         Game.weapon.setBullets(Game.weapon.getBullets() + Game.booker.getBulletsForKillingEnemy());
                     else
                         Weapon.WeaponData.machineGunBullets += Game.booker.getBulletsForKillingEnemy();

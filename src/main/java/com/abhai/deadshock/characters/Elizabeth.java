@@ -93,10 +93,10 @@ public class Elizabeth extends Character {
         if (emptySupplyInterval > 900) {
             if (Game.booker.getHP() < 100 || Game.weapon.getBullets() == 0) {
                 switch ((int) (Math.random() * 4)) {
-                    case 0 -> Sounds.empty.play(Game.menu.voiceSlider.getValue() / 100);
-                    case 1 -> Sounds.foundNothing.play(Game.menu.voiceSlider.getValue() / 100);
-                    case 2 -> Sounds.haveNothing.play(Game.menu.voiceSlider.getValue() / 100);
-                    case 3 -> Sounds.tryToFind.play(Game.menu.voiceSlider.getValue() / 100);
+                    case 0 -> Sounds.empty.play(Game.menu.getVoiceSlider().getValue() / 100);
+                    case 1 -> Sounds.foundNothing.play(Game.menu.getVoiceSlider().getValue() / 100);
+                    case 2 -> Sounds.haveNothing.play(Game.menu.getVoiceSlider().getValue() / 100);
+                    case 3 -> Sounds.tryToFind.play(Game.menu.getVoiceSlider().getValue() / 100);
                 }
             }
             emptySupplyInterval = 0;
@@ -107,12 +107,12 @@ public class Elizabeth extends Character {
         if (Game.levelNumber == Level.SECOND_LEVEL)
             if (startLevel && getTranslateX() > 100) {
                 startLevel = false;
-                Sounds.freedom.play(Game.menu.voiceSlider.getValue() / 100);
+                Sounds.freedom.play(Game.menu.getVoiceSlider().getValue() / 100);
             } else if (getTranslateX() > Block.BLOCK_SIZE * 150 && playVoiceWhereYouFrom) {
                 canMove = false;
                 playVoiceWhereYouFrom = false;
                 Sounds.whereAreYouFrom.setOnEndOfMedia(() -> canMove = true);
-                Sounds.whereAreYouFrom.setVolume(Game.menu.voiceSlider.getValue() / 100);
+                Sounds.whereAreYouFrom.setVolume(Game.menu.getVoiceSlider().getValue() / 100);
                 Sounds.whereAreYouFrom.play();
             }
     }
@@ -165,9 +165,9 @@ public class Elizabeth extends Character {
 
     private void playSupplyVoice() {
         switch ((int) (Math.random() * 3)) {
-            case 0 -> Sounds.bookerCatch.play(Game.menu.voiceSlider.getValue() / 100);
-            case 1 -> Sounds.bookerCatch2.play(Game.menu.voiceSlider.getValue() / 100);
-            case 2 -> Sounds.bookerCatch3.play(Game.menu.voiceSlider.getValue() / 100);
+            case 0 -> Sounds.bookerCatch.play(Game.menu.getVoiceSlider().getValue() / 100);
+            case 1 -> Sounds.bookerCatch2.play(Game.menu.getVoiceSlider().getValue() / 100);
+            case 2 -> Sounds.bookerCatch3.play(Game.menu.getVoiceSlider().getValue() / 100);
         }
         supplyInterval = 0;
     }

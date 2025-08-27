@@ -7,6 +7,7 @@ import com.abhai.deadshock.energetics.EnemyHypnosis;
 import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.utils.SpriteAnimation;
+import com.abhai.deadshock.utils.Texts;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -42,7 +43,7 @@ public class Boss extends Enemy implements Animatable {
         type = EnemyType.BOSS;
 
         hypnosis = new EnemyHypnosis();
-        name = new Text("Большой папочка");
+        name = new Text(Texts.BOSS_NAME);
         rectHP = new Rectangle(500, 5, Color.RED);
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
         animation = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED),
@@ -91,7 +92,7 @@ public class Boss extends Enemy implements Animatable {
         getTransforms().add(new Rotate(-90));
         setTranslateY(getTranslateY() + HEIGHT);
 
-        Sounds.bossDeath.setVolume(Game.menu.fxSlider.getValue() / 100);
+        Sounds.bossDeath.setVolume(Game.menu.getFxSlider().getValue() / 100);
         Sounds.bossDeath.setOnEndOfMedia(() -> {
             toDelete = true;
             Game.cutScene = new CutScenes();
@@ -174,9 +175,9 @@ public class Boss extends Enemy implements Animatable {
                 velocity = velocity.add(JUMP_SPEED, 0);
 
             switch ((int) (Math.random() * 3)) {
-                case 0 -> Sounds.bossHit.play(Game.menu.voiceSlider.getValue() / 100);
-                case 1 -> Sounds.bossHit2.play(Game.menu.fxSlider.getValue() / 100);
-                case 2 -> Sounds.bossHit3.play(Game.menu.fxSlider.getValue() / 100);
+                case 0 -> Sounds.bossHit.play(Game.menu.getVoiceSlider().getValue() / 100);
+                case 1 -> Sounds.bossHit2.play(Game.menu.getFxSlider().getValue() / 100);
+                case 2 -> Sounds.bossHit3.play(Game.menu.getFxSlider().getValue() / 100);
             }
             velocityInterval = 0;
         }
@@ -203,11 +204,11 @@ public class Boss extends Enemy implements Animatable {
     private void checkOnLevelChange() {
         stopAnimation();
         if (stunInterval == 0) {
-            Sounds.ohBooker.setVolume(Game.menu.voiceSlider.getValue() / 100);
+            Sounds.ohBooker.setVolume(Game.menu.getVoiceSlider().getValue() / 100);
             Sounds.ohBooker.play();
 
             Sounds.ohBooker.setOnEndOfMedia(() -> {
-                Sounds.fuck.play(Game.menu.voiceSlider.getValue() / 100);
+                Sounds.fuck.play(Game.menu.getVoiceSlider().getValue() / 100);
             });
         }
 
@@ -216,7 +217,7 @@ public class Boss extends Enemy implements Animatable {
             imageView.setViewport(new Rectangle2D(WIDTH * 2, 0, WIDTH, HEIGHT));
 
         if (stunInterval > 75) {
-            Sounds.bossTromp.play(Game.menu.fxSlider.getValue() / 100);
+            Sounds.bossTromp.play(Game.menu.getFxSlider().getValue() / 100);
             imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
         }
 

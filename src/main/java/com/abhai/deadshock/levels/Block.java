@@ -55,8 +55,4 @@ public class Block extends Pane {
 
         Game.gameRoot.getChildren().add(this);
     }
-
-    public void deleteFromScene() {
-        Game.gameRoot.getChildren().remove(this);
-    }
 }

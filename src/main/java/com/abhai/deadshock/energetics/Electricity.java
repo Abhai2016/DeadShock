@@ -47,7 +47,7 @@ class Electricity extends Pane {
 
             Game.gameRoot.getChildren().add(this);
             setTranslateY(Game.booker.getTranslateY() - 10);
-            Sounds.electricity.play(Game.menu.fxSlider.getValue() / 100);
+            Sounds.electricity.play(Game.menu.getFxSlider().getValue() / 100);
         }
     }
 
@@ -75,7 +75,7 @@ class Electricity extends Pane {
                     enemy.setHP(enemy.getHP() - Game.weapon.getDamage() / 2);
                 else {
                     enemy.setHP(0);
-                    Sounds.electricityDeath.play(Game.menu.fxSlider.getValue() / 100);
+                    Sounds.electricityDeath.play(Game.menu.getFxSlider().getValue() / 100);
                     return;
                 }
             }

@@ -1,8 +1,8 @@
 package com.abhai.deadshock.energetics;
 
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.utils.pools.ObjectPool;
 import com.abhai.deadshock.utils.Sounds;
+import com.abhai.deadshock.utils.pools.ObjectPool;
 
 import java.util.ArrayList;
 
@@ -16,7 +16,7 @@ public class DevilKiss {
     }
 
     public void shoot() {
-        Sounds.devilKissShot.play(Game.menu.fxSlider.getValue() / 100);
+        Sounds.devilKissShot.play(Game.menu.getFxSlider().getValue() / 100);
         DevilKissShot devilKissShot = devilKissShotObjectPool.get();
         devilKissShot.init(Game.booker.getTranslateX(), Game.booker.getTranslateY() + 5);
         devilKissShots.add(devilKissShot);
@@ -26,6 +26,7 @@ public class DevilKiss {
         if (!devilKissShots.isEmpty()) {
             for (DevilKissShot devilKissShot : devilKissShots)
                 devilKissShotObjectPool.put(devilKissShot);
+            Game.gameRoot.getChildren().removeAll(devilKissShots);
             devilKissShots.clear();
         }
     }

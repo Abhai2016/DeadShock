@@ -1,5 +1,6 @@
 package com.abhai.deadshock.weapons;
 
+import com.abhai.deadshock.DifficultyLevel;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.utils.Sounds;
@@ -18,7 +19,7 @@ import java.nio.file.Paths;
 import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
 
 public class Weapon extends Pane {
-    private String name = "";
+    private WeaponType type = WeaponType.NO_GUN;
 
     public ImageView explosion;
     public SpriteAnimation explosionAnimation;
@@ -54,8 +55,8 @@ public class Weapon extends Pane {
     public Weapon(boolean value) {
         canChoosePistol = value;
         if (canChoosePistol) {
-            name = "pistol";
-            Game.booker.changeWeaponAnimation(name);
+            type = WeaponType.PISTOL;
+            Game.booker.changeWeaponAnimation(type);
         }
         gun.setViewport(new Rectangle2D(400, 80, 56, 18));
         setTranslateX(BLOCK_SIZE * 26);
@@ -69,10 +70,10 @@ public class Weapon extends Pane {
         canChoosePistol = pistol;
         canChooseMachineGun = machineGun;
         if (canChooseMachineGun)
-            name = "machine_gun";
+            type = WeaponType.MACHINE_GUN;
         else if (canChoosePistol)
-            name = "pistol";
-        Game.booker.changeWeaponAnimation(name);
+            type = WeaponType.PISTOL;
+        Game.booker.changeWeaponAnimation(type);
         gun = new ImageView(new Image(rpgImagePath.toUri().toString()));
         setTranslateX(BLOCK_SIZE * 24);
         setTranslateY(BLOCK_SIZE * 12 - 20);
@@ -92,12 +93,12 @@ public class Weapon extends Pane {
         canChooseMachineGun = machineGun;
         canChooseRPG = rpg;
         if (canChooseRPG)
-            name = "rpg";
+            type = WeaponType.RPG;
         else if (canChooseMachineGun)
-            name = "machine_gun";
+            type = WeaponType.MACHINE_GUN;
         else if (canChoosePistol)
-            name = "pistol";
-        Game.booker.changeWeaponAnimation(name);
+            type = WeaponType.PISTOL;
+        Game.booker.changeWeaponAnimation(type);
 
         explosion = new ImageView(new Image(explosionImagePath.toUri().toString()));
         explosion.setFitWidth(128);
@@ -106,8 +107,8 @@ public class Weapon extends Pane {
         explosionAnimation.setCycleCount(1);
     }
 
-    public String getName() {
-        return name;
+    public WeaponType getType() {
+        return type;
     }
 
     public int getWeaponClip() {
@@ -181,17 +182,17 @@ public class Weapon extends Pane {
         if (!nowReloading) {
             switch (Game.levelNumber) {
                 case Level.FIRST_LEVEL:
-                    Sounds.willWork.play(Game.menu.voiceSlider.getValue() / 100);
-                    name = "pistol";
-                    Game.booker.changeWeaponAnimation(name);
+                    Sounds.willWork.play(Game.menu.getVoiceSlider().getValue() / 100);
+                    type = WeaponType.PISTOL;
+                    Game.booker.changeWeaponAnimation(type);
                     canChoosePistol = true;
                     WeaponData.pistolClip = clip = 20;
                     WeaponData.pistolBullets = bullets = 80;
                     break;
                 case Level.SECOND_LEVEL:
-                    Sounds.great.play(Game.menu.voiceSlider.getValue() / 100);
-                    name = "machine_gun";
-                    Game.booker.changeWeaponAnimation(name);
+                    Sounds.great.play(Game.menu.getVoiceSlider().getValue() / 100);
+                    type = WeaponType.MACHINE_GUN;
+                    Game.booker.changeWeaponAnimation(type);
                     canChooseMachineGun = true;
                     WeaponData.pistolClip = clip;
                     WeaponData.pistolBullets = bullets;
@@ -205,16 +206,16 @@ public class Weapon extends Pane {
                     explosionAnimation = new SpriteAnimation(explosion, Duration.seconds(1), 16, 4, 0, 0, 128, 128);
                     explosionAnimation.setCycleCount(1);
 
-                    Sounds.great.play(Game.menu.voiceSlider.getValue() / 100);
-                    if (name.equals("pistol")) {
+                    Sounds.great.play(Game.menu.getVoiceSlider().getValue() / 100);
+                    if (type.equals(WeaponType.PISTOL)) {
                         WeaponData.pistolClip = clip;
                         WeaponData.pistolBullets = bullets;
                     } else {
                         WeaponData.machineGunClip = clip;
                         WeaponData.machineGunBullets = bullets;
                     }
-                    name = "rpg";
-                    Game.booker.changeWeaponAnimation(name);
+                    type = WeaponType.RPG;
+                    Game.booker.changeWeaponAnimation(type);
                     canChooseRPG = true;
                     WeaponData.rpgClip = clip = 1;
                     WeaponData.rpgBullets = bullets = 30;
@@ -227,171 +228,165 @@ public class Weapon extends Pane {
         }
     }
 
-    public void setDamage() {
-        switch (Game.difficultyLevelText) {
-            case "marik":
+    public void setDifficultyLevel() {
+        switch (Game.difficultyLevel) {
+            case DifficultyLevel.MARIK -> {
                 damage = 30;
                 rpgDamage = 300;
-                break;
-            case "easy":
+            }
+            case DifficultyLevel.EASY -> {
                 damage = 20;
                 rpgDamage = 250;
-                break;
-            case "normal":
+            }
+            case DifficultyLevel.MEDIUM -> {
                 damage = 15;
                 rpgDamage = 200;
-                break;
-            case "high":
+            }
+            case DifficultyLevel.HARD -> {
                 damage = 10;
                 rpgDamage = 150;
-                break;
-            case "hardcore":
+            }
+            case DifficultyLevel.HARDCORE -> {
                 damage = 8;
                 rpgDamage = 150;
-                break;
+            }
         }
     }
 
     public void reload() {
         if (canReload && !nowReloading && bullets > 0) {
             canReload = false;
-            switch (name) {
-                case "pistol":
+            switch (type) {
+                case WeaponType.PISTOL -> {
                     if (clip < 20) {
-                        Sounds.pistolReload.setVolume(Game.menu.fxSlider.getValue() / 100);
+                        Sounds.pistolReload.setVolume(Game.menu.getFxSlider().getValue() / 100);
                         Sounds.pistolReload.play();
-                        fillClip(name, 20);
+                        fillClip(type, 20);
                     }
-                    break;
-                case "machine_gun":
+                }
+                case WeaponType.MACHINE_GUN -> {
                     if (clip < 30) {
-                        Sounds.machineGunReload.setVolume(Game.menu.fxSlider.getValue() / 100);
+                        Sounds.machineGunReload.setVolume(Game.menu.getFxSlider().getValue() / 100);
                         Sounds.machineGunReload.play();
-                        fillClip(name, 30);
+                        fillClip(type, 30);
                     }
-                    break;
-                case "rpg":
+                }
+                case WeaponType.RPG -> {
                     if (clip < 1)
-                        fillClip(name, 1);
-                    break;
+                        fillClip(type, 1);
+                }
             }
         }
     }
 
-    private void fillClip(String name, int value) {
+    private void fillClip(WeaponType type, int value) {
         nowReloading = true;
         canReload = false;
-        switch (name) {
-            case "pistol":
-                Sounds.pistolReload.setOnEndOfMedia(() -> {
-                    while (clip < value)
-                        if (bullets > 0) {
-                            clip++;
-                            bullets--;
-                        } else
-                            break;
-                    nowReloading = false;
-                });
-                break;
-            case "machine_gun":
-                Sounds.machineGunReload.setOnEndOfMedia(() -> {
-                    while (clip < value)
-                        if (bullets > 0) {
-                            clip++;
-                            bullets--;
-                        } else
-                            break;
-                    nowReloading = false;
-                });
-                break;
-            case "rpg":
-                Sounds.rpgShotWithReload.setOnEndOfMedia(() -> {
-                    while (clip < value)
-                        if (bullets > 0) {
-                            clip++;
-                            bullets--;
-                        } else
-                            break;
-                    nowReloading = false;
-                });
-                break;
+        switch (type) {
+            case WeaponType.PISTOL -> Sounds.pistolReload.setOnEndOfMedia(() -> {
+                while (clip < value)
+                    if (bullets > 0) {
+                        clip++;
+                        bullets--;
+                    } else
+                        break;
+                nowReloading = false;
+            });
+            case WeaponType.MACHINE_GUN -> Sounds.machineGunReload.setOnEndOfMedia(() -> {
+                while (clip < value)
+                    if (bullets > 0) {
+                        clip++;
+                        bullets--;
+                    } else
+                        break;
+                nowReloading = false;
+            });
+            case WeaponType.RPG -> Sounds.rpgShotWithReload.setOnEndOfMedia(() -> {
+                while (clip < value)
+                    if (bullets > 0) {
+                        clip++;
+                        bullets--;
+                    } else
+                        break;
+                nowReloading = false;
+            });
         }
     }
 
     public void shoot() {
-        switch (name) {
-            case "machine_gun":
-                if (shootInterval > 5) {
-                    Sounds.machineGunShot.play(Game.menu.fxSlider.getValue() / 100);
-                    Game.bullets.add(new Bullet(name));
-                    clip--;
-                    shootInterval = 0;
-                }
-                break;
-            case "pistol":
+        switch (type) {
+            case WeaponType.PISTOL -> {
                 if (singleShot) {
-                    Sounds.pistolShot.play(Game.menu.fxSlider.getValue() / 100);
-                    Game.bullets.add(new Bullet(name));
+                    Sounds.pistolShot.play(Game.menu.getFxSlider().getValue() / 100);
+                    Game.bullets.add(new Bullet(type));
                     clip--;
                     singleShot = false;
                 }
-                break;
-            case "rpg":
-                Sounds.rpgShotWithReload.setVolume(Game.menu.fxSlider.getValue() / 100);
+            }
+            case WeaponType.MACHINE_GUN -> {
+                if (shootInterval > 5) {
+                    Sounds.machineGunShot.play(Game.menu.getFxSlider().getValue() / 100);
+                    Game.bullets.add(new Bullet(type));
+                    clip--;
+                    shootInterval = 0;
+                }
+            }
+            case WeaponType.RPG -> {
+                Sounds.rpgShotWithReload.setVolume(Game.menu.getFxSlider().getValue() / 100);
                 Sounds.rpgShotWithReload.play();
                 Game.bullets.add(new RpgBullet());
                 clip--;
                 reload();
-                break;
+            }
         }
     }
 
-    public void changeWeapon(String str) {
-        if (!name.equals("")) {
-            switch (str) {
-                case "pistol":
+    public void changeWeapon(WeaponType type) {
+        if (!type.equals(WeaponType.NO_GUN)) {
+            switch (type) {
+                case WeaponType.PISTOL -> {
                     if (canChoosePistol) {
                         partChangeWeapon();
-                        name = "pistol";
-                        clip = (int) WeaponData.pistolClip;
-                        bullets = (int) WeaponData.pistolBullets;
+                        this.type = WeaponType.PISTOL;
+                        clip = WeaponData.pistolClip;
+                        bullets = WeaponData.pistolBullets;
                     }
-                    break;
-                case "machine_gun":
+                }
+                case WeaponType.MACHINE_GUN -> {
                     if (canChooseMachineGun) {
                         partChangeWeapon();
-                        name = "machine_gun";
-                        clip = (int) WeaponData.machineGunClip;
-                        bullets = (int) WeaponData.machineGunBullets;
+                        this.type = WeaponType.MACHINE_GUN;
+                        clip = WeaponData.machineGunClip;
+                        bullets = WeaponData.machineGunBullets;
                     }
-                    break;
-                case "rpg":
+                }
+                case WeaponType.RPG -> {
                     if (canChooseRPG) {
                         partChangeWeapon();
-                        name = "rpg";
+                        this.type = WeaponType.RPG;
                         clip = WeaponData.rpgClip;
                         bullets = WeaponData.rpgBullets;
                     }
-                    break;
+                }
             }
-            Game.booker.changeWeaponAnimation(name);
+            Game.booker.changeWeaponAnimation(type);
         }
     }
 
     private void partChangeWeapon() {
-        switch (name) {
-            case "pistol":
+        switch (type) {
+            case WeaponType.PISTOL -> {
                 WeaponData.pistolClip = clip;
                 WeaponData.pistolBullets = bullets;
-                break;
-            case "machine_gun":
+            }
+            case WeaponType.MACHINE_GUN -> {
                 WeaponData.machineGunClip = clip;
                 WeaponData.machineGunBullets = bullets;
-                break;
-            case "rpg":
+            }
+            case WeaponType.RPG -> {
                 WeaponData.rpgClip = clip;
                 WeaponData.rpgBullets = bullets;
-                break;
+            }
         }
     }
 

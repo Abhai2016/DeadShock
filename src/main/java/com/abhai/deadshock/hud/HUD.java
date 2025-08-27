@@ -1,5 +1,6 @@
 package com.abhai.deadshock.hud;
 
+import com.abhai.deadshock.DifficultyLevel;
 import com.abhai.deadshock.Game;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -39,25 +40,33 @@ public class HUD extends Pane {
     private Rectangle HP;
     private Rectangle salt;
 
+    private Image moneyForMarikImage;
+    private Image moneyForOtherDifficultyLevelsImage;
+
     public HUD() {
         initializeMoneyPane();
         initializeBulletsPane();
         initializeHpAndSaltPane();
         initializeEnergeticsPane();
 
-        setVisible(false);
         Game.appRoot.getChildren().add(this);
         getChildren().addAll(HP, salt, hpAndSalt, devilKiss, electricity, hypnosis, bulletPane, money, moneyText);
     }
 
-    public void setMarikLevel() {
-        getChildren().remove(moneyText);
-        money.setImage(new Image(Paths.get("resources", "images", "hud", "moneyForMarik.png").toUri().toString()));
+    public void setDifficultyLevel() {
+        if (Game.difficultyLevel == DifficultyLevel.MARIK) {
+            getChildren().remove(moneyText);
+            money.setImage(moneyForMarikImage);
+        } else if (!getChildren().contains(moneyText)){
+            getChildren().add(moneyText);
+            money.setImage(moneyForOtherDifficultyLevelsImage);
+        }
     }
 
     private void initializeMoneyPane() {
-        money = new ImageView(new Image(Paths.get("resources",
-                "images", "hud", "money.png").toUri().toString()));
+        moneyForMarikImage = new Image(Paths.get("resources", "images", "hud", "moneyForMarik.png").toUri().toString());
+        moneyForOtherDifficultyLevelsImage = new Image(Paths.get("resources", "images", "hud", "money.png").toUri().toString());
+        money = new ImageView(moneyForOtherDifficultyLevelsImage);
         money.setTranslateY(Game.scene.getHeight() - money.getImage().getHeight());
 
         moneyText = new Text();

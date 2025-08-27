@@ -39,7 +39,6 @@ public class Enemy extends Pane {
     }
 
     public void update() {
-
     }
 
     public void reset() {
@@ -52,9 +51,9 @@ public class Enemy extends Pane {
 
     public void playHitVoice() {
         switch ((int) (Math.random() * 3)) {
-            case 0 -> Sounds.audioClipHit.play(Game.menu.voiceSlider.getValue() / 100);
-            case 1 -> Sounds.audioClipHit2.play(Game.menu.voiceSlider.getValue() / 100);
-            case 2 -> Sounds.audioClipHit3.play(Game.menu.voiceSlider.getValue() / 100);
+            case 0 -> Sounds.audioClipHit.play(Game.menu.getVoiceSlider().getValue() / 100);
+            case 1 -> Sounds.audioClipHit2.play(Game.menu.getVoiceSlider().getValue() / 100);
+            case 2 -> Sounds.audioClipHit3.play(Game.menu.getVoiceSlider().getValue() / 100);
         }
     }
 
@@ -75,8 +74,8 @@ public class Enemy extends Pane {
 
     protected void playDeathVoice() {
         switch ((int) (Math.random() * 2)) {
-            case 0 -> Sounds.death.play(Game.menu.fxSlider.getValue() / 100);
-            case 1 -> Sounds.death2.play(Game.menu.fxSlider.getValue() / 100);
+            case 0 -> Sounds.death.play(Game.menu.getFxSlider().getValue() / 100);
+            case 1 -> Sounds.death2.play(Game.menu.getFxSlider().getValue() / 100);
         }
     }
 

@@ -8,6 +8,7 @@ import com.abhai.deadshock.hud.HUD;
 import com.abhai.deadshock.hud.Tutorial;
 import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.menus.Menu;
+import com.abhai.deadshock.supplies.Supply;
 import com.abhai.deadshock.utils.Controller;
 import com.abhai.deadshock.utils.Options;
 import com.abhai.deadshock.utils.Saves;
@@ -43,7 +44,7 @@ public class Game extends Application {
     public static ArrayList<Supply> supplies = new ArrayList<>();
     public static ArrayList<Bullet> bullets = new ArrayList<>();
     public static ArrayList<EnemyBullet> enemyBullets = new ArrayList<>();
-    public static ObjectPoolManager<Enemy> enemyPools = new ObjectPoolManager<>();
+    private final static ObjectPoolManager<Enemy> enemyPools = new ObjectPoolManager<>();
     public static ArrayList<Enemy> enemies = new ArrayList<>();
     public static HashMap<KeyCode, Boolean> keys = new HashMap<>();
     public static ObjectMapper mapper = new ObjectMapper();
@@ -65,9 +66,10 @@ public class Game extends Application {
     public static Energetic energetic;
 
     public static int levelNumber;
-    public static String difficultyLevelText = "normal";
+    public static DifficultyLevel difficultyLevel = DifficultyLevel.MEDIUM;
 
     public static Level level;
+    public static boolean active;
 
     //TODO connect frames to time
     public static AnimationTimer timer = new AnimationTimer() {
@@ -78,7 +80,11 @@ public class Game extends Application {
     };
 
     public static void initContent() {
+        timer.start();
+        active = false;
         appRoot.getChildren().add(gameRoot);
+        scene.setOnKeyPressed(event -> keys.put(event.getCode(), true));
+        scene.setOnKeyReleased(event -> keys.put(event.getCode(), false));
 
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -128,16 +134,17 @@ public class Game extends Application {
         level.changeLevel();
         vendingMachine = new VendingMachine();
         weapon = new Weapon();
-        weapon.setDamage();
+        weapon.setDifficultyLevel();
         createEnemies();
         Tutorial.init();
+
         if (levelNumber != Level.BOSS_LEVEL)
             vendingMachine.createButtons();
     }
 
     static void loadSaves(ObjectMapper mapper, Path savesPath) throws IOException {
         Saves saves = mapper.readValue(savesPath.toFile(), Saves.class);
-        difficultyLevelText = saves.getDifficultyLevel();
+        difficultyLevel = saves.getDifficultyLevel();
         levelNumber = saves.getLevelNumber();
 
         level = new Level();
@@ -214,9 +221,9 @@ public class Game extends Application {
 
             if (optionsPath.toFile().exists()) {
                 Options options = mapper.readValue(optionsPath.toFile(), Options.class);
-                menu.musicSlider.setValue(options.getMusicVolume());
-                menu.fxSlider.setValue(options.getFxVolume());
-                menu.voiceSlider.setValue(options.getVoiceVolume());
+                menu.getMusicSlider().setValue(options.getMusicVolume());
+                menu.getFxSlider().setValue(options.getFxVolume());
+                menu.getVoiceSlider().setValue(options.getVoiceVolume());
 
                 String track = options.getTrack();
                 menu.checkMusicForContinueGame(track);
@@ -237,7 +244,7 @@ public class Game extends Application {
             }
 
             Saves saves = new Saves();
-            saves.setDifficultyLevel(difficultyLevelText);
+            saves.setDifficultyLevel(difficultyLevel);
             saves.setLevelNumber(levelNumber);
             saves.setMoney(booker.getMoney());
             saves.setSalt(booker.getSalt());
@@ -273,10 +280,10 @@ public class Game extends Application {
             }
 
             Options options = new Options();
-            options.setFxVolume(menu.fxSlider.getValue());
-            options.setMusicVolume(menu.musicSlider.getValue());
-            options.setVoiceVolume(menu.voiceSlider.getValue());
-            options.setTrack(menu.music.getMedia().getSource());
+            options.setFxVolume(menu.getFxSlider().getValue());
+            options.setMusicVolume(menu.getMusicSlider().getValue());
+            options.setVoiceVolume(menu.getVoiceSlider().getValue());
+            options.setTrack(menu.getMusic().getMedia().getSource());
 
             fileWriter.write(mapper.writeValueAsString(options));
         } catch (Exception e) {
@@ -377,9 +384,6 @@ public class Game extends Application {
 
         Tutorial.delete();
 
-        if (menu != null)
-            appRoot.getChildren().remove(menu.menuBox);
-
         booker.reset();
         energetic.reset();
         elizabeth.reset();
@@ -417,9 +421,6 @@ public class Game extends Application {
         enemies.add(enemy);
     }
 
-    public static void nothing() {
-    }
-
     public static void setBossLevel() {
         booker.setTranslateX(100);
         booker.setTranslateY(500);
@@ -435,6 +436,11 @@ public class Game extends Application {
     }
 
     private static void update() {
+        Controller.update();
+
+        if (!active)
+            return;
+
         for (Enemy enemy : enemies) {
             enemy.update();
             if (enemy.isToDelete()) {
@@ -459,7 +465,6 @@ public class Game extends Application {
             }
         }
 
-        Controller.update();
         booker.update();
 
         if (energetic.getCountEnergetics() > 0)
@@ -467,7 +472,6 @@ public class Game extends Application {
         if (levelNumber > Level.FIRST_LEVEL)
             elizabeth.update();
 
-        menu.update();
         hud.update();
         weapon.update();
 

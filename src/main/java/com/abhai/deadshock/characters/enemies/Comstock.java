@@ -144,16 +144,16 @@ public class Comstock extends Enemy implements Animatable {
 
     private void playAttackVoice() {
         switch ((int) (Math.random() * 10)) {
-            case 0 -> Sounds.canYouShoot.play(Game.menu.voiceSlider.getValue() / 100);
-            case 1 -> Sounds.dieAlready.play(Game.menu.voiceSlider.getValue() / 100);
-            case 2 -> Sounds.dontSpareBullets.play(Game.menu.voiceSlider.getValue() / 100);
-            case 3 -> Sounds.keepShooting2.play(Game.menu.voiceSlider.getValue() / 100);
-            case 4 -> Sounds.killMe.play(Game.menu.voiceSlider.getValue() / 100);
-            case 5 -> Sounds.allYouCan.play(Game.menu.voiceSlider.getValue() / 100);
-            case 6 -> Sounds.whoAreYou.play(Game.menu.voiceSlider.getValue() / 100);
-            case 7 -> Sounds.stupid.play(Game.menu.voiceSlider.getValue() / 100);
-            case 8 -> Sounds.giveHimBullets.play(Game.menu.voiceSlider.getValue() / 100);
-            case 9 -> Sounds.keepShooting.play(Game.menu.voiceSlider.getValue() / 100);
+            case 0 -> Sounds.canYouShoot.play(Game.menu.getVoiceSlider().getValue() / 100);
+            case 1 -> Sounds.dieAlready.play(Game.menu.getVoiceSlider().getValue() / 100);
+            case 2 -> Sounds.dontSpareBullets.play(Game.menu.getVoiceSlider().getValue() / 100);
+            case 3 -> Sounds.keepShooting2.play(Game.menu.getVoiceSlider().getValue() / 100);
+            case 4 -> Sounds.killMe.play(Game.menu.getVoiceSlider().getValue() / 100);
+            case 5 -> Sounds.allYouCan.play(Game.menu.getVoiceSlider().getValue() / 100);
+            case 6 -> Sounds.whoAreYou.play(Game.menu.getVoiceSlider().getValue() / 100);
+            case 7 -> Sounds.stupid.play(Game.menu.getVoiceSlider().getValue() / 100);
+            case 8 -> Sounds.giveHimBullets.play(Game.menu.getVoiceSlider().getValue() / 100);
+            case 9 -> Sounds.keepShooting.play(Game.menu.getVoiceSlider().getValue() / 100);
         }
         voiceInterval = 0;
     }
@@ -170,12 +170,12 @@ public class Comstock extends Enemy implements Animatable {
     private void playVoiceLostBooker() {
         if (booleanVoice) {
             switch ((int) (Math.random() * 6)) {
-                case 0 -> Sounds.heHasGone.play(Game.menu.voiceSlider.getValue() / 100);
-                case 1 -> Sounds.heHasGone2.play(Game.menu.voiceSlider.getValue() / 100);
-                case 2 -> Sounds.heHasGone3.play(Game.menu.voiceSlider.getValue() / 100);
-                case 3 -> Sounds.lostHim.play(Game.menu.voiceSlider.getValue() / 100);
-                case 4 -> Sounds.lostHim2.play(Game.menu.voiceSlider.getValue() / 100);
-                case 5 -> Sounds.wereHere.play(Game.menu.voiceSlider.getValue() / 100);
+                case 0 -> Sounds.heHasGone.play(Game.menu.getVoiceSlider().getValue() / 100);
+                case 1 -> Sounds.heHasGone2.play(Game.menu.getVoiceSlider().getValue() / 100);
+                case 2 -> Sounds.heHasGone3.play(Game.menu.getVoiceSlider().getValue() / 100);
+                case 3 -> Sounds.lostHim.play(Game.menu.getVoiceSlider().getValue() / 100);
+                case 4 -> Sounds.lostHim2.play(Game.menu.getVoiceSlider().getValue() / 100);
+                case 5 -> Sounds.wereHere.play(Game.menu.getVoiceSlider().getValue() / 100);
             }
             booleanVoice = false;
         }
@@ -184,14 +184,14 @@ public class Comstock extends Enemy implements Animatable {
     private void playVoiceFoundBooker() {
         if (booleanVoice) {
             switch ((int) (Math.random() * 8)) {
-                case 0 -> Sounds.wontGoAway.play(Game.menu.voiceSlider.getValue() / 100);
-                case 1 -> Sounds.audioClipFire.play(Game.menu.voiceSlider.getValue() / 100);
-                case 2 -> Sounds.heIsHere.play(Game.menu.voiceSlider.getValue() / 100);
-                case 3 -> Sounds.getDownWeapon.play(Game.menu.voiceSlider.getValue() / 100);
-                case 4 -> Sounds.die.play(Game.menu.voiceSlider.getValue() / 100);
-                case 5 -> Sounds.attack.play(Game.menu.voiceSlider.getValue() / 100);
-                case 6 -> Sounds.theyAreHere.play(Game.menu.voiceSlider.getValue() / 100);
-                case 7 -> Sounds.takeThem.play(Game.menu.voiceSlider.getValue() / 100);
+                case 0 -> Sounds.wontGoAway.play(Game.menu.getVoiceSlider().getValue() / 100);
+                case 1 -> Sounds.audioClipFire.play(Game.menu.getVoiceSlider().getValue() / 100);
+                case 2 -> Sounds.heIsHere.play(Game.menu.getVoiceSlider().getValue() / 100);
+                case 3 -> Sounds.getDownWeapon.play(Game.menu.getVoiceSlider().getValue() / 100);
+                case 4 -> Sounds.die.play(Game.menu.getVoiceSlider().getValue() / 100);
+                case 5 -> Sounds.attack.play(Game.menu.getVoiceSlider().getValue() / 100);
+                case 6 -> Sounds.theyAreHere.play(Game.menu.getVoiceSlider().getValue() / 100);
+                case 7 -> Sounds.takeThem.play(Game.menu.getVoiceSlider().getValue() / 100);
             }
         }
         booleanVoice = false;
@@ -240,7 +240,7 @@ public class Comstock extends Enemy implements Animatable {
             if (coordinate == 'Y') {
                 setTranslateY(getTranslateY() - 1);
                 if (booleanVelocity) {
-                    Sounds.closeCombat.play(Game.menu.fxSlider.getValue() / 100);
+                    Sounds.closeCombat.play(Game.menu.getFxSlider().getValue() / 100);
                     velocity = velocity.add(getScaleX() * 5, JUMP_SPEED);
                     booleanVelocity = false;
                 }

@@ -1,26 +1,23 @@
 package com.abhai.deadshock.menus;
 
-import com.abhai.deadshock.utils.Controller;
+import com.abhai.deadshock.DifficultyLevel;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.Animatable;
 import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.utils.Sounds;
-import javafx.animation.Animation;
+import com.abhai.deadshock.utils.Texts;
 import javafx.animation.FadeTransition;
-import javafx.animation.FillTransition;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
@@ -28,89 +25,187 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 
 import static javafx.scene.input.KeyEvent.KEY_PRESSED;
 
+public class Menu extends Pane {
+    private static final Path ROCK_MUSIC_PATH = Paths.get("resources", "sounds", "music", "rock");
+    private static final Path METALCORE_MUSIC_PATH = Paths.get("resources", "sounds", "music", "metalcore");
+    private static final Path ELECTRONIC_MUSIC_PATH = Paths.get("resources", "sounds", "music", "electronic");
+    private static final Path DEVELOPERS_CHOICE_MUSIC_PATH = Paths.get("resources", "sounds", "music", "developersChoice");
 
-public class Menu {
-    private Path controlsImagePath = Paths.get("resources", "images", "menu", "controls.png");
-    private ImageView controls = new ImageView(new Image(controlsImagePath.toUri().toString()));
-    private Pane description = new Pane();
+    private MediaPlayer music;
+    private ImageView controls;
+    private Text typeOfMusicText;
+    private Path currentMusicPath;
+    private SubMenu currentSubMenu;
+    private Text difficultyLevelText;
+    private Pane difficultyBackground;
+    private HashMap<String, SubMenu> subMenus;
 
-    private Path soundPath = Paths.get("resources", "sounds", "music", "mainTheme.mp3");
-    public MediaPlayer music = new MediaPlayer(new Media(soundPath.toUri().toString()));
+    private Slider fxSlider;
+    private Slider musicSlider;
+    private Slider voiceSlider;
 
-    private final Path rock = Paths.get("resources", "sounds", "music", "rock");
-    private final Path post = Paths.get("resources", "sounds", "music", "metalcore");
-    private final Path electronic = Paths.get("resources", "sounds", "music", "electronic");
-    private final Path developersChoice = Paths.get("resources", "sounds", "music", "developersChoice");
-
-    private Path tempMusic = Paths.get("resources", "sounds", "music", "developersChoice", "01.mp3");
-
-    private Text musicText = new Text("Выбрано : ВЫБОР РАЗРАБОТЧИКА");
-    private Text descriptionDifficultyLevel = new Text("УРОВЕНЬ СЛОЖНОСТИ 'СРЕДНИЙ':\n" +
-            "150 монет в начале игры;\nУ противников выключен friendly fire;\nИгрок получает обычный " +
-            "урон;\nЭнергетики расходуют 20% солей;\nАптечки пополняют 15% " +
-            "жизней;\nВ ящиках с боеприпасами вы найдете 15 патронов;\nПри прыжке на противника у игрока " +
-            "отнимается 10% жизней;\nЗа убийство каждого противника получаете 5 монет;" +
-            "\n3 попытки на прохождение уровня(потом пересоздаются противники);" +
-            "\nКаждая регенерация отнимает 20 монет");
-
-    public MenuBox menuBox;
-
-    private SubMenu mainMenu;
-    private SubMenu optionsMenu;
-    private SubMenu controlMenu;
-    private SubMenu soundOptionMenu;
-    private SubMenu soundVolumeMenu;
-    private SubMenu musicMenu;
-    private SubMenu difficultyLevelMenu;
-
-    private MenuItem continueGame;
-
-    public Slider musicSlider;
-    public Slider voiceSlider;
-    public Slider fxSlider;
-
-    private boolean start = true;
-    public boolean booleanNewGame = false;
-    boolean isShown = true;
-
+    private boolean start;
+    private boolean isShown;
+    private boolean newGame;
 
     public Menu() {
+        currentMusicPath = Paths.get("resources", "sounds", "music", "developersChoice", "01.mp3");
+        music = new MediaPlayer(new Media(Paths.get("resources", "sounds", "music", "mainTheme.mp3").toUri().toString()));
         music.setCycleCount(MediaPlayer.INDEFINITE);
         music.play();
 
-        createMainMenu();
-        createDifficultyLevelMenu();
-        createOptionsMenu();
-        createControlMenu();
-        createMusicMenu();
-        createSoundVolume();
-        createSoundOptionMenu();
-        Game.appRoot.getChildren().add(menuBox);
+        start = true;
+        isShown = true;
+        newGame = false;
 
+        ImageView menuBackground = new ImageView(new Image(Paths.get("resources", "images", "menu", "menu.png").toUri().toString()));
+        getChildren().add(menuBackground);
+
+        Game.appRoot.getChildren().add(this);
+        initializeSubMenus();
         createCover();
     }
 
-    public void addListener() {
-        Game.scene.setOnKeyPressed(event -> Game.keys.put(event.getCode(), true) );
-        Game.scene.setOnKeyReleased(event -> Game.keys.put(event.getCode(), false) );
+    public boolean isShown() {
+        return isShown;
+    }
+
+    public MediaPlayer getMusic() {
+        return music;
+    }
+
+    public Slider getFxSlider() {
+        return fxSlider;
+    }
+
+    public Slider getMusicSlider() {
+        return musicSlider;
+    }
+
+    public Slider getVoiceSlider() {
+        return voiceSlider;
+    }
+
+    public void gameOver() {
+        start = true;
+        Game.clearDataForNewGame();
+        Game.initContentForNewGame();
+
+        controls.setVisible(false);
+        typeOfMusicText.setVisible(false);
+        changeSubMenu(subMenus.get(Texts.MAIN_SUBMENU));
+        showMenu();
+    }
+
+    public void hideMenu() {
+        FadeTransition ft = new FadeTransition(Duration.seconds(0.5), this);
+        ft.setFromValue(1);
+        ft.setToValue(0);
+        ft.setOnFinished(event -> Game.appRoot.getChildren().remove(this));
+        ft.play();
+
+        music.play();
+        isShown = false;
+        Game.active = true;
+
+        if (Sounds.whereAreYouFrom.getStatus() == MediaPlayer.Status.PAUSED)
+            Sounds.whereAreYouFrom.play();
+    }
+
+    public void showMenu() {
+        FadeTransition ft = new FadeTransition(Duration.seconds(0.5), this);
+        ft.setFromValue(0);
+        ft.setToValue(1);
+        ft.play();
+
+        music.pause();
+        isShown = true;
+        Game.active = false;
+        Game.booker.stopAnimation();
+        Game.appRoot.getChildren().add(this);
+
+        for (Enemy enemy : Game.enemies)
+            if (enemy instanceof Animatable animatable)
+                animatable.stopAnimation();
+        if (Sounds.whereAreYouFrom.getStatus() == MediaPlayer.Status.PLAYING)
+            Sounds.whereAreYouFrom.pause();
+    }
+
+    public void checkMusic() {
+        if (music.getMedia().getSource().contains("rock")) {
+            currentMusicPath = ROCK_MUSIC_PATH;
+            checkTrack();
+            return;
+        }
+
+        if (music.getMedia().getSource().contains("metalcore")) {
+            currentMusicPath = METALCORE_MUSIC_PATH;
+            checkTrack();
+            return;
+        }
+
+        if (music.getMedia().getSource().contains("electronic")) {
+            currentMusicPath = ELECTRONIC_MUSIC_PATH;
+            checkTrack();
+            return;
+        }
+
+        if (music.getMedia().getSource().contains("developersChoice")) {
+            currentMusicPath = DEVELOPERS_CHOICE_MUSIC_PATH;
+            checkTrack();
+        }
+    }
+
+    private void startGame() {
+        start = false;
+        Game.hud.setDifficultyLevel();
+        Game.booker.setDifficultyLevel();
+        Game.weapon.setDifficultyLevel();
+        Game.energetic.setDifficultyLevel();
+        difficultyBackground.setVisible(false);
+        Game.vendingMachine.setDifficultyLevel();
+        changeSubMenu(subMenus.get(Texts.MAIN_SUBMENU));
+
+        restartMusicIfNeeded();
+        hideMenu();
+    }
+
+    private void checkTrack() {
+        if (music.getMedia().getSource().contains("01.mp3"))
+            currentMusicPath = currentMusicPath.resolve("02.mp3");
+        else if (music.getMedia().getSource().contains("02.mp3"))
+            currentMusicPath = currentMusicPath.resolve("03.mp3");
+        else if (music.getMedia().getSource().contains("03.mp3"))
+            currentMusicPath = currentMusicPath.resolve("04.mp3");
+        else if (music.getMedia().getSource().contains("04.mp3"))
+            currentMusicPath = currentMusicPath.resolve("05.mp3");
+        else if (music.getMedia().getSource().contains("05.mp3"))
+            currentMusicPath = currentMusicPath.resolve("06.mp3");
+        else if (music.getMedia().getSource().contains("06.mp3"))
+            currentMusicPath = currentMusicPath.resolve("07.mp3");
+        else if (music.getMedia().getSource().contains("07.mp3"))
+            currentMusicPath = currentMusicPath.resolve("01.mp3");
+        restartMusicIfNeeded();
     }
 
     private void createCover() {
-        Path coverImagePath = Paths.get("resources", "images", "menu", "cover.jpg");
-        ImageView cover = new ImageView(new Image(coverImagePath.toUri().toString()));
-        Text textCover = new Text("Для продолжения нажмите ввод");
+        ImageView cover = new ImageView(new Image(Paths.get("resources", "images", "menu", "cover.jpg").toUri().toString()));
+        Text textCover = new Text(Texts.PUSH_ENTER_TO_CONTINUE);
         textCover.setFont(Font.font("Arial", FontWeight.BOLD, 28));
         textCover.setFill(Color.AQUA);
         textCover.setTranslateX(Game.scene.getWidth() / 3);
         textCover.setTranslateY(Game.scene.getHeight() - 225);
-        Game.appRoot.getChildren().addAll(cover, textCover);
+        getChildren().addAll(cover, textCover);
 
         FadeTransition fadeTransitionTextCover = new FadeTransition(Duration.seconds(1), textCover);
         fadeTransitionTextCover.setFromValue(1);
@@ -129,12 +224,7 @@ public class Menu {
                     fadeTransitionCover.setFromValue(1);
                     fadeTransitionCover.setToValue(0);
                     fadeTransitionCover.play();
-                    fadeTransitionCover.setOnFinished( event1 -> Game.appRoot.getChildren().removeAll(cover, textCover) );
-
-                    FadeTransition fadeTransitionMenu = new FadeTransition(Duration.seconds(2), menuBox);
-                    fadeTransitionMenu.setFromValue(0);
-                    fadeTransitionMenu.setToValue(1);
-                    fadeTransitionMenu.play();
+                    fadeTransitionCover.setOnFinished(event1 -> getChildren().removeAll(cover, textCover));
 
                     Game.scene.removeEventFilter(KEY_PRESSED, this);
                 }
@@ -144,116 +234,224 @@ public class Menu {
         Game.scene.addEventFilter(KEY_PRESSED, removeCoverFilter);
     }
 
-    private void createMainMenu() {
-        continueGame = new MenuItem("ПРОДОЛЖИТЬ ИГРУ");
-        MenuItem newGame = new MenuItem("НОВАЯ ИГРА");
-        MenuItem options = new MenuItem("НАСТРОЙКИ");
-        MenuItem exitGame = new MenuItem("ВЫХОД");
-        mainMenu = new SubMenu(continueGame, newGame, options, exitGame);
-        menuBox = new MenuBox(mainMenu);
+    private void createMainSubMenu() {
+        SubMenu mainSubMenu = new SubMenu();
+        CustomButton continueGame = new CustomButton(Texts.CONTINUE_GAME);
+        CustomButton newGame = new CustomButton(Texts.NEW_GAME);
+        CustomButton options = new CustomButton(Texts.OPTIONS);
+        CustomButton exitGame = new CustomButton(Texts.EXIT);
+        mainSubMenu.addCustomButtons(continueGame, newGame, options, exitGame);
+        subMenus.put(Texts.MAIN_SUBMENU, mainSubMenu);
+        currentSubMenu = mainSubMenu;
+        getChildren().add(currentSubMenu);
 
-
-        continueGame.setOnMouseClicked( event -> {
+        continueGame.setOnMouseClicked(event -> {
             if (!start) {
                 hideMenu();
             } else if (Game.levelNumber > Level.FIRST_LEVEL) {
                 startGame();
             }
         });
-
         newGame.setOnMouseClicked(event -> {
-            menuBox.setSubMenu(difficultyLevelMenu);
-            description.setVisible(true);
+            changeSubMenu(subMenus.get(Texts.DIFFICULTY_SUBMENU));
+            difficultyBackground.setVisible(true);
         });
 
-        options.setOnMouseClicked( event -> menuBox.setSubMenu(optionsMenu) );
-        exitGame.setOnMouseClicked( event -> System.exit(0) );
+        options.setOnMouseClicked(event -> changeSubMenu(subMenus.get(Texts.OPTIONS_SUBMENU)));
+        exitGame.setOnMouseClicked(event -> System.exit(0));
     }
 
-    private void createDifficultyLevelMenu() {
-        description.setVisible(false);
-        Rectangle rectangle = new Rectangle(775, 280, Color.WHITE);
-        rectangle.setTranslateX(Game.scene.getWidth() / 5 + 20);
-        rectangle.setTranslateY(Game.scene.getHeight() / 10);
-        rectangle.setOpacity(0.5);
-        description.getChildren().add(rectangle);
+    private void createMusicSubMenu() {
+        createTypeOfMusicText();
 
-        descriptionDifficultyLevel.setTranslateX(Game.scene.getWidth() / 5 + 25);
-        descriptionDifficultyLevel.setTranslateY(Game.scene.getHeight() / 8);
-        descriptionDifficultyLevel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        descriptionDifficultyLevel.setFill(Color.BLACK);
-        description.getChildren().add(descriptionDifficultyLevel);
-        menuBox.getChildren().add(description);
+        SubMenu musicSubMenu = new SubMenu();
+        CustomButton rockItem = new CustomButton(Texts.ROCK);
+        CustomButton post_hardcoreItem = new CustomButton(Texts.METALCORE);
+        CustomButton electronicItem = new CustomButton(Texts.ELECTRO);
+        CustomButton developersChoice = new CustomButton(Texts.DEVELOPERS_CHOICE);
+        CustomButton musicMenuBackItem = new CustomButton(Texts.BACK);
+        musicSubMenu.addCustomButtons(rockItem, post_hardcoreItem, electronicItem, developersChoice, musicMenuBackItem);
+        subMenus.put(Texts.SOUNDS_MUSIC_SUBMENU, musicSubMenu);
 
-        MenuItem marik = new MenuItem("МАРИК");
-        MenuItem easy = new MenuItem("ЛЕГКИЙ");
-        MenuItem normal = new MenuItem("СРЕДНИЙ");
-        MenuItem high = new MenuItem("ВЫСОКИЙ");
-        MenuItem hardcore = new MenuItem("ХАРДКОР");
-        MenuItem back = new MenuItem("НАЗАД");
-        MenuItem ready = new MenuItem("ПРИНЯТЬ");
-        difficultyLevelMenu = new SubMenu(marik, easy, normal, high, hardcore, back, ready);
-
-        marik.setOnMouseClicked( event -> {
-            descriptionDifficultyLevel.setText("УРОВЕНЬ СЛОЖНОСТИ 'МАРИК':\n" +
-                    "Бесконечные монеты;\nУ противников включен friendly fire;\nИгрок получает на 100% " +
-                    "меньше урона;\nЭнергетики расходуют 10% солей;\nАптечки дают 30% " +
-                    "жизней;\nВ ящиках с боеприпасами вы найдете 30 патронов;\nПри прыжке на противника у игрока " +
-                    "не отнимаются жизни;\n5 попыток на прохождение уровня(потом пересоздаются противники);" +
-                    "\nРегенерируйтесь сколько угодно, у вас бесконечно монет;)");
-            Game.difficultyLevelText = "marik";
+        rockItem.setOnMouseClicked(event -> {
+            currentMusicPath = Paths.get("resources", "sounds", "music", "rock", "01.mp3");
+            restartMusicIfNeeded();
+            typeOfMusicText.setText(Texts.CHOSEN_ROCK);
         });
 
-        easy.setOnMouseClicked( event ->  {
-            descriptionDifficultyLevel.setText("УРОВЕНЬ СЛОЖНОСТИ 'ЛЕГКИЙ':\n" +
-                    "300 монет в начале игры;\nУ противников включен friendly fire;\nИгрок получает на 50% " +
-                    "меньше урона;\nЭнергетики расходуют 15% солей;\nАптечки пополняют 20% " +
-                    "жизней;\nВ ящиках с боеприпасами вы найдете 20 патронов;\nПри прыжке на противника у игрока " +
-                    "отнимаются 5% жизней;\nЗа убийство каждого противника получаете 10 монет;" +
-                    "\n5 попыток на прохождение уровня(потом пересоздаются противники);" +
-                    "\nКаждая регенерация отнимает 15 монет");
-            Game.difficultyLevelText = "easy";
+        post_hardcoreItem.setOnMouseClicked(event -> {
+            currentMusicPath = Paths.get("resources", "sounds", "music", "metalcore", "01.mp3");
+            restartMusicIfNeeded();
+            typeOfMusicText.setText(Texts.CHOSEN_METALCORE);
         });
 
-        normal.setOnMouseClicked( event -> {
-            descriptionDifficultyLevel.setText("УРОВЕНЬ СЛОЖНОСТИ 'СРЕДНИЙ':\n" +
-                    "150 монет в начале игры;\nУ противников выключен friendly fire;\nИгрок получает обычный " +
-                    "урон;\nЭнергетики расходуют 20% солей;\nАптечки пополняют 15% " +
-                    "жизней;\nВ ящиках с боеприпасами вы найдете 15 патронов;\nПри прыжке на противника у игрока " +
-                    "отнимается 10% жизней;\nЗа убийство каждого противника получаете 5 монет;" +
-                    "\n3 попытки на прохождение уровня(потом пересоздаются противники);" +
-                    "\nКаждая регенерация отнимает 20 монет");
-            Game.difficultyLevelText = "normal";
-        } );
-        high.setOnMouseClicked( event -> {
-            descriptionDifficultyLevel.setText("УРОВЕНЬ СЛОЖНОСТИ 'ВЫСОКИЙ':\n" +
-                    "100 монет в начале игры;\nУ противников выключен friendly fire;\nПротивники умеют поднимать аптечки и патроны;" +
-                    "\nИгрок получает на 50% больше урона;\nЭнергетики расходуют 25% солей;\nАптечки пополняют 10% " +
-                    "жизней;\nВ ящиках с боеприпасами вы найдете 10 патронов;\nПри прыжке на противника у игрока " +
-                    "отнимается 15% жизней;\nЗа убийство каждого противника получаете 3 монеты;" +
-                    "\n2 попытки на прохождение уровня(потом пересоздаются противники);" +
-                    "\nКаждая регенерация отнимает 25 монет");
-            Game.difficultyLevelText = "high";
-        });
-        hardcore.setOnMouseClicked( event -> {
-            descriptionDifficultyLevel.setText("УРОВЕНЬ СЛОЖНОСТИ 'ХАРДКОР':\n" +
-                    "100 монет в начале игры;\nУ противников выключен friendly fire;\nПротивники умеют поднимать аптечки и патроны;" +
-                    "\nИгрок получает на 100% больше урона;\nЭнергетики расходуют 30% солей;\nАптечки пополняют 10% " +
-                    "жизней;\nВ ящиках с боеприпасами вы найдете 10 патронов;\nПри прыжке на противника у игрока " +
-                    "отнимается 20% жизней;\nЗа убийство каждого противника получаете 2 монеты;" +
-                    "\n1 попытка на прохождение уровня(потом пересоздаются противники);" +
-                    "\nНикакой регенирации, никаких сохранений, умрете - начинайте игру заново");
-            Game.difficultyLevelText = "hardcore";
+        electronicItem.setOnMouseClicked(event -> {
+            currentMusicPath = Paths.get("resources", "sounds", "music", "electronic", "01.mp3");
+            restartMusicIfNeeded();
+            typeOfMusicText.setText(Texts.CHOSEN_ELECTRO);
         });
 
-        back.setOnMouseClicked( event ->  {
-            menuBox.setSubMenu(mainMenu);
-            description.setVisible(false);
+        developersChoice.setOnMouseClicked(event -> {
+            currentMusicPath = Paths.get("resources", "sounds", "music", "developersChoice", "01.mp3");
+            restartMusicIfNeeded();
+            typeOfMusicText.setText(Texts.CHOSEN_DEVELOPER_CHOICE);
         });
 
-        ready.setOnMouseClicked( event -> {
-            ModalWindow.createNewWindows("НОВАЯ ИГРА");
-            if (booleanNewGame) {
+        musicMenuBackItem.setOnMouseClicked(event -> {
+            changeSubMenu(subMenus.get(Texts.SOUNDS_OPTIONS_SUBMENU));
+            typeOfMusicText.setVisible(false);
+        });
+    }
+
+    private void initializeSubMenus() {
+        subMenus = new HashMap<>();
+        createMainSubMenu();
+        createMusicSubMenu();
+        createVolumeSubMenu();
+        createSoundsSubMenu();
+        createOptionsSubMenu();
+        createControlsSubMenu();
+        createDifficultySubMenu();
+    }
+
+    private void createVolumeSubMenu() {
+        SubMenu volumeSubMenu = new SubMenu();
+        volumeSubMenu.addLabel(new Label(Texts.MUSIC_SLIDER_NAME));
+        musicSlider = new Slider(0, 100, 100);
+        volumeSubMenu.getChildren().add(musicSlider);
+
+        volumeSubMenu.addLabel(new Label(Texts.FX_SLIDER_NAME));
+        fxSlider = new Slider(0, 100, 100);
+        volumeSubMenu.getChildren().add(fxSlider);
+
+        volumeSubMenu.addLabel(new Label(Texts.VOICE_SLIDER_NAME));
+        voiceSlider = new Slider(0, 100, 100);
+        volumeSubMenu.getChildren().add(voiceSlider);
+
+        musicSlider.valueProperty().addListener((ov, old_val, new_val) -> {
+            music.setVolume(new_val.doubleValue() / 100);
+        });
+
+        CustomButton soundMenuBack = new CustomButton(Texts.BACK);
+        volumeSubMenu.addCustomButtons(soundMenuBack);
+        subMenus.put(Texts.SOUNDS_VOLUME_SUBMENU, volumeSubMenu);
+        soundMenuBack.setOnMouseClicked(event -> changeSubMenu(subMenus.get(Texts.SOUNDS_OPTIONS_SUBMENU)));
+    }
+
+    private void createSoundsSubMenu() {
+        SubMenu soundOptionSubMenu = new SubMenu();
+        CustomButton volume = new CustomButton(Texts.VOLUME);
+        CustomButton music = new CustomButton(Texts.MUSIC);
+        CustomButton soundOptionBack = new CustomButton(Texts.BACK);
+        soundOptionSubMenu.addCustomButtons(volume, music, soundOptionBack);
+        subMenus.put(Texts.SOUNDS_OPTIONS_SUBMENU, soundOptionSubMenu);
+
+        volume.setOnMouseClicked(event -> changeSubMenu(subMenus.get(Texts.SOUNDS_VOLUME_SUBMENU)));
+        music.setOnMouseClicked(event -> {
+            changeSubMenu(subMenus.get(Texts.SOUNDS_MUSIC_SUBMENU));
+            typeOfMusicText.setVisible(true);
+        });
+        soundOptionBack.setOnMouseClicked(event -> changeSubMenu(subMenus.get(Texts.OPTIONS_SUBMENU)));
+    }
+
+    private void createOptionsSubMenu() {
+        SubMenu optionsSubMenu = new SubMenu();
+        CustomButton sound = new CustomButton(Texts.SOUND);
+        CustomButton control = new CustomButton(Texts.CONTROLS);
+        CustomButton optionsBack = new CustomButton(Texts.BACK);
+        optionsSubMenu.addCustomButtons(sound, control, optionsBack);
+        subMenus.put(Texts.OPTIONS_SUBMENU, optionsSubMenu);
+
+        sound.setOnMouseClicked(event -> changeSubMenu(subMenus.get(Texts.SOUNDS_OPTIONS_SUBMENU)));
+        control.setOnMouseClicked(event -> {
+            changeSubMenu(subMenus.get(Texts.CONTROLS_SUBMENU));
+            controls.setVisible(true);
+        });
+        optionsBack.setOnMouseClicked(event -> changeSubMenu(subMenus.get(Texts.MAIN_SUBMENU)));
+    }
+
+    private void restartMusicIfNeeded() {
+        if (!start) {
+            music.stop();
+            music = new MediaPlayer(new Media(currentMusicPath.toUri().toString()));
+            music.setVolume(musicSlider.getValue() / 100);
+            music.play();
+            music.setOnEndOfMedia(this::checkMusic);
+        }
+    }
+
+    private void createTypeOfMusicText() {
+        typeOfMusicText = new Text(Texts.CHOSEN_DEVELOPER_CHOICE);
+        typeOfMusicText.setTranslateX(Game.scene.getWidth() / 5);
+        typeOfMusicText.setTranslateY(Game.scene.getHeight() / 6);
+        typeOfMusicText.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        typeOfMusicText.setFill(Color.WHITE);
+        typeOfMusicText.setVisible(false);
+        getChildren().add(typeOfMusicText);
+    }
+
+    private void createControlsSubMenu() {
+        controls = new ImageView(new Image(Paths.get("resources", "images", "menu", "controls.png").toUri().toString()));
+        controls.setVisible(false);
+        controls.setTranslateX(50);
+        controls.setTranslateY(100);
+        getChildren().add(controls);
+
+        SubMenu controlsSubMenu = new SubMenu();
+        CustomButton controlBack = new CustomButton(Texts.BACK);
+        controlBack.setTranslateX(50);
+        controlBack.setTranslateY(280);
+        controlsSubMenu.addCustomButtons(controlBack);
+        subMenus.put(Texts.CONTROLS_SUBMENU, controlsSubMenu);
+
+        controlBack.setOnMouseClicked(event -> {
+            changeSubMenu(subMenus.get(Texts.OPTIONS_SUBMENU));
+            controls.setVisible(false);
+        });
+    }
+
+    private void createDifficultySubMenu() {
+        createDifficultyLevelDescription();
+
+        SubMenu difficultySubMenu = new SubMenu();
+        CustomButton marik = new CustomButton(Texts.MARIK);
+        CustomButton easy = new CustomButton(Texts.EASY);
+        CustomButton normal = new CustomButton(Texts.MEDIUM);
+        CustomButton high = new CustomButton(Texts.HARD);
+        CustomButton hardcore = new CustomButton(Texts.HARDCORE);
+        CustomButton back = new CustomButton(Texts.BACK);
+        CustomButton ready = new CustomButton(Texts.APPLY);
+        difficultySubMenu.addCustomButtons(marik, easy, normal, high, hardcore, back, ready);
+        subMenus.put(Texts.DIFFICULTY_SUBMENU, difficultySubMenu);
+
+        marik.setOnMouseClicked(event -> {
+            difficultyLevelText.setText(Texts.MARIK_DIFFICULTY_DESCRIPTION);
+            Game.difficultyLevel = DifficultyLevel.MARIK;
+        });
+        easy.setOnMouseClicked(event -> {
+            difficultyLevelText.setText(Texts.EASY_DIFFICULTY_DESCRIPTION);
+            Game.difficultyLevel = DifficultyLevel.EASY;
+        });
+        normal.setOnMouseClicked(event -> {
+            difficultyLevelText.setText(Texts.MEDIUM_DIFFICULTY_DESCRIPTION);
+            Game.difficultyLevel = DifficultyLevel.MEDIUM;
+        });
+        high.setOnMouseClicked(event -> {
+            difficultyLevelText.setText(Texts.HARD_DIFFICULTY_DESCRIPTION);
+            Game.difficultyLevel = DifficultyLevel.HARD;
+        });
+        hardcore.setOnMouseClicked(event -> {
+            difficultyLevelText.setText(Texts.HARDCORE_DIFFICULTY_DESCRIPTION);
+            Game.difficultyLevel = DifficultyLevel.HARDCORE;
+        });
+
+        back.setOnMouseClicked(event -> {
+            changeSubMenu(subMenus.get(Texts.MAIN_SUBMENU));
+            difficultyBackground.setVisible(false);
+        });
+        ready.setOnMouseClicked(event -> {
+            createNewGameConfirmationWindow();
+            if (newGame) {
                 if (start && Game.levelNumber == Level.FIRST_LEVEL) {
                     start = false;
                 } else {
@@ -265,467 +463,93 @@ public class Menu {
         });
     }
 
-    private void startGame() {
-        menuBox.setSubMenu(mainMenu);
-        description.setVisible(false);
-        Game.booker.setDifficultyLevel();
-        Game.energetic.setDifficultyLevel();
-        Game.weapon.setDamage();
-        if (Game.difficultyLevelText.equals("marik") && Game.levelNumber < Level.BOSS_LEVEL) {
-            Game.hud.setMarikLevel();
-            Game.vendingMachine.setMarikLevel();
-        }
-        music.stop();
-
-        music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
-        music.setVolume(musicSlider.getValue() / 100);
-        music.play();
-        addMediaListener();
-        Game.hud.setVisible(true);
-        start = false;
-        hideMenu();
+    private void changeSubMenu(SubMenu subMenu) {
+        getChildren().remove(currentSubMenu);
+        currentSubMenu = subMenu;
+        getChildren().add(subMenu);
     }
 
-    public void newGame() {
-        Game.clearDataForNewGame();
-        Game.initContentForNewGame();
+    private void createNewGameConfirmationWindow() {
+        Stage stage = new Stage();
+        stage.setWidth(217);
+        stage.setHeight(113);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setResizable(false);
 
-        continueGame.setOnMouseClicked( event -> Game.nothing() );
-        Game.scene.setOnKeyPressed( event -> Game.nothing());
+        Text areYouSureText = new Text(Texts.ARE_YOU_SURE);
+        areYouSureText.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        areYouSureText.setFill(Color.BLACK);
+        areYouSureText.setTranslateX(39);
+        areYouSureText.setTranslateY(20);
 
-        menuBox.setSubMenu(mainMenu);
-        music.stop();
-        showMenu();
-    }
+        Text savesWillBeLostText = new Text(Texts.SAVES_WILL_BE_LOST);
+        savesWillBeLostText.setFont(Font.font("Arial", FontWeight.BOLD, 12));
+        savesWillBeLostText.setFill(Color.BLACK);
+        savesWillBeLostText.setTranslateX(5);
+        savesWillBeLostText.setTranslateY(40);
 
-    private void createOptionsMenu() {
-        MenuItem sound = new MenuItem("ЗВУК");
-        MenuItem control = new MenuItem("УПРАВЛЕНИЕ");
-        MenuItem optionsBack = new MenuItem("НАЗАД");
-        optionsMenu = new SubMenu(sound, control, optionsBack);
-
-        sound.setOnMouseClicked( event -> menuBox.setSubMenu(soundOptionMenu) );
-        control.setOnMouseClicked( event -> {
-            menuBox.setSubMenu(controlMenu);
-            controls.setVisible(true);
-        });
-        optionsBack.setOnMouseClicked( event -> menuBox.setSubMenu(mainMenu) );
-    }
-
-    private void createSoundOptionMenu() {
-        MenuItem volume = new MenuItem("ГРОМКОСТЬ");
-        MenuItem music = new MenuItem("МУЗЫКА");
-        MenuItem soundOptionBack = new MenuItem("НАЗАД");
-        soundOptionMenu = new SubMenu(volume, music, soundOptionBack);
-
-        volume.setOnMouseClicked( event -> menuBox.setSubMenu(soundVolumeMenu) );
-        music.setOnMouseClicked( event -> {
-            menuBox.setSubMenu(musicMenu);
-            musicText.setVisible(true);
-        });
-        soundOptionBack.setOnMouseClicked( event -> menuBox.setSubMenu(mainMenu) );
-    }
-
-    private void createMusicMenu() {
-        musicText.setTranslateX(Game.scene.getWidth() / 5);
-        musicText.setTranslateY(Game.scene.getHeight() / 6);
-        musicText.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        musicText.setFill(Color.WHITE);
-        musicText.setVisible(false);
-        menuBox.getChildren().add(musicText);
-
-        MenuItem rockItem = new MenuItem("РОК");
-        MenuItem post_hardcoreItem = new MenuItem("METALCORE");
-        MenuItem electronicItem = new MenuItem("ЭЛЕКТРОННАЯ");
-        MenuItem developersChoice = new MenuItem("ВЫБОР РАЗРАБОТЧИКА");
-        MenuItem musicMenuBackItem = new MenuItem("НАЗАД");
-        musicMenu = new SubMenu(rockItem, post_hardcoreItem, electronicItem, developersChoice, musicMenuBackItem);
-
-        rockItem.setOnMouseClicked( event -> {
-            tempMusic = Paths.get("resources", "sounds", "music", "rock", "01.mp3");
-            if (!start) {
-                music.stop();
-
-                music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
-                music.setVolume(musicSlider.getValue() / 100);
-            }
-
-            addMediaListener();
-            musicText.setText("Выбрано : РОК");
+        Button yesButton = new Button(Texts.YES);
+        yesButton.setPrefWidth(50);
+        yesButton.setTranslateX(5);
+        yesButton.setTranslateY(50);
+        yesButton.setOnMouseClicked(event -> {
+            newGame = true;
+            stage.close();
         });
 
-        post_hardcoreItem.setOnMouseClicked( event -> {
-            tempMusic = Paths.get("resources", "sounds", "music", "metalcore", "01.mp3");
-            if (!start) {
-                music.stop();
-                music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
-                music.setVolume(musicSlider.getValue() / 100);
-            }
-
-            addMediaListener();
-            musicText.setText("Выбрано : Metalcore");
+        Button noButton = new Button(Texts.NO);
+        noButton.setPrefWidth(50);
+        noButton.setTranslateX(stage.getWidth() - 70);
+        noButton.setTranslateY(50);
+        noButton.setOnMouseClicked(event -> {
+            newGame = false;
+            stage.close();
         });
 
-        electronicItem.setOnMouseClicked( event -> {
-            tempMusic = Paths.get("resources", "sounds", "music", "electronic", "01.mp3");
-            if (!start) {
-                music.stop();
-                music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
-                music.setVolume(musicSlider.getValue() / 100);
-            }
+        Pane rootPane = new Pane();
+        rootPane.getChildren().addAll(areYouSureText, savesWillBeLostText, yesButton, noButton);
 
-            addMediaListener();
-            musicText.setText("Выбрано : ЭЛЕКТРОННАЯ");
-        });
-
-        developersChoice.setOnMouseClicked( event -> {
-            tempMusic = Paths.get("resources", "sounds", "music", "developersChoice", "01.mp3");
-            if (!start) {
-                music.stop();
-                music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
-                music.setVolume(musicSlider.getValue() / 100);
-            }
-
-            addMediaListener();
-            musicText.setText("Выбрано : ВЫБОР РАЗРАБОТЧИКА");
-        });
-
-        musicMenuBackItem.setOnMouseClicked( event -> {
-            menuBox.setSubMenu(soundOptionMenu);
-            musicText.setVisible(false);
-        });
+        Scene scene = new Scene(rootPane);
+        stage.setScene(scene);
+        stage.setTitle(Texts.NEW_GAME);
+        Path imagePath = Paths.get("resources", "images", "icons", "icon.jpg");
+        stage.getIcons().add(new Image(imagePath.toUri().toString()));
+        stage.showAndWait();
     }
 
-    private void createControlMenu() {
-        controls.setVisible(false);
-        controls.setTranslateX(50);
-        controls.setTranslateY(100);
-        menuBox.getChildren().add(controls);
+    private void createDifficultyLevelDescription() {
+        difficultyBackground = new Pane();
+        difficultyBackground.setVisible(false);
+        Rectangle rectangle = new Rectangle(775, 280, Color.WHITE);
+        rectangle.setTranslateX(Game.scene.getWidth() / 5 + 20);
+        rectangle.setTranslateY(Game.scene.getHeight() / 10);
+        rectangle.setOpacity(0.5);
+        difficultyBackground.getChildren().add(rectangle);
 
-        MenuItem controlBack = new MenuItem("НАЗАД");
-        controlBack.setTranslateX(50);
-        controlBack.setTranslateY(280);
-        controlMenu = new SubMenu(controlBack);
-
-        controlBack.setOnMouseClicked( event ->  {
-            menuBox.setSubMenu(optionsMenu);
-            controls.setVisible(false);
-        });
-    }
-
-    private void createSoundVolume() {
-        soundVolumeMenu = new SubMenu();
-
-        createMusicVolume();
-        createFxVolume();
-        createVoiceVolume();
-
-        MenuItem soundMenuBack = new MenuItem("НАЗАД");
-        soundVolumeMenu.addItem(soundMenuBack);
-
-        soundMenuBack.setOnMouseClicked( event -> menuBox.setSubMenu(soundOptionMenu) );
-    }
-
-    private void createMusicVolume() {
-        Label musicLabel = new Label("Музыка");
-        soundVolumeMenu.addItem(musicLabel);
-        HBox musicBox = new HBox(10);
-        musicSlider = new Slider(0, 100, 100);
-        Text musicText = new Text(String.valueOf((int) musicSlider.getValue()));
-        musicText.setFill(Color.WHITE);
-        musicText.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-        musicBox.getChildren().addAll(musicSlider, musicText);
-        soundVolumeMenu.getChildren().add(musicBox);
-
-        musicSlider.valueProperty().addListener((ov, old_val, new_val) -> {
-            musicText.setText(String.valueOf(new_val.intValue()));
-            music.setVolume(new_val.doubleValue() / 100);
-        });
-    }
-
-    private void createFxVolume() {
-        Label fxLabel = new Label("Звуковые эффекты");
-        soundVolumeMenu.addItem(fxLabel);
-        HBox fxBox = new HBox(10);
-        fxSlider = new Slider(0, 100, 100);
-        Text fxText = new Text(String.valueOf((int) fxSlider.getValue()));
-        fxText.setFill(Color.WHITE);
-        fxText.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-        fxBox.getChildren().addAll(fxSlider, fxText);
-        soundVolumeMenu.getChildren().add(fxBox);
-
-        fxSlider.valueProperty().addListener((ov, old_val, new_val) -> {
-            fxText.setText(String.valueOf(new_val.intValue()));
-            Sounds.pistolShot.setVolume(new_val.doubleValue() / 100);
-        });
-    }
-
-    private void createVoiceVolume() {
-        Label voiceLabel = new Label("Голос");
-        soundVolumeMenu.addItem(voiceLabel);
-        HBox voiceBox = new HBox(10);
-        voiceSlider = new Slider(0, 100, 100);
-        Text voiceText = new Text(String.valueOf((int) voiceSlider.getValue()));
-        voiceText.setFill(Color.WHITE);
-        voiceText.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-        voiceBox.getChildren().addAll(voiceSlider, voiceText);
-        soundVolumeMenu.getChildren().add(voiceBox);
-
-        voiceSlider.valueProperty().addListener((ov, old_val, new_val) -> {
-            voiceText.setText(String.valueOf(new_val.intValue()));
-        });
-    }
-
-    private void hideMenu() {
-        FadeTransition ft = new FadeTransition(Duration.seconds(0.5), menuBox);
-        ft.setFromValue(1);
-        ft.setToValue(0);
-        ft.setOnFinished( event -> Game.appRoot.getChildren().remove(menuBox) );
-        ft.play();
-
-        addListener();
-        music.play();
-        if (Game.levelNumber > Level.FIRST_LEVEL)
-            if (Sounds.whereAreYouFrom.getStatus() == MediaPlayer.Status.PAUSED)
-                Sounds.whereAreYouFrom.play();
-        Game.timer.start();
-        isShown = false;
-    }
-
-    private void showMenu() {
-        FadeTransition ft = new FadeTransition(Duration.seconds(0.5), menuBox);
-        ft.setFromValue(0);
-        ft.setToValue(1);
-        ft.play();
-        music.pause();
-        Game.booker.stopAnimation();
-        for (Enemy enemy : Game.enemies)
-            if (enemy instanceof Animatable animatable)
-                animatable.stopAnimation();
-        if (Sounds.whereAreYouFrom.getStatus() == MediaPlayer.Status.PLAYING)
-            Sounds.whereAreYouFrom.pause();
-        if (!Game.appRoot.getChildren().contains(menuBox))
-            Game.appRoot.getChildren().add(menuBox);
-        Game.timer.stop();
-        isShown = true;
-    }
-
-    public void update() {
-        if (Controller.isPressed(KeyCode.ESCAPE) && (Game.vendingMachine == null || !Game.vendingMachine.isShown())) {
-            Game.keys.remove(KeyCode.ESCAPE);
-            if (!isShown) {
-                showMenu();
-            }
-
-            Game.scene.setOnKeyPressed(event -> {
-                if (event.getCode() == KeyCode.ESCAPE && isShown) {
-                    hideMenu();
-                }
-            });
-        }
-
-        if (Controller.isPressed(KeyCode.G) ) {
-            Game.keys.remove(KeyCode.G);
-            checkMusic();
-        }
-    }
-
-    private void checkMusic() {
-        if ( music.getMedia().getSource().contains("rock") ) {
-            tempMusic = rock;
-            checkTrack();
-        }
-
-        if ( music.getMedia().getSource().contains("metalcore") ) {
-            tempMusic = post;
-            checkTrack();
-        }
-
-        if ( music.getMedia().getSource().contains("electronic") ) {
-            tempMusic = electronic;
-            checkTrack();
-        }
-
-        if ( music.getMedia().getSource().contains("developersChoice") ) {
-            tempMusic = developersChoice;
-            checkTrack();
-        }
-
-        addListener();
+        difficultyLevelText = new Text(Texts.MEDIUM_DIFFICULTY_DESCRIPTION);
+        difficultyLevelText.setTranslateX(Game.scene.getWidth() / 5 + 25);
+        difficultyLevelText.setTranslateY(Game.scene.getHeight() / 8);
+        difficultyLevelText.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        difficultyLevelText.setFill(Color.BLACK);
+        difficultyBackground.getChildren().add(difficultyLevelText);
+        getChildren().add(difficultyBackground);
     }
 
     public void checkMusicForContinueGame(String text) {
         if (text.contains("rock")) {
-            tempMusic = rock;
-            musicText.setText("Выбрано : РОК");
+            currentMusicPath = ROCK_MUSIC_PATH;
+            typeOfMusicText.setText(Texts.CHOSEN_ROCK);
         } else if (text.contains("metalcore")) {
-            tempMusic = post;
-            musicText.setText("Выбрано : METALCORE");
+            currentMusicPath = METALCORE_MUSIC_PATH;
+            typeOfMusicText.setText(Texts.CHOSEN_METALCORE);
         } else if (text.contains("electronic")) {
-            tempMusic = electronic;
-            musicText.setText("Выбрано : ЭЛЕКТРОННАЯ");
+            currentMusicPath = ELECTRONIC_MUSIC_PATH;
+            typeOfMusicText.setText(Texts.CHOSEN_ELECTRO);
         } else {
-            tempMusic = developersChoice;
-            musicText.setText("Выбрано : ВЫБОР РАЗРАБОТЧИКА");
+            currentMusicPath = DEVELOPERS_CHOICE_MUSIC_PATH;
+            typeOfMusicText.setText(Texts.CHOSEN_DEVELOPER_CHOICE);
         }
 
-        tempMusic = tempMusic.resolve(text.substring(text.length() - 6, text.length()));
-    }
-
-    private void addMediaListener() {
-        music.setOnEndOfMedia( () -> checkMusic() );
-    }
-
-    private void checkTrack() {
-        if (music.getMedia().getSource().contains("01.mp3")) {
-            music.stop();
-            tempMusic = tempMusic.resolve("02.mp3");
-            music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
-            music.setVolume(musicSlider.getValue() / 100);
-            music.play();
-            addMediaListener();
-            return;
-        }
-        if (music.getMedia().getSource().contains("02.mp3")) {
-            music.stop();
-            tempMusic = tempMusic.resolve("03.mp3");
-            music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
-            music.setVolume(musicSlider.getValue() / 100);
-            music.play();
-            addMediaListener();
-            return;
-        }
-        if (music.getMedia().getSource().contains("03.mp3")) {
-            music.stop();
-            tempMusic = tempMusic.resolve("04.mp3");
-            music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
-            music.setVolume(musicSlider.getValue() / 100);
-            music.play();
-            addMediaListener();
-            return;
-        }
-        if (music.getMedia().getSource().contains("04.mp3")) {
-            music.stop();
-            tempMusic = tempMusic.resolve("05.mp3");
-            music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
-            music.setVolume(musicSlider.getValue() / 100);
-            music.play();
-            addMediaListener();
-            return;
-        }
-        if (music.getMedia().getSource().contains("05.mp3")) {
-            music.stop();
-            tempMusic = tempMusic.resolve("06.mp3");
-            music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
-            music.setVolume(musicSlider.getValue() / 100);
-            music.play();
-            addMediaListener();
-            return;
-        }
-        if (music.getMedia().getSource().contains("06.mp3")) {
-            music.stop();
-            tempMusic = tempMusic.resolve("07.mp3");
-            music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
-            music.setVolume(musicSlider.getValue() / 100);
-            music.play();
-            addMediaListener();
-            return;
-        }
-        if (music.getMedia().getSource().contains("07.mp3")) {
-            music.stop();
-            tempMusic = tempMusic.resolve("01.mp3");
-            music = new MediaPlayer(new Media(tempMusic.toUri().toString()));
-            music.setVolume(musicSlider.getValue() / 100);
-            music.play();
-            addMediaListener();
-        }
-    }
-
-    private class MenuItem extends StackPane {
-
-        private Text text;
-        private Rectangle button;
-
-        MenuItem(String name) {
-            button = new Rectangle(200, 20, Color.WHITE);
-            button.setOpacity(0.5);
-
-            text = new Text(name);
-            text.setFill(Color.WHITE);
-            text.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-
-            setAlignment(Pos.CENTER);
-            getChildren().addAll(button, text);
-
-            FillTransition fillTransition = new FillTransition(Duration.seconds(0.5), button);
-            addListeners(button, fillTransition);
-        }
-
-
-        private void addListeners(Rectangle bg, FillTransition ft) {
-            setOnMouseEntered(event -> {
-                ft.setFromValue(Color.WHITE);
-                ft.setToValue(Color.DARKGOLDENROD);
-                ft.setCycleCount(Animation.INDEFINITE);
-                ft.setAutoReverse(true);
-                ft.play();
-            });
-
-            setOnMouseExited(event -> {
-                ft.stop();
-                bg.setFill(Color.WHITE);
-            });
-        }
-    }
-
-    private class SubMenu extends VBox {
-
-        SubMenu() {
-        }
-
-        SubMenu(MenuItem... items) {
-            setSpacing(15);
-            setTranslateX(50);
-            setTranslateY(100);
-
-            for (MenuItem item : items)
-                getChildren().addAll(item);
-        }
-
-
-        void addItem(MenuItem menuItem) {
-            setSpacing(5);
-            setTranslateX(50);
-            setTranslateY(100);
-
-            getChildren().add(menuItem);
-        }
-
-
-        void addItem(Label lbl) {
-            lbl.setTextFill(Color.WHITE);
-            lbl.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-            getChildren().add(lbl);
-        }
-    }
-
-    private class MenuBox extends Pane {
-
-        private SubMenu subMenu;
-
-        MenuBox(SubMenu sm) {
-            subMenu = sm;
-
-            Path menuImagePath = Paths.get("resources", "images", "menu", "menu.png");
-            ImageView imgView = new ImageView(new Image(menuImagePath.toUri().toString()));
-            getChildren().addAll(imgView, subMenu);
-        }
-
-
-        void setSubMenu(SubMenu sm) {
-            getChildren().remove(subMenu);
-            subMenu = sm;
-            getChildren().addAll(subMenu);
-        }
+        currentMusicPath = currentMusicPath.resolve(text.substring(text.length() - 6));
     }
 }

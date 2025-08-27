@@ -22,11 +22,11 @@ public class CutScenes {
         Game.booker.setTranslateX(100);
         Game.booker.setTranslateY(500);
 
-        Game.menu.music.pause();
+        Game.menu.getMusic().pause();
         Game.timer.stop();
+        Game.active = false;
         Game.clearData(false);
 
-        Game.stage.setWidth(1235);
         switch (Game.levelNumber) {
             case Level.FIRST_LEVEL -> {
                 playVideo("elizabeth.mp4");
@@ -34,14 +34,6 @@ public class CutScenes {
                     if (!actionPerformed) {
                         actionPerformed = true;
                         endCutScene1();
-                    }
-                });
-                Game.scene.setOnKeyPressed(event -> {
-                    if (event.getCode() == KeyCode.ESCAPE || event.getCode() == KeyCode.ENTER
-                            && !actionPerformed) {
-                        actionPerformed = true;
-                        endCutScene1();
-                        event.consume();
                     }
                 });
             }
@@ -53,30 +45,13 @@ public class CutScenes {
                         endCutScene2();
                     }
                 });
-                Game.scene.setOnKeyPressed(event -> {
-                    if (event.getCode() == KeyCode.ESCAPE || event.getCode() == KeyCode.ENTER
-                            && !actionPerformed) {
-                        actionPerformed = true;
-                        endCutScene2();
-                        event.consume();
-                    }
-                });
             }
             case Level.BOSS_LEVEL -> {
-                Game.stage.setWidth(1230);
                 playVideo("end.mp4");
                 video.setOnEndOfMedia(() -> {
                     if (!actionPerformed) {
                         actionPerformed = true;
                         endCutScene3();
-                    }
-                });
-                Game.scene.setOnKeyPressed(event -> {
-                    if (event.getCode() == KeyCode.ESCAPE || event.getCode() == KeyCode.ENTER
-                            && !actionPerformed) {
-                        actionPerformed = true;
-                        endCutScene3();
-                        event.consume();
                     }
                 });
             }
@@ -89,7 +64,7 @@ public class CutScenes {
         videoView = new MediaView(video);
         videoView.setFitWidth(Game.scene.getWidth());
         videoView.setFitHeight(Game.scene.getHeight());
-        videoView.getMediaPlayer().setVolume(Game.menu.voiceSlider.getValue() / 100);
+        videoView.getMediaPlayer().setVolume(Game.menu.getVoiceSlider().getValue() / 100);
         Game.appRoot.getChildren().add(videoView);
 
         FadeTransition ft = new FadeTransition(Duration.seconds(1), videoView);
@@ -112,7 +87,6 @@ public class CutScenes {
         Game.appRoot.getChildren().remove(videoView);
         video.stop();
         videoView = null;
-        Game.stage.setWidth(1280);
         System.exit(0);
     }
 
@@ -128,13 +102,12 @@ public class CutScenes {
         Game.createEnemies();
 
         Game.timer.start();
-        Game.menu.music.play();
-        Game.menu.addListener();
+        Game.active = true;
+        Game.menu.getMusic().play();
         Tutorial.init();
         Game.elizabeth.init();
         Game.vendingMachine.changeLevel();
         Game.energetic.changeLevel();
-        Game.stage.setWidth(1280);
         Game.gameRoot.getChildren().add(Game.booker);
 
         Game.saveSaves();

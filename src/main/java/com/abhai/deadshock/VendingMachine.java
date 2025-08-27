@@ -57,8 +57,8 @@ public class VendingMachine extends Pane {
                 if (event.getCode() == KeyCode.ENTER)
                     keyAction();
                 else if (event.getCode() == KeyCode.ESCAPE) {
-                    Game.timer.start();
-                    Game.menu.music.play();
+                    Game.active = true;
+                    Game.menu.getMusic().play();
                     ft.setByValue(1);
                     ft.setToValue(0);
                     ft.play();
@@ -129,9 +129,9 @@ public class VendingMachine extends Pane {
             Tutorial.setVendingMachineMenu();
 
         Tutorial.delete();
-        Game.timer.stop();
-        Game.menu.music.pause();
-        Sounds.audioClipOpenMenu.play(Game.menu.fxSlider.getValue() / 100);
+        Game.active = false;
+        Game.menu.getMusic().pause();
+        Sounds.audioClipOpenMenu.play(Game.menu.getFxSlider().getValue() / 100);
         moneyText.setText(String.valueOf(Game.booker.getMoney()));
 
         for (Enemy enemy : Game.enemies)
@@ -160,8 +160,11 @@ public class VendingMachine extends Pane {
         setButton(btnMachineGunBullets, btnPistolBullets);
     }
 
-    public void setMarikLevel() {
-        Game.appRoot.getChildren().remove(moneyText);
+    public void setDifficultyLevel() {
+        if (Game.difficultyLevel == DifficultyLevel.MARIK)
+            Game.appRoot.getChildren().remove(moneyText);
+        else if (!Game.appRoot.getChildren().contains(moneyText))
+            Game.appRoot.getChildren().add(moneyText);
     }
 
     private void setButton(Button button, Button preButton) {
@@ -178,35 +181,35 @@ public class VendingMachine extends Pane {
             case Level.FIRST_LEVEL -> {
                 btnBigMedicine.setOnMouseClicked( event -> {
                     if (isShown) {
-                        Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
+                        Sounds.audioClipChangeItem.play(Game.menu.getFxSlider().getValue() / 100);
                         vendingMachineMenu.setViewport( new Rectangle2D(0, 0, 920, 597) );
                         chosenElementMenu = "bigMedicine";
                     }
                 });
                 btnLittleMedicine.setOnMouseClicked( event -> {
                     if (isShown) {
-                        Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
+                        Sounds.audioClipChangeItem.play(Game.menu.getFxSlider().getValue() / 100);
                         vendingMachineMenu.setViewport( new Rectangle2D(0, 597, 920, 597) );
                         chosenElementMenu = "littleMedicine";
                     }
                 });
                 btnBigSalt.setOnMouseClicked( event -> {
                     if (isShown) {
-                        Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
+                        Sounds.audioClipChangeItem.play(Game.menu.getFxSlider().getValue() / 100);
                         vendingMachineMenu.setViewport( new Rectangle2D(0, 1194, 920, 597) );
                         chosenElementMenu = "bigSalt";
                     }
                 });
                 btnLittleSalt.setOnMouseClicked( event -> {
                     if (isShown) {
-                        Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
+                        Sounds.audioClipChangeItem.play(Game.menu.getFxSlider().getValue() / 100);
                         vendingMachineMenu.setViewport( new Rectangle2D(0, 1791, 920, 597) );
                         chosenElementMenu = "littleSalt";
                     }
                 });
                 btnPistolBullets.setOnMouseClicked( event -> {
                     if (isShown) {
-                        Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
+                        Sounds.audioClipChangeItem.play(Game.menu.getFxSlider().getValue() / 100);
                         vendingMachineMenu.setViewport( new Rectangle2D(0, 2388, 920, 597) );
                         chosenElementMenu = "pistolBullets";
                     }
@@ -215,42 +218,42 @@ public class VendingMachine extends Pane {
             case Level.SECOND_LEVEL, Level.THIRD_LEVEL -> {
                 btnBigMedicine.setOnMouseClicked( event -> {
                     if (isShown) {
-                        Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
+                        Sounds.audioClipChangeItem.play(Game.menu.getFxSlider().getValue() / 100);
                         vendingMachineMenu.setViewport( new Rectangle2D(920, 0, 920, 597) );
                         chosenElementMenu = "bigMedicine";
                     }
                 });
                 btnLittleMedicine.setOnMouseClicked( event -> {
                     if (isShown) {
-                        Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
+                        Sounds.audioClipChangeItem.play(Game.menu.getFxSlider().getValue() / 100);
                         vendingMachineMenu.setViewport( new Rectangle2D(920, 597, 920, 597) );
                         chosenElementMenu = "littleMedicine";
                     }
                 });
                 btnBigSalt.setOnMouseClicked( event -> {
                     if (isShown) {
-                        Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
+                        Sounds.audioClipChangeItem.play(Game.menu.getFxSlider().getValue() / 100);
                         vendingMachineMenu.setViewport( new Rectangle2D(920, 1194, 920, 597) );
                         chosenElementMenu = "bigSalt";
                     }
                 });
                 btnLittleSalt.setOnMouseClicked( event -> {
                     if (isShown) {
-                        Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
+                        Sounds.audioClipChangeItem.play(Game.menu.getFxSlider().getValue() / 100);
                         vendingMachineMenu.setViewport( new Rectangle2D(920, 1791, 920, 597) );
                         chosenElementMenu = "littleSalt";
                     }
                 });
                 btnPistolBullets.setOnMouseClicked( event -> {
                     if (isShown) {
-                        Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
+                        Sounds.audioClipChangeItem.play(Game.menu.getFxSlider().getValue() / 100);
                         vendingMachineMenu.setViewport( new Rectangle2D(920, 2388, 920, 597) );
                         chosenElementMenu = "pistolBullets";
                     }
                 });
                 btnMachineGunBullets.setOnMouseClicked( event -> {
                     if (isShown) {
-                        Sounds.audioClipChangeItem.play(Game.menu.fxSlider.getValue() / 100);
+                        Sounds.audioClipChangeItem.play(Game.menu.getFxSlider().getValue() / 100);
                         vendingMachineMenu.setViewport( new Rectangle2D(920, 2985, 920, 597) );
                         chosenElementMenu = "machineGunBullets";
                     }
@@ -266,7 +269,7 @@ public class VendingMachine extends Pane {
             case "bigMedicine":
                 if (Game.booker.getMoney() >= 36) {
                     if (Game.booker.getHP() <= 20) {
-                        Sounds.audioClipPurchase.play(Game.menu.fxSlider.getValue() / 100);
+                        Sounds.audioClipPurchase.play(Game.menu.getFxSlider().getValue() / 100);
                         Game.booker.setMoney(Game.booker.getMoney() - 36);
                         Game.booker.setHP(Game.booker.getHP() + 80);
                         Game.hud.update();
@@ -275,7 +278,7 @@ public class VendingMachine extends Pane {
                     } else if (Game.booker.getHP() == 100)
                         full("У вас полная жизнь! Для продолжения кликните по этому сообщению");
                     else {
-                        Sounds.audioClipPurchase.play(Game.menu.fxSlider.getValue() / 100);
+                        Sounds.audioClipPurchase.play(Game.menu.getFxSlider().getValue() / 100);
                         Game.booker.setMoney(Game.booker.getMoney() - 36);
                         Game.booker.setHP(100);
                         Game.hud.update();
@@ -290,14 +293,14 @@ public class VendingMachine extends Pane {
                     if (Game.booker.getHP() == 100)
                         full("У вас полная жизнь! Для продолжения кликните по этому сообщению");
                     else if (Game.booker.getHP() <= 80) {
-                        Sounds.audioClipPurchase.play(Game.menu.fxSlider.getValue() / 100);
+                        Sounds.audioClipPurchase.play(Game.menu.getFxSlider().getValue() / 100);
                         Game.booker.setMoney(Game.booker.getMoney() - 14);
                         Game.booker.setHP(Game.booker.getHP() + 20);
                         Game.hud.update();
                         moneyText.setText(String.valueOf(Game.booker.getMoney()));
                         moneyText.setTranslateX(Game.hud.getMoneyText().getTranslateX() + 470);
                     } else {
-                        Sounds.audioClipPurchase.play(Game.menu.fxSlider.getValue() / 100);
+                        Sounds.audioClipPurchase.play(Game.menu.getFxSlider().getValue() / 100);
                         Game.booker.setMoney(Game.booker.getMoney() - 14);
                         Game.booker.setHP(100);
                         Game.hud.update();
@@ -310,7 +313,7 @@ public class VendingMachine extends Pane {
             case "bigSalt":
                 if (Game.booker.getMoney() >= 67) {
                     if (Game.booker.getSalt() != 100) {
-                        Sounds.audioClipPurchase.play(Game.menu.fxSlider.getValue() / 100);
+                        Sounds.audioClipPurchase.play(Game.menu.getFxSlider().getValue() / 100);
                         Game.booker.setSalt(100);
                         Game.booker.setMoney(Game.booker.getMoney() - 67);
                         Game.hud.update();
@@ -324,14 +327,14 @@ public class VendingMachine extends Pane {
             case "littleSalt":
                 if (Game.booker.getMoney() >= 19) {
                     if (Game.booker.getSalt() <= 75) {
-                        Sounds.audioClipPurchase.play(Game.menu.fxSlider.getValue() / 100);
+                        Sounds.audioClipPurchase.play(Game.menu.getFxSlider().getValue() / 100);
                         Game.booker.setMoney(Game.booker.getMoney() - 19);
                         Game.booker.setSalt(Game.booker.getSalt() + 25);
                         Game.hud.update();
                         moneyText.setText(String.valueOf(Game.booker.getMoney()));
                         moneyText.setTranslateX(Game.hud.getMoneyText().getTranslateX() + 470);
                     } else if (Game.booker.getSalt() != 100) {
-                        Sounds.audioClipPurchase.play(Game.menu.fxSlider.getValue() / 100);
+                        Sounds.audioClipPurchase.play(Game.menu.getFxSlider().getValue() / 100);
                         Game.booker.setMoney(Game.booker.getMoney() - 19);
                         Game.booker.setSalt(100);
                         Game.hud.update();
@@ -344,11 +347,11 @@ public class VendingMachine extends Pane {
                 break;
             case "pistolBullets":
                 if (Game.booker.getMoney() >= 8) {
-                    if (Game.weapon.getName().equals("pistol"))
+                    if (Game.weapon.getType().equals("pistol"))
                         Game.weapon.setBullets(Game.weapon.getBullets() + 12);
                     else
                         Weapon.WeaponData.pistolBullets += 12;
-                    Sounds.audioClipPurchase.play(Game.menu.fxSlider.getValue() / 100);
+                    Sounds.audioClipPurchase.play(Game.menu.getFxSlider().getValue() / 100);
                     Game.booker.setMoney(Game.booker.getMoney() - 8);
                     Game.hud.update();
                     moneyText.setText(String.valueOf(Game.booker.getMoney()));
@@ -358,11 +361,11 @@ public class VendingMachine extends Pane {
                 break;
             case "machineGunBullets":
                 if (Game.booker.getMoney() >= 8) {
-                    if (Game.weapon.getName().equals("machine_gun"))
+                    if (Game.weapon.getType().equals("machine_gun"))
                         Game.weapon.setBullets(Game.weapon.getBullets() + 35);
                     else
                         Weapon.WeaponData.machineGunBullets += 35;
-                    Sounds.audioClipPurchase.play(Game.menu.fxSlider.getValue() / 100);
+                    Sounds.audioClipPurchase.play(Game.menu.getFxSlider().getValue() / 100);
                     Game.booker.setMoney(Game.booker.getMoney() - 8);
                     Game.hud.update();
                     moneyText.setText(String.valueOf(Game.booker.getMoney()));

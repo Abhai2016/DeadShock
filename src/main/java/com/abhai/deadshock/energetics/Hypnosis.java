@@ -1,9 +1,11 @@
 package com.abhai.deadshock.energetics;
 
+import com.abhai.deadshock.DifficultyLevel;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.utils.Sounds;
+import com.abhai.deadshock.utils.Texts;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -22,7 +24,7 @@ public class Hypnosis {
         hypnotized = false;
         setDifficultyLevel();
 
-        intervalText = new Text("Длительность гипноза");
+        intervalText = new Text(Texts.HYPNOSIS_DURATION);
         intervalText.setFont(Font.font("Aria", 28));
         intervalText.setFill(Color.WHITE);
         intervalText.setVisible(false);
@@ -68,19 +70,19 @@ public class Hypnosis {
     }
 
     protected void setDifficultyLevel() {
-        switch (Game.difficultyLevelText) {
-            case "marik" -> maxInterval = 550;
-            case "easy" -> maxInterval = 450;
-            case "normal" -> maxInterval = 350;
-            case "high" -> maxInterval = 250;
-            case "hardcore" -> maxInterval = 150;
+        switch (Game.difficultyLevel) {
+            case DifficultyLevel.MARIK -> maxInterval = 550;
+            case DifficultyLevel.EASY -> maxInterval = 450;
+            case DifficultyLevel.MEDIUM -> maxInterval = 350;
+            case DifficultyLevel.HARD -> maxInterval = 250;
+            case DifficultyLevel.HARDCORE -> maxInterval = 150;
         }
     }
 
     protected void hypnotizeTheTarget() {
         for (Enemy enemy : Game.enemies)
             enemy.setHypnotized(true);
-        Sounds.hypnosis.play(Game.menu.fxSlider.getValue() / 100);
+        Sounds.hypnosis.play(Game.menu.getFxSlider().getValue() / 100);
     }
 
     protected void unhypnotizeTheTarget() {

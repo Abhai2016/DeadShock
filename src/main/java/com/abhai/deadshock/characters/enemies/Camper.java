@@ -66,11 +66,11 @@ public class Camper extends Enemy {
     }
 
     private void playVoice() {
-        Sounds.audioClipCamper.play(Game.menu.fxSlider.getValue() / 100);
+        Sounds.audioClipCamper.play(Game.menu.getFxSlider().getValue() / 100);
         switch ((int) (Math.random() * 3)) {
-            case 0 -> Sounds.bookerHit.play(Game.menu.fxSlider.getValue() / 100);
-            case 1 -> Sounds.bookerHit2.play(Game.menu.fxSlider.getValue() / 100);
-            case 2 -> Sounds.bookerHit3.play(Game.menu.fxSlider.getValue() / 100);
+            case 0 -> Sounds.bookerHit.play(Game.menu.getFxSlider().getValue() / 100);
+            case 1 -> Sounds.bookerHit2.play(Game.menu.getFxSlider().getValue() / 100);
+            case 2 -> Sounds.bookerHit3.play(Game.menu.getFxSlider().getValue() / 100);
         }
         Game.booker.setHP(Game.booker.getHP() - DAMAGE);
         voiceInterval = 0;

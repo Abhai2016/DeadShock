@@ -1,5 +1,6 @@
 package com.abhai.deadshock.weapons.bullets;
 
+import com.abhai.deadshock.DifficultyLevel;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.levels.Block;
@@ -23,22 +24,12 @@ public class EnemyBullet extends Bullet {
             setScaleX(-1);
         }
 
-        switch (Game.difficultyLevelText) {
-            case "marik":
-                damage = 2;
-                break;
-            case "easy":
-                damage = 3;
-                break;
-            case "normal":
-                damage = 5;
-                break;
-            case "high":
-                damage = 7;
-                break;
-            case "hardcore":
-                damage = 10;
-                break;
+        switch (Game.difficultyLevel) {
+            case DifficultyLevel.MARIK -> damage = 2;
+            case DifficultyLevel.EASY -> damage = 3;
+            case DifficultyLevel.MEDIUM -> damage = 5;
+            case DifficultyLevel.HARD -> damage = 7;
+            case DifficultyLevel.HARDCORE -> damage = 10;
         }
 
         switch (enemyName) {
@@ -82,13 +73,13 @@ public class EnemyBullet extends Bullet {
             byte rand = (byte) (Math.random() * 3);
             switch (rand) {
                 case 0:
-                    Sounds.bookerHit.play(Game.menu.voiceSlider.getValue() / 100);
+                    Sounds.bookerHit.play(Game.menu.getVoiceSlider().getValue() / 100);
                     break;
                 case 1:
-                    Sounds.bookerHit2.play(Game.menu.voiceSlider.getValue() / 100);
+                    Sounds.bookerHit2.play(Game.menu.getVoiceSlider().getValue() / 100);
                     break;
                 case 2:
-                    Sounds.bookerHit3.play(Game.menu.voiceSlider.getValue() / 100);
+                    Sounds.bookerHit3.play(Game.menu.getVoiceSlider().getValue() / 100);
                     break;
             }
         }
@@ -102,7 +93,7 @@ public class EnemyBullet extends Bullet {
 
         for (Enemy enemy : Game.enemies)
             if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
-                if (Game.difficultyLevelText.equals("marik") || Game.difficultyLevelText.equals("easy")) {
+                if (Game.difficultyLevel.equals("marik") || Game.difficultyLevel.equals("easy")) {
                     enemy.setHP(enemy.getHP() - Game.weapon.getDamage());
                 }
                 Game.gameRoot.getChildren().remove(this);

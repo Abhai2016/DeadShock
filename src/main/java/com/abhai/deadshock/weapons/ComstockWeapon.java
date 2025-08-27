@@ -17,7 +17,7 @@ public class ComstockWeapon extends EnemyWeapon {
             reload(20);
 
         if (shootInterval > 30 && clip > 0) {
-            Sounds.pistolShot.play(Game.menu.fxSlider.getValue() / 100);
+            Sounds.pistolShot.play(Game.menu.getFxSlider().getValue() / 100);
             clip--;
             shootInterval = 0;
             Game.enemyBullets.add(new EnemyBullet("comstock", scaleX, x, y));

@@ -19,11 +19,11 @@ public class EnemyWeapon {
     void reload(int fullClip) {
         if (!nowReloading) {
             switch ((int) (Math.random() * 5)) {
-                case 0 -> Sounds.noAmmo.play(Game.menu.voiceSlider.getValue() / 100);
-                case 1 -> Sounds.noAmmo2.play(Game.menu.voiceSlider.getValue() / 100);
-                case 2 -> Sounds.needAmmo.play(Game.menu.voiceSlider.getValue() / 100);
-                case 3 -> Sounds.needAmmo2.play(Game.menu.voiceSlider.getValue() / 100);
-                case 4 -> Sounds.reloading.play(Game.menu.voiceSlider.getValue() / 100);
+                case 0 -> Sounds.noAmmo.play(Game.menu.getVoiceSlider().getValue() / 100);
+                case 1 -> Sounds.noAmmo2.play(Game.menu.getVoiceSlider().getValue() / 100);
+                case 2 -> Sounds.needAmmo.play(Game.menu.getVoiceSlider().getValue() / 100);
+                case 3 -> Sounds.needAmmo2.play(Game.menu.getVoiceSlider().getValue() / 100);
+                case 4 -> Sounds.reloading.play(Game.menu.getVoiceSlider().getValue() / 100);
             }
             nowReloading = true;
         }

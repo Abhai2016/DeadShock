@@ -46,7 +46,7 @@ public class RpgBullet extends Bullet {
         Game.weapon.explosion.setTranslateY(getTranslateY() - Game.weapon.explosion.getFitHeight() / 2);
         Game.gameRoot.getChildren().add(Game.weapon.explosion);
         Game.weapon.explosionAnimation.play();
-        Sounds.rpgExplosion.play(Game.menu.fxSlider.getValue() / 100);
+        Sounds.rpgExplosion.play(Game.menu.getFxSlider().getValue() / 100);
         isExplosion = true;
 
         if (Game.levelNumber != Level.BOSS_LEVEL)

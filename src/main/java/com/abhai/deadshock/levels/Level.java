@@ -1,6 +1,7 @@
 package com.abhai.deadshock.levels;
 
 import com.abhai.deadshock.Game;
+import com.abhai.deadshock.utils.Texts;
 import com.abhai.deadshock.utils.pools.ObjectPool;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,11 +22,11 @@ public class Level {
     public static final int THIRD_LEVEL = 3;
     public static final int BOSS_LEVEL = 4;
 
-    private static final Path levelsDataPath = Paths.get("resources", "data", "levels.dat");
-    private static final Path firstLevelImagePath = Paths.get("resources", "images", "levels", "backgrounds", "firstLevel.jpg");
-    private static final Path secondLevelImagePath = Paths.get("resources", "images", "levels", "backgrounds", "secondLevel.jpg");
-    private static final Path thirdLevelImagePath = Paths.get("resources", "images", "levels", "backgrounds", "thirdLevel.jpg");
-    private static final Path bossLevelImagePath = Paths.get("resources", "images", "levels", "backgrounds", "bossLevel.jpg");
+    private static final Path LEVELS_DATA_PATH = Paths.get("resources", "data", "levels.dat");
+    private static final Path FIRST_LEVEL_IMAGE_PATH = Paths.get("resources", "images", "levels", "backgrounds", "firstLevel.jpg");
+    private static final Path SECOND_LEVEL_IMAGE_PATH = Paths.get("resources", "images", "levels", "backgrounds", "secondLevel.jpg");
+    private static final Path THIRD_LEVEL_IMAGE_PATH = Paths.get("resources", "images", "levels", "backgrounds", "thirdLevel.jpg");
+    private static final Path BOSS_LEVEL_IMAGE_PATH = Paths.get("resources", "images", "levels", "backgrounds", "bossLevel.jpg");
 
     private ImageView statue;
     private final ImageView background;
@@ -57,12 +58,12 @@ public class Level {
         String[] level = new String[0];
 
         try {
-            Map<String, String[]> levelData = new ObjectMapper().readValue(levelsDataPath.toFile(), new TypeReference<>() {});
+            Map<String, String[]> levelData = new ObjectMapper().readValue(LEVELS_DATA_PATH.toFile(), new TypeReference<>() {});
             switch (Game.levelNumber) {
-                case FIRST_LEVEL -> level = levelData.get("firstLevel");
-                case SECOND_LEVEL -> level = levelData.get("secondLevel");
-                case THIRD_LEVEL -> level =  levelData.get("thirdLevel");
-                case BOSS_LEVEL -> level = levelData.get("bossLevel");
+                case FIRST_LEVEL -> level = levelData.get(Texts.FIRST_LEVEL);
+                case SECOND_LEVEL -> level = levelData.get(Texts.SECOND_LEVEL);
+                case THIRD_LEVEL -> level =  levelData.get(Texts.THIRD_LEVEL);
+                case BOSS_LEVEL -> level = levelData.get(Texts.BOSS_LEVEL);
             }
         } catch (IOException e) {
             System.out.println(e.getLocalizedMessage());
@@ -93,8 +94,8 @@ public class Level {
 
     private void resetBlocks() {
         for (Block block : blocks) {
-            block.deleteFromScene();
             blockPool.put(block);
+            Game.gameRoot.getChildren().remove(block);
         }
         blocks.clear();
     }
@@ -102,16 +103,16 @@ public class Level {
     private void initializeBackground() {
         switch (Game.levelNumber) {
             case FIRST_LEVEL -> {
-                background.setImage(new Image(firstLevelImagePath.toUri().toString()));
+                background.setImage(new Image(FIRST_LEVEL_IMAGE_PATH.toUri().toString()));
                 statue = new ImageView(new Image(Paths.get("resources", "images", "levels", "statue.jpg").toUri().toString()));
                 statue.setTranslateX(BLOCK_SIZE * 300 - statue.getImage().getWidth());
             }
             case SECOND_LEVEL -> {
-                background.setImage(new Image(secondLevelImagePath.toUri().toString()));
+                background.setImage(new Image(SECOND_LEVEL_IMAGE_PATH.toUri().toString()));
                 Game.gameRoot.getChildren().remove(statue);
             }
-            case THIRD_LEVEL -> background.setImage(new Image(thirdLevelImagePath.toUri().toString()));
-            case BOSS_LEVEL -> background.setImage(new Image(bossLevelImagePath.toUri().toString()));
+            case THIRD_LEVEL -> background.setImage(new Image(THIRD_LEVEL_IMAGE_PATH.toUri().toString()));
+            case BOSS_LEVEL -> background.setImage(new Image(BOSS_LEVEL_IMAGE_PATH.toUri().toString()));
         }
     }
 

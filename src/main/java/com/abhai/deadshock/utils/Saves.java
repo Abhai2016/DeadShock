@@ -1,7 +1,9 @@
 package com.abhai.deadshock.utils;
 
+import com.abhai.deadshock.DifficultyLevel;
+
 public class Saves {
-    private String difficultyLevel;
+    private DifficultyLevel difficultyLevel;
     private int levelNumber;
     private int money;
     private int salt;
@@ -84,11 +86,11 @@ public class Saves {
         this.machineGunBullets = machineGunBullets;
     }
 
-    public String getDifficultyLevel() {
+    public DifficultyLevel getDifficultyLevel() {
         return difficultyLevel;
     }
 
-    public void setDifficultyLevel(String difficultyLevel) {
+    public void setDifficultyLevel(DifficultyLevel difficultyLevel) {
         this.difficultyLevel = difficultyLevel;
     }
 

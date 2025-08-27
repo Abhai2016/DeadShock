@@ -4,6 +4,7 @@ import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.levels.BlockType;
+import com.abhai.deadshock.weapons.WeaponType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -23,7 +24,7 @@ public class Bullet extends Pane {
 
     }
 
-    public Bullet(String weaponName) {
+    public Bullet(WeaponType type) {
         if (Game.booker.getScaleX() < 0) {
             direction = false;
             setScaleX(-1);
@@ -32,13 +33,9 @@ public class Bullet extends Pane {
         Path imagePath = Paths.get("resources", "images", "weapons", "bullet.png");
         bullet = new ImageView(new Image(imagePath.toUri().toString()));
 
-        switch (weaponName) {
-            case "pistol":
-                setTranslateY(Game.booker.getTranslateY() + 14);
-                break;
-            case "machine_gun":
-                setTranslateY(Game.booker.getTranslateY() + 20);
-                break;
+        switch (type) {
+            case WeaponType.PISTOL -> setTranslateY(Game.booker.getTranslateY() + 14);
+            case WeaponType.MACHINE_GUN -> setTranslateY(Game.booker.getTranslateY() + 20);
         }
 
         if (direction)
