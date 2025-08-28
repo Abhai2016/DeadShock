@@ -2,7 +2,6 @@ package com.abhai.deadshock.characters;
 
 import com.abhai.deadshock.DifficultyLevel;
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.supplies.Supply;
 import com.abhai.deadshock.characters.enemies.Boss;
 import com.abhai.deadshock.characters.enemies.Comstock;
 import com.abhai.deadshock.characters.enemies.Enemy;
@@ -10,11 +9,12 @@ import com.abhai.deadshock.characters.enemies.EnemyType;
 import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.levels.BlockType;
 import com.abhai.deadshock.levels.Level;
-import com.abhai.deadshock.supplies.SupplyType;
 import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.utils.SpriteAnimation;
 import com.abhai.deadshock.utils.Texts;
 import com.abhai.deadshock.weapons.WeaponType;
+import com.abhai.deadshock.weapons.bullets.Bullet;
+import com.abhai.deadshock.weapons.bullets.EnemyBullet;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -140,6 +140,19 @@ public class Booker extends Character implements Animatable {
         HP = value;
     }
 
+    public void addMedicineForKillingEnemy() {
+        if (HP + medicineForKillingEnemy > 100)
+            HP = 100;
+        else
+            HP += medicineForKillingEnemy;
+
+        switch ((int) (Math.random() * 2)) {
+            case 0 -> Sounds.feelsBetter.play(Game.menu.getVoiceSlider().getValue() / 100);
+            case 1 -> Sounds.feelingBetter.play(Game.menu.getVoiceSlider().getValue() / 100);
+        }
+
+    }
+
     public void setSalt(int value) {
         salt = value;
     }
@@ -160,7 +173,6 @@ public class Booker extends Character implements Animatable {
         salt -= saltPrice;
     }
 
-
     private void die() {
         dead = true;
         if (Game.difficultyLevel.equals(DifficultyLevel.HARDCORE))
@@ -170,6 +182,13 @@ public class Booker extends Character implements Animatable {
             Game.active = false;
             Game.menu.getMusic().pause();
             Game.energetic.clear();
+
+            for (EnemyBullet enemyBullet : Game.enemyBullets)
+                Game.gameRoot.getChildren().remove(enemyBullet);
+            Game.enemyBullets.clear();
+            for (Bullet bullet : Game.bullets)
+                Game.gameRoot.getChildren().remove(bullet);
+            Game.bullets.clear();
 
             for (Enemy enemy : Game.enemies) {
                 if (enemy instanceof Animatable animatable)
@@ -235,8 +254,10 @@ public class Booker extends Character implements Animatable {
             else
                 animation.play();
 
-            if (!Game.supplies.isEmpty() || (Game.levelNumber > Level.FIRST_LEVEL && Game.elizabeth.isGiveSupply()))
-                takeSupply();
+            if (Game.elizabeth.isGiveSupply() && getBoundsInParent().intersects(Game.elizabeth.getBoundsInParent())) {
+                addMedicineForKillingEnemy();
+                Game.elizabeth.giveMedicine();
+            }
 
             if (Game.levelNumber < Level.THIRD_LEVEL)
                 playVoice();
@@ -313,29 +334,6 @@ public class Booker extends Character implements Animatable {
         velocity = velocity.add(0, JUMP_SPEED);
     }
 
-    private void takeSupply() {
-        if (Game.elizabeth.isGiveSupply())
-            if (getBoundsInParent().intersects(Game.elizabeth.getBoundsInParent())) {
-                takeMedicine();
-                Game.elizabeth.giveMedicine();
-            }
-
-        for (Supply supply : Game.supplies)
-            if (supply.getBoundsInParent().intersects(getBoundsInParent())) {
-                if (supply.getSupply().equals(SupplyType.MEDICINE) && Game.booker.getHP() < 100) {
-                    takeMedicine();
-                    Game.gameRoot.getChildren().remove(supply);
-                    Game.supplies.remove(supply);
-                } else if (supply.getSupply().equals(SupplyType.AMMO)) {
-                    Sounds.great.play(Game.menu.getVoiceSlider().getValue() / 100);
-                    Game.weapon.setBullets(Game.weapon.getBullets() + bulletsForKillingEnemy);
-                    Game.gameRoot.getChildren().remove(supply);
-                    Game.supplies.remove(supply);
-                }
-                break;
-            }
-    }
-
     public void moveX(double x) {
         if (velocity.getX() < 0)
             velocity = velocity.add(ANIMATION_SPEED, 0);
@@ -355,18 +353,6 @@ public class Booker extends Character implements Animatable {
 
             if (intersectsWithEnemies('X'))
                 return;
-        }
-    }
-
-    private void takeMedicine() {
-        if (HP + medicineForKillingEnemy > 100)
-            HP = 100;
-        else
-            HP += medicineForKillingEnemy;
-
-        switch ((int) (Math.random() * 2)) {
-            case 0 -> Sounds.feelsBetter.play(Game.menu.getVoiceSlider().getValue() / 100);
-            case 1 -> Sounds.feelingBetter.play(Game.menu.getVoiceSlider().getValue() / 100);
         }
     }
 
@@ -453,7 +439,8 @@ public class Booker extends Character implements Animatable {
     public void setIdleAnimation() {
         switch (Game.weapon.getType()) {
             case WeaponType.PISTOL -> imageView.setViewport(new Rectangle2D(IDLE_PISTOL_OFFSET_X, 0, WIDTH, HEIGHT));
-            case WeaponType.MACHINE_GUN -> imageView.setViewport(new Rectangle2D(IDLE_MACHINE_OFFSET_X, 0, WIDTH, HEIGHT));
+            case WeaponType.MACHINE_GUN ->
+                    imageView.setViewport(new Rectangle2D(IDLE_MACHINE_OFFSET_X, 0, WIDTH, HEIGHT));
             case WeaponType.RPG -> imageView.setViewport(new Rectangle2D(IDLE_RPG_OFFSET_X, 0, WIDTH, HEIGHT));
             default -> imageView.setViewport(new Rectangle2D(IDLE_WITH_NO_GUN_OFFSET_X, 0, WIDTH, HEIGHT));
         }
@@ -467,7 +454,7 @@ public class Booker extends Character implements Animatable {
                 money = 1000000;
                 livesCount = 4;
                 priceForGeneration = 0;
-                closeCombatDamage = 100;
+                closeCombatDamage = 75;
                 moneyForKillingEnemy = 0;
                 bulletsForKillingEnemy = 30;
                 medicineForKillingEnemy = 30;
@@ -475,25 +462,25 @@ public class Booker extends Character implements Animatable {
             case DifficultyLevel.EASY -> {
                 money = 300;
                 livesCount = 4;
-                closeCombatDamage = 75;
+                closeCombatDamage = 50;
                 priceForGeneration = 15;
                 moneyForKillingEnemy = 10;
-                bulletsForKillingEnemy = 20;
-                medicineForKillingEnemy = 20;
+                bulletsForKillingEnemy = 25;
+                medicineForKillingEnemy = 25;
             }
             case DifficultyLevel.MEDIUM -> {
                 money = 150;
                 livesCount = 2;
-                closeCombatDamage = 50;
+                closeCombatDamage = 40;
                 priceForGeneration = 20;
                 moneyForKillingEnemy = 5;
-                bulletsForKillingEnemy = 15;
-                medicineForKillingEnemy = 15;
+                bulletsForKillingEnemy = 20;
+                medicineForKillingEnemy = 20;
             }
             case DifficultyLevel.HARD -> {
                 money = 100;
                 livesCount = 1;
-                closeCombatDamage = 40;
+                closeCombatDamage = 30;
                 priceForGeneration = 25;
                 moneyForKillingEnemy = 3;
                 bulletsForKillingEnemy = 10;

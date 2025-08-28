@@ -22,12 +22,8 @@ public class Camper extends Enemy {
     }
 
     private void moveY() {
-        for (int i = 0; i < Math.abs(velocity.getY()); i++) {
-            if (velocity.getY() > 0)
-                setTranslateY(getTranslateY() + 1);
-            else
-                setTranslateY(getTranslateY() - 1);
-
+        for (int i = 0; i < velocity.getY(); i++) {
+            setTranslateY(getTranslateY() + 1);
             for (Block block : Game.level.getBlocks())
                 if (getBoundsInParent().intersects(block.getBoundsInParent())) {
                     setTranslateY(getTranslateY() - 1);

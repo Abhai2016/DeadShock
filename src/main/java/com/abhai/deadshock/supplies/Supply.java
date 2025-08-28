@@ -1,70 +1,67 @@
 package com.abhai.deadshock.supplies;
 
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.characters.Character;
-import com.abhai.deadshock.characters.enemies.EnemyType;
-import com.abhai.deadshock.weapons.Weapon;
-import javafx.animation.RotateTransition;
+import com.abhai.deadshock.levels.Block;
+import com.abhai.deadshock.levels.BlockType;
+import com.abhai.deadshock.weapons.WeaponType;
+import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.util.Duration;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Supply extends Pane {
-    private Path medicineImagePath = Paths.get("resources", "images", "supply", "medicine.png");
-    private ImageView medicine = new ImageView(new Image(medicineImagePath.toUri().toString()));
+    private static final int GRAVITY = 10;
+    private final Image ammoImage = new Image(Paths.get("resources", "images", "supply", "ammo.png").toUri().toString());
+    private final Image medicineImage = new Image(Paths.get("resources", "images", "supply", "medicine.png").toUri().toString());
 
-    private Path ammoImagePath = Paths.get("resources", "images", "supply", "ammo.png");
-    private ImageView ammo = new ImageView(new Image(ammoImagePath.toUri().toString()));
+    private boolean delete;
+    private SupplyType type;
+    private final Point2D velocity;
+    private final ImageView imageView;
 
-    private RotateTransition rt = new RotateTransition(Duration.seconds(1), ammo);
+    public Supply() {
+        imageView = new ImageView();
+        getChildren().add(imageView);
 
-    private SupplyType supply;
-    private EnemyType enemyType;
+        delete = false;
+        velocity = new Point2D(0, GRAVITY);
+    }
 
-    private boolean delete = false;
-
-    public Supply(int value, double x, double y) {
-        switch (value) {
-            case 0:
-                supply = SupplyType.MEDICINE;
-                getChildren().add(medicine);
-                break;
-            case 1:
-                supply = SupplyType.AMMO;
-                getChildren().add(ammo);
-                break;
+    private void move() {
+        for (int i = 0; i < velocity.getY(); i++) {
+            setTranslateY(getTranslateY() + 1);
+            for (Block block : Game.level.getBlocks())
+                if (getBoundsInParent().intersects(block.getBoundsInParent()) && block.getType() != BlockType.INVISIBLE) {
+                    setTranslateY(getTranslateY() - 1);
+                    return;
+                }
         }
+    }
+
+    private void delete() {
+        delete = true;
+        if (type == SupplyType.AMMO) {
+            if (Game.weapon.getType() != WeaponType.RPG)
+                Game.weapon.setBullets(Game.weapon.getBullets() + Game.booker.getBulletsForKillingEnemy());
+            else
+                Game.weapon.setBullets(Game.weapon.getBullets() + Game.booker.getBulletsForKillingEnemy() / 5);
+        } else
+            Game.booker.addMedicineForKillingEnemy();
+    }
+
+    public void init(double x, double y) {
+        if (Math.random() < 0.5) {
+            type = SupplyType.MEDICINE;
+            imageView.setImage(medicineImage);
+        } else {
+            type = SupplyType.AMMO;
+            imageView.setImage(ammoImage);
+        }
+        delete = false;
         setTranslateX(x);
         setTranslateY(y - 15);
-    }
-
-    public Supply(double x, double y, EnemyType enemyType) {
-        this.enemyType = enemyType;
-
-        supply = SupplyType.AMMO;
-        getChildren().add(ammo);
-
-        setTranslateX(x);
-        setTranslateY(y);
-        Game.gameRoot.getChildren().add(this);
-
-        rt.setByAngle(360);
-        rt.play();
-    }
-
-    public SupplyType getSupply() {
-        return supply;
-    }
-
-    public ImageView getImageSupply() {
-        if (supply.equals(SupplyType.MEDICINE))
-            return medicine;
-        else
-            return ammo;
     }
 
     public boolean isDelete() {
@@ -72,96 +69,9 @@ public class Supply extends Pane {
     }
 
     public void update() {
-        if (getBoundsInParent().intersects(Game.booker.getBoundsInParent()))
-            switch (enemyType) {
-                case EnemyType.COMSTOCK -> {
-                    if (Game.weapon.getType().equals("pistol"))
-                        Game.weapon.setBullets(Game.weapon.getBullets() + Game.booker.getBulletsForKillingEnemy());
-                    else
-                        Weapon.WeaponData.pistolBullets += Game.booker.getBulletsForKillingEnemy();
-                    Game.gameRoot.getChildren().remove(this);
-                    delete = true;
-                }
-                case EnemyType.RED_EYE -> {
-                    if (Game.weapon.getType().equals("machine_gun"))
-                        Game.weapon.setBullets(Game.weapon.getBullets() + Game.booker.getBulletsForKillingEnemy());
-                    else
-                        Weapon.WeaponData.machineGunBullets += Game.booker.getBulletsForKillingEnemy();
-                    Game.gameRoot.getChildren().remove(this);
-                    delete = true;
-                }
-            }
-        else {
-            rt.setOnFinished(event -> rt.play());
-
-            if (getTranslateX() < Game.booker.getTranslateX())
-                setTranslateX(getTranslateX() + Character.SPEED * 1.5);
-            if (getTranslateX() > Game.booker.getTranslateX())
-                setTranslateX(getTranslateX() - Character.SPEED * 1.5);
-
-            if (getTranslateY() < Game.booker.getTranslateY())
-                setTranslateY(getTranslateY() + Character.SPEED * 1.5);
-            if (getTranslateY() > Game.booker.getTranslateY())
-                setTranslateY(getTranslateY() - Character.SPEED * 1.5);
-        }
-
+        if (!getBoundsInParent().intersects(Game.booker.getBoundsInParent()))
+            move();
+        else
+            delete();
     }
-
-    //TODO implement supply logic after killing an enemy
-    /*private void createSupply(int randSupply) {
-        if (randSupply == 0)
-            Game.elizabeth.countMedicine++;
-        else {
-            switch ((int) (Math.random() * 2)) {
-                case 0:
-                    Sounds.audioClipAmmo.play(Game.menu.voiceSlider.getValue() / 100);
-                case 1:
-                    Sounds.audioClipAmmo2.play(Game.menu.voiceSlider.getValue() / 100);
-            }
-            if (Game.elizabeth.getAmmo() != null)
-                Game.gameRoot.getChildren().remove(Game.elizabeth.getAmmo());
-            Game.elizabeth.setAmmo(new Supply(Game.elizabeth.getTranslateX(), Game.elizabeth.getTranslateY(), type));
-        }
-
-        Game.gameRoot.getChildren().remove(this);
-        toDelete = true;
-    }
-
-    private void pickUpSupply() {
-        boolean pickUpSupply = true;
-        if (pickUpSupply) {
-            if (Game.booker.getBoundsInParent().intersects(getBoundsInParent())) {
-                if (supply.getSupply().equals("medicine")) {
-                    Sounds.feelsBetter.setVolume(Game.menu.voiceSlider.getValue() / 100);
-                    Sounds.feelsBetter.play();
-                    for (int count = 0; count < Game.booker.getMedicineCount(); count++)
-                        if (Game.booker.getHP() < 100)
-                            Game.booker.setHP(Game.booker.getHP() + 1);
-                        else
-                            break;
-                } else {
-                    Sounds.great.play(Game.menu.voiceSlider.getValue() / 100);
-                    Game.weapon.setBullets(Game.weapon.getBullets() + Game.booker.getBulletCount());
-                }
-                Game.gameRoot.getChildren().remove(this);
-                pickUpSupply = false;
-                toDelete = true;
-            }
-
-            if (Game.difficultyLevelText.equals("high") || Game.difficultyLevelText.equals("hardcore"))
-                for (Enemy enemy : Game.enemies)
-                    if (enemy != this && enemy.getBoundsInParent().intersects(getBoundsInParent())) {
-                        if (supply.getSupply().equals("medicine")) {
-                            for (int count = 0; count < Game.booker.getMedicineCount(); count++)
-                                if (enemy.HP < 100)
-                                    enemy.HP++;
-                                else
-                                    break;
-                        }
-                        Game.gameRoot.getChildren().remove(this);
-                        pickUpSupply = false;
-                        toDelete = true;
-                    }
-        }
-    }*/
 }

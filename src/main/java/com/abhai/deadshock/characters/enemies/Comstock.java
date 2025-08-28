@@ -1,6 +1,7 @@
 package com.abhai.deadshock.characters.enemies;
 
 import com.abhai.deadshock.Game;
+import com.abhai.deadshock.supplies.Supply;
 import com.abhai.deadshock.characters.Animatable;
 import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.levels.BlockType;
@@ -55,6 +56,12 @@ public class Comstock extends Enemy implements Animatable {
         toDelete = true;
         stopAnimation();
         playDeathVoice();
+        if (Math.random() < 0.5) {
+            Supply supply = Game.supplyPool.get();
+            supply.init(getTranslateX(), getTranslateY());
+            Game.gameRoot.getChildren().add(supply);
+            Game.supplies.add(supply);
+        }
         Game.booker.addMoneyForKillingEnemy();
     }
 

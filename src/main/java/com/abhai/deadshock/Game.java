@@ -12,6 +12,7 @@ import com.abhai.deadshock.supplies.Supply;
 import com.abhai.deadshock.utils.Controller;
 import com.abhai.deadshock.utils.Options;
 import com.abhai.deadshock.utils.Saves;
+import com.abhai.deadshock.utils.pools.ObjectPool;
 import com.abhai.deadshock.utils.pools.ObjectPoolManager;
 import com.abhai.deadshock.weapons.Weapon;
 import com.abhai.deadshock.weapons.bullets.Bullet;
@@ -42,6 +43,7 @@ public class Game extends Application {
     private static Path optionsPath = Paths.get("resources", "data", "options.dat");
 
     public static ArrayList<Supply> supplies = new ArrayList<>();
+    public static ObjectPool<Supply> supplyPool = new ObjectPool<>(Supply::new, 10, 20);
     public static ArrayList<Bullet> bullets = new ArrayList<>();
     public static ArrayList<EnemyBullet> enemyBullets = new ArrayList<>();
     private final static ObjectPoolManager<Enemy> enemyPools = new ObjectPoolManager<>();
@@ -128,7 +130,9 @@ public class Game extends Application {
     }
 
     //TODO fix a bug with vendingMachine where buttons to buy or esc don't work after the death/levelReset/changeLevel, etc.
-    //TODO fix a bug with a weapon
+    //TODO fix a bug with a weapon that doesn't want to work after second reload
+    //TODO fix a bug with a weapon that saves wrong amount of bullets in saves.dat file
+    //TODO do not forget to change difficulty's level description
     public static void initContentForNewGame() {
         levelNumber = Level.FIRST_LEVEL;
         level.changeLevel();
@@ -310,6 +314,13 @@ public class Game extends Application {
             gameRoot.getChildren().remove(bullet);
         bullets.clear();
 
+        for (Supply supply : supplies) {
+            gameRoot.getChildren().remove(supply);
+            supplyPool.put(supply);
+        }
+        supplies.clear();
+
+        energetic.clear();
         keys.clear();
     }
 
@@ -341,6 +352,11 @@ public class Game extends Application {
         for (Bullet bullet : bullets)
             gameRoot.getChildren().remove(bullet);
         bullets.clear();
+        for (Supply supply : supplies) {
+            gameRoot.getChildren().remove(supply);
+            supplyPool.put(supply);
+        }
+        supplies.clear();
 
         gameRoot.getChildren().remove(weapon);
         gameRoot.getChildren().remove(energetic);
@@ -357,6 +373,11 @@ public class Game extends Application {
             enemyPools.put(enemy);
         }
         enemies.clear();
+        for (Supply supply : supplies) {
+            gameRoot.getChildren().remove(supply);
+            supplyPool.put(supply);
+        }
+        supplies.clear();
 
         for (EnemyBullet enemyBullet : enemyBullets)
             gameRoot.getChildren().remove(enemyBullet);
@@ -461,6 +482,16 @@ public class Game extends Application {
             enemyBullet.update();
             if (enemyBullet.isDelete()) {
                 enemyBullets.remove(enemyBullet);
+                break;
+            }
+        }
+        for (Supply supply : supplies) {
+            if (!supply.isDelete())
+                supply.update();
+            else {
+                gameRoot.getChildren().remove(supply);
+                supplyPool.put(supply);
+                supplies.remove(supply);
                 break;
             }
         }
