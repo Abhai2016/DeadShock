@@ -3,150 +3,122 @@ package com.abhai.deadshock.utils;
 import com.abhai.deadshock.DifficultyLevel;
 
 public class Saves {
-    private DifficultyLevel difficultyLevel;
-    private int levelNumber;
-    private int money;
     private int salt;
-    private int pistolClip;
-    private int pistolBullets;
-    private int machineGunClip;
-    private int machineGunBullets;
-    private int rpgClip;
+    private int money;
     private int rpgBullets;
+    private int levelNumber;
+    private int pistolBullets;
+    private int machineGunBullets;
+    private DifficultyLevel difficultyLevel;
 
-    private boolean canChoosePistol;
-    private boolean canChooseMachineGun;
     private boolean canChooseRPG;
-    private boolean canChooseDevilKiss;
-    private boolean canChooseElectricity;
+    private boolean canChoosePistol;
     private boolean canChooseHypnosis;
+    private boolean canChooseDevilKiss;
+    private boolean canChooseMachineGun;
+    private boolean canChooseElectricity;
 
-
-    public boolean isCanChooseHypnosis() {
-        return canChooseHypnosis;
-    }
-
-    public void setCanChooseHypnosis(boolean canChooseHypnosis) {
-        this.canChooseHypnosis = canChooseHypnosis;
-    }
-
-    public boolean isCanChooseRPG() {
-        return canChooseRPG;
-    }
-
-    public void setCanChooseRPG(boolean canChooseRPG) {
-        this.canChooseRPG = canChooseRPG;
-    }
-
-    public int getRpgClip() {
-        return rpgClip;
-    }
-
-    public void setRpgClip(int rpgClip) {
-        this.rpgClip = rpgClip;
-    }
-
-    public int getRpgBullets() {
-        return rpgBullets;
-    }
-
-    public void setRpgBullets(int rpgBullets) {
-        this.rpgBullets = rpgBullets;
-    }
-
-    public boolean isCanChooseMachineGun() {
-        return canChooseMachineGun;
-    }
-
-    public void setCanChooseMachineGun(boolean canChooseMachineGun) {
-        this.canChooseMachineGun = canChooseMachineGun;
-    }
-
-    public boolean isCanChooseElectricity() {
-        return canChooseElectricity;
-    }
-
-    public void setCanChooseElectricity(boolean canChooseElectricity) {
-        this.canChooseElectricity = canChooseElectricity;
-    }
-
-    public int getMachineGunClip() {
-        return machineGunClip;
-    }
-
-    public void setMachineGunClip(int machineGunClip) {
-        this.machineGunClip = machineGunClip;
-    }
-
-    public int getMachineGunBullets() {
-        return machineGunBullets;
-    }
-
-    public void setMachineGunBullets(int machineGunBullets) {
-        this.machineGunBullets = machineGunBullets;
-    }
-
-    public DifficultyLevel getDifficultyLevel() {
-        return difficultyLevel;
-    }
-
-    public void setDifficultyLevel(DifficultyLevel difficultyLevel) {
-        this.difficultyLevel = difficultyLevel;
-    }
-
-    public int getLevelNumber() {
-        return levelNumber;
-    }
-
-    public void setLevelNumber(int levelNumber) {
-        this.levelNumber = levelNumber;
+    public int getSalt() {
+        return salt;
     }
 
     public int getMoney() {
         return money;
     }
 
-    public void setMoney(int money) {
-        this.money = money;
-    }
-
-    public int getSalt() {
-        return salt;
+    public int getRpgBullets() {
+        return rpgBullets;
     }
 
     public void setSalt(int salt) {
         this.salt = salt;
     }
 
-    public int getPistolClip() {
-        return pistolClip;
+    public int getLevelNumber() {
+        return levelNumber;
     }
 
-    public void setPistolClip(int pistolClip) {
-        this.pistolClip = pistolClip;
+    public void setMoney(int money) {
+        this.money = money;
     }
 
     public int getPistolBullets() {
         return pistolBullets;
     }
 
-    public void setPistolBullets(int pistolBullets) {
-        this.pistolBullets = pistolBullets;
-    }
-
-    public boolean isCanChooseDevilKiss() {
-        return canChooseDevilKiss;
-    }
-
-    public void setCanChooseDevilKiss(boolean canChooseDevilKiss) {
-        this.canChooseDevilKiss = canChooseDevilKiss;
+    public boolean isCanChooseRPG() {
+        return canChooseRPG;
     }
 
     public boolean isCanChoosePistol() {
         return canChoosePistol;
     }
 
+    public int getMachineGunBullets() {
+        return machineGunBullets;
+    }
+
+    public boolean isCanChooseHypnosis() {
+        return canChooseHypnosis;
+    }
+
+    public boolean isCanChooseDevilKiss() {
+        return canChooseDevilKiss;
+    }
+
+    public boolean isCanChooseMachineGun() {
+        return canChooseMachineGun;
+    }
+
+    public void setCanChooseElectricity(boolean canChooseElectricity) {
+        this.canChooseElectricity = canChooseElectricity;
+    }
+
+    public DifficultyLevel getDifficultyLevel() {
+        return difficultyLevel;
+    }
+
+    public boolean isCanChooseElectricity() {
+        return canChooseElectricity;
+    }
+
+    public void setRpgBullets(int rpgBullets) {
+        this.rpgBullets = rpgBullets;
+    }
+
+    public void setLevelNumber(int levelNumber) {
+        this.levelNumber = levelNumber;
+    }
+
+    public void setPistolBullets(int pistolBullets) {
+        this.pistolBullets = pistolBullets;
+    }
+
+    public void setCanChooseRPG(boolean canChooseRPG) {
+        this.canChooseRPG = canChooseRPG;
+    }
+
     public void setCanChoosePistol(boolean canChoosePistol) {
         this.canChoosePistol = canChoosePistol;
+    }
+
+    public void setMachineGunBullets(int machineGunBullets) {
+        this.machineGunBullets = machineGunBullets;
+    }
+
+    public void setCanChooseHypnosis(boolean canChooseHypnosis) {
+        this.canChooseHypnosis = canChooseHypnosis;
+    }
+
+    public void setDifficultyLevel(DifficultyLevel difficultyLevel) {
+        this.difficultyLevel = difficultyLevel;
+    }
+
+    public void setCanChooseDevilKiss(boolean canChooseDevilKiss) {
+        this.canChooseDevilKiss = canChooseDevilKiss;
+    }
+
+    public void setCanChooseMachineGun(boolean canChooseMachineGun) {
+        this.canChooseMachineGun = canChooseMachineGun;
     }
 }

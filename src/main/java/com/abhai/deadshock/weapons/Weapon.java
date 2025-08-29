@@ -131,14 +131,6 @@ public class Weapon extends Pane {
         canReload = value;
     }
 
-    public boolean isCanReload() {
-        return canReload;
-    }
-
-    public boolean isNowReloading() {
-        return nowReloading;
-    }
-
     public void setSingleShot(boolean value) {
         singleShot = value;
     }
@@ -314,35 +306,37 @@ public class Weapon extends Pane {
     }
 
     public void shoot() {
-        switch (type) {
-            case WeaponType.PISTOL -> {
-                if (singleShot) {
-                    Sounds.pistolShot.play(Game.menu.getFxSlider().getValue() / 100);
-                    Game.bullets.add(new Bullet(type));
-                    clip--;
-                    singleShot = false;
+        if (clip > 0 && !nowReloading) {
+            switch (type) {
+                case WeaponType.PISTOL -> {
+                    if (singleShot) {
+                        Sounds.pistolShot.play(Game.menu.getFxSlider().getValue() / 100);
+                        Game.bullets.add(new Bullet(type));
+                        clip--;
+                        singleShot = false;
+                    }
                 }
-            }
-            case WeaponType.MACHINE_GUN -> {
-                if (shootInterval > 5) {
-                    Sounds.machineGunShot.play(Game.menu.getFxSlider().getValue() / 100);
-                    Game.bullets.add(new Bullet(type));
-                    clip--;
-                    shootInterval = 0;
+                case WeaponType.MACHINE_GUN -> {
+                    if (shootInterval > 5) {
+                        Sounds.machineGunShot.play(Game.menu.getFxSlider().getValue() / 100);
+                        Game.bullets.add(new Bullet(type));
+                        clip--;
+                        shootInterval = 0;
+                    }
                 }
-            }
-            case WeaponType.RPG -> {
-                Sounds.rpgShotWithReload.setVolume(Game.menu.getFxSlider().getValue() / 100);
-                Sounds.rpgShotWithReload.play();
-                Game.bullets.add(new RpgBullet());
-                clip--;
-                reload();
+                case WeaponType.RPG -> {
+                    Sounds.rpgShotWithReload.setVolume(Game.menu.getFxSlider().getValue() / 100);
+                    Sounds.rpgShotWithReload.play();
+                    Game.bullets.add(new RpgBullet());
+                    clip--;
+                    reload();
+                }
             }
         }
     }
 
     public void changeWeapon(WeaponType type) {
-        if (!type.equals(WeaponType.NO_GUN)) {
+        if (!type.equals(WeaponType.NO_GUN) && !nowReloading) {
             switch (type) {
                 case WeaponType.PISTOL -> {
                     if (canChoosePistol) {

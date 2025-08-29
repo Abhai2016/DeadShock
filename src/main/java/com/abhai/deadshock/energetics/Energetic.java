@@ -150,6 +150,8 @@ public class Energetic extends Pane {
             }
         }
         setTranslateY(0);
+        if (countEnergetics > 1)
+            canChangeEnergetic = true;
         Game.gameRoot.getChildren().remove(this);
     }
 
@@ -258,12 +260,12 @@ public class Energetic extends Pane {
         return saltPrice;
     }
 
-    public int getCountEnergetics() {
-        return countEnergetics;
-    }
-
     public void setCanShoot(boolean value) {
         canShoot = value;
+    }
+
+    public int getCountEnergetics() {
+        return countEnergetics;
     }
 
     public boolean canChooseHypnosis() {
@@ -276,10 +278,6 @@ public class Energetic extends Pane {
 
     public boolean canChooseElectricity() {
         return canChooseElectricity;
-    }
-
-    public void setCanChangeEnergetic(boolean value) {
-        canChangeEnergetic = value;
     }
 
     public void update() {

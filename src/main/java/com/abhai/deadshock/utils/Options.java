@@ -1,40 +1,40 @@
 package com.abhai.deadshock.utils;
 
 public class Options {
-    private double musicVolume;
-    private double fxVolume;
-    private double voiceVolume;
     private String track;
+    private double fxVolume;
+    private double musicVolume;
+    private double voiceVolume;
 
-    public double getMusicVolume() {
-        return musicVolume;
-    }
-
-    public void setMusicVolume(double musicVolume) {
-        this.musicVolume = musicVolume;
+    public String getTrack() {
+        return track;
     }
 
     public double getFxVolume() {
         return fxVolume;
     }
 
-    public void setFxVolume(double fxVolume) {
-        this.fxVolume = fxVolume;
+    public double getMusicVolume() {
+        return musicVolume;
     }
 
     public double getVoiceVolume() {
         return voiceVolume;
     }
 
+    public void setTrack(String track) {
+        this.track = track;
+    }
+
+    public void setFxVolume(double fxVolume) {
+        this.fxVolume = fxVolume;
+    }
+
     public void setVoiceVolume(double voiceVolume) {
         this.voiceVolume = voiceVolume;
     }
 
-    public String getTrack() {
-        return track;
-    }
-
-    public void setTrack(String track) {
-        this.track = track;
+    public void setMusicVolume(double musicVolume) {
+        this.musicVolume = musicVolume;
     }
 }

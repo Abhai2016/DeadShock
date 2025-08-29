@@ -123,26 +123,28 @@ public class VendingMachine extends Pane {
     }
 
     public void openMachineMenu() {
-        isShown = true;
+        if (!isShown) {
+            isShown = true;
 
-        if (Game.levelNumber == Level.FIRST_LEVEL)
-            Tutorial.setVendingMachineMenu();
+            if (Game.levelNumber == Level.FIRST_LEVEL)
+                Tutorial.setVendingMachineMenu();
 
-        Tutorial.delete();
-        Game.active = false;
-        Game.menu.getMusic().pause();
-        Sounds.audioClipOpenMenu.play(Game.menu.getFxSlider().getValue() / 100);
-        moneyText.setText(String.valueOf(Game.booker.getMoney()));
+            Tutorial.delete();
+            Game.active = false;
+            Game.menu.getMusic().pause();
+            Sounds.audioClipOpenMenu.play(Game.menu.getFxSlider().getValue() / 100);
+            moneyText.setText(String.valueOf(Game.booker.getMoney()));
 
-        for (Enemy enemy : Game.enemies)
-            if (enemy instanceof Animatable animatable)
-                animatable.stopAnimation();
+            for (Enemy enemy : Game.enemies)
+                if (enemy instanceof Animatable animatable)
+                    animatable.stopAnimation();
 
-        ft.setByValue(0);
-        ft.setToValue(1);
-        ft.play();
+            ft.setByValue(0);
+            ft.setToValue(1);
+            ft.play();
 
-        moneyText.setVisible(true);
+            moneyText.setVisible(true);
+        }
     }
 
     void createButtons() {

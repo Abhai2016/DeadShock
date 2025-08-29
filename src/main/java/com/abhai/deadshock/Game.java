@@ -170,45 +170,45 @@ public class Game extends Application {
         switch (levelNumber) {
             case Level.SECOND_LEVEL -> {
                 weapon = new Weapon(saves.isCanChoosePistol());
-                weapon.setWeaponClip(saves.getPistolClip());
+                weapon.setWeaponClip(20);
                 weapon.setBullets(saves.getPistolBullets());
             }
             case Level.THIRD_LEVEL -> {
                 weapon = new Weapon(saves.isCanChoosePistol(), saves.isCanChooseMachineGun());
                 if (weapon.isCanChooseMachineGun()) {
-                    weapon.setWeaponClip(saves.getMachineGunClip());
+                    weapon.setWeaponClip(30);
                     weapon.setBullets(saves.getMachineGunBullets());
                     if (weapon.isCanChoosePistol()) {
-                        Weapon.WeaponData.pistolClip = saves.getPistolClip();
+                        Weapon.WeaponData.pistolClip = 20;
                         Weapon.WeaponData.pistolBullets = saves.getPistolBullets();
                     }
                 } else if (weapon.isCanChoosePistol()) {
-                    weapon.setWeaponClip(saves.getPistolClip());
+                    weapon.setWeaponClip(20);
                     weapon.setBullets(saves.getPistolBullets());
                 }
             }
             case Level.BOSS_LEVEL -> {
                 weapon = new Weapon(saves.isCanChoosePistol(), saves.isCanChooseMachineGun(), saves.isCanChooseRPG());
                 if (weapon.isCanChooseRPG()) {
-                    weapon.setWeaponClip(saves.getRpgClip());
+                    weapon.setWeaponClip(1);
                     weapon.setBullets(saves.getRpgBullets());
                     if (weapon.isCanChooseMachineGun()) {
-                        Weapon.WeaponData.machineGunClip = saves.getMachineGunClip();
+                        Weapon.WeaponData.machineGunClip = 30;
                         Weapon.WeaponData.machineGunBullets = saves.getMachineGunBullets();
                     }
                     if (weapon.isCanChoosePistol()) {
-                        Weapon.WeaponData.pistolClip = saves.getPistolClip();
+                        Weapon.WeaponData.pistolClip = 20;
                         Weapon.WeaponData.pistolBullets = saves.getPistolBullets();
                     }
                 } else if (weapon.isCanChooseMachineGun()) {
-                    weapon.setWeaponClip(saves.getMachineGunClip());
+                    weapon.setWeaponClip(30);
                     weapon.setBullets(saves.getMachineGunBullets());
                     if (weapon.isCanChoosePistol()) {
-                        Weapon.WeaponData.pistolClip = saves.getPistolClip();
+                        Weapon.WeaponData.pistolClip = 20;
                         Weapon.WeaponData.pistolBullets = saves.getPistolBullets();
                     }
                 } else if (weapon.isCanChoosePistol()) {
-                    weapon.setWeaponClip(saves.getPistolClip());
+                    weapon.setWeaponClip(20);
                     weapon.setBullets(saves.getPistolBullets());
                 }
             }
@@ -253,11 +253,8 @@ public class Game extends Application {
             saves.setMoney(booker.getMoney());
             saves.setSalt(booker.getSalt());
 
-            saves.setPistolClip(Weapon.WeaponData.pistolClip);
             saves.setPistolBullets(Weapon.WeaponData.pistolBullets);
-            saves.setMachineGunClip(Weapon.WeaponData.machineGunClip);
             saves.setMachineGunBullets(Weapon.WeaponData.machineGunBullets);
-            saves.setRpgClip(Weapon.WeaponData.rpgClip);
             saves.setRpgBullets(Weapon.WeaponData.rpgBullets);
 
             saves.setCanChoosePistol(weapon.isCanChoosePistol());
