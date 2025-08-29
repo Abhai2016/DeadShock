@@ -3,7 +3,6 @@ package com.abhai.deadshock;
 import com.abhai.deadshock.hud.Tutorial;
 import com.abhai.deadshock.levels.Level;
 import javafx.animation.FadeTransition;
-import javafx.scene.input.KeyCode;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -108,7 +107,6 @@ public class CutScenes {
         Game.elizabeth.init();
         Game.vendingMachine.changeLevel();
         Game.energetic.changeLevel();
-        Game.gameRoot.getChildren().add(Game.booker);
 
         Game.saveSaves();
         Game.saveOptions();

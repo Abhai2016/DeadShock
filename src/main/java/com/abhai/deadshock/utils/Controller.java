@@ -67,6 +67,8 @@ public class Controller {
     private static void energeticListener() {
         if (Game.energetic.getCountEnergetics() > 1 && isPressed(KeyCode.Q))
             Game.energetic.changeEnergetic();
+        if (!isPressed(KeyCode.Q))
+            Game.energetic.setCanChangeEnergetic(true);
         if (!isPressed(KeyCode.L))
             Game.energetic.setCanShoot(true);
         if (isPressed(KeyCode.L) && !Game.booker.isHypnotized() && Game.booker.getSalt() >= Game.energetic.getSaltPrice())

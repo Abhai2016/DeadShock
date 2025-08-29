@@ -15,7 +15,6 @@ import com.abhai.deadshock.utils.Saves;
 import com.abhai.deadshock.utils.pools.ObjectPool;
 import com.abhai.deadshock.utils.pools.ObjectPoolManager;
 import com.abhai.deadshock.weapons.Weapon;
-import com.abhai.deadshock.weapons.bullets.Bullet;
 import com.abhai.deadshock.weapons.bullets.EnemyBullet;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,10 +43,10 @@ public class Game extends Application {
 
     public static ArrayList<Supply> supplies = new ArrayList<>();
     public static ObjectPool<Supply> supplyPool = new ObjectPool<>(Supply::new, 10, 20);
-    public static ArrayList<Bullet> bullets = new ArrayList<>();
     public static ArrayList<EnemyBullet> enemyBullets = new ArrayList<>();
-    private final static ObjectPoolManager<Enemy> enemyPools = new ObjectPoolManager<>();
+    public static ObjectPool<EnemyBullet> enemyBulletsPool = new ObjectPool<>(EnemyBullet::new, 50, 150);
     public static ArrayList<Enemy> enemies = new ArrayList<>();
+    private final static ObjectPoolManager<Enemy> enemyPools = new ObjectPoolManager<>();
     public static HashMap<KeyCode, Boolean> keys = new HashMap<>();
     public static ObjectMapper mapper = new ObjectMapper();
 
@@ -141,6 +140,7 @@ public class Game extends Application {
         weapon.setDifficultyLevel();
         createEnemies();
         Tutorial.init();
+        energetic.reset();
 
         if (levelNumber != Level.BOSS_LEVEL)
             vendingMachine.createButtons();
@@ -304,19 +304,15 @@ public class Game extends Application {
         createEnemies();
 
         for (EnemyBullet enemyBullet : enemyBullets)
-            gameRoot.getChildren().remove(enemyBullet);
+            enemyBulletsPool.put(enemyBullet);
+        gameRoot.getChildren().removeAll(enemyBullets);
         enemyBullets.clear();
 
-        for (Bullet bullet : bullets)
-            gameRoot.getChildren().remove(bullet);
-        bullets.clear();
+        weapon.clearBullets();
 
-        for (Supply supply : supplies) {
-            gameRoot.getChildren().remove(supply);
+        for (Supply supply : supplies)
             supplyPool.put(supply);
-        }
         supplies.clear();
-
         energetic.clear();
         keys.clear();
     }
@@ -335,29 +331,18 @@ public class Game extends Application {
         }
         enemies.clear();
 
-        if (forBossLevel) {
+        if (forBossLevel)
             enemies.add(boss);
-        } else {
-            gameRoot.getChildren().remove(booker);
-            gameRoot.getChildren().remove(elizabeth);
-        }
 
         for (EnemyBullet enemyBullet : enemyBullets)
-            gameRoot.getChildren().remove(enemyBullet);
+            enemyBulletsPool.put(enemyBullet);
+        gameRoot.getChildren().removeAll(enemyBullets);
         enemyBullets.clear();
 
-        for (Bullet bullet : bullets)
-            gameRoot.getChildren().remove(bullet);
-        bullets.clear();
-        for (Supply supply : supplies) {
-            gameRoot.getChildren().remove(supply);
+        weapon.clearBullets();
+        for (Supply supply : supplies)
             supplyPool.put(supply);
-        }
         supplies.clear();
-
-        gameRoot.getChildren().remove(weapon);
-        gameRoot.getChildren().remove(energetic);
-
         keys.clear();
     }
 
@@ -370,19 +355,15 @@ public class Game extends Application {
             enemyPools.put(enemy);
         }
         enemies.clear();
-        for (Supply supply : supplies) {
-            gameRoot.getChildren().remove(supply);
+        for (Supply supply : supplies)
             supplyPool.put(supply);
-        }
         supplies.clear();
 
         for (EnemyBullet enemyBullet : enemyBullets)
-            gameRoot.getChildren().remove(enemyBullet);
+            enemyBulletsPool.put(enemyBullet);
+        gameRoot.getChildren().removeAll(enemyBullets);
         enemyBullets.clear();
-
-        for (Bullet bullet : bullets)
-            gameRoot.getChildren().remove(bullet);
-        bullets.clear();
+        weapon.clearBullets();
 
         if (levelNumber > Level.FIRST_LEVEL) {
             Path savesPath = Paths.get("resources", "data", "saves.dat");
@@ -403,7 +384,6 @@ public class Game extends Application {
         Tutorial.delete();
 
         booker.reset();
-        energetic.reset();
         elizabeth.reset();
     }
 
@@ -468,25 +448,17 @@ public class Game extends Application {
                 break;
             }
         }
-        for (Bullet bullet : bullets) {
-            bullet.update();
-            if (bullet.isDelete()) {
-                bullets.remove(bullet);
-                break;
-            }
-        }
         for (EnemyBullet enemyBullet : enemyBullets) {
             enemyBullet.update();
             if (enemyBullet.isDelete()) {
                 enemyBullets.remove(enemyBullet);
+                enemyBulletsPool.put(enemyBullet);
                 break;
             }
         }
         for (Supply supply : supplies) {
-            if (!supply.isDelete())
-                supply.update();
-            else {
-                gameRoot.getChildren().remove(supply);
+            supply.update();
+            if (supply.isDelete()) {
                 supplyPool.put(supply);
                 supplies.remove(supply);
                 break;

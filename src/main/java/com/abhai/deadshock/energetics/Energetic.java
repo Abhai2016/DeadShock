@@ -70,7 +70,7 @@ public class Energetic extends Pane {
         canShoot = true;
         countEnergetics = 0;
         hypnosis = new Hypnosis();
-        canChangeEnergetic = false;
+        canChangeEnergetic = true;
         imageView = new ImageView();
         devilKiss = new DevilKiss();
         electricity = new Electricity();
@@ -89,8 +89,8 @@ public class Energetic extends Pane {
     public void reset() {
         canShoot = true;
         countEnergetics = 0;
-        canChangeEnergetic = false;
         canChooseHypnosis = false;
+        canChangeEnergetic = true;
         canChooseDevilKiss = false;
         canChooseElectricity = false;
 
@@ -134,7 +134,6 @@ public class Energetic extends Pane {
             }
             case Level.SECOND_LEVEL -> {
                 countEnergetics++;
-                canChangeEnergetic = true;
                 canChooseElectricity = true;
                 type = EnergeticType.ELECTRICITY;
                 Game.hud.getElectricity().setVisible(true);
@@ -143,15 +142,12 @@ public class Energetic extends Pane {
             case Level.THIRD_LEVEL -> {
                 countEnergetics++;
                 canChooseHypnosis = true;
-                canChangeEnergetic = true;
                 type = EnergeticType.HYPNOSIS;
                 Game.hud.getHypnosis().setVisible(true);
                 Sounds.newEnergetic.play(Game.menu.getVoiceSlider().getValue() / 100);
             }
         }
         setTranslateY(0);
-        if (countEnergetics > 1)
-            canChangeEnergetic = true;
         Game.gameRoot.getChildren().remove(this);
     }
 
@@ -165,7 +161,8 @@ public class Energetic extends Pane {
             setTranslateX(HYPNOSIS_X);
             setTranslateY(HYPNOSIS_Y);
         }
-        Game.gameRoot.getChildren().add(this);
+        if (!Game.gameRoot.getChildren().contains(this))
+            Game.gameRoot.getChildren().add(this);
     }
 
     public void changeEnergetic() {
@@ -278,6 +275,10 @@ public class Energetic extends Pane {
 
     public boolean canChooseElectricity() {
         return canChooseElectricity;
+    }
+
+    public void setCanChangeEnergetic(boolean value) {
+        canChangeEnergetic = value;
     }
 
     public void update() {

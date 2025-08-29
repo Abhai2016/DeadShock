@@ -59,7 +59,6 @@ public class Comstock extends Enemy implements Animatable {
         if (Math.random() < 0.5) {
             Supply supply = Game.supplyPool.get();
             supply.init(getTranslateX(), getTranslateY());
-            Game.gameRoot.getChildren().add(supply);
             Game.supplies.add(supply);
         }
         Game.booker.addMoneyForKillingEnemy();

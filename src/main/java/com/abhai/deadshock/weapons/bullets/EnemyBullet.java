@@ -3,27 +3,38 @@ package com.abhai.deadshock.weapons.bullets;
 import com.abhai.deadshock.DifficultyLevel;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.enemies.Enemy;
-import com.abhai.deadshock.levels.Block;
-import com.abhai.deadshock.levels.BlockType;
 import com.abhai.deadshock.utils.Sounds;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import com.abhai.deadshock.weapons.WeaponType;
 
 public class EnemyBullet extends Bullet {
-    private byte damage;
 
-    public EnemyBullet(String enemyName, double scaleX, double x, double y) {
-        Path imagePath = Paths.get("resources", "images", "weapons", "bullet.png");
-        bullet = new ImageView(new Image(imagePath.toUri().toString()));
+    public EnemyBullet() {
+    }
 
-        if (scaleX < 0) {
-            direction = false;
-            setScaleX(-1);
+    private void intersectsWithCharacters() {
+        if (getBoundsInParent().intersects(Game.booker.getBoundsInParent())) {
+            Game.booker.setHP(Game.booker.getHP() - damage);
+            switch ((int) (Math.random() * 3)) {
+                case 0 -> Sounds.bookerHit.play(Game.menu.getVoiceSlider().getValue() / 100);
+                case 1 -> Sounds.bookerHit2.play(Game.menu.getVoiceSlider().getValue() / 100);
+                case 2 -> Sounds.bookerHit3.play(Game.menu.getVoiceSlider().getValue() / 100);
+            }
+            delete = true;
+            Game.gameRoot.getChildren().remove(this);
         }
 
+        for (Enemy enemy : Game.enemies)
+            if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
+                if (Game.difficultyLevel == DifficultyLevel.MARIK || Game.difficultyLevel == DifficultyLevel.EASY)
+                    enemy.setHP(enemy.getHP() - Game.weapon.getDamage());
+                delete = true;
+                Game.gameRoot.getChildren().remove(this);
+                return;
+            }
+    }
+
+    @Override
+    protected void setDifficultyLevelForBullet() {
         switch (Game.difficultyLevel) {
             case DifficultyLevel.MARIK -> damage = 2;
             case DifficultyLevel.EASY -> damage = 3;
@@ -31,74 +42,30 @@ public class EnemyBullet extends Bullet {
             case DifficultyLevel.HARD -> damage = 7;
             case DifficultyLevel.HARDCORE -> damage = 10;
         }
-
-        switch (enemyName) {
-            case "comstock":
-                setTranslateY(y + 9);
-                if (direction)
-                    setTranslateX(x + 67);
-                else
-                    setTranslateX(x - 5);
-                break;
-            case "red_eye":
-                setTranslateY(y + 9);
-                if (direction)
-                    setTranslateX(x + 67);
-                else
-                    setTranslateX(x - 5);
-                break;
-        }
-        getChildren().add(bullet);
-        Game.gameRoot.getChildren().add(this);
     }
 
+    public void init(double scaleX, double x, double y) {
+        super.init(WeaponType.PISTOL);
+
+        if (scaleX > 0) {
+            direction = true;
+            setTranslateX(x + 67);
+        } else {
+            setTranslateX(x - 5);
+            direction = false;
+        }
+        setTranslateY(y + 9);
+        setDifficultyLevelForBullet();
+    }
 
     @Override
     public void update() {
         if (direction)
-            setTranslateX(getTranslateX() + BULLET_SPEED);
+            setTranslateX(getTranslateX() + speed);
         else
-            setTranslateX(getTranslateX() - BULLET_SPEED);
+            setTranslateX(getTranslateX() - speed);
 
-        if (getTranslateX() > -Game.gameRoot.getLayoutX() + Game.appRoot.getWidth()
-                || getTranslateX() < -Game.gameRoot.getLayoutX()) {
-            Game.gameRoot.getChildren().remove(this);
-            delete = true;
-        }
-
-        if (getBoundsInParent().intersects(Game.booker.getBoundsInParent())) {
-            Game.gameRoot.getChildren().remove(this);
-            delete = true;
-            Game.booker.setHP(Game.booker.getHP() - damage);
-            byte rand = (byte) (Math.random() * 3);
-            switch (rand) {
-                case 0:
-                    Sounds.bookerHit.play(Game.menu.getVoiceSlider().getValue() / 100);
-                    break;
-                case 1:
-                    Sounds.bookerHit2.play(Game.menu.getVoiceSlider().getValue() / 100);
-                    break;
-                case 2:
-                    Sounds.bookerHit3.play(Game.menu.getVoiceSlider().getValue() / 100);
-                    break;
-            }
-        }
-
-        for (Block block : Game.level.getBlocks())
-            if (getBoundsInParent().intersects(block.getBoundsInParent()) && !block.getType().equals(BlockType.INVISIBLE)) {
-                Game.gameRoot.getChildren().remove(this);
-                delete = true;
-                return;
-            }
-
-        for (Enemy enemy : Game.enemies)
-            if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
-                if (Game.difficultyLevel.equals("marik") || Game.difficultyLevel.equals("easy")) {
-                    enemy.setHP(enemy.getHP() - Game.weapon.getDamage());
-                }
-                Game.gameRoot.getChildren().remove(this);
-                delete = true;
-                return;
-            }
+        intersectsWithWorld();
+        intersectsWithCharacters();
     }
 }

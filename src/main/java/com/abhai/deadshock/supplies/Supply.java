@@ -49,6 +49,7 @@ public class Supply extends Pane {
                 Game.weapon.setBullets(Game.weapon.getBullets() + Game.booker.getBulletsForKillingEnemy() / 5);
         } else
             Game.booker.addMedicineForKillingEnemy();
+        Game.gameRoot.getChildren().remove(this);
     }
 
     public void init(double x, double y) {
@@ -62,6 +63,7 @@ public class Supply extends Pane {
         delete = false;
         setTranslateX(x);
         setTranslateY(y - 15);
+        Game.gameRoot.getChildren().add(this);
     }
 
     public boolean isDelete() {

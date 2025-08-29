@@ -27,7 +27,8 @@ public class Elizabeth extends Character {
     public void init() {
         setTranslateX(START_X);
         setTranslateY(START_Y);
-        Game.gameRoot.getChildren().add(this);
+        if (!Game.gameRoot.getChildren().contains(this))
+            Game.gameRoot.getChildren().add(this);
     }
 
     public void reset() {

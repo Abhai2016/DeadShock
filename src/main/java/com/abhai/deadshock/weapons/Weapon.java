@@ -5,8 +5,8 @@ import com.abhai.deadshock.Game;
 import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.utils.SpriteAnimation;
+import com.abhai.deadshock.utils.pools.ObjectPool;
 import com.abhai.deadshock.weapons.bullets.Bullet;
-import com.abhai.deadshock.weapons.bullets.RpgBullet;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -15,11 +15,14 @@ import javafx.util.Duration;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
 
 public class Weapon extends Pane {
     private WeaponType type = WeaponType.NO_GUN;
+    public final ArrayList<Bullet> bulletsList = new ArrayList<>();
+    private final ObjectPool<Bullet> bulletsPool = new ObjectPool<>(Bullet::new, 50, 150);
 
     public ImageView explosion;
     public SpriteAnimation explosionAnimation;
@@ -167,7 +170,8 @@ public class Weapon extends Pane {
             setTranslateX(BLOCK_SIZE * 24);
             setTranslateY(BLOCK_SIZE * 12 - 20);
         }
-        Game.gameRoot.getChildren().add(this);
+        if (!Game.gameRoot.getChildren().contains(this))
+            Game.gameRoot.getChildren().add(this);
     }
 
     public void pickUpWeapon() {
@@ -311,7 +315,9 @@ public class Weapon extends Pane {
                 case WeaponType.PISTOL -> {
                     if (singleShot) {
                         Sounds.pistolShot.play(Game.menu.getFxSlider().getValue() / 100);
-                        Game.bullets.add(new Bullet(type));
+                        Bullet bullet = bulletsPool.get();
+                        bullet.init(WeaponType.PISTOL);
+                        bulletsList.add(bullet);
                         clip--;
                         singleShot = false;
                     }
@@ -319,7 +325,9 @@ public class Weapon extends Pane {
                 case WeaponType.MACHINE_GUN -> {
                     if (shootInterval > 5) {
                         Sounds.machineGunShot.play(Game.menu.getFxSlider().getValue() / 100);
-                        Game.bullets.add(new Bullet(type));
+                        Bullet bullet = bulletsPool.get();
+                        bullet.init(WeaponType.MACHINE_GUN);
+                        bulletsList.add(bullet);
                         clip--;
                         shootInterval = 0;
                     }
@@ -327,7 +335,9 @@ public class Weapon extends Pane {
                 case WeaponType.RPG -> {
                     Sounds.rpgShotWithReload.setVolume(Game.menu.getFxSlider().getValue() / 100);
                     Sounds.rpgShotWithReload.play();
-                    Game.bullets.add(new RpgBullet());
+                    Bullet bullet = bulletsPool.get();
+                    bullet.init(WeaponType.RPG);
+                    bulletsList.add(bullet);
                     clip--;
                     reload();
                 }
@@ -384,8 +394,24 @@ public class Weapon extends Pane {
         }
     }
 
+    public void clearBullets() {
+        for (Bullet bullet : bulletsList)
+            bulletsPool.put(bullet);
+        Game.gameRoot.getChildren().removeAll(bulletsList);
+        bulletsList.clear();
+    }
+
     public void update() {
         shootInterval++;
+        for (Bullet bullet : bulletsList) {
+            bullet.update();
+            if (bullet.isDelete()) {
+                bulletsPool.put(bullet);
+                bulletsList.remove(bullet);
+                Game.gameRoot.getChildren().remove(bullet);
+                break;
+            }
+        }
     }
 
     public static class WeaponData {

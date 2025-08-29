@@ -13,7 +13,6 @@ import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.utils.SpriteAnimation;
 import com.abhai.deadshock.utils.Texts;
 import com.abhai.deadshock.weapons.WeaponType;
-import com.abhai.deadshock.weapons.bullets.Bullet;
 import com.abhai.deadshock.weapons.bullets.EnemyBullet;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
@@ -184,11 +183,10 @@ public class Booker extends Character implements Animatable {
             Game.energetic.clear();
 
             for (EnemyBullet enemyBullet : Game.enemyBullets)
-                Game.gameRoot.getChildren().remove(enemyBullet);
+                Game.enemyBulletsPool.put(enemyBullet);
+            Game.gameRoot.getChildren().removeAll(Game.enemyBullets);
             Game.enemyBullets.clear();
-            for (Bullet bullet : Game.bullets)
-                Game.gameRoot.getChildren().remove(bullet);
-            Game.bullets.clear();
+            Game.weapon.clearBullets();
 
             for (Enemy enemy : Game.enemies) {
                 if (enemy instanceof Animatable animatable)
@@ -237,6 +235,9 @@ public class Booker extends Character implements Animatable {
         booleanVelocityY = true;
         velocity = new Point2D(0, 0);
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
+
+        if (Sounds.whereAreYouFrom.getStatus() == MediaPlayer.Status.PLAYING)
+            Sounds.whereAreYouFrom.stop();
 
         HP = 100;
         salt = 100;
