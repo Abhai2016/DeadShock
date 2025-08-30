@@ -3,7 +3,6 @@ package com.abhai.deadshock.supplies;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.levels.BlockType;
-import com.abhai.deadshock.weapons.WeaponType;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -42,12 +41,9 @@ public class Supply extends Pane {
 
     private void delete() {
         delete = true;
-        if (type == SupplyType.AMMO) {
-            if (Game.weapon.getType() != WeaponType.RPG)
-                Game.weapon.setBullets(Game.weapon.getBullets() + Game.booker.getBulletsForKillingEnemy());
-            else
-                Game.weapon.setBullets(Game.weapon.getBullets() + Game.booker.getBulletsForKillingEnemy() / 5);
-        } else
+        if (type == SupplyType.AMMO)
+            Game.booker.takeAmmo();
+        else
             Game.booker.addMedicineForKillingEnemy();
         Game.gameRoot.getChildren().remove(this);
     }

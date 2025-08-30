@@ -6,12 +6,14 @@ import com.abhai.deadshock.characters.enemies.Boss;
 import com.abhai.deadshock.characters.enemies.Comstock;
 import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.characters.enemies.EnemyType;
+import com.abhai.deadshock.energetics.Energetic;
 import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.levels.BlockType;
 import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.utils.SpriteAnimation;
 import com.abhai.deadshock.utils.Texts;
+import com.abhai.deadshock.weapons.Weapon;
 import com.abhai.deadshock.weapons.WeaponType;
 import com.abhai.deadshock.weapons.bullets.EnemyBullet;
 import javafx.event.EventHandler;
@@ -66,7 +68,9 @@ public class Booker extends Character implements Animatable {
     private int bulletsForKillingEnemy;
     private int medicineForKillingEnemy;
 
+    private Weapon weapon;
     private Point2D velocity;
+    private Energetic energetic;
     private SpriteAnimation withRPG;
     private SpriteAnimation animation;
     private SpriteAnimation withoutGun;
@@ -86,6 +90,8 @@ public class Booker extends Character implements Animatable {
         booleanVelocityX = true;
         booleanVelocityY = true;
         velocity = new Point2D(0, 0);
+        weapon = new Weapon.Builder().build();
+        energetic = new Energetic.Builder().build();
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
 
         HP = 100;
@@ -139,6 +145,10 @@ public class Booker extends Character implements Animatable {
         HP = value;
     }
 
+    public Weapon getWeapon() {
+        return weapon;
+    }
+
     public void addMedicineForKillingEnemy() {
         if (HP + medicineForKillingEnemy > 100)
             HP = 100;
@@ -160,16 +170,24 @@ public class Booker extends Character implements Animatable {
         return hypnotized;
     }
 
+    public Energetic getEnergetic() {
+        return energetic;
+    }
+
     public void setCanPlayVoice(boolean value) {
         canPlayVoice = value;
     }
 
-    public int getBulletsForKillingEnemy() {
-        return bulletsForKillingEnemy;
+    public void setWeapon(Weapon.Builder builder) {
+        weapon = builder.build();
     }
 
     public void minusSaltForUsingEnergetic(int saltPrice) {
         salt -= saltPrice;
+    }
+
+    public void setEnergetic(Energetic.Builder builder) {
+        energetic = builder.build();
     }
 
     private void die() {
@@ -180,13 +198,13 @@ public class Booker extends Character implements Animatable {
             stopAnimation();
             Game.active = false;
             Game.menu.getMusic().pause();
-            Game.energetic.clear();
+            energetic.clear();
 
             for (EnemyBullet enemyBullet : Game.enemyBullets)
                 Game.enemyBulletsPool.put(enemyBullet);
             Game.gameRoot.getChildren().removeAll(Game.enemyBullets);
             Game.enemyBullets.clear();
-            Game.weapon.clearBullets();
+            weapon.clearBullets();
 
             for (Enemy enemy : Game.enemies) {
                 if (enemy instanceof Animatable animatable)
@@ -224,10 +242,17 @@ public class Booker extends Character implements Animatable {
         }
     }
 
+    public void clear() {
+        energetic.clear();
+        weapon.clearBullets();
+    }
+
     public void reset() {
         dead = false;
         start = true;
         canJump = true;
+        weapon.reset();
+        energetic.reset();
         hypnotized = false;
         canPlayVoice = true;
         animation = withoutGun;
@@ -246,6 +271,8 @@ public class Booker extends Character implements Animatable {
     }
 
     private void behave() {
+        weapon.update();
+        energetic.update();
         moveY(velocity.getY());
         moveX(velocity.getX());
 
@@ -263,6 +290,13 @@ public class Booker extends Character implements Animatable {
             if (Game.levelNumber < Level.THIRD_LEVEL)
                 playVoice();
         }
+    }
+
+    public void takeAmmo() {
+        if (weapon.getType() != WeaponType.RPG)
+            weapon.setCurrentBullets(weapon.getCurrentBullets() + bulletsForKillingEnemy);
+        else
+            weapon.setCurrentBullets(weapon.getCurrentBullets() + bulletsForKillingEnemy / 5);
     }
 
     public void hypnotize() {
@@ -333,6 +367,11 @@ public class Booker extends Character implements Animatable {
     public void unhypnotize() {
         hypnotized = false;
         velocity = velocity.add(0, JUMP_SPEED);
+    }
+
+    public void changeLevel() {
+        weapon.changeLevel();
+        energetic.changeLevel();
     }
 
     public void moveX(double x) {
@@ -438,7 +477,7 @@ public class Booker extends Character implements Animatable {
     }
 
     public void setIdleAnimation() {
-        switch (Game.weapon.getType()) {
+        switch (weapon.getType()) {
             case WeaponType.PISTOL -> imageView.setViewport(new Rectangle2D(IDLE_PISTOL_OFFSET_X, 0, WIDTH, HEIGHT));
             case WeaponType.MACHINE_GUN ->
                     imageView.setViewport(new Rectangle2D(IDLE_MACHINE_OFFSET_X, 0, WIDTH, HEIGHT));
@@ -501,6 +540,7 @@ public class Booker extends Character implements Animatable {
         if (Game.levelNumber == Level.FIRST_LEVEL)
             this.money = money;
 
+        energetic.setDifficultyLevel();
         Game.hud.updateMoneyTextPosition();
     }
 

@@ -97,7 +97,7 @@ public class CutScenes {
         Tutorial.delete();
         Game.levelNumber++;
         Game.level.changeLevel();
-        Game.weapon.changeLevel();
+        Game.booker.changeLevel();
         Game.createEnemies();
 
         Game.timer.start();
@@ -106,7 +106,6 @@ public class CutScenes {
         Tutorial.init();
         Game.elizabeth.init();
         Game.vendingMachine.changeLevel();
-        Game.energetic.changeLevel();
 
         Game.saveSaves();
         Game.saveOptions();

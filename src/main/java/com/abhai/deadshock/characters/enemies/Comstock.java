@@ -148,10 +148,6 @@ public class Comstock extends Enemy implements Animatable {
         }
     }
 
-    protected void initWeapon() {
-        enemyWeapon = new EnemyWeapon(WeaponType.PISTOL);
-    }
-
     private void playAttackVoice() {
         switch ((int) (Math.random() * 10)) {
             case 0 -> Sounds.canYouShoot.play(Game.menu.getVoiceSlider().getValue() / 100);
@@ -309,6 +305,10 @@ public class Comstock extends Enemy implements Animatable {
             else
                 moveX(SPEED);
         }
+    }
+
+    protected void initWeapon() {
+        enemyWeapon = new EnemyWeapon(WeaponType.PISTOL);
     }
 
     @Override

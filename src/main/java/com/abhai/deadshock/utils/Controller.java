@@ -34,19 +34,19 @@ public class Controller {
 
     private static void weaponListener() {
         if (isPressed(KeyCode.R))
-            Game.weapon.reload();
+            Game.booker.getWeapon().reload();
         if (!isPressed(KeyCode.R))
-            Game.weapon.setCanReload(true);
+            Game.booker.getWeapon().setCanReload(true);
         if (isPressed(KeyCode.J))
-            Game.weapon.shoot();
+            Game.booker.getWeapon().shoot();
         if (!isPressed(KeyCode.J))
-            Game.weapon.setSingleShot(true);
+            Game.booker.getWeapon().setSingleShot(true);
         if (isPressed(KeyCode.DIGIT1))
-            Game.weapon.changeWeapon(WeaponType.PISTOL);
+            Game.booker.getWeapon().changeWeapon(WeaponType.PISTOL);
         if (isPressed(KeyCode.DIGIT2))
-            Game.weapon.changeWeapon(WeaponType.MACHINE_GUN);
+            Game.booker.getWeapon().changeWeapon(WeaponType.MACHINE_GUN);
         if (isPressed(KeyCode.DIGIT3))
-            Game.weapon.changeWeapon(WeaponType.RPG);
+            Game.booker.getWeapon().changeWeapon(WeaponType.RPG);
     }
 
     private static void movementListener() {
@@ -65,24 +65,24 @@ public class Controller {
     }
 
     private static void energeticListener() {
-        if (Game.energetic.getCountEnergetics() > 1 && isPressed(KeyCode.Q))
-            Game.energetic.changeEnergetic();
+        if (Game.booker.getEnergetic().getCountEnergetics() > 1 && isPressed(KeyCode.Q))
+            Game.booker.getEnergetic().changeEnergetic();
         if (!isPressed(KeyCode.Q))
-            Game.energetic.setCanChangeEnergetic(true);
+            Game.booker.getEnergetic().setCanChangeEnergetic(true);
         if (!isPressed(KeyCode.L))
-            Game.energetic.setCanShoot(true);
-        if (isPressed(KeyCode.L) && !Game.booker.isHypnotized() && Game.booker.getSalt() >= Game.energetic.getSaltPrice())
-            Game.energetic.shoot();
+            Game.booker.getEnergetic().setCanShoot(true);
+        if (isPressed(KeyCode.L) && !Game.booker.isHypnotized() && Game.booker.getSalt() >= Game.booker.getEnergetic().getSaltPrice())
+            Game.booker.getEnergetic().shoot();
     }
 
     private static void interactionListener() {
         if (isPressed(KeyCode.E) && Game.levelNumber < Level.BOSS_LEVEL)
-            if (Game.booker.getBoundsInParent().intersects(Game.weapon.getBoundsInParent()))
-                Game.weapon.pickUpWeapon();
+            if (Game.booker.getBoundsInParent().intersects(Game.booker.getWeapon().getBoundsInParent()))
+                Game.booker.getWeapon().pickUpWeapon();
             else if (Game.booker.getBoundsInParent().intersects(Game.vendingMachine.getVendingMachine().getBoundsInParent()))
                 Game.vendingMachine.openMachineMenu();
-            else if (Game.booker.getBoundsInParent().intersects(Game.energetic.getBoundsInParent()))
-                Game.energetic.pickUp();
+            else if (Game.booker.getBoundsInParent().intersects(Game.booker.getEnergetic().getBoundsInParent()))
+                Game.booker.getEnergetic().pickUp();
         if (isPressed(KeyCode.G)) {
             Game.keys.remove(KeyCode.G);
             Game.menu.checkMusic();

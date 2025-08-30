@@ -108,9 +108,9 @@ public class Bullet extends Pane {
             for (Enemy enemy : Game.enemies)
                 if (explosion.getBoundsInParent().intersects(enemy.getBoundsInParent()))
                     if (enemy.getType() != EnemyType.BOSS)
-                        enemy.setHP(enemy.getHP() - Game.weapon.getRpgDamage());
+                        enemy.setHP(enemy.getHP() - Game.booker.getWeapon().getRpgDamage());
                     else if (!bossDamagedByRPG) {
-                        enemy.setHP(enemy.getHP() - Game.weapon.getRpgDamage());
+                        enemy.setHP(enemy.getHP() - Game.booker.getWeapon().getRpgDamage());
                         bossDamagedByRPG = true;
                         return;
                     }
@@ -123,7 +123,7 @@ public class Bullet extends Pane {
                     else {
                         delete = true;
                         Game.gameRoot.getChildren().remove(this);
-                        enemy.setHP((enemy.getHP() - Game.weapon.getDamage()));
+                        enemy.setHP((enemy.getHP() - Game.booker.getWeapon().getBulletDamage()));
                     }
                     return;
                 }
@@ -175,7 +175,7 @@ public class Bullet extends Pane {
     public void update() {
         if (exploding) {
             if (explosion.getBoundsInParent().intersects(Game.booker.getBoundsInParent()))
-                Game.booker.setHP(Game.booker.getHP() - Game.weapon.getRpgDamage());
+                Game.booker.setHP(Game.booker.getHP() - Game.booker.getWeapon().getRpgDamage());
             intersectsWithEnemies();
         } else {
             if (direction)

@@ -153,6 +153,6 @@ public class HUD extends Pane {
         salt.setWidth(Game.booker.getSalt());
 
         moneyText.setText(String.valueOf(Game.booker.getMoney()));
-        bulletText.setText(Game.weapon.getWeaponClip() + " / " + Game.weapon.getBullets());
+        bulletText.setText(Game.booker.getWeapon().getCurrentClip() + " / " + Game.booker.getWeapon().getCurrentBullets());
     }
 }

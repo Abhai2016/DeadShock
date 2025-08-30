@@ -170,10 +170,9 @@ public class Menu extends Pane {
         start = false;
         Game.hud.setDifficultyLevel();
         Game.booker.setDifficultyLevel();
-        Game.weapon.setDifficultyLevel();
-        Game.energetic.setDifficultyLevel();
         difficultyBackground.setVisible(false);
         Game.vendingMachine.setDifficultyLevel();
+        Game.booker.getWeapon().setDifficultyLevel();
         changeSubMenu(subMenus.get(Texts.MAIN_SUBMENU));
 
         restartMusicIfNeeded();

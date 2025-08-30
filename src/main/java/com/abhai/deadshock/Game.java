@@ -15,6 +15,7 @@ import com.abhai.deadshock.utils.Saves;
 import com.abhai.deadshock.utils.pools.ObjectPool;
 import com.abhai.deadshock.utils.pools.ObjectPoolManager;
 import com.abhai.deadshock.weapons.Weapon;
+import com.abhai.deadshock.weapons.WeaponType;
 import com.abhai.deadshock.weapons.bullets.EnemyBullet;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,12 +60,10 @@ public class Game extends Application {
     public static Menu menu;
     public static Booker booker;
     public static HUD hud;
-    public static Weapon weapon;
     public static Elizabeth elizabeth;
     public static VendingMachine vendingMachine;
 
     public static CutScenes cutScene;
-    public static Energetic energetic;
 
     public static int levelNumber;
     public static DifficultyLevel difficultyLevel = DifficultyLevel.MEDIUM;
@@ -99,9 +98,7 @@ public class Game extends Application {
                 vendingMachine = new VendingMachine();
                 booker = new Booker();
                 elizabeth = new Elizabeth();
-                weapon = new Weapon();
                 hud = new HUD();
-                energetic = new Energetic.Builder().build();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -129,18 +126,14 @@ public class Game extends Application {
     }
 
     //TODO fix a bug with vendingMachine where buttons to buy or esc don't work after the death/levelReset/changeLevel, etc.
-    //TODO fix a bug with a weapon that doesn't want to work after second reload
-    //TODO fix a bug with a weapon that saves wrong amount of bullets in saves.dat file
     //TODO do not forget to change difficulty's level description
     public static void initContentForNewGame() {
         levelNumber = Level.FIRST_LEVEL;
         level.changeLevel();
         vendingMachine = new VendingMachine();
-        weapon = new Weapon();
-        weapon.setDifficultyLevel();
         createEnemies();
         Tutorial.init();
-        energetic.reset();
+        booker.reset();
 
         if (levelNumber != Level.BOSS_LEVEL)
             vendingMachine.createButtons();
@@ -156,63 +149,26 @@ public class Game extends Application {
             vendingMachine = new VendingMachine();
         hud = new HUD();
 
+        Weapon.Builder weaponBuilder = new Weapon.Builder();
+        weaponBuilder.setCanChoosePistol(saves.isCanChoosePistol())
+                .setCanChooseMachineGun(saves.isCanChooseMachineGun())
+                .setCanChooseRpg(saves.isCanChooseRPG())
+                .setPistolBullets(saves.getPistolBullets())
+                .setMachineGunBullets(saves.getMachineGunBullets())
+                .setRpgBullets(saves.getRpgBullets());
+
+        Energetic.Builder energeticBuilder = new Energetic.Builder();
+        energeticBuilder.canChooseDevilKiss(saves.isCanChooseDevilKiss())
+                .canChooseElectricity(saves.isCanChooseElectricity())
+                .canChooseHypnosis(saves.isCanChooseHypnosis());
+
         booker = new Booker();
         elizabeth = new Elizabeth();
         elizabeth.init();
         booker.setMoney(saves.getMoney());
         booker.setSalt(saves.getSalt());
-        Energetic.Builder builder = new Energetic.Builder();
-        builder.canChooseDevilKiss(saves.isCanChooseDevilKiss())
-                .canChooseElectricity(saves.isCanChooseElectricity())
-                .canChooseHypnosis(saves.isCanChooseHypnosis());
-        energetic = builder.build();
-
-        switch (levelNumber) {
-            case Level.SECOND_LEVEL -> {
-                weapon = new Weapon(saves.isCanChoosePistol());
-                weapon.setWeaponClip(20);
-                weapon.setBullets(saves.getPistolBullets());
-            }
-            case Level.THIRD_LEVEL -> {
-                weapon = new Weapon(saves.isCanChoosePistol(), saves.isCanChooseMachineGun());
-                if (weapon.isCanChooseMachineGun()) {
-                    weapon.setWeaponClip(30);
-                    weapon.setBullets(saves.getMachineGunBullets());
-                    if (weapon.isCanChoosePistol()) {
-                        Weapon.WeaponData.pistolClip = 20;
-                        Weapon.WeaponData.pistolBullets = saves.getPistolBullets();
-                    }
-                } else if (weapon.isCanChoosePistol()) {
-                    weapon.setWeaponClip(20);
-                    weapon.setBullets(saves.getPistolBullets());
-                }
-            }
-            case Level.BOSS_LEVEL -> {
-                weapon = new Weapon(saves.isCanChoosePistol(), saves.isCanChooseMachineGun(), saves.isCanChooseRPG());
-                if (weapon.isCanChooseRPG()) {
-                    weapon.setWeaponClip(1);
-                    weapon.setBullets(saves.getRpgBullets());
-                    if (weapon.isCanChooseMachineGun()) {
-                        Weapon.WeaponData.machineGunClip = 30;
-                        Weapon.WeaponData.machineGunBullets = saves.getMachineGunBullets();
-                    }
-                    if (weapon.isCanChoosePistol()) {
-                        Weapon.WeaponData.pistolClip = 20;
-                        Weapon.WeaponData.pistolBullets = saves.getPistolBullets();
-                    }
-                } else if (weapon.isCanChooseMachineGun()) {
-                    weapon.setWeaponClip(30);
-                    weapon.setBullets(saves.getMachineGunBullets());
-                    if (weapon.isCanChoosePistol()) {
-                        Weapon.WeaponData.pistolClip = 20;
-                        Weapon.WeaponData.pistolBullets = saves.getPistolBullets();
-                    }
-                } else if (weapon.isCanChoosePistol()) {
-                    weapon.setWeaponClip(20);
-                    weapon.setBullets(saves.getPistolBullets());
-                }
-            }
-        }
+        booker.setWeapon(weaponBuilder);
+        booker.setEnergetic(energeticBuilder);
     }
 
     static void loadOptions() {
@@ -253,16 +209,30 @@ public class Game extends Application {
             saves.setMoney(booker.getMoney());
             saves.setSalt(booker.getSalt());
 
-            saves.setPistolBullets(Weapon.WeaponData.pistolBullets);
-            saves.setMachineGunBullets(Weapon.WeaponData.machineGunBullets);
-            saves.setRpgBullets(Weapon.WeaponData.rpgBullets);
+            switch (booker.getWeapon().getType()) {
+                case WeaponType.PISTOL -> {
+                    saves.setPistolBullets(booker.getWeapon().getCurrentBullets());
+                    saves.setMachineGunBullets(booker.getWeapon().getMachineGunBullets());
+                    saves.setRpgBullets(booker.getWeapon().getRpgBullets());
+                }
+                case WeaponType.MACHINE_GUN -> {
+                    saves.setPistolBullets(booker.getWeapon().getPistolBullets());
+                    saves.setMachineGunBullets(booker.getWeapon().getCurrentBullets());
+                    saves.setRpgBullets(booker.getWeapon().getRpgBullets());
+                }
+                case WeaponType.RPG -> {
+                    saves.setPistolBullets(booker.getWeapon().getPistolBullets());
+                    saves.setMachineGunBullets(booker.getWeapon().getMachineGunBullets());
+                    saves.setRpgBullets(booker.getWeapon().getCurrentBullets());
+                }
+            }
 
-            saves.setCanChoosePistol(weapon.isCanChoosePistol());
-            saves.setCanChooseMachineGun(weapon.isCanChooseMachineGun());
-            saves.setCanChooseRPG(weapon.isCanChooseRPG());
-            saves.setCanChooseDevilKiss(energetic.canChooseDevilKiss());
-            saves.setCanChooseElectricity(energetic.canChooseElectricity());
-            saves.setCanChooseHypnosis(energetic.canChooseHypnosis());
+            saves.setCanChoosePistol(booker.getWeapon().isCanChoosePistol());
+            saves.setCanChooseMachineGun(booker.getWeapon().isCanChooseMachineGun());
+            saves.setCanChooseRPG(booker.getWeapon().isCanChooseRpg());
+            saves.setCanChooseDevilKiss(booker.getEnergetic().canChooseDevilKiss());
+            saves.setCanChooseElectricity(booker.getEnergetic().canChooseElectricity());
+            saves.setCanChooseHypnosis(booker.getEnergetic().canChooseHypnosis());
 
             fileWriter.write(mapper.writeValueAsString(saves));
         } catch (Exception e) {
@@ -308,12 +278,11 @@ public class Game extends Application {
         gameRoot.getChildren().removeAll(enemyBullets);
         enemyBullets.clear();
 
-        weapon.clearBullets();
+        booker.clear();
 
         for (Supply supply : supplies)
             supplyPool.put(supply);
         supplies.clear();
-        energetic.clear();
         keys.clear();
     }
 
@@ -339,7 +308,7 @@ public class Game extends Application {
         gameRoot.getChildren().removeAll(enemyBullets);
         enemyBullets.clear();
 
-        weapon.clearBullets();
+        booker.clear();
         for (Supply supply : supplies)
             supplyPool.put(supply);
         supplies.clear();
@@ -363,7 +332,6 @@ public class Game extends Application {
             enemyBulletsPool.put(enemyBullet);
         gameRoot.getChildren().removeAll(enemyBullets);
         enemyBullets.clear();
-        weapon.clearBullets();
 
         if (levelNumber > Level.FIRST_LEVEL) {
             Path savesPath = Paths.get("resources", "data", "saves.dat");
@@ -375,15 +343,8 @@ public class Game extends Application {
         }
 
         keys.clear();
-
-        if (weapon != null) {
-            gameRoot.getChildren().remove(weapon);
-            weapon = null;
-        }
-
         Tutorial.delete();
 
-        booker.reset();
         elizabeth.reset();
     }
 
@@ -466,14 +427,10 @@ public class Game extends Application {
         }
 
         booker.update();
-
-        if (energetic.getCountEnergetics() > 0)
-            energetic.update();
         if (levelNumber > Level.FIRST_LEVEL)
             elizabeth.update();
 
         hud.update();
-        weapon.update();
 
         if (booker.getTranslateX() > BLOCK_SIZE * 295)
             cutScene = new CutScenes();

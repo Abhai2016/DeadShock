@@ -6,6 +6,7 @@ import com.abhai.deadshock.hud.Tutorial;
 import com.abhai.deadshock.levels.Level;
 import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.weapons.Weapon;
+import com.abhai.deadshock.weapons.WeaponType;
 import javafx.animation.FadeTransition;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
@@ -349,10 +350,10 @@ public class VendingMachine extends Pane {
                 break;
             case "pistolBullets":
                 if (Game.booker.getMoney() >= 8) {
-                    if (Game.weapon.getType().equals("pistol"))
-                        Game.weapon.setBullets(Game.weapon.getBullets() + 12);
+                    if (Game.booker.getWeapon().getType() == WeaponType.PISTOL)
+                        Game.booker.getWeapon().setCurrentBullets(Game.booker.getWeapon().getCurrentBullets() + 12);
                     else
-                        Weapon.WeaponData.pistolBullets += 12;
+                        Game.booker.getWeapon().setPistolBullets(Game.booker.getWeapon().getPistolBullets() + 12);
                     Sounds.audioClipPurchase.play(Game.menu.getFxSlider().getValue() / 100);
                     Game.booker.setMoney(Game.booker.getMoney() - 8);
                     Game.hud.update();
@@ -363,10 +364,10 @@ public class VendingMachine extends Pane {
                 break;
             case "machineGunBullets":
                 if (Game.booker.getMoney() >= 8) {
-                    if (Game.weapon.getType().equals("machine_gun"))
-                        Game.weapon.setBullets(Game.weapon.getBullets() + 35);
+                    if (Game.booker.getWeapon().getType() == WeaponType.MACHINE_GUN)
+                        Game.booker.getWeapon().setCurrentBullets(Game.booker.getWeapon().getCurrentBullets() + 35);
                     else
-                        Weapon.WeaponData.machineGunBullets += 35;
+                        Game.booker.getWeapon().setMachineGunBullets(Game.booker.getWeapon().getMachineGunBullets() + 35);
                     Sounds.audioClipPurchase.play(Game.menu.getFxSlider().getValue() / 100);
                     Game.booker.setMoney(Game.booker.getMoney() - 8);
                     Game.hud.update();

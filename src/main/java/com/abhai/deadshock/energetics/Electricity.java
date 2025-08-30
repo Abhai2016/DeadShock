@@ -71,13 +71,12 @@ class Electricity extends Pane {
     private void intersectsWithEnemies() {
         for (Enemy enemy : Game.enemies)
             if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
-                if (enemy.getType() == EnemyType.BOSS)
-                    enemy.setHP(enemy.getHP() - Game.weapon.getDamage() / 2);
-                else {
+                if (enemy.getType() != EnemyType.BOSS) {
                     enemy.setHP(0);
                     Sounds.electricityDeath.play(Game.menu.getFxSlider().getValue() / 100);
                     return;
-                }
+                } else
+                    enemy.setHP(enemy.getHP() - Game.booker.getWeapon().getBulletDamage() / 2);
             }
     }
 

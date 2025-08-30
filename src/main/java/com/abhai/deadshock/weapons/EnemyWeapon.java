@@ -22,7 +22,7 @@ public class EnemyWeapon {
             clip = 30;
             shootInterval = 20;
         }
-        currentClip = 0;
+        currentClip = clip;
         nowReloading = false;
         currentShootInterval = 0;
         currentReloadInterval = 0;

@@ -92,7 +92,7 @@ public class Elizabeth extends Character {
             emptySupplyInterval = 0;
 
         if (emptySupplyInterval > 900) {
-            if (Game.booker.getHP() < 100 || Game.weapon.getBullets() == 0) {
+            if (Game.booker.getHP() < 100 || Game.booker.getWeapon().getCurrentBullets() == 0) {
                 switch ((int) (Math.random() * 4)) {
                     case 0 -> Sounds.empty.play(Game.menu.getVoiceSlider().getValue() / 100);
                     case 1 -> Sounds.foundNothing.play(Game.menu.getVoiceSlider().getValue() / 100);

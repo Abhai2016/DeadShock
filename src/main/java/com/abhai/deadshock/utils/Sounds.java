@@ -85,10 +85,7 @@ public class Sounds {
     public static AudioClip electricityDeath = new AudioClip(Paths.get("resources", "sounds", "fx", "energetics", "electricityDeath.mp3").toUri().toString());
     public static AudioClip audioClipChangeItem = new AudioClip(Paths.get("resources", "sounds", "fx", "vendingMachine", "changeItem.mp3").toUri().toString());
     public static AudioClip changeToDevilKiss = new AudioClip(Paths.get("resources", "sounds", "fx", "energetics", "changeToDevilKiss.mp3").toUri().toString());
-    public static MediaPlayer pistolReload = new MediaPlayer(new Media(Paths.get("resources", "sounds", "fx", "weapons", "pistolReload.mp3").toUri().toString()));
     public static AudioClip changeToElectricity = new AudioClip(Paths.get("resources", "sounds", "fx", "energetics", "changeToElectricity.mp3").toUri().toString());
-    public static MediaPlayer machineGunReload = new MediaPlayer(new Media(Paths.get("resources", "sounds", "fx", "weapons", "machineGunReload.mp3").toUri().toString()));
-    public static MediaPlayer rpgShotWithReload = new MediaPlayer(new Media(Paths.get("resources", "sounds", "fx", "weapons", "rpgShotWithReload.mp3").toUri().toString()));
 
     //boss
     public static AudioClip bossHit = new AudioClip(Paths.get("resources", "sounds", "fx", "boss", "hit.mp3").toUri().toString());

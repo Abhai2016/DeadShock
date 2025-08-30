@@ -64,7 +64,7 @@ class DevilKissShot extends Pane {
         for (Enemy enemy : Game.enemies)
             if (getBoundsInParent().intersects(enemy.getBoundsInParent()))
                 if (enemy.getType() == EnemyType.BOSS) {
-                    enemy.setHP(enemy.getHP() - Game.weapon.getRpgDamage());
+                    enemy.setHP(enemy.getHP() - Game.booker.getWeapon().getRpgDamage());
                     toDelete = true;
                 } else
                     enemy.setHP(0);

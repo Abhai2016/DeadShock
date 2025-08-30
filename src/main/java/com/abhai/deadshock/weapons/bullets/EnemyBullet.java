@@ -26,7 +26,7 @@ public class EnemyBullet extends Bullet {
         for (Enemy enemy : Game.enemies)
             if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
                 if (Game.difficultyLevel == DifficultyLevel.MARIK || Game.difficultyLevel == DifficultyLevel.EASY)
-                    enemy.setHP(enemy.getHP() - Game.weapon.getDamage());
+                    enemy.setHP(enemy.getHP() - Game.booker.getWeapon().getBulletDamage());
                 delete = true;
                 Game.gameRoot.getChildren().remove(this);
                 return;
