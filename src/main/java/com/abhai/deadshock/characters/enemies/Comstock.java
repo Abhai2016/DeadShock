@@ -1,14 +1,14 @@
 package com.abhai.deadshock.characters.enemies;
 
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.supplies.Supply;
 import com.abhai.deadshock.characters.Animatable;
 import com.abhai.deadshock.levels.Block;
 import com.abhai.deadshock.levels.BlockType;
+import com.abhai.deadshock.supplies.Supply;
 import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.utils.SpriteAnimation;
-import com.abhai.deadshock.weapons.ComstockWeapon;
 import com.abhai.deadshock.weapons.EnemyWeapon;
+import com.abhai.deadshock.weapons.WeaponType;
 import javafx.geometry.Point2D;
 import javafx.util.Duration;
 
@@ -148,6 +148,10 @@ public class Comstock extends Enemy implements Animatable {
         }
     }
 
+    protected void initWeapon() {
+        enemyWeapon = new EnemyWeapon(WeaponType.PISTOL);
+    }
+
     private void playAttackVoice() {
         switch ((int) (Math.random() * 10)) {
             case 0 -> Sounds.canYouShoot.play(Game.menu.getVoiceSlider().getValue() / 100);
@@ -206,6 +210,10 @@ public class Comstock extends Enemy implements Animatable {
     @Override
     public void stopAnimation() {
         animation.stop();
+    }
+
+    public void setCanSeeBooker(boolean canSeeBooker) {
+        this.canSeeBooker = canSeeBooker;
     }
 
     protected boolean intersectsWithBlock(Block block) {
@@ -291,9 +299,9 @@ public class Comstock extends Enemy implements Animatable {
                 }
             }
         } else {
-            if (getTranslateY() <= Game.booker.getTranslateY()) {
+            if (getTranslateY() <= Game.booker.getTranslateY())
                 enemyWeapon.shoot(getScaleX(), getTranslateX(), getTranslateY());
-            } else
+            else
                 losingBooker();
 
             if (booleanSupplier.equals(onTheLeft))
@@ -301,14 +309,6 @@ public class Comstock extends Enemy implements Animatable {
             else
                 moveX(SPEED);
         }
-    }
-
-    protected void initWeapon() {
-        enemyWeapon = new ComstockWeapon();
-    }
-
-    public void setCanSeeBooker(boolean canSeeBooker) {
-        this.canSeeBooker = canSeeBooker;
     }
 
     @Override

@@ -2,20 +2,33 @@ package com.abhai.deadshock.weapons;
 
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.utils.Sounds;
+import com.abhai.deadshock.weapons.bullets.EnemyBullet;
 
 public class EnemyWeapon {
-    private int reloadingInterval = 0;
-    int shootInterval = 0;
-    int clip = 0;
+    private static final int RELOAD_INTERVAL = 180;
 
-    private boolean nowReloading = false;
+    private final int clip;
+    private int currentClip;
+    private boolean nowReloading;
+    private final int shootInterval;
+    private int currentShootInterval;
+    private int currentReloadInterval;
 
-    EnemyWeapon() {
+    public EnemyWeapon(WeaponType type) {
+        if (type == WeaponType.PISTOL) {
+            clip = 20;
+            shootInterval = 30;
+        } else {
+            clip = 30;
+            shootInterval = 20;
+        }
+        currentClip = 0;
+        nowReloading = false;
+        currentShootInterval = 0;
+        currentReloadInterval = 0;
     }
 
-    public void shoot(double scaleX, double x, double y) {}
-
-    void reload(int fullClip) {
+    private void reload() {
         if (!nowReloading) {
             switch ((int) (Math.random() * 5)) {
                 case 0 -> Sounds.noAmmo.play(Game.menu.getVoiceSlider().getValue() / 100);
@@ -27,11 +40,26 @@ public class EnemyWeapon {
             nowReloading = true;
         }
 
-        reloadingInterval++;
-        if (reloadingInterval > 180) {
-            clip = fullClip;
-            reloadingInterval = 0;
+        currentReloadInterval++;
+        if (currentReloadInterval > RELOAD_INTERVAL) {
+            currentClip = clip;
             nowReloading = false;
+            currentReloadInterval = 0;
+        }
+    }
+
+    public void shoot(double scaleX, double x, double y) {
+        if (currentClip == 0)
+            reload();
+
+        currentShootInterval++;
+        if (currentShootInterval > shootInterval && currentClip > 0) {
+            Sounds.pistolShot.play(Game.menu.getFxSlider().getValue() / 100);
+            currentClip--;
+            currentShootInterval = 0;
+            EnemyBullet enemyBullet = Game.enemyBulletsPool.get();
+            enemyBullet.init(scaleX, x, y);
+            Game.enemyBullets.add(enemyBullet);
         }
     }
 }
