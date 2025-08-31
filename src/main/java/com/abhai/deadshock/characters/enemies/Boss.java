@@ -1,6 +1,5 @@
 package com.abhai.deadshock.characters.enemies;
 
-import com.abhai.deadshock.CutScenes;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.Animatable;
 import com.abhai.deadshock.energetics.EnemyHypnosis;
@@ -95,7 +94,7 @@ public class Boss extends Enemy implements Animatable {
         Sounds.bossDeath.setVolume(Game.menu.getFxSlider().getValue() / 100);
         Sounds.bossDeath.setOnEndOfMedia(() -> {
             toDelete = true;
-            Game.cutScene = new CutScenes();
+            Game.playCutscene();
         });
         Sounds.bossDeath.play();
     }

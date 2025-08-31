@@ -20,12 +20,17 @@ import com.abhai.deadshock.weapons.bullets.EnemyBullet;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.animation.AnimationTimer;
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -39,6 +44,13 @@ import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
 
 
 public class Game extends Application {
+    private static final Media THIRD_CUTSCENE = new Media(Paths.get("resources", "videos", "end.mp4").toUri().toString());
+    private static final Media SECOND_CUTSCENE = new Media(Paths.get("resources", "videos", "comstock.mp4").toUri().toString());
+    private static final Media FIRST_CUTSCENE = new Media(Paths.get("resources", "videos", "elizabeth.mp4").toUri().toString());
+
+    private static MediaPlayer video;
+    private static MediaView videoView;
+
     private static Path savesPath = Paths.get("resources", "data", "saves.dat");
     private static Path optionsPath = Paths.get("resources", "data", "options.dat");
 
@@ -63,8 +75,6 @@ public class Game extends Application {
     public static Elizabeth elizabeth;
     public static VendingMachine vendingMachine;
 
-    public static CutScenes cutScene;
-
     public static int levelNumber;
     public static DifficultyLevel difficultyLevel = DifficultyLevel.MEDIUM;
 
@@ -82,6 +92,7 @@ public class Game extends Application {
     public static void initContent() {
         timer.start();
         active = false;
+        videoView = new MediaView();
         appRoot.getChildren().add(gameRoot);
         scene.setOnKeyPressed(event -> keys.put(event.getCode(), true));
         scene.setOnKeyReleased(event -> keys.put(event.getCode(), false));
@@ -262,6 +273,63 @@ public class Game extends Application {
         }
     }
 
+    public static void playCutscene() {
+        booker.setTranslateX(100);
+        booker.setTranslateY(500);
+
+        timer.stop();
+        active = false;
+        menu.getMusic().pause();
+        clearData(false);
+        appRoot.getChildren().add(videoView);
+
+        FadeTransition ft = new FadeTransition(Duration.seconds(1), videoView);
+        ft.setFromValue(0);
+        ft.setToValue(1);
+        ft.play();
+
+        switch (levelNumber) {
+            case Level.FIRST_LEVEL -> {
+                video = new MediaPlayer(FIRST_CUTSCENE);
+                video.setOnEndOfMedia(Game::initLevelAfterCutscene);
+            }
+            case Level.SECOND_LEVEL -> {
+                video = new MediaPlayer(SECOND_CUTSCENE);
+                video.setOnEndOfMedia(Game::initLevelAfterCutscene);
+            }
+            case Level.BOSS_LEVEL -> {
+                video = new MediaPlayer(THIRD_CUTSCENE);
+                video.setOnEndOfMedia(() -> System.exit(0));
+            }
+        }
+
+        videoView.setMediaPlayer(video);
+        videoView.getMediaPlayer().setVolume(menu.getVoiceSlider().getValue() / 100);
+        video.play();
+    }
+
+    public static void initLevelAfterCutscene() {
+        video.stop();
+        booker.setCanPlayVoice(true);
+        appRoot.getChildren().remove(videoView);
+
+        Tutorial.delete();
+        levelNumber++;
+        level.changeLevel();
+        booker.changeLevel();
+        createEnemies();
+
+        timer.start();
+        active = true;
+        menu.getMusic().play();
+        Tutorial.init();
+        elizabeth.init();
+        vendingMachine.changeLevel();
+
+        saveSaves();
+        saveOptions();
+    }
+
     public static void resetLevel() {
         gameRoot.setLayoutX(0);
         level.setBackgroundLayoutX(0);
@@ -433,7 +501,7 @@ public class Game extends Application {
         hud.update();
 
         if (booker.getTranslateX() > BLOCK_SIZE * 295)
-            cutScene = new CutScenes();
+            playCutscene();
     }
 
     @Override
