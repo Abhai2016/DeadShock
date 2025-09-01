@@ -1,8 +1,8 @@
 package com.abhai.deadshock.characters;
 
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.levels.Block;
-import com.abhai.deadshock.levels.Level;
+import com.abhai.deadshock.world.levels.Block;
+import com.abhai.deadshock.world.levels.Level;
 import com.abhai.deadshock.utils.Sounds;
 import javafx.geometry.Rectangle2D;
 

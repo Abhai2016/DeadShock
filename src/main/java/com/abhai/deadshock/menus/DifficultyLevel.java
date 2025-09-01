@@ -1,4 +1,4 @@
-package com.abhai.deadshock;
+package com.abhai.deadshock.menus;
 
 public enum DifficultyLevel {
     MARIK,

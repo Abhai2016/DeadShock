@@ -1,4 +1,4 @@
-package com.abhai.deadshock.levels;
+package com.abhai.deadshock.world.levels;
 
 import com.abhai.deadshock.Game;
 import javafx.geometry.Rectangle2D;

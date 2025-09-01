@@ -1,8 +1,8 @@
-package com.abhai.deadshock.supplies;
+package com.abhai.deadshock.world.supplies;
 
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.levels.Block;
-import com.abhai.deadshock.levels.BlockType;
+import com.abhai.deadshock.world.levels.Block;
+import com.abhai.deadshock.world.levels.BlockType;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;

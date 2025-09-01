@@ -1,6 +1,6 @@
 package com.abhai.deadshock.hud;
 
-import com.abhai.deadshock.DifficultyLevel;
+import com.abhai.deadshock.menus.DifficultyLevel;
 import com.abhai.deadshock.Game;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;

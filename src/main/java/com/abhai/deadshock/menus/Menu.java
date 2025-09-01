@@ -1,10 +1,9 @@
 package com.abhai.deadshock.menus;
 
-import com.abhai.deadshock.DifficultyLevel;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.Animatable;
 import com.abhai.deadshock.characters.enemies.Enemy;
-import com.abhai.deadshock.levels.Level;
+import com.abhai.deadshock.world.levels.Level;
 import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.utils.Texts;
 import javafx.animation.FadeTransition;

@@ -6,9 +6,11 @@ import com.abhai.deadshock.characters.enemies.*;
 import com.abhai.deadshock.energetics.Energetic;
 import com.abhai.deadshock.hud.HUD;
 import com.abhai.deadshock.hud.Tutorial;
-import com.abhai.deadshock.levels.Level;
+import com.abhai.deadshock.world.VendingMachine;
+import com.abhai.deadshock.menus.DifficultyLevel;
+import com.abhai.deadshock.world.levels.Level;
 import com.abhai.deadshock.menus.Menu;
-import com.abhai.deadshock.supplies.Supply;
+import com.abhai.deadshock.world.supplies.Supply;
 import com.abhai.deadshock.utils.Controller;
 import com.abhai.deadshock.utils.Options;
 import com.abhai.deadshock.utils.Saves;
@@ -40,7 +42,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
+import static com.abhai.deadshock.world.levels.Block.BLOCK_SIZE;
 
 
 public class Game extends Application {

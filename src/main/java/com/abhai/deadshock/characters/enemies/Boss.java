@@ -3,7 +3,7 @@ package com.abhai.deadshock.characters.enemies;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.Animatable;
 import com.abhai.deadshock.energetics.EnemyHypnosis;
-import com.abhai.deadshock.levels.Level;
+import com.abhai.deadshock.world.levels.Level;
 import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.utils.SpriteAnimation;
 import com.abhai.deadshock.utils.Texts;
@@ -15,7 +15,7 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
-import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
+import static com.abhai.deadshock.world.levels.Block.BLOCK_SIZE;
 
 public class Boss extends Enemy implements Animatable {
     private static final int SPEED = 1;

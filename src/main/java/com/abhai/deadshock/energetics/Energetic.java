@@ -1,8 +1,8 @@
 package com.abhai.deadshock.energetics;
 
-import com.abhai.deadshock.DifficultyLevel;
+import com.abhai.deadshock.menus.DifficultyLevel;
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.levels.Level;
+import com.abhai.deadshock.world.levels.Level;
 import com.abhai.deadshock.utils.Sounds;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -11,7 +11,7 @@ import javafx.scene.layout.Pane;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
+import static com.abhai.deadshock.world.levels.Block.BLOCK_SIZE;
 
 public class Energetic extends Pane {
     public static class Builder {

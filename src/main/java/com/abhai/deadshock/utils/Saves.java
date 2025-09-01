@@ -1,6 +1,6 @@
 package com.abhai.deadshock.utils;
 
-import com.abhai.deadshock.DifficultyLevel;
+import com.abhai.deadshock.menus.DifficultyLevel;
 
 public class Saves {
     private int salt;

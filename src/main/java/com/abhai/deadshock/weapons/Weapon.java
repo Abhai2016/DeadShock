@@ -1,8 +1,8 @@
 package com.abhai.deadshock.weapons;
 
-import com.abhai.deadshock.DifficultyLevel;
+import com.abhai.deadshock.menus.DifficultyLevel;
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.levels.Level;
+import com.abhai.deadshock.world.levels.Level;
 import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.utils.pools.ObjectPool;
 import com.abhai.deadshock.weapons.bullets.Bullet;
@@ -16,7 +16,7 @@ import javafx.scene.media.MediaPlayer;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
+import static com.abhai.deadshock.world.levels.Block.BLOCK_SIZE;
 
 public class Weapon extends Pane {
     public static class Builder {

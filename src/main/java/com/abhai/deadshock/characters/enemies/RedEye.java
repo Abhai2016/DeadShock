@@ -1,6 +1,6 @@
 package com.abhai.deadshock.characters.enemies;
 
-import com.abhai.deadshock.levels.Block;
+import com.abhai.deadshock.world.levels.Block;
 import com.abhai.deadshock.weapons.EnemyWeapon;
 import com.abhai.deadshock.weapons.WeaponType;
 

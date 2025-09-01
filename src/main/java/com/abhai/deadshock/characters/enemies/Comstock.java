@@ -2,9 +2,9 @@ package com.abhai.deadshock.characters.enemies;
 
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.Animatable;
-import com.abhai.deadshock.levels.Block;
-import com.abhai.deadshock.levels.BlockType;
-import com.abhai.deadshock.supplies.Supply;
+import com.abhai.deadshock.world.levels.Block;
+import com.abhai.deadshock.world.levels.BlockType;
+import com.abhai.deadshock.world.supplies.Supply;
 import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.utils.SpriteAnimation;
 import com.abhai.deadshock.weapons.EnemyWeapon;

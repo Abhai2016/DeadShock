@@ -1,11 +1,12 @@
-package com.abhai.deadshock;
+package com.abhai.deadshock.world;
 
+import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.Animatable;
 import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.hud.Tutorial;
-import com.abhai.deadshock.levels.Level;
+import com.abhai.deadshock.menus.DifficultyLevel;
+import com.abhai.deadshock.world.levels.Level;
 import com.abhai.deadshock.utils.Sounds;
-import com.abhai.deadshock.weapons.Weapon;
 import com.abhai.deadshock.weapons.WeaponType;
 import javafx.animation.FadeTransition;
 import javafx.event.EventHandler;
@@ -25,7 +26,7 @@ import javafx.util.Duration;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
+import static com.abhai.deadshock.world.levels.Block.BLOCK_SIZE;
 import static javafx.scene.input.KeyEvent.KEY_PRESSED;
 
 public class VendingMachine extends Pane {
@@ -74,7 +75,7 @@ public class VendingMachine extends Pane {
         }
     };
 
-    VendingMachine() {
+    public VendingMachine() {
         vendingMachineMenu.setTranslateX(200);
         vendingMachineMenu.setTranslateY(50);
 
@@ -111,7 +112,7 @@ public class VendingMachine extends Pane {
         addListener();
     }
 
-    void changeLevel() {
+    public void changeLevel() {
         if (Game.levelNumber == Level.SECOND_LEVEL) {
             vendingMachine.setTranslateX(BLOCK_SIZE * 157);
             vendingMachine.setTranslateY(BLOCK_SIZE * 7 - 6);
@@ -148,7 +149,7 @@ public class VendingMachine extends Pane {
         }
     }
 
-    void createButtons() {
+    public void createButtons() {
         btnBigMedicine.setPrefWidth(BUTTON_WIDTH);
         btnBigMedicine.setPrefHeight(BUTTON_HEIGHT);
         btnBigMedicine.setTranslateX(vendingMachineMenu.getTranslateX() + 136);

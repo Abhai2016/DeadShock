@@ -1,6 +1,6 @@
 package com.abhai.deadshock.energetics;
 
-import com.abhai.deadshock.DifficultyLevel;
+import com.abhai.deadshock.menus.DifficultyLevel;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.utils.Sounds;
 

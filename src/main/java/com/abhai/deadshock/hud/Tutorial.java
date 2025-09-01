@@ -1,13 +1,13 @@
 package com.abhai.deadshock.hud;
 
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.levels.Level;
+import com.abhai.deadshock.world.levels.Level;
 import com.abhai.deadshock.utils.Texts;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
+import static com.abhai.deadshock.world.levels.Block.BLOCK_SIZE;
 
 public class Tutorial {
     private static final int SMALL_OFFSET_Y = 150;

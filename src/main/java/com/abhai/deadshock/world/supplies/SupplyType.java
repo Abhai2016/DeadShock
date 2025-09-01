@@ -1,4 +1,4 @@
-package com.abhai.deadshock.supplies;
+package com.abhai.deadshock.world.supplies;
 
 public enum SupplyType {
     AMMO,

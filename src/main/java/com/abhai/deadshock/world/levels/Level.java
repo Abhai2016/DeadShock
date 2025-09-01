@@ -1,4 +1,4 @@
-package com.abhai.deadshock.levels;
+package com.abhai.deadshock.world.levels;
 
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.utils.Texts;
@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Map;
 
-import static com.abhai.deadshock.levels.Block.BLOCK_SIZE;
+import static com.abhai.deadshock.world.levels.Block.BLOCK_SIZE;
 
 public class Level {
     public static final int FIRST_LEVEL = 1;

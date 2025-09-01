@@ -2,7 +2,7 @@ package com.abhai.deadshock.utils;
 
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.Character;
-import com.abhai.deadshock.levels.Level;
+import com.abhai.deadshock.world.levels.Level;
 import com.abhai.deadshock.weapons.WeaponType;
 import javafx.scene.input.KeyCode;
 
