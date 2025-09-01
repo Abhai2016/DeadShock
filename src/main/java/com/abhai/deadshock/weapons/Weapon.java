@@ -287,7 +287,7 @@ public class Weapon extends Pane {
             setTranslateY(BLOCK_SIZE * 12 - 20);
             imageView.setViewport(new Rectangle2D(400, 80, 56, 18));
         } else if (Game.levelNumber == Level.THIRD_LEVEL) {
-            getChildren().add(imageView);
+            imageView.setImage(RPG_IMAGE);
             setTranslateX(BLOCK_SIZE * 24);
             setTranslateY(BLOCK_SIZE * 12 - 20);
         }
@@ -303,7 +303,10 @@ public class Weapon extends Pane {
                     type = WeaponType.PISTOL;
                     Game.booker.changeWeaponAnimation(type);
                     pistolClip = currentClip = FULL_PISTOL_CLIP;
-                    pistolBullets = currentBullets = START_PISTOL_BULLETS;
+                    if (pistolBullets > 0)
+                        currentBullets = pistolBullets;
+                    else
+                        currentBullets = pistolBullets = START_PISTOL_BULLETS;
                     Sounds.willWork.play(Game.menu.getVoiceSlider().getValue() / 100);
                 }
                 case Level.SECOND_LEVEL -> {
@@ -313,7 +316,10 @@ public class Weapon extends Pane {
                     pistolBullets = currentBullets;
                     Game.booker.changeWeaponAnimation(type);
                     machineGunClip = currentClip = FULL_MACHINE_GUN_CLIP;
-                    machineGunBullets = currentBullets = START_MACHINE_GUN_BULLETS;
+                    if (machineGunBullets > 0)
+                        currentBullets = machineGunBullets;
+                    else
+                        machineGunBullets = currentBullets = START_MACHINE_GUN_BULLETS;
                     Sounds.great.play(Game.menu.getVoiceSlider().getValue() / 100);
                 }
                 case Level.THIRD_LEVEL -> {
@@ -330,7 +336,11 @@ public class Weapon extends Pane {
                     type = WeaponType.RPG;
                     rpgClip = currentClip = FULL_RPG_CLIP;
                     Game.booker.changeWeaponAnimation(type);
-                    rpgBullets = currentBullets = START_RPG_BULLETS;
+
+                    if (rpgBullets > 0)
+                        currentBullets = rpgBullets;
+                    else
+                        rpgBullets = currentBullets = START_RPG_BULLETS;
                     Sounds.great.play(Game.menu.getVoiceSlider().getValue() / 100);
                 }
             }

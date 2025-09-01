@@ -90,8 +90,6 @@ public class Booker extends Character implements Animatable {
         booleanVelocityX = true;
         booleanVelocityY = true;
         velocity = new Point2D(0, 0);
-        weapon = new Weapon.Builder().build();
-        energetic = new Energetic.Builder().build();
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
 
         HP = 100;
@@ -143,6 +141,8 @@ public class Booker extends Character implements Animatable {
 
     public void setHP(int value) {
         HP = value;
+        if (HP > 100)
+            HP = 100;
     }
 
     public Weapon getWeapon() {
@@ -150,10 +150,7 @@ public class Booker extends Character implements Animatable {
     }
 
     public void addMedicineForKillingEnemy() {
-        if (HP + medicineForKillingEnemy > 100)
-            HP = 100;
-        else
-            HP += medicineForKillingEnemy;
+        setHP(HP + medicineForKillingEnemy);
 
         switch ((int) (Math.random() * 2)) {
             case 0 -> Sounds.feelsBetter.play(Game.menu.getVoiceSlider().getValue() / 100);
@@ -164,6 +161,8 @@ public class Booker extends Character implements Animatable {
 
     public void setSalt(int value) {
         salt = value;
+        if (salt > 100)
+            salt = 100;
     }
 
     public boolean isHypnotized() {

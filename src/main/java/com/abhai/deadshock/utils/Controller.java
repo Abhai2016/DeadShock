@@ -6,7 +6,10 @@ import com.abhai.deadshock.world.levels.Level;
 import com.abhai.deadshock.weapons.WeaponType;
 import javafx.scene.input.KeyCode;
 
+import java.util.HashMap;
+
 public class Controller {
+    public static HashMap<KeyCode, Boolean> keys = new HashMap<>();
 
     public static void update() {
         menuListener();
@@ -23,12 +26,20 @@ public class Controller {
     }
 
     private static void menuListener() {
-        if (isPressed(KeyCode.ESCAPE) && (Game.vendingMachine == null || !Game.vendingMachine.isShown())) {
-            Game.keys.remove(KeyCode.ESCAPE);
-            if (Game.menu.isShown())
+        if (isPressed(KeyCode.ESCAPE)) {
+            keys.remove(KeyCode.ESCAPE);
+            if (Game.vendingMachine.isShown())
+                Game.vendingMachine.hideMenu();
+            else if (Game.menu.isShown())
                 Game.menu.hideMenu();
             else
                 Game.menu.showMenu();
+            return;
+        }
+
+        if (isPressed(KeyCode.ENTER) && Game.vendingMachine.isShown()) {
+            keys.remove(KeyCode.ENTER);
+            Game.vendingMachine.makePurchase();
         }
     }
 
@@ -79,17 +90,17 @@ public class Controller {
         if (isPressed(KeyCode.E) && Game.levelNumber < Level.BOSS_LEVEL)
             if (Game.booker.getBoundsInParent().intersects(Game.booker.getWeapon().getBoundsInParent()))
                 Game.booker.getWeapon().pickUpWeapon();
-            else if (Game.booker.getBoundsInParent().intersects(Game.vendingMachine.getVendingMachine().getBoundsInParent()))
-                Game.vendingMachine.openMachineMenu();
             else if (Game.booker.getBoundsInParent().intersects(Game.booker.getEnergetic().getBoundsInParent()))
                 Game.booker.getEnergetic().pickUp();
+            else if (Game.booker.getBoundsInParent().intersects(Game.vendingMachine.getVendingMachineImage().getBoundsInParent()) && !Game.vendingMachine.isShown())
+                Game.vendingMachine.openMenu();
         if (isPressed(KeyCode.G)) {
-            Game.keys.remove(KeyCode.G);
+            keys.remove(KeyCode.G);
             Game.menu.checkMusic();
         }
     }
 
     private static boolean isPressed(KeyCode keyCode) {
-        return Game.keys.getOrDefault(keyCode, false);
+        return keys.getOrDefault(keyCode, false);
     }
 }

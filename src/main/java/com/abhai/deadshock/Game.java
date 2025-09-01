@@ -6,11 +6,8 @@ import com.abhai.deadshock.characters.enemies.*;
 import com.abhai.deadshock.energetics.Energetic;
 import com.abhai.deadshock.hud.HUD;
 import com.abhai.deadshock.hud.Tutorial;
-import com.abhai.deadshock.world.VendingMachine;
 import com.abhai.deadshock.menus.DifficultyLevel;
-import com.abhai.deadshock.world.levels.Level;
 import com.abhai.deadshock.menus.Menu;
-import com.abhai.deadshock.world.supplies.Supply;
 import com.abhai.deadshock.utils.Controller;
 import com.abhai.deadshock.utils.Options;
 import com.abhai.deadshock.utils.Saves;
@@ -19,6 +16,9 @@ import com.abhai.deadshock.utils.pools.ObjectPoolManager;
 import com.abhai.deadshock.weapons.Weapon;
 import com.abhai.deadshock.weapons.WeaponType;
 import com.abhai.deadshock.weapons.bullets.EnemyBullet;
+import com.abhai.deadshock.world.levels.Level;
+import com.abhai.deadshock.world.supplies.Supply;
+import com.abhai.deadshock.world.vendingMachine.VendingMachine;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.animation.AnimationTimer;
@@ -26,7 +26,7 @@ import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -39,7 +39,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.abhai.deadshock.world.levels.Block.BLOCK_SIZE;
@@ -62,7 +61,6 @@ public class Game extends Application {
     public static ObjectPool<EnemyBullet> enemyBulletsPool = new ObjectPool<>(EnemyBullet::new, 50, 150);
     public static ArrayList<Enemy> enemies = new ArrayList<>();
     private final static ObjectPoolManager<Enemy> enemyPools = new ObjectPoolManager<>();
-    public static HashMap<KeyCode, Boolean> keys = new HashMap<>();
     public static ObjectMapper mapper = new ObjectMapper();
 
     public static Stage stage;
@@ -84,6 +82,8 @@ public class Game extends Application {
     public static boolean active;
 
     //TODO connect frames to time
+    //TODO fix a bug with supply ammo by checking which enemy was killed instead of just editing currentBullets
+    //TODO fix a bug with rpg's explosion
     public static AnimationTimer timer = new AnimationTimer() {
         @Override
         public void handle(long now) {
@@ -96,8 +96,8 @@ public class Game extends Application {
         active = false;
         videoView = new MediaView();
         appRoot.getChildren().add(gameRoot);
-        scene.setOnKeyPressed(event -> keys.put(event.getCode(), true));
-        scene.setOnKeyReleased(event -> keys.put(event.getCode(), false));
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> Controller.keys.put(event.getCode(), true));
+        scene.addEventFilter(KeyEvent.KEY_RELEASED, event -> Controller.keys.put(event.getCode(), false));
 
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -110,6 +110,8 @@ public class Game extends Application {
                 level = new Level();
                 vendingMachine = new VendingMachine();
                 booker = new Booker();
+                booker.setWeapon(new Weapon.Builder());
+                booker.setEnergetic(new Energetic.Builder());
                 elizabeth = new Elizabeth();
                 hud = new HUD();
             }
@@ -134,22 +136,17 @@ public class Game extends Application {
             }
         }));
 
-        if (levelNumber != Level.BOSS_LEVEL)
-            vendingMachine.createButtons();
+        if (Game.levelNumber != Level.BOSS_LEVEL)
+            vendingMachine.init();
     }
 
-    //TODO fix a bug with vendingMachine where buttons to buy or esc don't work after the death/levelReset/changeLevel, etc.
-    //TODO do not forget to change difficulty's level description
     public static void initContentForNewGame() {
         levelNumber = Level.FIRST_LEVEL;
         level.changeLevel();
-        vendingMachine = new VendingMachine();
         createEnemies();
         Tutorial.init();
         booker.reset();
-
-        if (levelNumber != Level.BOSS_LEVEL)
-            vendingMachine.createButtons();
+        vendingMachine.initializePosition();
     }
 
     static void loadSaves(ObjectMapper mapper, Path savesPath) throws IOException {
@@ -158,8 +155,7 @@ public class Game extends Application {
         levelNumber = saves.getLevelNumber();
 
         level = new Level();
-        if (levelNumber != Level.BOSS_LEVEL)
-            vendingMachine = new VendingMachine();
+        vendingMachine = new VendingMachine();
         hud = new HUD();
 
         Weapon.Builder weaponBuilder = new Weapon.Builder();
@@ -326,7 +322,7 @@ public class Game extends Application {
         menu.getMusic().play();
         Tutorial.init();
         elizabeth.init();
-        vendingMachine.changeLevel();
+        vendingMachine.initializePosition();
 
         saveSaves();
         saveOptions();
@@ -353,7 +349,7 @@ public class Game extends Application {
         for (Supply supply : supplies)
             supplyPool.put(supply);
         supplies.clear();
-        keys.clear();
+        Controller.keys.clear();
     }
 
     public static void clearData(boolean forBossLevel) {
@@ -382,7 +378,7 @@ public class Game extends Application {
         for (Supply supply : supplies)
             supplyPool.put(supply);
         supplies.clear();
-        keys.clear();
+        Controller.keys.clear();
     }
 
     public static void clearDataForNewGame() {
@@ -407,12 +403,9 @@ public class Game extends Application {
             Path savesPath = Paths.get("resources", "data", "saves.dat");
             if (savesPath.toFile().exists())
                 savesPath.toFile().delete();
-
-            gameRoot.getChildren().remove(vendingMachine);
-            vendingMachine = null;
         }
 
-        keys.clear();
+        Controller.keys.clear();
         Tutorial.delete();
 
         elizabeth.reset();
@@ -457,6 +450,7 @@ public class Game extends Application {
         clearData(true);
 
         Tutorial.delete();
+        gameRoot.getChildren().remove(vendingMachine);
         levelNumber++;
         level.changeLevel();
 

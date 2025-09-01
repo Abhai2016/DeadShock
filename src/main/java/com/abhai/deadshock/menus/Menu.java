@@ -107,18 +107,20 @@ public class Menu extends Pane {
     }
 
     public void hideMenu() {
-        FadeTransition ft = new FadeTransition(Duration.seconds(0.5), this);
-        ft.setFromValue(1);
-        ft.setToValue(0);
-        ft.setOnFinished(event -> Game.appRoot.getChildren().remove(this));
-        ft.play();
+        if (!start) {
+            FadeTransition ft = new FadeTransition(Duration.seconds(0.5), this);
+            ft.setFromValue(1);
+            ft.setToValue(0);
+            ft.setOnFinished(event -> Game.appRoot.getChildren().remove(this));
+            ft.play();
 
-        music.play();
-        isShown = false;
-        Game.active = true;
+            music.play();
+            isShown = false;
+            Game.active = true;
 
-        if (Sounds.whereAreYouFrom.getStatus() == MediaPlayer.Status.PAUSED)
-            Sounds.whereAreYouFrom.play();
+            if (Sounds.whereAreYouFrom.getStatus() == MediaPlayer.Status.PAUSED)
+                Sounds.whereAreYouFrom.play();
+        }
     }
 
     public void showMenu() {
@@ -170,7 +172,6 @@ public class Menu extends Pane {
         Game.hud.setDifficultyLevel();
         Game.booker.setDifficultyLevel();
         difficultyBackground.setVisible(false);
-        Game.vendingMachine.setDifficultyLevel();
         Game.booker.getWeapon().setDifficultyLevel();
         changeSubMenu(subMenus.get(Texts.MAIN_SUBMENU));
 
