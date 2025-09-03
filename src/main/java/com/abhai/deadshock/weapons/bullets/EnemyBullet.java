@@ -7,8 +7,19 @@ import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.weapons.WeaponType;
 
 public class EnemyBullet extends Bullet {
+    private int damage;
 
     public EnemyBullet() {
+    }
+
+    public void setDifficultyLevel() {
+        switch (Game.difficultyLevel) {
+            case DifficultyLevel.MARIK -> damage = 2;
+            case DifficultyLevel.EASY -> damage = 3;
+            case DifficultyLevel.MEDIUM -> damage = 5;
+            case DifficultyLevel.HARD -> damage = 7;
+            case DifficultyLevel.HARDCORE -> damage = 10;
+        }
     }
 
     private void intersectsWithCharacters() {
@@ -26,22 +37,11 @@ public class EnemyBullet extends Bullet {
         for (Enemy enemy : Game.enemies)
             if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
                 if (Game.difficultyLevel == DifficultyLevel.MARIK || Game.difficultyLevel == DifficultyLevel.EASY)
-                    enemy.setHP(enemy.getHP() - Game.booker.getWeapon().getBulletDamage());
+                    enemy.setHP(enemy.getHP() - damage);
                 delete = true;
                 Game.gameRoot.getChildren().remove(this);
                 return;
             }
-    }
-
-    @Override
-    protected void setDifficultyLevelForBullet() {
-        switch (Game.difficultyLevel) {
-            case DifficultyLevel.MARIK -> damage = 2;
-            case DifficultyLevel.EASY -> damage = 3;
-            case DifficultyLevel.MEDIUM -> damage = 5;
-            case DifficultyLevel.HARD -> damage = 7;
-            case DifficultyLevel.HARDCORE -> damage = 10;
-        }
     }
 
     public void init(double scaleX, double x, double y) {
@@ -55,7 +55,6 @@ public class EnemyBullet extends Bullet {
             direction = false;
         }
         setTranslateY(y + 9);
-        setDifficultyLevelForBullet();
     }
 
     @Override

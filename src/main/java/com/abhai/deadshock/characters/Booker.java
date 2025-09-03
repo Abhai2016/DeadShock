@@ -121,6 +121,18 @@ public class Booker extends Character implements Animatable {
         return HP;
     }
 
+    public void setHP(int value) {
+        HP = value;
+        if (HP > 100)
+            HP = 100;
+    }
+
+    public void setSalt(int value) {
+        salt = value;
+        if (salt > 100)
+            salt = 100;
+    }
+
     public int getSalt() {
         return salt;
     }
@@ -139,12 +151,6 @@ public class Booker extends Character implements Animatable {
         Game.hud.updateMoneyTextPosition();
     }
 
-    public void setHP(int value) {
-        HP = value;
-        if (HP > 100)
-            HP = 100;
-    }
-
     public Weapon getWeapon() {
         return weapon;
     }
@@ -157,12 +163,6 @@ public class Booker extends Character implements Animatable {
             case 1 -> Sounds.feelingBetter.play(Game.menu.getVoiceSlider().getValue() / 100);
         }
 
-    }
-
-    public void setSalt(int value) {
-        salt = value;
-        if (salt > 100)
-            salt = 100;
     }
 
     public boolean isHypnotized() {

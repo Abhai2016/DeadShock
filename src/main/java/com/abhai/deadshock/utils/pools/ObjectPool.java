@@ -22,6 +22,10 @@ public class ObjectPool<T> {
             pool.add(object);
     }
 
+    public ArrayList<T> getAll() {
+        return pool;
+    }
+
     public T get() {
         return pool.isEmpty() ? factory.get() : pool.removeFirst();
     }

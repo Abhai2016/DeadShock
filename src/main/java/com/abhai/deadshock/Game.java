@@ -83,7 +83,6 @@ public class Game extends Application {
 
     //TODO connect frames to time
     //TODO fix a bug with supply ammo by checking which enemy was killed instead of just editing currentBullets
-    //TODO fix a bug with rpg's explosion
     public static AnimationTimer timer = new AnimationTimer() {
         @Override
         public void handle(long now) {
@@ -109,11 +108,11 @@ public class Game extends Application {
                 levelNumber = Level.FIRST_LEVEL;
                 level = new Level();
                 vendingMachine = new VendingMachine();
+                hud = new HUD();
                 booker = new Booker();
                 booker.setWeapon(new Weapon.Builder());
                 booker.setEnergetic(new Energetic.Builder());
                 elizabeth = new Elizabeth();
-                hud = new HUD();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -456,6 +455,11 @@ public class Game extends Application {
 
         saveSaves();
         saveOptions();
+    }
+
+    public static void setDifficultyLevelForEnemyBullets() {
+        for (EnemyBullet enemyBullet : enemyBulletsPool.getAll())
+            enemyBullet.setDifficultyLevel();
     }
 
     private static void update() {

@@ -172,6 +172,7 @@ public class Menu extends Pane {
         Game.hud.setDifficultyLevel();
         Game.booker.setDifficultyLevel();
         difficultyBackground.setVisible(false);
+        Game.setDifficultyLevelForEnemyBullets();
         Game.booker.getWeapon().setDifficultyLevel();
         changeSubMenu(subMenus.get(Texts.MAIN_SUBMENU));
 

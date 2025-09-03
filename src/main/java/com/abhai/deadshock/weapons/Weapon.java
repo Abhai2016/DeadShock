@@ -72,9 +72,6 @@ public class Weapon extends Pane {
     private static final int START_MACHINE_GUN_BULLETS = 120;
     private static final Image RPG_IMAGE = new Image(Paths.get("resources", "images", "weapons", "rpg.png").toUri().toString());
     private static final Image WEAPON_IMAGE = new Image(Paths.get("resources", "images", "weapons", "weapons.png").toUri().toString());
-    private static final Media pistolReload = new Media(Paths.get("resources", "sounds", "fx", "weapons", "pistolReload.mp3").toUri().toString());
-    private static final Media machineGunReload = new Media(Paths.get("resources", "sounds", "fx", "weapons", "machineGunReload.mp3").toUri().toString());
-    private static final Media rpgShotWithReload = new Media(Paths.get("resources", "sounds", "fx", "weapons", "rpgShotWithReload.mp3").toUri().toString());
 
     private WeaponType type;
     private ImageView imageView;
@@ -244,10 +241,11 @@ public class Weapon extends Pane {
                     Bullet bullet = bulletsPool.get();
                     bullet.init(WeaponType.RPG);
                     bullets.add(bullet);
-                    reloadMediaPLayer = new MediaPlayer(rpgShotWithReload);
+                    reloadMediaPLayer = new MediaPlayer(Sounds.rpgShotWithReload);
                     reloadMediaPLayer.setVolume(Game.menu.getFxSlider().getValue() / 100);
                     reloadMediaPLayer.play();
-                    reload();
+                    if (currentBullets > 0)
+                        fillClip(WeaponType.RPG);
                 }
             }
         }
@@ -259,7 +257,7 @@ public class Weapon extends Pane {
             switch (type) {
                 case WeaponType.PISTOL -> {
                     if (currentClip < FULL_PISTOL_CLIP) {
-                        reloadMediaPLayer = new MediaPlayer(pistolReload);
+                        reloadMediaPLayer = new MediaPlayer(Sounds.pistolReload);
                         reloadMediaPLayer.setVolume(Game.menu.getFxSlider().getValue() / 100);
                         reloadMediaPLayer.play();
                         fillClip(type);
@@ -267,15 +265,19 @@ public class Weapon extends Pane {
                 }
                 case WeaponType.MACHINE_GUN -> {
                     if (currentClip < FULL_MACHINE_GUN_CLIP) {
-                        reloadMediaPLayer = new MediaPlayer(machineGunReload);
+                        reloadMediaPLayer = new MediaPlayer(Sounds.machineGunReload);
                         reloadMediaPLayer.setVolume(Game.menu.getFxSlider().getValue() / 100);
                         reloadMediaPLayer.play();
                         fillClip(type);
                     }
                 }
                 case WeaponType.RPG -> {
-                    if (currentClip < FULL_RPG_CLIP)
+                    if (currentClip < FULL_RPG_CLIP) {
+                        reloadMediaPLayer = new MediaPlayer(Sounds.rpgReload);
+                        reloadMediaPLayer.setVolume(Game.menu.getFxSlider().getValue() / 100);
+                        reloadMediaPLayer.play();
                         fillClip(type);
+                    }
                 }
             }
         }
