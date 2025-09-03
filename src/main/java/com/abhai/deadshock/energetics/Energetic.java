@@ -1,9 +1,9 @@
 package com.abhai.deadshock.energetics;
 
-import com.abhai.deadshock.menus.DifficultyLevel;
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.world.levels.Level;
+import com.abhai.deadshock.menus.DifficultyLevel;
 import com.abhai.deadshock.utils.Sounds;
+import com.abhai.deadshock.world.levels.Level;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;

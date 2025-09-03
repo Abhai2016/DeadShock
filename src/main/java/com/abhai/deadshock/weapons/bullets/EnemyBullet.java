@@ -1,8 +1,8 @@
 package com.abhai.deadshock.weapons.bullets;
 
-import com.abhai.deadshock.menus.DifficultyLevel;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.enemies.Enemy;
+import com.abhai.deadshock.menus.DifficultyLevel;
 import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.weapons.WeaponType;
 

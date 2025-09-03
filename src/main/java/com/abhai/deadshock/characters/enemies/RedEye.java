@@ -1,8 +1,8 @@
 package com.abhai.deadshock.characters.enemies;
 
-import com.abhai.deadshock.world.levels.Block;
 import com.abhai.deadshock.weapons.EnemyWeapon;
 import com.abhai.deadshock.weapons.WeaponType;
+import com.abhai.deadshock.world.levels.Block;
 
 public class RedEye extends Comstock {
 

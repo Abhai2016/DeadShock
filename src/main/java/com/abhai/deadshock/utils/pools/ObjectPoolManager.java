@@ -11,7 +11,7 @@ public class ObjectPoolManager<T> {
         pools = new HashMap<>();
     }
 
-    public <S extends T> void register (Class<? extends S> type, Supplier<? extends S> factory, int initSize, int maxSize) {
+    public <S extends T> void register(Class<? extends S> type, Supplier<? extends S> factory, int initSize, int maxSize) {
         pools.put(type, new ObjectPool<>(factory, initSize, maxSize));
     }
 

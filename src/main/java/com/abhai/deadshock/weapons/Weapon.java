@@ -1,16 +1,15 @@
 package com.abhai.deadshock.weapons;
 
-import com.abhai.deadshock.menus.DifficultyLevel;
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.world.levels.Level;
+import com.abhai.deadshock.menus.DifficultyLevel;
 import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.utils.pools.ObjectPool;
 import com.abhai.deadshock.weapons.bullets.Bullet;
+import com.abhai.deadshock.world.levels.Level;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
 import java.nio.file.Paths;

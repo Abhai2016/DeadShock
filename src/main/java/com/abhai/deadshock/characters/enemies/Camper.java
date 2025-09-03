@@ -1,8 +1,8 @@
 package com.abhai.deadshock.characters.enemies;
 
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.world.levels.Block;
 import com.abhai.deadshock.utils.Sounds;
+import com.abhai.deadshock.world.levels.Block;
 
 public class Camper extends Enemy {
     private static final int DAMAGE = 5;

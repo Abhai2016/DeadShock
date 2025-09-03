@@ -457,9 +457,11 @@ public class Game extends Application {
         saveOptions();
     }
 
-    public static void setDifficultyLevelForEnemyBullets() {
+    public static void setDifficultyLevel() {
         for (EnemyBullet enemyBullet : enemyBulletsPool.getAll())
             enemyBullet.setDifficultyLevel();
+        hud.setDifficultyLevel();
+        booker.setDifficultyLevel();
     }
 
     private static void update() {

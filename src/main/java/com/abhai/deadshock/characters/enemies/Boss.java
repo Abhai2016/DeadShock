@@ -3,10 +3,10 @@ package com.abhai.deadshock.characters.enemies;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.Animatable;
 import com.abhai.deadshock.energetics.EnemyHypnosis;
-import com.abhai.deadshock.world.levels.Level;
 import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.utils.SpriteAnimation;
 import com.abhai.deadshock.utils.Texts;
+import com.abhai.deadshock.world.levels.Level;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -82,7 +82,6 @@ public class Boss extends Enemy implements Animatable {
     protected String getImageName() {
         return "bigDaddy.png";
     }
-
 
     private void die() {
         dead = true;

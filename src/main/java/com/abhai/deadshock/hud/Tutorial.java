@@ -1,8 +1,8 @@
 package com.abhai.deadshock.hud;
 
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.world.levels.Level;
 import com.abhai.deadshock.utils.Texts;
+import com.abhai.deadshock.world.levels.Level;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;

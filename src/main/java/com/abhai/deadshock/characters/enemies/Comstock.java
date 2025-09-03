@@ -2,13 +2,13 @@ package com.abhai.deadshock.characters.enemies;
 
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.Animatable;
-import com.abhai.deadshock.world.levels.Block;
-import com.abhai.deadshock.world.levels.BlockType;
-import com.abhai.deadshock.world.supplies.Supply;
 import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.utils.SpriteAnimation;
 import com.abhai.deadshock.weapons.EnemyWeapon;
 import com.abhai.deadshock.weapons.WeaponType;
+import com.abhai.deadshock.world.levels.Block;
+import com.abhai.deadshock.world.levels.BlockType;
+import com.abhai.deadshock.world.supplies.Supply;
 import javafx.geometry.Point2D;
 import javafx.util.Duration;
 

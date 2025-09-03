@@ -539,6 +539,7 @@ public class Booker extends Character implements Animatable {
         if (Game.levelNumber == Level.FIRST_LEVEL)
             this.money = money;
 
+        weapon.setDifficultyLevel();
         energetic.setDifficultyLevel();
         Game.hud.updateMoneyTextPosition();
     }

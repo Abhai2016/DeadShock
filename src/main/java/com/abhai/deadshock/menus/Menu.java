@@ -3,9 +3,9 @@ package com.abhai.deadshock.menus;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.Animatable;
 import com.abhai.deadshock.characters.enemies.Enemy;
-import com.abhai.deadshock.world.levels.Level;
 import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.utils.Texts;
+import com.abhai.deadshock.world.levels.Level;
 import javafx.animation.FadeTransition;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -169,11 +169,8 @@ public class Menu extends Pane {
 
     private void startGame() {
         start = false;
-        Game.hud.setDifficultyLevel();
-        Game.booker.setDifficultyLevel();
         difficultyBackground.setVisible(false);
-        Game.setDifficultyLevelForEnemyBullets();
-        Game.booker.getWeapon().setDifficultyLevel();
+        Game.setDifficultyLevel();
         changeSubMenu(subMenus.get(Texts.MAIN_SUBMENU));
 
         restartMusicIfNeeded();

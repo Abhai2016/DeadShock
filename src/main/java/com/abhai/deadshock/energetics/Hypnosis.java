@@ -1,11 +1,11 @@
 package com.abhai.deadshock.energetics;
 
-import com.abhai.deadshock.menus.DifficultyLevel;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.enemies.Enemy;
-import com.abhai.deadshock.world.levels.Level;
+import com.abhai.deadshock.menus.DifficultyLevel;
 import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.utils.Texts;
+import com.abhai.deadshock.world.levels.Level;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;

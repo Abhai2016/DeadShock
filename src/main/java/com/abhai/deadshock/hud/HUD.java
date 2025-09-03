@@ -1,7 +1,7 @@
 package com.abhai.deadshock.hud;
 
-import com.abhai.deadshock.menus.DifficultyLevel;
 import com.abhai.deadshock.Game;
+import com.abhai.deadshock.menus.DifficultyLevel;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -57,7 +57,7 @@ public class HUD extends Pane {
         if (Game.difficultyLevel == DifficultyLevel.MARIK) {
             getChildren().remove(moneyText);
             money.setImage(moneyForMarikImage);
-        } else if (!getChildren().contains(moneyText)){
+        } else if (!getChildren().contains(moneyText)) {
             getChildren().add(moneyText);
             money.setImage(moneyForOtherDifficultyLevelsImage);
         }
@@ -130,10 +130,6 @@ public class HUD extends Pane {
                 "images", "hud", "hypnosis.png").toUri().toString()));
         hypnosis.setTranslateY(ENERGETIC_OFFSET_Y);
         hypnosis.setVisible(false);
-    }
-
-    public Text getMoneyText() {
-        return moneyText;
     }
 
     public ImageView getHypnosis() {
