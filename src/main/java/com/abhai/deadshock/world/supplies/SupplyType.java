@@ -1,6 +1,8 @@
 package com.abhai.deadshock.world.supplies;
 
 public enum SupplyType {
-    AMMO,
-    MEDICINE
+    MEDICINE,
+    RPG_BULLETS,
+    PISTOL_BULLETS,
+    MACHINE_GUN_BULLETS
 }

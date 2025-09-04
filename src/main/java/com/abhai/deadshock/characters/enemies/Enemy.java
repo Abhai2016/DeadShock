@@ -2,6 +2,7 @@ package com.abhai.deadshock.characters.enemies;
 
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.utils.Sounds;
+import com.abhai.deadshock.world.supplies.SupplyType;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
@@ -101,5 +102,9 @@ public class Enemy extends Pane {
 
     public void setHypnotized(boolean value) {
         hypnotized = value;
+    }
+
+    protected SupplyType getSupplyType() {
+        return SupplyType.MEDICINE;
     }
 }

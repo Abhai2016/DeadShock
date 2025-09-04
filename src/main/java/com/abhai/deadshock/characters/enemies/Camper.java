@@ -3,6 +3,8 @@ package com.abhai.deadshock.characters.enemies;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.utils.Sounds;
 import com.abhai.deadshock.world.levels.Block;
+import com.abhai.deadshock.world.supplies.Supply;
+import com.abhai.deadshock.world.supplies.SupplyType;
 
 public class Camper extends Enemy {
     private static final int DAMAGE = 5;
@@ -17,8 +19,12 @@ public class Camper extends Enemy {
     private void die() {
         toDelete = true;
         playDeathVoice();
+        if (Math.random() < 0.5) {
+            Supply supply = Game.supplyPool.get();
+            supply.init(getSupplyType(), getTranslateX(), getTranslateY());
+            Game.supplies.add(supply);
+        }
         Game.booker.addMoneyForKillingEnemy();
-        Game.elizabeth.addMedicineForKillingEnemy();
     }
 
     private void moveY() {
@@ -83,6 +89,11 @@ public class Camper extends Enemy {
     @Override
     protected String getImageName() {
         return "camper.png";
+    }
+
+    @Override
+    protected SupplyType getSupplyType() {
+        return SupplyType.RPG_BULLETS;
     }
 
     @Override

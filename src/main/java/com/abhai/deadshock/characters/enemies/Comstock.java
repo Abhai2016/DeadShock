@@ -9,6 +9,7 @@ import com.abhai.deadshock.weapons.WeaponType;
 import com.abhai.deadshock.world.levels.Block;
 import com.abhai.deadshock.world.levels.BlockType;
 import com.abhai.deadshock.world.supplies.Supply;
+import com.abhai.deadshock.world.supplies.SupplyType;
 import javafx.geometry.Point2D;
 import javafx.util.Duration;
 
@@ -58,7 +59,7 @@ public class Comstock extends Enemy implements Animatable {
         playDeathVoice();
         if (Math.random() < 0.5) {
             Supply supply = Game.supplyPool.get();
-            supply.init(getTranslateX(), getTranslateY());
+            supply.init(getSupplyType(), getTranslateX(), getTranslateY());
             Game.supplies.add(supply);
         }
         Game.booker.addMoneyForKillingEnemy();
@@ -208,10 +209,6 @@ public class Comstock extends Enemy implements Animatable {
         animation.stop();
     }
 
-    public void setCanSeeBooker(boolean canSeeBooker) {
-        this.canSeeBooker = canSeeBooker;
-    }
-
     protected boolean intersectsWithBlock(Block block) {
         return getBoundsInParent().intersects(block.getBoundsInParent()) && !block.getType().equals(BlockType.INVISIBLE);
     }
@@ -307,8 +304,17 @@ public class Comstock extends Enemy implements Animatable {
         }
     }
 
+    @Override
+    protected SupplyType getSupplyType() {
+        return SupplyType.PISTOL_BULLETS;
+    }
+
     protected void initWeapon() {
         enemyWeapon = new EnemyWeapon(WeaponType.PISTOL);
+    }
+
+    public void setCanSeeBooker(boolean canSeeBooker) {
+        this.canSeeBooker = canSeeBooker;
     }
 
     @Override

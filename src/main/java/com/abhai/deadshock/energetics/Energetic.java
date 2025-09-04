@@ -152,6 +152,11 @@ public class Energetic extends Pane {
     }
 
     public void changeLevel() {
+        if (Game.levelNumber == Level.BOSS_LEVEL) {
+            Game.gameRoot.getChildren().remove(this);
+            return;
+        }
+
         if (Game.levelNumber == Level.SECOND_LEVEL) {
             imageView.setImage(new Image(ELECTRICITY_IMAGE_PATH.toUri().toString()));
             setTranslateX(ELECTRICITY_X);

@@ -80,9 +80,9 @@ public class Game extends Application {
 
     public static Level level;
     public static boolean active;
+    public static boolean setBossLevel = false;
 
     //TODO connect frames to time
-    //TODO fix a bug with supply ammo by checking which enemy was killed instead of just editing currentBullets
     public static AnimationTimer timer = new AnimationTimer() {
         @Override
         public void handle(long now) {
@@ -136,7 +136,7 @@ public class Game extends Application {
         }));
 
         if (Game.levelNumber != Level.BOSS_LEVEL)
-            vendingMachine.init();
+            vendingMachine.initializeButtons();
     }
 
     public static void initContentForNewGame() {
@@ -183,9 +183,7 @@ public class Game extends Application {
         try {
             ObjectMapper mapper = new ObjectMapper();
             Path optionsPath = Paths.get("resources", "data", "options.dat");
-
-            if (menu == null)
-                menu = new Menu();
+            menu = new Menu();
 
             if (optionsPath.toFile().exists()) {
                 Options options = mapper.readValue(optionsPath.toFile(), Options.class);
@@ -452,6 +450,7 @@ public class Game extends Application {
         gameRoot.getChildren().remove(vendingMachine);
         levelNumber++;
         level.changeLevel();
+        booker.changeLevel();
 
         saveSaves();
         saveOptions();
@@ -478,6 +477,10 @@ public class Game extends Application {
                 enemies.remove(enemy);
                 break;
             }
+        }
+        if (setBossLevel) {
+            setBossLevel();
+            setBossLevel = false;
         }
         for (EnemyBullet enemyBullet : enemyBullets) {
             enemyBullet.update();

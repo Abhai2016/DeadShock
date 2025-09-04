@@ -41,29 +41,29 @@ public class Supply extends Pane {
 
     private void delete() {
         delete = true;
-        if (type == SupplyType.AMMO)
-            Game.booker.takeAmmo();
+        if (type != SupplyType.MEDICINE)
+            Game.booker.takeAmmo(type);
         else
             Game.booker.addMedicineForKillingEnemy();
         Game.gameRoot.getChildren().remove(this);
     }
 
-    public void init(double x, double y) {
+    public boolean isDelete() {
+        return delete;
+    }
+
+    public void init(SupplyType supplyType, double x, double y) {
         if (Math.random() < 0.5) {
             type = SupplyType.MEDICINE;
             imageView.setImage(medicineImage);
         } else {
-            type = SupplyType.AMMO;
+            type = supplyType;
             imageView.setImage(ammoImage);
         }
         delete = false;
         setTranslateX(x);
         setTranslateY(y - 15);
         Game.gameRoot.getChildren().add(this);
-    }
-
-    public boolean isDelete() {
-        return delete;
     }
 
     public void update() {

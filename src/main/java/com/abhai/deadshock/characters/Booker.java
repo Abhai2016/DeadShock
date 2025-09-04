@@ -16,6 +16,7 @@ import com.abhai.deadshock.utils.Texts;
 import com.abhai.deadshock.weapons.Weapon;
 import com.abhai.deadshock.weapons.WeaponType;
 import com.abhai.deadshock.weapons.bullets.EnemyBullet;
+import com.abhai.deadshock.world.supplies.SupplyType;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -291,13 +292,6 @@ public class Booker extends Character implements Animatable {
         }
     }
 
-    public void takeAmmo() {
-        if (weapon.getType() != WeaponType.RPG)
-            weapon.setCurrentBullets(weapon.getCurrentBullets() + bulletsForKillingEnemy);
-        else
-            weapon.setCurrentBullets(weapon.getCurrentBullets() + bulletsForKillingEnemy / 5);
-    }
-
     public void hypnotize() {
         hypnotized = true;
         velocity = velocity.add(0, JUMP_SPEED);
@@ -553,6 +547,20 @@ public class Booker extends Character implements Animatable {
         } else if (canJump) {
             canJump = false;
             velocity = velocity.add(0, JUMP_SPEED);
+        }
+    }
+
+    public void takeAmmo(SupplyType type) {
+        switch (type) {
+            case SupplyType.RPG_BULLETS -> weapon.setRpgBullets(weapon.getRpgBullets() + bulletsForKillingEnemy / 5);
+            case SupplyType.PISTOL_BULLETS -> weapon.setPistolBullets(weapon.getPistolBullets() + bulletsForKillingEnemy);
+            case SupplyType.MACHINE_GUN_BULLETS -> weapon.setMachineGunBullets(weapon.getMachineGunBullets() + bulletsForKillingEnemy);
+        }
+
+        switch (weapon.getType()) {
+            case WeaponType.RPG -> weapon.setCurrentBullets(weapon.getRpgBullets());
+            case WeaponType.PISTOL -> weapon.setCurrentBullets(weapon.getPistolBullets());
+            case WeaponType.MACHINE_GUN -> weapon.setCurrentBullets(weapon.getMachineGunBullets());
         }
     }
 

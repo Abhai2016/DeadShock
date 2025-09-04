@@ -159,7 +159,7 @@ public class Boss extends Enemy implements Animatable {
     public void changeLevel() {
         initHp();
         stunInterval = 0;
-        Game.setBossLevel();
+        Game.setBossLevel = true;
         setTranslateX(BLOCK_SIZE * 10);
         setTranslateY(BLOCK_SIZE * 12 - 5);
     }

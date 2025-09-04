@@ -115,18 +115,18 @@ public class Weapon extends Pane {
     }
 
     public void init() {
-        rpgClip = 0;
         rpgDamage = 0;
-        pistolClip = 0;
         currentClip = 0;
         bulletDamage = 0;
         canReload = true;
         singleShot = true;
         currentBullets = 0;
-        machineGunClip = 0;
         nowReloading = false;
+        rpgClip = FULL_RPG_CLIP;
         currentShootInterval = 0;
         bullets = new ArrayList<>();
+        pistolClip = FULL_PISTOL_CLIP;
+        machineGunClip = FULL_MACHINE_GUN_CLIP;
         imageView = new ImageView(WEAPON_IMAGE);
         bulletsPool = new ObjectPool<>(Bullet::new, 50, 150);
 
@@ -140,8 +140,8 @@ public class Weapon extends Pane {
             case Level.SECOND_LEVEL -> {
                 if (canChoosePistol) {
                     type = WeaponType.PISTOL;
+                    currentClip = pistolClip;
                     currentBullets = pistolBullets;
-                    currentClip = FULL_PISTOL_CLIP;
                     Game.booker.changeWeaponAnimation(type);
                 }
                 setTranslateX(BLOCK_SIZE * 26);
@@ -150,13 +150,13 @@ public class Weapon extends Pane {
             }
             case Level.THIRD_LEVEL -> {
                 if (canChooseMachineGun) {
+                    currentClip = machineGunClip;
                     type = WeaponType.MACHINE_GUN;
                     currentBullets = machineGunBullets;
-                    currentClip = FULL_MACHINE_GUN_CLIP;
                 } else if (canChoosePistol) {
                     type = WeaponType.PISTOL;
+                    currentClip = pistolClip;
                     currentBullets = pistolBullets;
-                    currentClip = FULL_PISTOL_CLIP;
                 }
                 imageView.setImage(RPG_IMAGE);
                 setTranslateX(BLOCK_SIZE * 24);
@@ -166,16 +166,16 @@ public class Weapon extends Pane {
             case Level.BOSS_LEVEL -> {
                 if (canChooseRpg) {
                     type = WeaponType.RPG;
+                    currentClip = rpgClip;
                     currentBullets = rpgBullets;
-                    currentClip = FULL_RPG_CLIP;
                 } else if (canChooseMachineGun) {
+                    currentClip = machineGunClip;
                     type = WeaponType.MACHINE_GUN;
                     currentBullets = machineGunBullets;
-                    currentClip = FULL_MACHINE_GUN_CLIP;
                 } else if (canChoosePistol) {
                     type = WeaponType.PISTOL;
+                    currentClip = pistolClip;
                     currentBullets = pistolBullets;
-                    currentClip = FULL_PISTOL_CLIP;
                 }
                 Game.booker.changeWeaponAnimation(type);
             }
@@ -283,6 +283,11 @@ public class Weapon extends Pane {
     }
 
     public void changeLevel() {
+        if (Game.levelNumber == Level.BOSS_LEVEL) {
+            Game.gameRoot.getChildren().remove(this);
+            return;
+        }
+
         if (Game.levelNumber == Level.SECOND_LEVEL) {
             setTranslateX(BLOCK_SIZE * 26);
             setTranslateY(BLOCK_SIZE * 12 - 20);
@@ -520,6 +525,10 @@ public class Weapon extends Pane {
 
     public boolean isCanChooseMachineGun() {
         return canChooseMachineGun;
+    }
+
+    public void setRpgBullets(int rpgBullets) {
+        this.rpgBullets = rpgBullets;
     }
 
     public void setCurrentBullets(long value) {

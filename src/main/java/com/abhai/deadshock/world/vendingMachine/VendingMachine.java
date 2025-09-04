@@ -46,13 +46,9 @@ public class VendingMachine extends Pane {
 
     public VendingMachine() {
         isShown = false;
-        purchaseType = PurchaseType.BIG_MEDICINE;
-    }
-
-    public void init() {
         initializeImages();
         initializePosition();
-        initializeButtons();
+        purchaseType = PurchaseType.BIG_MEDICINE;
     }
 
     public void openMenu() {
@@ -173,7 +169,6 @@ public class VendingMachine extends Pane {
         fadeTransition.play();
 
         getChildren().add(vendingMachineImage);
-        Game.gameRoot.getChildren().add(this);
         Game.appRoot.getChildren().add(vendingMachineMenuImage);
     }
 
@@ -195,8 +190,8 @@ public class VendingMachine extends Pane {
                 vendingMachineMenuImage.setViewport(new Rectangle2D(920, 0, 920, 597));
             }
         }
-        if (!Game.gameRoot.getChildren().contains(vendingMachineImage))
-            Game.gameRoot.getChildren().add(vendingMachineImage);
+        if (!Game.gameRoot.getChildren().contains(this) && Game.levelNumber != Level.BOSS_LEVEL)
+            Game.gameRoot.getChildren().add(this);
     }
 
     public boolean isShown() {

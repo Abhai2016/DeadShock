@@ -3,6 +3,7 @@ package com.abhai.deadshock.characters.enemies;
 import com.abhai.deadshock.weapons.EnemyWeapon;
 import com.abhai.deadshock.weapons.WeaponType;
 import com.abhai.deadshock.world.levels.Block;
+import com.abhai.deadshock.world.supplies.SupplyType;
 
 public class RedEye extends Comstock {
 
@@ -27,6 +28,11 @@ public class RedEye extends Comstock {
     @Override
     protected String getImageName() {
         return "redEye.png";
+    }
+
+    @Override
+    protected SupplyType getSupplyType() {
+        return SupplyType.MACHINE_GUN_BULLETS;
     }
 
     @Override
