@@ -3,19 +3,17 @@ package com.abhai.deadshock.menus;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.Animatable;
 import com.abhai.deadshock.characters.enemies.Enemy;
-import com.abhai.deadshock.utils.Sounds;
+import com.abhai.deadshock.types.DifficultyType;
+import com.abhai.deadshock.utils.GameMedia;
 import com.abhai.deadshock.utils.Texts;
 import com.abhai.deadshock.world.levels.Level;
 import javafx.animation.FadeTransition;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -32,14 +30,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 
-import static javafx.scene.input.KeyEvent.KEY_PRESSED;
-
 public class Menu extends Pane {
     private static final Path ROCK_MUSIC_PATH = Paths.get("resources", "sounds", "music", "rock");
     private static final Path METALCORE_MUSIC_PATH = Paths.get("resources", "sounds", "music", "metalcore");
     private static final Path ELECTRONIC_MUSIC_PATH = Paths.get("resources", "sounds", "music", "electronic");
     private static final Path DEVELOPERS_CHOICE_MUSIC_PATH = Paths.get("resources", "sounds", "music", "developersChoice");
+    private static final ImageView cover = new ImageView(new Image(Paths.get("resources", "images", "menu", "cover.jpg").toUri().toString()));
 
+    private Text textCover;
     private MediaPlayer music;
     private ImageView controls;
     private Text typeOfMusicText;
@@ -48,6 +46,7 @@ public class Menu extends Pane {
     private Text difficultyLevelText;
     private Pane difficultyBackground;
     private HashMap<String, SubMenu> subMenus;
+    private FadeTransition fadeTransitionTextCover;
 
     private Slider fxSlider;
     private Slider musicSlider;
@@ -56,6 +55,7 @@ public class Menu extends Pane {
     private boolean start;
     private boolean isShown;
     private boolean newGame;
+    private boolean isCoverShown;
 
     public Menu() {
         currentMusicPath = Paths.get("resources", "sounds", "music", "developersChoice", "01.mp3");
@@ -66,17 +66,22 @@ public class Menu extends Pane {
         start = true;
         isShown = true;
         newGame = false;
+        isCoverShown = true;
 
         ImageView menuBackground = new ImageView(new Image(Paths.get("resources", "images", "menu", "menu.png").toUri().toString()));
         getChildren().add(menuBackground);
 
-        Game.appRoot.getChildren().add(this);
+        Game.getAppRoot().getChildren().add(this);
         initializeSubMenus();
         createCover();
     }
 
     public boolean isShown() {
         return isShown;
+    }
+
+    public boolean isCoverShown() {
+        return isCoverShown;
     }
 
     public MediaPlayer getMusic() {
@@ -97,11 +102,10 @@ public class Menu extends Pane {
 
     public void gameOver() {
         start = true;
-        Game.clearDataForNewGame();
-        Game.initContentForNewGame();
 
         controls.setVisible(false);
         typeOfMusicText.setVisible(false);
+        Game.getGameWorld().newGameReset();
         changeSubMenu(subMenus.get(Texts.MAIN_SUBMENU));
         showMenu();
     }
@@ -111,15 +115,15 @@ public class Menu extends Pane {
             FadeTransition ft = new FadeTransition(Duration.seconds(0.5), this);
             ft.setFromValue(1);
             ft.setToValue(0);
-            ft.setOnFinished(event -> Game.appRoot.getChildren().remove(this));
+            ft.setOnFinished(event -> Game.getAppRoot().getChildren().remove(this));
             ft.play();
 
             music.play();
             isShown = false;
-            Game.active = true;
+            Game.getGameWorld().setActive(true);
 
-            if (Sounds.whereAreYouFrom.getStatus() == MediaPlayer.Status.PAUSED)
-                Sounds.whereAreYouFrom.play();
+            if (GameMedia.WHERE_ARE_YOU_FROM.getStatus() == MediaPlayer.Status.PAUSED)
+                GameMedia.WHERE_ARE_YOU_FROM.play();
         }
     }
 
@@ -131,15 +135,26 @@ public class Menu extends Pane {
 
         music.pause();
         isShown = true;
-        Game.active = false;
-        Game.booker.stopAnimation();
-        Game.appRoot.getChildren().add(this);
+        Game.getGameWorld().setActive(false);
+        Game.getGameWorld().getBooker().stopAnimation();
+        Game.getAppRoot().getChildren().add(this);
 
-        for (Enemy enemy : Game.enemies)
+        for (Enemy enemy : Game.getGameWorld().getEnemies())
             if (enemy instanceof Animatable animatable)
                 animatable.stopAnimation();
-        if (Sounds.whereAreYouFrom.getStatus() == MediaPlayer.Status.PLAYING)
-            Sounds.whereAreYouFrom.pause();
+        if (GameMedia.WHERE_ARE_YOU_FROM.getStatus() == MediaPlayer.Status.PLAYING)
+            GameMedia.WHERE_ARE_YOU_FROM.pause();
+    }
+
+    public void hideCover() {
+        isCoverShown = false;
+        fadeTransitionTextCover.stop();
+
+        FadeTransition fadeTransitionCover = new FadeTransition(Duration.seconds(2), cover);
+        fadeTransitionCover.setFromValue(1);
+        fadeTransitionCover.setToValue(0);
+        fadeTransitionCover.play();
+        fadeTransitionCover.setOnFinished(event -> getChildren().removeAll(cover, textCover));
     }
 
     public void checkMusic() {
@@ -170,7 +185,7 @@ public class Menu extends Pane {
     private void startGame() {
         start = false;
         difficultyBackground.setVisible(false);
-        Game.setDifficultyLevel();
+        Game.getGameWorld().setDifficultyLevel();
         changeSubMenu(subMenus.get(Texts.MAIN_SUBMENU));
 
         restartMusicIfNeeded();
@@ -196,39 +211,19 @@ public class Menu extends Pane {
     }
 
     private void createCover() {
-        ImageView cover = new ImageView(new Image(Paths.get("resources", "images", "menu", "cover.jpg").toUri().toString()));
-        Text textCover = new Text(Texts.PUSH_ENTER_TO_CONTINUE);
+        textCover = new Text(Texts.PUSH_ENTER_TO_CONTINUE);
         textCover.setFont(Font.font("Arial", FontWeight.BOLD, 28));
         textCover.setFill(Color.AQUA);
-        textCover.setTranslateX(Game.scene.getWidth() / 3);
-        textCover.setTranslateY(Game.scene.getHeight() - 225);
+        textCover.setTranslateX(Game.SCENE_WIDTH / 3);
+        textCover.setTranslateY(Game.SCENE_HEIGHT - 225);
         getChildren().addAll(cover, textCover);
 
-        FadeTransition fadeTransitionTextCover = new FadeTransition(Duration.seconds(1), textCover);
+        fadeTransitionTextCover = new FadeTransition(Duration.seconds(1), textCover);
         fadeTransitionTextCover.setFromValue(1);
         fadeTransitionTextCover.setToValue(0);
         fadeTransitionTextCover.setCycleCount(FadeTransition.INDEFINITE);
         fadeTransitionTextCover.setAutoReverse(true);
         fadeTransitionTextCover.play();
-
-        EventHandler<KeyEvent> removeCoverFilter = new EventHandler<>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.ENTER) {
-                    fadeTransitionTextCover.stop();
-
-                    FadeTransition fadeTransitionCover = new FadeTransition(Duration.seconds(2), cover);
-                    fadeTransitionCover.setFromValue(1);
-                    fadeTransitionCover.setToValue(0);
-                    fadeTransitionCover.play();
-                    fadeTransitionCover.setOnFinished(event1 -> getChildren().removeAll(cover, textCover));
-
-                    Game.scene.removeEventFilter(KEY_PRESSED, this);
-                }
-            }
-        };
-
-        Game.scene.addEventFilter(KEY_PRESSED, removeCoverFilter);
     }
 
     private void createMainSubMenu() {
@@ -245,7 +240,7 @@ public class Menu extends Pane {
         continueGame.setOnMouseClicked(event -> {
             if (!start) {
                 hideMenu();
-            } else if (Game.levelNumber > Level.FIRST_LEVEL) {
+            } else if (Game.getGameWorld().getLevel().getCurrentLevelNumber() > Level.FIRST_LEVEL) {
                 startGame();
             }
         });
@@ -370,7 +365,7 @@ public class Menu extends Pane {
     private void restartMusicIfNeeded() {
         if (!start) {
             music.stop();
-            music = new MediaPlayer(new Media(currentMusicPath.toUri().toString()));
+            music = new MediaPlayer(new javafx.scene.media.Media(currentMusicPath.toUri().toString()));
             music.setVolume(musicSlider.getValue() / 100);
             music.play();
             music.setOnEndOfMedia(this::checkMusic);
@@ -379,8 +374,8 @@ public class Menu extends Pane {
 
     private void createTypeOfMusicText() {
         typeOfMusicText = new Text(Texts.CHOSEN_DEVELOPER_CHOICE);
-        typeOfMusicText.setTranslateX(Game.scene.getWidth() / 5);
-        typeOfMusicText.setTranslateY(Game.scene.getHeight() / 6);
+        typeOfMusicText.setTranslateX(Game.SCENE_WIDTH / 5);
+        typeOfMusicText.setTranslateY(Game.SCENE_HEIGHT / 6);
         typeOfMusicText.setFont(Font.font("Arial", FontWeight.BOLD, 20));
         typeOfMusicText.setFill(Color.WHITE);
         typeOfMusicText.setVisible(false);
@@ -423,23 +418,23 @@ public class Menu extends Pane {
 
         marik.setOnMouseClicked(event -> {
             difficultyLevelText.setText(Texts.MARIK_DIFFICULTY_DESCRIPTION);
-            Game.difficultyLevel = DifficultyLevel.MARIK;
+            Game.getGameWorld().setDifficultyType(DifficultyType.MARIK);
         });
         easy.setOnMouseClicked(event -> {
             difficultyLevelText.setText(Texts.EASY_DIFFICULTY_DESCRIPTION);
-            Game.difficultyLevel = DifficultyLevel.EASY;
+            Game.getGameWorld().setDifficultyType(DifficultyType.EASY);
         });
         normal.setOnMouseClicked(event -> {
             difficultyLevelText.setText(Texts.MEDIUM_DIFFICULTY_DESCRIPTION);
-            Game.difficultyLevel = DifficultyLevel.MEDIUM;
+            Game.getGameWorld().setDifficultyType(DifficultyType.MEDIUM);
         });
         high.setOnMouseClicked(event -> {
             difficultyLevelText.setText(Texts.HARD_DIFFICULTY_DESCRIPTION);
-            Game.difficultyLevel = DifficultyLevel.HARD;
+            Game.getGameWorld().setDifficultyType(DifficultyType.HARD);
         });
         hardcore.setOnMouseClicked(event -> {
             difficultyLevelText.setText(Texts.HARDCORE_DIFFICULTY_DESCRIPTION);
-            Game.difficultyLevel = DifficultyLevel.HARDCORE;
+            Game.getGameWorld().setDifficultyType(DifficultyType.HARDCORE);
         });
 
         back.setOnMouseClicked(event -> {
@@ -449,12 +444,10 @@ public class Menu extends Pane {
         ready.setOnMouseClicked(event -> {
             createNewGameConfirmationWindow();
             if (newGame) {
-                if (start && Game.levelNumber == Level.FIRST_LEVEL) {
+                if (start && Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.FIRST_LEVEL)
                     start = false;
-                } else {
-                    Game.clearDataForNewGame();
-                    Game.initContentForNewGame();
-                }
+                else
+                    Game.getGameWorld().newGameReset();
                 startGame();
             }
         });
@@ -518,14 +511,14 @@ public class Menu extends Pane {
         difficultyBackground = new Pane();
         difficultyBackground.setVisible(false);
         Rectangle rectangle = new Rectangle(775, 280, Color.WHITE);
-        rectangle.setTranslateX(Game.scene.getWidth() / 5 + 20);
-        rectangle.setTranslateY(Game.scene.getHeight() / 10);
+        rectangle.setTranslateX(Game.SCENE_WIDTH / 5 + 20);
+        rectangle.setTranslateY(Game.SCENE_HEIGHT / 10);
         rectangle.setOpacity(0.5);
         difficultyBackground.getChildren().add(rectangle);
 
         difficultyLevelText = new Text(Texts.MEDIUM_DIFFICULTY_DESCRIPTION);
-        difficultyLevelText.setTranslateX(Game.scene.getWidth() / 5 + 25);
-        difficultyLevelText.setTranslateY(Game.scene.getHeight() / 8);
+        difficultyLevelText.setTranslateX(Game.SCENE_WIDTH / 5 + 25);
+        difficultyLevelText.setTranslateY(Game.SCENE_HEIGHT / 8);
         difficultyLevelText.setFont(Font.font("Arial", FontWeight.BOLD, 20));
         difficultyLevelText.setFill(Color.BLACK);
         difficultyBackground.getChildren().add(difficultyLevelText);

@@ -1,27 +1,18 @@
 package com.abhai.deadshock.characters;
 
-import com.abhai.deadshock.menus.DifficultyLevel;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.enemies.Boss;
-import com.abhai.deadshock.characters.enemies.Comstock;
 import com.abhai.deadshock.characters.enemies.Enemy;
-import com.abhai.deadshock.characters.enemies.EnemyType;
 import com.abhai.deadshock.energetics.Energetic;
-import com.abhai.deadshock.world.levels.Block;
-import com.abhai.deadshock.world.levels.BlockType;
-import com.abhai.deadshock.world.levels.Level;
-import com.abhai.deadshock.utils.Sounds;
+import com.abhai.deadshock.types.*;
+import com.abhai.deadshock.utils.GameMedia;
 import com.abhai.deadshock.utils.SpriteAnimation;
 import com.abhai.deadshock.utils.Texts;
 import com.abhai.deadshock.weapons.Weapon;
-import com.abhai.deadshock.weapons.WeaponType;
-import com.abhai.deadshock.weapons.bullets.EnemyBullet;
-import com.abhai.deadshock.world.supplies.SupplyType;
-import javafx.event.EventHandler;
+import com.abhai.deadshock.world.levels.Block;
+import com.abhai.deadshock.world.levels.Level;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -32,8 +23,6 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.nio.file.Paths;
-
-import static javafx.scene.input.KeyEvent.KEY_PRESSED;
 
 public class Booker extends Character implements Animatable {
     public static final int WIDTH = 60;
@@ -54,12 +43,13 @@ public class Booker extends Character implements Animatable {
     private boolean dead;
     private boolean start;
     private boolean canJump;
+    private boolean gameOver;
     private boolean hypnotized;
     private boolean canPlayVoice;
     private boolean booleanVelocityX;
     private boolean booleanVelocityY;
 
-    private int HP;
+    private int Hp;
     private int salt;
     private int money;
     private int livesCount;
@@ -79,13 +69,14 @@ public class Booker extends Character implements Animatable {
     private SpriteAnimation withMachineGun;
 
     private Text moneyText;
-    private Text gameOverText;
+    private Text deathText;
     private Text continueText;
 
     public Booker() {
         dead = false;
         start = true;
         canJump = true;
+        gameOver = false;
         hypnotized = false;
         canPlayVoice = true;
         booleanVelocityX = true;
@@ -93,7 +84,7 @@ public class Booker extends Character implements Animatable {
         velocity = new Point2D(0, 0);
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
 
-        HP = 100;
+        Hp = 100;
         money = 0;
         salt = 100;
         livesCount = 0;
@@ -105,7 +96,7 @@ public class Booker extends Character implements Animatable {
 
         initDeathText();
         initAnimations();
-        Game.gameRoot.getChildren().add(this);
+        Game.getGameRoot().getChildren().add(this);
     }
 
     @Override
@@ -118,14 +109,14 @@ public class Booker extends Character implements Animatable {
         return "booker.png";
     }
 
-    public int getHP() {
-        return HP;
+    public int getHp() {
+        return Hp;
     }
 
-    public void setHP(int value) {
-        HP = value;
-        if (HP > 100)
-            HP = 100;
+    public void setHp(int value) {
+        Hp = value;
+        if (Hp > 100)
+            Hp = 100;
     }
 
     public void setSalt(int value) {
@@ -140,16 +131,20 @@ public class Booker extends Character implements Animatable {
 
     public void setMoney(int value) {
         money = value;
-        Game.hud.updateMoneyTextPosition();
+        Game.getGameWorld().getHud().updateMoneyTextPosition();
     }
 
     public int getMoney() {
         return money;
     }
 
+    public boolean isDead() {
+        return dead;
+    }
+
     public void addMoneyForKillingEnemy() {
         money += moneyForKillingEnemy;
-        Game.hud.updateMoneyTextPosition();
+        Game.getGameWorld().getHud().updateMoneyTextPosition();
     }
 
     public Weapon getWeapon() {
@@ -157,13 +152,17 @@ public class Booker extends Character implements Animatable {
     }
 
     public void addMedicineForKillingEnemy() {
-        setHP(HP + medicineForKillingEnemy);
+        setHp(Hp + medicineForKillingEnemy);
 
         switch ((int) (Math.random() * 2)) {
-            case 0 -> Sounds.feelsBetter.play(Game.menu.getVoiceSlider().getValue() / 100);
-            case 1 -> Sounds.feelingBetter.play(Game.menu.getVoiceSlider().getValue() / 100);
+            case 0 -> GameMedia.FEELS_BETTER.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 1 -> GameMedia.FEELING_BETTER.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
         }
 
+    }
+
+    public boolean isGameOver() {
+        return gameOver;
     }
 
     public boolean isHypnotized() {
@@ -192,51 +191,33 @@ public class Booker extends Character implements Animatable {
 
     private void die() {
         dead = true;
-        if (Game.difficultyLevel.equals(DifficultyLevel.HARDCORE))
+        if (Game.getGameWorld().getDifficultyType().equals(DifficultyType.HARDCORE))
             gameOver();
         else {
-            stopAnimation();
-            Game.active = false;
-            Game.menu.getMusic().pause();
-            energetic.clear();
-
-            for (EnemyBullet enemyBullet : Game.enemyBullets)
-                Game.enemyBulletsPool.put(enemyBullet);
-            Game.gameRoot.getChildren().removeAll(Game.enemyBullets);
-            Game.enemyBullets.clear();
-            weapon.clearBullets();
-
-            for (Enemy enemy : Game.enemies) {
-                if (enemy instanceof Animatable animatable)
-                    animatable.stopAnimation();
-                if (enemy instanceof Comstock comstock)
-                    comstock.setCanSeeBooker(false);
-            }
-
+            Game.getGameWorld().deathPause();
             if (money < priceForGeneration)
                 gameOver();
             else {
                 livesCount--;
                 money -= priceForGeneration;
-                Game.hud.updateMoneyTextPosition();
+                Game.getGameWorld().getHud().updateMoneyTextPosition();
 
-                if (Game.levelNumber > Level.FIRST_LEVEL)
+                if (Game.getGameWorld().getLevel().getCurrentLevelNumber() > Level.FIRST_LEVEL)
                     playVideoDeath();
                 else {
-                    Game.appRoot.getChildren().add(gameOverText);
+                    Game.getAppRoot().getChildren().add(deathText);
 
                     if (start)
-                        Game.appRoot.getChildren().add(moneyText);
+                        Game.getAppRoot().getChildren().add(moneyText);
 
                     if (livesCount < 0) {
                         continueText.setText(Texts.PUSH_ENTER_TO_START_LEVEL_AGAIN);
-                        continueText.setTranslateX(Game.scene.getWidth() / 4);
+                        continueText.setTranslateX(Game.SCENE_WIDTH / 4);
                     } else {
                         continueText.setText(Texts.PUSH_ENTER_TO_CONTINUE);
-                        continueText.setTranslateX(Game.scene.getWidth() / 3);
+                        continueText.setTranslateX(Game.SCENE_WIDTH / 3);
                     }
-                    Game.appRoot.getChildren().add(continueText);
-                    addEventListenerOnDeathText();
+                    Game.getAppRoot().getChildren().add(continueText);
                 }
             }
         }
@@ -261,10 +242,10 @@ public class Booker extends Character implements Animatable {
         velocity = new Point2D(0, 0);
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
 
-        if (Sounds.whereAreYouFrom.getStatus() == MediaPlayer.Status.PLAYING)
-            Sounds.whereAreYouFrom.stop();
+        if (GameMedia.WHERE_ARE_YOU_FROM.getStatus() == MediaPlayer.Status.PLAYING)
+            GameMedia.WHERE_ARE_YOU_FROM.stop();
 
-        HP = 100;
+        Hp = 100;
         salt = 100;
         setTranslateX(100);
         setTranslateY(200);
@@ -282,12 +263,7 @@ public class Booker extends Character implements Animatable {
             else
                 animation.play();
 
-            if (Game.elizabeth.isGiveSupply() && getBoundsInParent().intersects(Game.elizabeth.getBoundsInParent())) {
-                addMedicineForKillingEnemy();
-                Game.elizabeth.giveMedicine();
-            }
-
-            if (Game.levelNumber < Level.THIRD_LEVEL)
+            if (Game.getGameWorld().getLevel().getCurrentLevelNumber() < Level.THIRD_LEVEL)
                 playVoice();
         }
     }
@@ -298,61 +274,62 @@ public class Booker extends Character implements Animatable {
     }
 
     private void gameOver() {
-        gameOverText.setFont(Font.font("Arial", FontWeight.BOLD, 28));
-        gameOverText.setFill(Color.RED);
-        gameOverText.setTranslateX(Game.scene.getWidth() / 2 - 100);
-        gameOverText.setTranslateY(Game.scene.getHeight() / 2);
-        Game.appRoot.getChildren().add(gameOverText);
-
-        Game.scene.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ESCAPE) {
-                Game.appRoot.getChildren().remove(gameOverText);
-                Game.menu.gameOver();
-            }
-        });
+        gameOver = true;
+        deathText.setText(Texts.GAME_OVER);
+        deathText.setFont(Font.font("Arial", FontWeight.BOLD, 28));
+        deathText.setFill(Color.RED);
+        deathText.setTranslateX(Game.SCENE_WIDTH / 2 - 100);
+        deathText.setTranslateY(Game.SCENE_HEIGHT / 2);
+        Game.getAppRoot().getChildren().add(deathText);
     }
 
     private void playVoice() {
-        if (!Game.enemies.isEmpty() && Game.levelNumber == Level.FIRST_LEVEL)
-            if (getTranslateX() > Game.enemies.getFirst().getTranslateX() - Block.BLOCK_SIZE * 15 && canPlayVoice) {
-                Sounds.shit.play(Game.menu.getVoiceSlider().getValue() / 100);
+        if (!Game.getGameWorld().getEnemies().isEmpty() && Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.FIRST_LEVEL)
+            if (getTranslateX() > Game.getGameWorld().getEnemies().getFirst().getTranslateX() - Block.BLOCK_SIZE * 15 && canPlayVoice) {
+                GameMedia.SHIT.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
                 canPlayVoice = false;
                 return;
             }
 
-        if (Game.enemies.isEmpty() && !canPlayVoice && Game.levelNumber == Level.FIRST_LEVEL) {
-            Sounds.cretins.play(Game.menu.getVoiceSlider().getValue() / 100);
+        if (Game.getGameWorld().getEnemies().isEmpty() && !canPlayVoice && Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.FIRST_LEVEL) {
+            GameMedia.CRETINS.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             canPlayVoice = true;
             return;
         }
 
-        if (Game.enemies.isEmpty() && Game.levelNumber == Level.SECOND_LEVEL && canPlayVoice) {
-            Sounds.letsGo.play(Game.menu.getVoiceSlider().getValue() / 100);
+        if (Game.getGameWorld().getEnemies().isEmpty() && Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.SECOND_LEVEL && canPlayVoice) {
+            GameMedia.LETS_GO.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             canPlayVoice = false;
         }
     }
 
-    private void deathReset() {
+    public void deathReset() {
+        if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.FIRST_LEVEL) {
+            Game.getGameWorld().deathUnpause();
+            Game.getAppRoot().getChildren().removeAll(deathText, continueText);
+
+            if (start) {
+                Game.getAppRoot().getChildren().remove(moneyText);
+                start = false;
+            }
+        }
+
         setTranslateX(100);
         setTranslateY(200);
 
-        HP = 100;
+        Hp = 100;
         dead = false;
-        Game.gameRoot.setLayoutX(0);
-        if (Game.levelNumber > Level.FIRST_LEVEL)
-            Game.elizabeth.resetAfterBookersDeath();
-        Game.level.setBackgroundLayoutX(0);
         velocity = new Point2D(0, 0);
 
         if (livesCount < 0) {
             salt = 100;
-            switch (Game.difficultyLevel) {
-                case DifficultyLevel.MARIK, DifficultyLevel.EASY -> livesCount = 4;
-                case DifficultyLevel.MEDIUM -> livesCount = 2;
-                case DifficultyLevel.HARD -> livesCount = 1;
-                case DifficultyLevel.HARDCORE -> livesCount = 0;
+            switch (Game.getGameWorld().getDifficultyType()) {
+                case DifficultyType.MARIK, DifficultyType.EASY -> livesCount = 4;
+                case DifficultyType.MEDIUM -> livesCount = 2;
+                case DifficultyType.HARD -> livesCount = 1;
+                case DifficultyType.HARDCORE -> livesCount = 0;
             }
-            Game.resetLevel();
+            Game.getGameWorld().resetLevel();
             canPlayVoice = true;
         }
     }
@@ -376,9 +353,11 @@ public class Booker extends Character implements Animatable {
             booleanVelocityX = true;
 
         for (int i = 0; i < Math.abs(x); i++) {
-            if (x > 0 && Game.booker.getTranslateX() < Game.gameRoot.getWidth() - WIDTH)
-                setTranslateX(getTranslateX() + 1);
-            else if (Game.booker.getTranslateX() > 1)
+            if (x > 0) {
+                if ((Game.getGameWorld().getLevel().getCurrentLevelNumber() != Level.BOSS_LEVEL && getTranslateX() < Block.BLOCK_SIZE * 300 - WIDTH)
+                        || (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.BOSS_LEVEL && getTranslateX() < Block.BLOCK_SIZE * 37 - WIDTH))
+                    setTranslateX(getTranslateX() + 1);
+            } else if (getTranslateX() > 1)
                 setTranslateX(getTranslateX() - 1);
 
             if (intersectsWithBlocks('X', x))
@@ -390,24 +369,23 @@ public class Booker extends Character implements Animatable {
     }
 
     private void initDeathText() {
-        gameOverText = new Text(Texts.YOU_ARE_DEAD);
-        gameOverText.setFont(Font.font("Arial", FontWeight.BOLD, 28));
-        gameOverText.setFill(Color.RED);
-        gameOverText.setTranslateX(Game.scene.getWidth() / 2 - 75);
-        gameOverText.setTranslateY(Game.scene.getHeight() / 2);
+        deathText = new Text(Texts.YOU_ARE_DEAD);
+        deathText.setFont(Font.font("Arial", FontWeight.BOLD, 28));
+        deathText.setFill(Color.RED);
+        deathText.setTranslateX(Game.SCENE_WIDTH / 2 - 75);
+        deathText.setTranslateY(Game.SCENE_HEIGHT / 2);
 
         continueText = new Text(Texts.PUSH_ENTER_TO_CONTINUE);
         continueText.setFont(Font.font("Arial", FontWeight.BOLD, 28));
         continueText.setFill(Color.WHITE);
-        continueText.setTranslateX(Game.scene.getWidth() / 3);
-        continueText.setTranslateY(Game.scene.getHeight() / 2 + 40);
-
+        continueText.setTranslateX(Game.SCENE_WIDTH / 3);
+        continueText.setTranslateY(Game.SCENE_HEIGHT / 2 + 40);
 
         moneyText = new Text(Texts.WITH_EACH_DEATH_YOU_LOSE + priceForGeneration + Texts.NO_MONEY_NO_GAME);
         moneyText.setFont(Font.font("Arial", FontWeight.BOLD, 28));
         moneyText.setFill(Color.RED);
-        moneyText.setTranslateX(Game.scene.getWidth() / 4);
-        moneyText.setTranslateY(Game.scene.getHeight() / 1.5 - 30);
+        moneyText.setTranslateX(Game.SCENE_WIDTH / 4);
+        moneyText.setTranslateY(Game.SCENE_HEIGHT / 1.5 - 30);
     }
 
     private void moveY(double y) {
@@ -444,26 +422,25 @@ public class Booker extends Character implements Animatable {
     }
 
     private void playVideoDeath() {
-        if (Sounds.whereAreYouFrom.getStatus() == MediaPlayer.Status.PLAYING)
-            Sounds.whereAreYouFrom.pause();
+        if (GameMedia.WHERE_ARE_YOU_FROM.getStatus() == MediaPlayer.Status.PLAYING)
+            GameMedia.WHERE_ARE_YOU_FROM.pause();
 
-        if (Game.levelNumber == Level.BOSS_LEVEL && Game.enemies.getFirst() instanceof Boss boss)
+        if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.BOSS_LEVEL && Game.getGameWorld().getEnemies().getFirst() instanceof Boss boss)
             boss.unStun();
 
         MediaPlayer videoDeath = new MediaPlayer(new Media(
                 Paths.get("resources", "videos", "death.mp4").toUri().toString()));
         MediaView videoView = new MediaView(videoDeath);
-        Game.appRoot.getChildren().add(videoView);
-        videoView.getMediaPlayer().setVolume(Game.menu.getVoiceSlider().getValue() / 100);
+        Game.getAppRoot().getChildren().add(videoView);
+        videoView.getMediaPlayer().setVolume(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
 
         videoDeath.play();
         videoDeath.setOnEndOfMedia(() -> {
-            Game.active = true;
-            Game.menu.getMusic().play();
-            Game.appRoot.getChildren().remove(videoView);
+            Game.getGameWorld().deathUnpause();
+            Game.getAppRoot().getChildren().remove(videoView);
 
-            if (Sounds.whereAreYouFrom.getStatus() == MediaPlayer.Status.PAUSED)
-                Sounds.whereAreYouFrom.play();
+            if (GameMedia.WHERE_ARE_YOU_FROM.getStatus() == MediaPlayer.Status.PAUSED)
+                GameMedia.WHERE_ARE_YOU_FROM.play();
 
             deathReset();
         });
@@ -482,8 +459,8 @@ public class Booker extends Character implements Animatable {
 
     public void setDifficultyLevel() {
         int money = 0;
-        switch (Game.difficultyLevel) {
-            case DifficultyLevel.MARIK -> {
+        switch (Game.getGameWorld().getDifficultyType()) {
+            case DifficultyType.MARIK -> {
                 money = 1000000;
                 livesCount = 4;
                 priceForGeneration = 0;
@@ -492,7 +469,7 @@ public class Booker extends Character implements Animatable {
                 bulletsForKillingEnemy = 30;
                 medicineForKillingEnemy = 30;
             }
-            case DifficultyLevel.EASY -> {
+            case DifficultyType.EASY -> {
                 money = 300;
                 livesCount = 4;
                 closeCombatDamage = 50;
@@ -501,7 +478,7 @@ public class Booker extends Character implements Animatable {
                 bulletsForKillingEnemy = 25;
                 medicineForKillingEnemy = 25;
             }
-            case DifficultyLevel.MEDIUM -> {
+            case DifficultyType.MEDIUM -> {
                 money = 150;
                 livesCount = 2;
                 closeCombatDamage = 40;
@@ -510,7 +487,7 @@ public class Booker extends Character implements Animatable {
                 bulletsForKillingEnemy = 20;
                 medicineForKillingEnemy = 20;
             }
-            case DifficultyLevel.HARD -> {
+            case DifficultyType.HARD -> {
                 money = 100;
                 livesCount = 1;
                 closeCombatDamage = 30;
@@ -519,7 +496,7 @@ public class Booker extends Character implements Animatable {
                 bulletsForKillingEnemy = 10;
                 medicineForKillingEnemy = 10;
             }
-            case DifficultyLevel.HARDCORE -> {
+            case DifficultyType.HARDCORE -> {
                 money = 100;
                 livesCount = 0;
                 closeCombatDamage = 25;
@@ -530,12 +507,12 @@ public class Booker extends Character implements Animatable {
             }
         }
 
-        if (Game.levelNumber == Level.FIRST_LEVEL)
+        if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.FIRST_LEVEL)
             this.money = money;
 
         weapon.setDifficultyLevel();
         energetic.setDifficultyLevel();
-        Game.hud.updateMoneyTextPosition();
+        Game.getGameWorld().getHud().updateMoneyTextPosition();
     }
 
     public void jump(boolean enemyJump) {
@@ -553,8 +530,10 @@ public class Booker extends Character implements Animatable {
     public void takeAmmo(SupplyType type) {
         switch (type) {
             case SupplyType.RPG_BULLETS -> weapon.setRpgBullets(weapon.getRpgBullets() + bulletsForKillingEnemy / 5);
-            case SupplyType.PISTOL_BULLETS -> weapon.setPistolBullets(weapon.getPistolBullets() + bulletsForKillingEnemy);
-            case SupplyType.MACHINE_GUN_BULLETS -> weapon.setMachineGunBullets(weapon.getMachineGunBullets() + bulletsForKillingEnemy);
+            case SupplyType.PISTOL_BULLETS ->
+                    weapon.setPistolBullets(weapon.getPistolBullets() + bulletsForKillingEnemy);
+            case SupplyType.MACHINE_GUN_BULLETS ->
+                    weapon.setMachineGunBullets(weapon.getMachineGunBullets() + bulletsForKillingEnemy);
         }
 
         switch (weapon.getType()) {
@@ -565,35 +544,13 @@ public class Booker extends Character implements Animatable {
     }
 
     public void closeCombat(double scaleX) {
-        HP -= closeCombatDamage / 10;
+        Hp -= closeCombatDamage / 10;
 
         if (booleanVelocityX) {
             booleanVelocityX = false;
             velocity = velocity.add(scaleX * -JUMP_SPEED, 0);
-            Sounds.closeCombat.play(Game.menu.getFxSlider().getValue() / 100);
+            GameMedia.CLOSE_COMBAT.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
         }
-    }
-
-    private void addEventListenerOnDeathText() {
-        EventHandler<KeyEvent> removeDeathText = new EventHandler<>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.ENTER) {
-                    Game.active = true;
-                    Game.menu.getMusic().play();
-                    Game.appRoot.getChildren().removeAll(gameOverText, continueText);
-
-                    if (start) {
-                        Game.appRoot.getChildren().remove(moneyText);
-                        start = false;
-                    }
-
-                    deathReset();
-                    Game.scene.removeEventFilter(KEY_PRESSED, this);
-                }
-            }
-        };
-        Game.scene.addEventFilter(KEY_PRESSED, removeDeathText);
     }
 
     public void changeWeaponAnimation(WeaponType weaponType) {
@@ -608,7 +565,7 @@ public class Booker extends Character implements Animatable {
     }
 
     private boolean intersectsWithEnemies(char typeOfCoordinate) {
-        for (Enemy enemy : Game.enemies)
+        for (Enemy enemy : Game.getGameWorld().getEnemies())
             if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
                 if (typeOfCoordinate == 'Y') {
                     if ((enemy.getType() == EnemyType.BOSS && enemy.getHP() < 1) || enemy.isHypnotized())
@@ -616,9 +573,9 @@ public class Booker extends Character implements Animatable {
                     else {
                         jump(true);
                         if (enemy.getType() == EnemyType.BOSS)
-                            HP -= closeCombatDamage / 10;
+                            Hp -= closeCombatDamage / 10;
                         enemy.setHP(enemy.getHP() - closeCombatDamage);
-                        Sounds.closeCombat.play(Game.menu.getFxSlider().getValue() / 100);
+                        GameMedia.CLOSE_COMBAT.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
                     }
                     setTranslateY(getTranslateY() - 1);
                 } else
@@ -630,13 +587,13 @@ public class Booker extends Character implements Animatable {
 
     private boolean intersectsWithBlocks(char typeOfCoordinate, double coordinate) {
         if (hypnotized) {
-            for (Block block : Game.level.getBlocks())
+            for (Block block : Game.getGameWorld().getLevel().getBlocks())
                 if (block.getType().equals(BlockType.METAL) && getBoundsInParent().intersects(block.getBoundsInParent())) {
                     setTranslateY(getTranslateY() - 1);
                     return true;
                 }
         } else {
-            for (Block block : Game.level.getBlocks())
+            for (Block block : Game.getGameWorld().getLevel().getBlocks())
                 if (!block.getType().equals(BlockType.INVISIBLE) && getBoundsInParent().intersects(block.getBoundsInParent())) {
                     if (typeOfCoordinate == 'X')
                         if (coordinate > 0)
@@ -656,10 +613,17 @@ public class Booker extends Character implements Animatable {
         return false;
     }
 
+    public void newGame() {
+        Game.getAppRoot().getChildren().remove(deathText);
+        deathText.setText(Texts.YOU_ARE_DEAD);
+        gameOver = false;
+        Game.getGameWorld().getMenu().gameOver();
+    }
+
     public void update() {
-        if ((HP < 1 || getTranslateY() > Game.scene.getHeight()) && !dead) {
+        if ((Hp < 1 || getTranslateY() > Game.SCENE_HEIGHT) && !dead)
             die();
-        } else
+        else
             behave();
     }
 }

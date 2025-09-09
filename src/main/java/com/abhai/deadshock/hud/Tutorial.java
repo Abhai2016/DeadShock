@@ -16,7 +16,7 @@ public class Tutorial {
     private static final int SMALLEST_OFFSET_Y = 50;
 
     public static void init() {
-        switch (Game.levelNumber) {
+        switch (Game.getGameWorld().getLevel().getCurrentLevelNumber()) {
             case Level.FIRST_LEVEL -> {
                 setText(Texts.MOVE_CHARACTER, 100, DEFAULT_OFFSET_Y);
                 setText(Texts.JUMP, BLOCK_SIZE * 23, DEFAULT_OFFSET_Y);
@@ -43,17 +43,17 @@ public class Tutorial {
         }
     }
 
+    public static void reset() {
+        delete();
+        init();
+    }
+
     public static void delete() {
-        switch (Game.levelNumber) {
-            case Level.FIRST_LEVEL ->
-                    Game.gameRoot.getChildren().removeAll(Texts.MOVE_CHARACTER, Texts.JUMP, Texts.PICK_UP_WEAPON,
-                            Texts.SHOOT, Texts.RELOAD, Texts.CHANGE_TRACK, Texts.CHANGE_MUSIC,
-                            Texts.GET_MONEY_FROM_ENEMY, Texts.TURN_ON_VENDING_MACHINE, Texts.SHOOT_ENERGETIC,
-                            Texts.RELOAD_ENERGETIC, Texts.VENDING_MACHINE_MENU);
-            case Level.SECOND_LEVEL ->
-                    Game.gameRoot.getChildren().removeAll(Texts.TAKE_MEDICINE, Texts.SWITCH_WEAPON, Texts.SWITCH_ENERGETIC, Texts.SAVES);
-            case Level.THIRD_LEVEL -> Game.gameRoot.getChildren().removeAll(Texts.CHANGE_WEAPON, Texts.RPG_BULLETS);
-        }
+        Game.getGameRoot().getChildren().removeAll(Texts.MOVE_CHARACTER, Texts.JUMP, Texts.PICK_UP_WEAPON,
+                Texts.SHOOT, Texts.RELOAD, Texts.CHANGE_TRACK, Texts.CHANGE_MUSIC,
+                Texts.GET_MONEY_FROM_ENEMY, Texts.TURN_ON_VENDING_MACHINE, Texts.SHOOT_ENERGETIC,
+                Texts.RELOAD_ENERGETIC, Texts.VENDING_MACHINE_MENU, Texts.TAKE_MEDICINE,
+                Texts.SWITCH_WEAPON, Texts.SWITCH_ENERGETIC, Texts.SAVES, Texts.CHANGE_WEAPON, Texts.RPG_BULLETS);
     }
 
     public static void setVendingMachineMenu() {
@@ -61,7 +61,11 @@ public class Tutorial {
         Texts.VENDING_MACHINE_MENU.setFill(Color.WHITE);
         Texts.VENDING_MACHINE_MENU.setTranslateX(50);
         Texts.VENDING_MACHINE_MENU.setTranslateY(50);
-        Game.appRoot.getChildren().add(Texts.VENDING_MACHINE_MENU);
+        Game.getAppRoot().getChildren().add(Texts.VENDING_MACHINE_MENU);
+    }
+
+    public static void deleteVendingMachineMenu() {
+        Game.getAppRoot().getChildren().remove(Texts.VENDING_MACHINE_MENU);
     }
 
     private static void setText(Text text, int x, int y) {
@@ -69,10 +73,6 @@ public class Tutorial {
         text.setFill(Color.WHITE);
         text.setTranslateX(x);
         text.setTranslateY(y);
-        Game.gameRoot.getChildren().add(text);
-    }
-
-    public static void deleteVendingMachineMenu() {
-        Game.appRoot.getChildren().remove(Texts.VENDING_MACHINE_MENU);
+        Game.getGameRoot().getChildren().add(text);
     }
 }

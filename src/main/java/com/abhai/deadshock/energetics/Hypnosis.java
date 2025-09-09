@@ -2,8 +2,8 @@ package com.abhai.deadshock.energetics;
 
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.enemies.Enemy;
-import com.abhai.deadshock.menus.DifficultyLevel;
-import com.abhai.deadshock.utils.Sounds;
+import com.abhai.deadshock.types.DifficultyType;
+import com.abhai.deadshock.utils.GameMedia;
 import com.abhai.deadshock.utils.Texts;
 import com.abhai.deadshock.world.levels.Level;
 import javafx.scene.paint.Color;
@@ -28,11 +28,11 @@ public class Hypnosis {
         intervalText.setFont(Font.font("Aria", 28));
         intervalText.setFill(Color.WHITE);
         intervalText.setVisible(false);
-        Game.appRoot.getChildren().add(intervalText);
+        Game.getAppRoot().getChildren().add(intervalText);
 
         intervalRect = new Rectangle(300, 3, Color.WHITE);
         intervalRect.setVisible(false);
-        Game.appRoot.getChildren().add(intervalRect);
+        Game.getAppRoot().getChildren().add(intervalRect);
     }
 
     public void delete() {
@@ -49,44 +49,44 @@ public class Hypnosis {
         hypnotizeTheTarget();
 
         intervalRect.setWidth(300);
-        if (Game.levelNumber != Level.BOSS_LEVEL) {
-            intervalRect.setTranslateX(Game.appRoot.getWidth() / 2 - intervalRect.getWidth() / 2);
+        if (Game.getGameWorld().getLevel().getCurrentLevelNumber() != Level.BOSS_LEVEL) {
+            intervalRect.setTranslateX(Game.SCENE_WIDTH / 2 - intervalRect.getWidth() / 2);
             intervalRect.setTranslateY(40);
         } else {
-            intervalRect.setTranslateX(Game.appRoot.getWidth() / 2 - intervalRect.getWidth() / 2 + 20);
+            intervalRect.setTranslateX(Game.SCENE_WIDTH / 2 - intervalRect.getWidth() / 2 + 20);
             intervalRect.setTranslateY(80);
         }
         intervalRect.setVisible(true);
 
 
-        if (Game.levelNumber != Level.BOSS_LEVEL) {
-            intervalText.setTranslateX(Game.appRoot.getWidth() / 2 - intervalRect.getWidth() / 2 + 25);
+        if (Game.getGameWorld().getLevel().getCurrentLevelNumber() != Level.BOSS_LEVEL) {
+            intervalText.setTranslateX(Game.SCENE_WIDTH / 2 - intervalRect.getWidth() / 2 + 25);
             intervalText.setTranslateY(30);
         } else {
-            intervalText.setTranslateX(Game.appRoot.getWidth() / 2 - intervalRect.getWidth() / 2 + 25);
+            intervalText.setTranslateX(Game.SCENE_WIDTH / 2 - intervalRect.getWidth() / 2 + 25);
             intervalText.setTranslateY(70);
         }
         intervalText.setVisible(true);
     }
 
     protected void setDifficultyLevel() {
-        switch (Game.difficultyLevel) {
-            case DifficultyLevel.MARIK -> maxInterval = 550;
-            case DifficultyLevel.EASY -> maxInterval = 450;
-            case DifficultyLevel.MEDIUM -> maxInterval = 350;
-            case DifficultyLevel.HARD -> maxInterval = 250;
-            case DifficultyLevel.HARDCORE -> maxInterval = 150;
+        switch (Game.getGameWorld().getDifficultyType()) {
+            case DifficultyType.MARIK -> maxInterval = 550;
+            case DifficultyType.EASY -> maxInterval = 450;
+            case DifficultyType.MEDIUM -> maxInterval = 350;
+            case DifficultyType.HARD -> maxInterval = 250;
+            case DifficultyType.HARDCORE -> maxInterval = 150;
         }
     }
 
     protected void hypnotizeTheTarget() {
-        for (Enemy enemy : Game.enemies)
+        for (Enemy enemy : Game.getGameWorld().getEnemies())
             enemy.setHypnotized(true);
-        Sounds.hypnosis.play(Game.menu.getFxSlider().getValue() / 100);
+        GameMedia.AUDIO_CLIP.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
     }
 
     protected void unhypnotizeTheTarget() {
-        for (Enemy enemy : Game.enemies)
+        for (Enemy enemy : Game.getGameWorld().getEnemies())
             enemy.setHypnotized(false);
     }
 

@@ -1,7 +1,7 @@
 package com.abhai.deadshock.energetics;
 
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.utils.Sounds;
+import com.abhai.deadshock.utils.GameMedia;
 import com.abhai.deadshock.utils.pools.ObjectPool;
 
 import java.util.ArrayList;
@@ -16,9 +16,9 @@ public class DevilKiss {
     }
 
     public void shoot() {
-        Sounds.devilKissShot.play(Game.menu.getFxSlider().getValue() / 100);
+        GameMedia.DEVIL_KISS_SHOT.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
         DevilKissShot devilKissShot = devilKissShotObjectPool.get();
-        devilKissShot.init(Game.booker.getTranslateX(), Game.booker.getTranslateY() + 5);
+        devilKissShot.init(Game.getGameWorld().getBooker().getTranslateX(), Game.getGameWorld().getBooker().getTranslateY() + 5);
         devilKissShots.add(devilKissShot);
     }
 
@@ -26,7 +26,7 @@ public class DevilKiss {
         if (!devilKissShots.isEmpty()) {
             for (DevilKissShot devilKissShot : devilKissShots)
                 devilKissShotObjectPool.put(devilKissShot);
-            Game.gameRoot.getChildren().removeAll(devilKissShots);
+            Game.getGameRoot().getChildren().removeAll(devilKissShots);
             devilKissShots.clear();
         }
     }
@@ -38,7 +38,7 @@ public class DevilKiss {
                 if (devilKissShot.isToDelete()) {
                     devilKissShots.remove(devilKissShot);
                     devilKissShotObjectPool.put(devilKissShot);
-                    Game.gameRoot.getChildren().remove(devilKissShot);
+                    Game.getGameRoot().getChildren().remove(devilKissShot);
                     return;
                 }
             }

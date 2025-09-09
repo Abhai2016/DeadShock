@@ -1,9 +1,9 @@
 package com.abhai.deadshock.world.levels;
 
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.utils.Texts;
+import com.abhai.deadshock.dtos.LevelsDTO;
+import com.abhai.deadshock.types.BlockType;
 import com.abhai.deadshock.utils.pools.ObjectPool;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Map;
 
 import static com.abhai.deadshock.world.levels.Block.BLOCK_SIZE;
 
@@ -29,28 +28,30 @@ public class Level {
     private static final Path BOSS_LEVEL_IMAGE_PATH = Paths.get("resources", "images", "levels", "backgrounds", "bossLevel.jpg");
 
     private ImageView statue;
+    private int currentLevelNumber;
     private final ImageView background;
     private final ArrayList<Block> blocks;
     private final ObjectPool<Block> blockPool;
 
-    public Level() {
+    public Level(int currentLevelNumber) {
         blocks = new ArrayList<>();
         background = new ImageView();
+        this.currentLevelNumber = currentLevelNumber;
         blockPool = new ObjectPool<>(Block::new, 350, 500);
 
         initializeBackground();
 
-        Game.gameRoot.getChildren().add(background);
-        if (Game.levelNumber == FIRST_LEVEL && !Game.gameRoot.getChildren().contains(statue))
-            Game.gameRoot.getChildren().add(statue);
+        Game.getGameRoot().getChildren().add(background);
+        if (currentLevelNumber == FIRST_LEVEL && !Game.getGameRoot().getChildren().contains(statue))
+            Game.getGameRoot().getChildren().add(statue);
 
         createLevel();
     }
 
     public void changeLevel() {
         initializeBackground();
-        if (Game.levelNumber == FIRST_LEVEL && !Game.gameRoot.getChildren().contains(statue))
-            Game.gameRoot.getChildren().add(statue);
+        if (currentLevelNumber == FIRST_LEVEL && !Game.getGameRoot().getChildren().contains(statue))
+            Game.getGameRoot().getChildren().add(statue);
         createLevel();
     }
 
@@ -58,12 +59,12 @@ public class Level {
         String[] level = new String[0];
 
         try {
-            Map<String, String[]> levelData = new ObjectMapper().readValue(LEVELS_DATA_PATH.toFile(), new TypeReference<>() {});
-            switch (Game.levelNumber) {
-                case FIRST_LEVEL -> level = levelData.get(Texts.FIRST_LEVEL);
-                case SECOND_LEVEL -> level = levelData.get(Texts.SECOND_LEVEL);
-                case THIRD_LEVEL -> level =  levelData.get(Texts.THIRD_LEVEL);
-                case BOSS_LEVEL -> level = levelData.get(Texts.BOSS_LEVEL);
+            LevelsDTO levelData = new ObjectMapper().readValue(LEVELS_DATA_PATH.toFile(), LevelsDTO.class);
+            switch (currentLevelNumber) {
+                case FIRST_LEVEL -> level = levelData.getFirstLevel();
+                case SECOND_LEVEL -> level = levelData.getSecondLevel();
+                case THIRD_LEVEL -> level = levelData.getThirdLevel();
+                case BOSS_LEVEL -> level = levelData.getBossLevel();
             }
         } catch (IOException e) {
             System.out.println(e.getLocalizedMessage());
@@ -95,13 +96,13 @@ public class Level {
     private void resetBlocks() {
         for (Block block : blocks) {
             blockPool.put(block);
-            Game.gameRoot.getChildren().remove(block);
+            Game.getGameRoot().getChildren().remove(block);
         }
         blocks.clear();
     }
 
     private void initializeBackground() {
-        switch (Game.levelNumber) {
+        switch (currentLevelNumber) {
             case FIRST_LEVEL -> {
                 background.setImage(new Image(FIRST_LEVEL_IMAGE_PATH.toUri().toString()));
                 statue = new ImageView(new Image(Paths.get("resources", "images", "levels", "statue.jpg").toUri().toString()));
@@ -109,7 +110,7 @@ public class Level {
             }
             case SECOND_LEVEL -> {
                 background.setImage(new Image(SECOND_LEVEL_IMAGE_PATH.toUri().toString()));
-                Game.gameRoot.getChildren().remove(statue);
+                Game.getGameRoot().getChildren().remove(statue);
             }
             case THIRD_LEVEL -> background.setImage(new Image(THIRD_LEVEL_IMAGE_PATH.toUri().toString()));
             case BOSS_LEVEL -> background.setImage(new Image(BOSS_LEVEL_IMAGE_PATH.toUri().toString()));
@@ -126,7 +127,15 @@ public class Level {
         blocks.add(block);
     }
 
+    public int getCurrentLevelNumber() {
+        return currentLevelNumber;
+    }
+
     public void setBackgroundLayoutX(double x) {
         background.setLayoutX(x);
+    }
+
+    public void setCurrentLevelNumber(int currentLevelNumber) {
+        this.currentLevelNumber = currentLevelNumber;
     }
 }

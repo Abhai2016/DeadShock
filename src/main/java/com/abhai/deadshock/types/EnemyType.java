@@ -1,4 +1,4 @@
-package com.abhai.deadshock.characters.enemies;
+package com.abhai.deadshock.types;
 
 public enum EnemyType {
     BOSS,

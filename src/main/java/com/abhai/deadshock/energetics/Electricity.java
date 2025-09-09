@@ -3,8 +3,8 @@ package com.abhai.deadshock.energetics;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.Booker;
 import com.abhai.deadshock.characters.enemies.Enemy;
-import com.abhai.deadshock.characters.enemies.EnemyType;
-import com.abhai.deadshock.utils.Sounds;
+import com.abhai.deadshock.types.EnemyType;
+import com.abhai.deadshock.utils.GameMedia;
 import com.abhai.deadshock.utils.SpriteAnimation;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
@@ -38,45 +38,45 @@ class Electricity extends Pane {
             active = true;
             animation.play();
 
-            if (Game.booker.getScaleX() > 0)
-                setTranslateX(Game.booker.getTranslateX() + Booker.WIDTH);
+            if (Game.getGameWorld().getBooker().getScaleX() > 0)
+                setTranslateX(Game.getGameWorld().getBooker().getTranslateX() + Booker.WIDTH);
             else {
                 setScaleX(-1);
-                setTranslateX(Game.booker.getTranslateX() - 170);
+                setTranslateX(Game.getGameWorld().getBooker().getTranslateX() - 170);
             }
 
-            Game.gameRoot.getChildren().add(this);
-            setTranslateY(Game.booker.getTranslateY() - 10);
-            Sounds.electricity.play(Game.menu.getFxSlider().getValue() / 100);
+            Game.getGameRoot().getChildren().add(this);
+            setTranslateY(Game.getGameWorld().getBooker().getTranslateY() - 10);
+            GameMedia.ELECTRICITY.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
         }
     }
 
     private void move() {
-        if (Game.booker.getScaleX() > 0) {
-            setTranslateX(Game.booker.getTranslateX() + Booker.WIDTH);
+        if (Game.getGameWorld().getBooker().getScaleX() > 0) {
+            setTranslateX(Game.getGameWorld().getBooker().getTranslateX() + Booker.WIDTH);
             setScaleX(1);
         } else {
             setScaleX(-1);
-            setTranslateX(Game.booker.getTranslateX() - 170);
+            setTranslateX(Game.getGameWorld().getBooker().getTranslateX() - 170);
         }
 
-        setTranslateY(Game.booker.getTranslateY() - 10);
+        setTranslateY(Game.getGameWorld().getBooker().getTranslateY() - 10);
     }
 
     public void delete() {
         active = false;
-        Game.gameRoot.getChildren().remove(this);
+        Game.getGameRoot().getChildren().remove(this);
     }
 
     private void intersectsWithEnemies() {
-        for (Enemy enemy : Game.enemies)
+        for (Enemy enemy : Game.getGameWorld().getEnemies())
             if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
                 if (enemy.getType() != EnemyType.BOSS) {
                     enemy.setHP(0);
-                    Sounds.electricityDeath.play(Game.menu.getFxSlider().getValue() / 100);
+                    GameMedia.ELECTRICITY_DEATH.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
                     return;
                 } else
-                    enemy.setHP(enemy.getHP() - Game.booker.getWeapon().getBulletDamage() / 2);
+                    enemy.setHP(enemy.getHP() - Game.getGameWorld().getBooker().getWeapon().getBulletDamage() / 2);
             }
     }
 

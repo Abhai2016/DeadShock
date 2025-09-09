@@ -1,4 +1,4 @@
-package com.abhai.deadshock.world.levels;
+package com.abhai.deadshock.types;
 
 public enum BlockType {
     BOX,

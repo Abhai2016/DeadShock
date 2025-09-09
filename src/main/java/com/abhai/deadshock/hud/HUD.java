@@ -1,7 +1,7 @@
 package com.abhai.deadshock.hud;
 
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.menus.DifficultyLevel;
+import com.abhai.deadshock.types.DifficultyType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -49,12 +49,12 @@ public class HUD extends Pane {
         initializeHpAndSaltPane();
         initializeEnergeticsPane();
 
-        Game.appRoot.getChildren().add(this);
+        Game.getAppRoot().getChildren().add(this);
         getChildren().addAll(HP, salt, hpAndSalt, devilKiss, electricity, hypnosis, bulletPane, money, moneyText);
     }
 
     public void setDifficultyLevel() {
-        if (Game.difficultyLevel == DifficultyLevel.MARIK) {
+        if (Game.getGameWorld().getDifficultyType() == DifficultyType.MARIK) {
             getChildren().remove(moneyText);
             money.setImage(moneyForMarikImage);
         } else if (!getChildren().contains(moneyText)) {
@@ -67,7 +67,7 @@ public class HUD extends Pane {
         moneyForMarikImage = new Image(Paths.get("resources", "images", "hud", "moneyForMarik.png").toUri().toString());
         moneyForOtherDifficultyLevelsImage = new Image(Paths.get("resources", "images", "hud", "money.png").toUri().toString());
         money = new ImageView(moneyForOtherDifficultyLevelsImage);
-        money.setTranslateY(Game.scene.getHeight() - money.getImage().getHeight());
+        money.setTranslateY(Game.SCENE_HEIGHT - money.getImage().getHeight());
 
         moneyText = new Text();
         moneyText.setFill(Color.PALEGOLDENROD);
@@ -90,15 +90,15 @@ public class HUD extends Pane {
 
         bulletPane = new Pane();
         bulletPane.getChildren().addAll(rect, bulletText);
-        bulletPane.setTranslateX(Game.appRoot.getWidth() - rect.getWidth());
+        bulletPane.setTranslateX(Game.SCENE_WIDTH - rect.getWidth());
     }
 
     public void updateMoneyTextPosition() {
-        if (Game.booker.getMoney() > 99)
+        if (Game.getGameWorld().getBooker().getMoney() > 99)
             moneyText.setTranslateX(MONEY_TEXT_OFFSET_X);
-        else if (Game.booker.getMoney() > 9)
+        else if (Game.getGameWorld().getBooker().getMoney() > 9)
             moneyText.setTranslateX(MONEY_TEXT_OFFSET_X + 7);
-        else if (Game.booker.getMoney() < 10)
+        else if (Game.getGameWorld().getBooker().getMoney() < 10)
             moneyText.setTranslateX(MONEY_TEXT_OFFSET_X + 12);
     }
 
@@ -145,10 +145,11 @@ public class HUD extends Pane {
     }
 
     public void update() {
-        HP.setWidth(Game.booker.getHP());
-        salt.setWidth(Game.booker.getSalt());
+        HP.setWidth(Game.getGameWorld().getBooker().getHp());
+        salt.setWidth(Game.getGameWorld().getBooker().getSalt());
 
-        moneyText.setText(String.valueOf(Game.booker.getMoney()));
-        bulletText.setText(Game.booker.getWeapon().getCurrentClip() + " / " + Game.booker.getWeapon().getCurrentBullets());
+        moneyText.setText(String.valueOf(Game.getGameWorld().getBooker().getMoney()));
+        bulletText.setText(Game.getGameWorld().getBooker().getWeapon().getCurrentClip() +
+                " / " + Game.getGameWorld().getBooker().getWeapon().getCurrentBullets());
     }
 }

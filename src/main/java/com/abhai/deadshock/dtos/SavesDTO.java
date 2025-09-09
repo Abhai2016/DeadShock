@@ -1,15 +1,15 @@
-package com.abhai.deadshock.utils;
+package com.abhai.deadshock.dtos;
 
-import com.abhai.deadshock.menus.DifficultyLevel;
+import com.abhai.deadshock.types.DifficultyType;
 
-public class Saves {
+public class SavesDTO {
     private int salt;
     private int money;
     private int rpgBullets;
     private int levelNumber;
     private int pistolBullets;
     private int machineGunBullets;
-    private DifficultyLevel difficultyLevel;
+    private DifficultyType difficultyType;
 
     private boolean canChooseRPG;
     private boolean canChoosePistol;
@@ -66,16 +66,16 @@ public class Saves {
         return canChooseDevilKiss;
     }
 
+    public DifficultyType getDifficultyType() {
+        return difficultyType;
+    }
+
     public boolean isCanChooseMachineGun() {
         return canChooseMachineGun;
     }
 
     public void setCanChooseElectricity(boolean canChooseElectricity) {
         this.canChooseElectricity = canChooseElectricity;
-    }
-
-    public DifficultyLevel getDifficultyLevel() {
-        return difficultyLevel;
     }
 
     public boolean isCanChooseElectricity() {
@@ -102,16 +102,16 @@ public class Saves {
         this.canChoosePistol = canChoosePistol;
     }
 
+    public void setDifficultyType(DifficultyType difficultyType) {
+        this.difficultyType = difficultyType;
+    }
+
     public void setMachineGunBullets(int machineGunBullets) {
         this.machineGunBullets = machineGunBullets;
     }
 
     public void setCanChooseHypnosis(boolean canChooseHypnosis) {
         this.canChooseHypnosis = canChooseHypnosis;
-    }
-
-    public void setDifficultyLevel(DifficultyLevel difficultyLevel) {
-        this.difficultyLevel = difficultyLevel;
     }
 
     public void setCanChooseDevilKiss(boolean canChooseDevilKiss) {

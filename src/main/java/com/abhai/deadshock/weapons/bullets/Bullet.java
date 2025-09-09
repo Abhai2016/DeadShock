@@ -2,12 +2,12 @@ package com.abhai.deadshock.weapons.bullets;
 
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.enemies.Enemy;
-import com.abhai.deadshock.characters.enemies.EnemyType;
-import com.abhai.deadshock.utils.Sounds;
+import com.abhai.deadshock.types.BlockType;
+import com.abhai.deadshock.types.EnemyType;
+import com.abhai.deadshock.types.WeaponType;
+import com.abhai.deadshock.utils.GameMedia;
 import com.abhai.deadshock.utils.SpriteAnimation;
-import com.abhai.deadshock.weapons.WeaponType;
 import com.abhai.deadshock.world.levels.Block;
-import com.abhai.deadshock.world.levels.BlockType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -50,7 +50,7 @@ public class Bullet extends Pane {
         getChildren().add(explosionImageView);
         explosionAnimation.play();
 
-        Sounds.rpgExplosion.play(Game.menu.getFxSlider().getValue() / 100);
+        GameMedia.RPG_EXPLOSION.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
         setTranslateX(getTranslateX() - explosionImageView.getFitWidth() / 2);
         setTranslateY(getTranslateY() - explosionImageView.getFitHeight() / 2);
         explosionAnimation.setOnFinished(event -> {
@@ -58,7 +58,7 @@ public class Bullet extends Pane {
             explosionAnimation.stop();
             getChildren().add(bulletImageView);
             getChildren().remove(explosionImageView);
-            Game.gameRoot.getChildren().remove(this);
+            Game.getAppRoot().getChildren().remove(this);
         });
     }
 
@@ -69,44 +69,44 @@ public class Bullet extends Pane {
         exploding = false;
         bossDamagedByRPG = false;
 
-        if (Game.booker.getScaleX() < 0) {
+        if (Game.getGameWorld().getBooker().getScaleX() < 0) {
             direction = false;
             setScaleX(-1);
         }
 
         if (direction)
-            setTranslateX(Game.booker.getTranslateX() + Game.booker.getWidth());
+            setTranslateX(Game.getGameWorld().getBooker().getTranslateX() + Game.getGameWorld().getBooker().getWidth());
         else
-            setTranslateX(Game.booker.getTranslateX());
+            setTranslateX(Game.getGameWorld().getBooker().getTranslateX());
 
         switch (this.type) {
             case WeaponType.PISTOL -> {
                 speed = BULLET_SPEED;
                 bulletImageView.setImage(BULLET_IMAGE);
-                setTranslateY(Game.booker.getTranslateY() + 14);
+                setTranslateY(Game.getGameWorld().getBooker().getTranslateY() + 14);
             }
             case WeaponType.MACHINE_GUN -> {
                 speed = BULLET_SPEED;
                 bulletImageView.setImage(BULLET_IMAGE);
-                setTranslateY(Game.booker.getTranslateY() + 20);
+                setTranslateY(Game.getGameWorld().getBooker().getTranslateY() + 20);
             }
             case WeaponType.RPG -> {
                 speed = RPG_SPEED;
                 bulletImageView.setImage(RPG_IMAGE);
-                setTranslateY(Game.booker.getTranslateY() + 10);
+                setTranslateY(Game.getGameWorld().getBooker().getTranslateY() + 10);
             }
         }
-        Game.gameRoot.getChildren().add(this);
+        Game.getGameRoot().getChildren().add(this);
     }
 
     private void intersectsWithEnemies() {
-        for (Enemy enemy : Game.enemies)
+        for (Enemy enemy : Game.getGameWorld().getEnemies())
             if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
                 if (exploding) {
                     if (enemy.getType() != EnemyType.BOSS)
-                        enemy.setHP(enemy.getHP() - Game.booker.getWeapon().getRpgDamage());
+                        enemy.setHP(enemy.getHP() - Game.getGameWorld().getBooker().getWeapon().getRpgDamage());
                     else if (!bossDamagedByRPG) {
-                        enemy.setHP(enemy.getHP() - Game.booker.getWeapon().getRpgDamage());
+                        enemy.setHP(enemy.getHP() - Game.getGameWorld().getBooker().getWeapon().getRpgDamage());
                         bossDamagedByRPG = true;
                     }
                 } else {
@@ -115,8 +115,8 @@ public class Bullet extends Pane {
                         createExplosion();
                     else {
                         delete = true;
-                        Game.gameRoot.getChildren().remove(this);
-                        enemy.setHP((enemy.getHP() - Game.booker.getWeapon().getBulletDamage()));
+                        Game.getGameRoot().getChildren().remove(this);
+                        enemy.setHP((enemy.getHP() - Game.getGameWorld().getBooker().getWeapon().getBulletDamage()));
                     }
                 }
                 return;
@@ -124,19 +124,19 @@ public class Bullet extends Pane {
     }
 
     protected void intersectsWithWorld() {
-        if (getTranslateX() > -Game.gameRoot.getLayoutX() + Game.appRoot.getWidth() || getTranslateX() < -Game.gameRoot.getLayoutX()) {
+        if (getTranslateX() > -Game.getGameRoot().getLayoutX() + Game.SCENE_WIDTH || getTranslateX() < -Game.getGameRoot().getLayoutX()) {
             delete = true;
-            Game.gameRoot.getChildren().remove(this);
+            Game.getGameRoot().getChildren().remove(this);
             return;
         }
 
-        for (Block block : Game.level.getBlocks())
+        for (Block block : Game.getGameWorld().getLevel().getBlocks())
             if (getBoundsInParent().intersects(block.getBoundsInParent()) && block.getType() != BlockType.INVISIBLE) {
                 if (type == WeaponType.RPG)
                     createExplosion();
                 else {
                     delete = true;
-                    Game.gameRoot.getChildren().remove(this);
+                    Game.getGameRoot().getChildren().remove(this);
                 }
                 return;
             }
@@ -148,8 +148,8 @@ public class Bullet extends Pane {
 
     public void update() {
         if (exploding) {
-            if (getBoundsInParent().intersects(Game.booker.getBoundsInParent()))
-                Game.booker.setHP(Game.booker.getHP() - Game.booker.getWeapon().getRpgDamage());
+            if (getBoundsInParent().intersects(Game.getGameWorld().getBooker().getBoundsInParent()))
+                Game.getGameWorld().getBooker().setHp(Game.getGameWorld().getBooker().getHp() - Game.getGameWorld().getBooker().getWeapon().getRpgDamage());
             intersectsWithEnemies();
         } else {
             if (direction)

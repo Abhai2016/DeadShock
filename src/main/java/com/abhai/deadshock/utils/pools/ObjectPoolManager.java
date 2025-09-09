@@ -11,8 +11,12 @@ public class ObjectPoolManager<T> {
         pools = new HashMap<>();
     }
 
-    public <S extends T> void register(Class<? extends S> type, Supplier<? extends S> factory, int initSize, int maxSize) {
-        pools.put(type, new ObjectPool<>(factory, initSize, maxSize));
+    @SuppressWarnings("unchecked")
+    public <S extends T> void put(S object) {
+        ObjectPool<S> pool = (ObjectPool<S>) pools.get(object.getClass());
+        if (pool == null)
+            throw new IllegalStateException("Pool Not Found");
+        pool.put(object);
     }
 
     @SuppressWarnings("unchecked")
@@ -23,11 +27,7 @@ public class ObjectPoolManager<T> {
         return pool.get();
     }
 
-    @SuppressWarnings("unchecked")
-    public <S extends T> void put(S object) {
-        ObjectPool<S> pool = (ObjectPool<S>) pools.get(object.getClass());
-        if (pool == null)
-            throw new IllegalStateException("Pool Not Found");
-        pool.put(object);
+    public <S extends T> void register(Class<? extends S> type, Supplier<? extends S> factory, int initSize, int maxSize) {
+        pools.put(type, new ObjectPool<>(factory, initSize, maxSize));
     }
 }

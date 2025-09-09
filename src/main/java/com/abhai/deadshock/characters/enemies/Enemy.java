@@ -1,8 +1,9 @@
 package com.abhai.deadshock.characters.enemies;
 
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.utils.Sounds;
-import com.abhai.deadshock.world.supplies.SupplyType;
+import com.abhai.deadshock.types.EnemyType;
+import com.abhai.deadshock.types.SupplyType;
+import com.abhai.deadshock.utils.GameMedia;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
@@ -20,11 +21,10 @@ public class Enemy extends Pane {
     protected Point2D velocity;
     protected ImageView imageView;
 
-    protected boolean toDelete;
-    protected boolean hypnotized;
-
     protected int HP;
+    protected boolean toDelete;
     protected int voiceInterval;
+    protected boolean hypnotized;
 
     Enemy() {
         toDelete = false;
@@ -42,19 +42,11 @@ public class Enemy extends Pane {
     public void update() {
     }
 
-    public void reset() {
-        toDelete = false;
-        hypnotized = false;
-        voiceInterval = 0;
-        velocity = new Point2D(0, GRAVITY);
-        Game.gameRoot.getChildren().remove(this);
-    }
-
     public void playHitVoice() {
         switch ((int) (Math.random() * 3)) {
-            case 0 -> Sounds.audioClipHit.play(Game.menu.getVoiceSlider().getValue() / 100);
-            case 1 -> Sounds.audioClipHit2.play(Game.menu.getVoiceSlider().getValue() / 100);
-            case 2 -> Sounds.audioClipHit3.play(Game.menu.getVoiceSlider().getValue() / 100);
+            case 0 -> GameMedia.AUDIO_CLIP_HIT.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 1 -> GameMedia.AUDIO_CLIP_HIT_2.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 2 -> GameMedia.AUDIO_CLIP_HIT_3.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
         }
     }
 
@@ -63,20 +55,25 @@ public class Enemy extends Pane {
     }
 
     protected void closeCombat() {
-        Game.booker.closeCombat(getScaleX());
         setTranslateX(getTranslateX() - getScaleX());
+        Game.getGameWorld().getBooker().closeCombat(getScaleX());
     }
 
     public void init(int x, int y) {
+        toDelete = false;
+        hypnotized = false;
+        voiceInterval = 0;
+        velocity = new Point2D(0, GRAVITY);
+
         setTranslateX(x);
         setTranslateY(y);
-        Game.gameRoot.getChildren().add(this);
+        Game.getGameRoot().getChildren().add(this);
     }
 
     protected void playDeathVoice() {
         switch ((int) (Math.random() * 2)) {
-            case 0 -> Sounds.death.play(Game.menu.getFxSlider().getValue() / 100);
-            case 1 -> Sounds.death2.play(Game.menu.getFxSlider().getValue() / 100);
+            case 0 -> GameMedia.DEATH.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
+            case 1 -> GameMedia.DEATH_2.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
         }
     }
 

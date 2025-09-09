@@ -1,11 +1,12 @@
-package com.abhai.deadshock.world.vendingMachine;
+package com.abhai.deadshock.world;
 
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.Animatable;
 import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.hud.Tutorial;
-import com.abhai.deadshock.utils.Sounds;
-import com.abhai.deadshock.weapons.WeaponType;
+import com.abhai.deadshock.types.PurchaseType;
+import com.abhai.deadshock.types.WeaponType;
+import com.abhai.deadshock.utils.GameMedia;
 import com.abhai.deadshock.world.levels.Level;
 import javafx.animation.FadeTransition;
 import javafx.geometry.Rectangle2D;
@@ -52,31 +53,31 @@ public class VendingMachine extends Pane {
     }
 
     public void openMenu() {
-        if (Game.levelNumber == Level.FIRST_LEVEL)
+        if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.FIRST_LEVEL)
             Tutorial.setVendingMachineMenu();
 
         isShown = true;
         Tutorial.delete();
-        Game.active = false;
-        Game.menu.getMusic().pause();
+        Game.getGameWorld().setActive(false);
+        Game.getGameWorld().getMenu().getMusic().pause();
 
-        for (Enemy enemy : Game.enemies)
+        for (Enemy enemy : Game.getGameWorld().getEnemies())
             if (enemy instanceof Animatable animatable)
                 animatable.stopAnimation();
 
-        Sounds.audioClipOpenMenu.play(Game.menu.getFxSlider().getValue() / 100);
+        GameMedia.AUDIO_CLIP_OPEN_MENU.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
         fadeTransition.setByValue(0);
         fadeTransition.setToValue(1);
         fadeTransition.play();
     }
 
     public void hideMenu() {
-        if (Game.levelNumber == Level.FIRST_LEVEL)
+        if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.FIRST_LEVEL)
             Tutorial.deleteVendingMachineMenu();
 
         isShown = false;
-        Game.active = true;
-        Game.menu.getMusic().play();
+        Game.getGameWorld().setActive(true);
+        Game.getGameWorld().getMenu().getMusic().play();
         fadeTransition.setByValue(1);
         fadeTransition.setToValue(0);
         fadeTransition.play();
@@ -85,55 +86,55 @@ public class VendingMachine extends Pane {
     public void makePurchase() {
         switch (purchaseType) {
             case PurchaseType.BIG_MEDICINE -> {
-                if (Game.booker.getMoney() >= PurchaseType.BIG_MEDICINE.price && Game.booker.getHP() < 100) {
-                    Game.booker.setMoney(Game.booker.getMoney() - PurchaseType.BIG_MEDICINE.price);
-                    Sounds.audioClipPurchase.play(Game.menu.getFxSlider().getValue() / 100);
-                    Game.booker.setHP(Game.booker.getHP() + PurchaseType.BIG_MEDICINE.value);
+                if (Game.getGameWorld().getBooker().getMoney() >= PurchaseType.BIG_MEDICINE.price && Game.getGameWorld().getBooker().getHp() < 100) {
+                    Game.getGameWorld().getBooker().setMoney(Game.getGameWorld().getBooker().getMoney() - PurchaseType.BIG_MEDICINE.price);
+                    GameMedia.AUDIO_CLIP_PURCHASE.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
+                    Game.getGameWorld().getBooker().setHp(Game.getGameWorld().getBooker().getHp() + PurchaseType.BIG_MEDICINE.value);
                 }
             }
             case PurchaseType.LITTLE_MEDICINE -> {
-                if (Game.booker.getMoney() >= PurchaseType.LITTLE_MEDICINE.price && Game.booker.getHP() < 100) {
-                    Game.booker.setMoney(Game.booker.getMoney() - PurchaseType.LITTLE_MEDICINE.price);
-                    Game.booker.setHP(Game.booker.getHP() + PurchaseType.LITTLE_MEDICINE.value);
-                    Sounds.audioClipPurchase.play(Game.menu.getFxSlider().getValue() / 100);
+                if (Game.getGameWorld().getBooker().getMoney() >= PurchaseType.LITTLE_MEDICINE.price && Game.getGameWorld().getBooker().getHp() < 100) {
+                    Game.getGameWorld().getBooker().setMoney(Game.getGameWorld().getBooker().getMoney() - PurchaseType.LITTLE_MEDICINE.price);
+                    Game.getGameWorld().getBooker().setHp(Game.getGameWorld().getBooker().getHp() + PurchaseType.LITTLE_MEDICINE.value);
+                    GameMedia.AUDIO_CLIP_PURCHASE.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
                 }
             }
             case PurchaseType.BIG_SALT -> {
-                if (Game.booker.getMoney() >= PurchaseType.BIG_SALT.price && Game.booker.getSalt() < 100) {
-                    Game.booker.setSalt(Game.booker.getSalt() + PurchaseType.BIG_SALT.value);
-                    Game.booker.setMoney(Game.booker.getMoney() - PurchaseType.BIG_SALT.price);
-                    Sounds.audioClipPurchase.play(Game.menu.getFxSlider().getValue() / 100);
+                if (Game.getGameWorld().getBooker().getMoney() >= PurchaseType.BIG_SALT.price && Game.getGameWorld().getBooker().getSalt() < 100) {
+                    Game.getGameWorld().getBooker().setSalt(Game.getGameWorld().getBooker().getSalt() + PurchaseType.BIG_SALT.value);
+                    Game.getGameWorld().getBooker().setMoney(Game.getGameWorld().getBooker().getMoney() - PurchaseType.BIG_SALT.price);
+                    GameMedia.AUDIO_CLIP_PURCHASE.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
                 }
             }
             case PurchaseType.LITTLE_SALT -> {
-                if (Game.booker.getMoney() >= PurchaseType.LITTLE_SALT.price && Game.booker.getSalt() < 100) {
-                    Sounds.audioClipPurchase.play(Game.menu.getFxSlider().getValue() / 100);
-                    Game.booker.setSalt(Game.booker.getSalt() + PurchaseType.LITTLE_SALT.value);
-                    Game.booker.setMoney(Game.booker.getMoney() - PurchaseType.LITTLE_SALT.price);
+                if (Game.getGameWorld().getBooker().getMoney() >= PurchaseType.LITTLE_SALT.price && Game.getGameWorld().getBooker().getSalt() < 100) {
+                    GameMedia.AUDIO_CLIP_PURCHASE.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
+                    Game.getGameWorld().getBooker().setSalt(Game.getGameWorld().getBooker().getSalt() + PurchaseType.LITTLE_SALT.value);
+                    Game.getGameWorld().getBooker().setMoney(Game.getGameWorld().getBooker().getMoney() - PurchaseType.LITTLE_SALT.price);
                 }
             }
             case PurchaseType.PISTOL_BULLETS -> {
-                if (Game.booker.getMoney() >= PurchaseType.PISTOL_BULLETS.price) {
-                    Sounds.audioClipPurchase.play(Game.menu.getFxSlider().getValue() / 100);
-                    Game.booker.setMoney(Game.booker.getMoney() - PurchaseType.PISTOL_BULLETS.price);
-                    if (Game.booker.getWeapon().getType() == WeaponType.PISTOL)
-                        Game.booker.getWeapon().setCurrentBullets(Game.booker.getWeapon().getCurrentBullets() + PurchaseType.PISTOL_BULLETS.value);
+                if (Game.getGameWorld().getBooker().getMoney() >= PurchaseType.PISTOL_BULLETS.price) {
+                    GameMedia.AUDIO_CLIP_PURCHASE.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
+                    Game.getGameWorld().getBooker().setMoney(Game.getGameWorld().getBooker().getMoney() - PurchaseType.PISTOL_BULLETS.price);
+                    if (Game.getGameWorld().getBooker().getWeapon().getType() == WeaponType.PISTOL)
+                        Game.getGameWorld().getBooker().getWeapon().setCurrentBullets(Game.getGameWorld().getBooker().getWeapon().getCurrentBullets() + PurchaseType.PISTOL_BULLETS.value);
                     else
-                        Game.booker.getWeapon().setPistolBullets(Game.booker.getWeapon().getPistolBullets() + PurchaseType.PISTOL_BULLETS.value);
+                        Game.getGameWorld().getBooker().getWeapon().setPistolBullets(Game.getGameWorld().getBooker().getWeapon().getPistolBullets() + PurchaseType.PISTOL_BULLETS.value);
                 }
             }
             case PurchaseType.MACHINE_GUN_BULLETS -> {
-                if (Game.booker.getMoney() >= PurchaseType.MACHINE_GUN_BULLETS.price) {
-                    Sounds.audioClipPurchase.play(Game.menu.getFxSlider().getValue() / 100);
-                    Game.booker.setMoney(Game.booker.getMoney() - PurchaseType.MACHINE_GUN_BULLETS.price);
-                    if (Game.booker.getWeapon().getType() == WeaponType.MACHINE_GUN)
-                        Game.booker.getWeapon().setCurrentBullets(Game.booker.getWeapon().getCurrentBullets() + PurchaseType.MACHINE_GUN_BULLETS.value);
+                if (Game.getGameWorld().getBooker().getMoney() >= PurchaseType.MACHINE_GUN_BULLETS.price) {
+                    GameMedia.AUDIO_CLIP_PURCHASE.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
+                    Game.getGameWorld().getBooker().setMoney(Game.getGameWorld().getBooker().getMoney() - PurchaseType.MACHINE_GUN_BULLETS.price);
+                    if (Game.getGameWorld().getBooker().getWeapon().getType() == WeaponType.MACHINE_GUN)
+                        Game.getGameWorld().getBooker().getWeapon().setCurrentBullets(Game.getGameWorld().getBooker().getWeapon().getCurrentBullets() + PurchaseType.MACHINE_GUN_BULLETS.value);
                     else
-                        Game.booker.getWeapon().setMachineGunBullets(Game.booker.getWeapon().getMachineGunBullets() + PurchaseType.MACHINE_GUN_BULLETS.value);
+                        Game.getGameWorld().getBooker().getWeapon().setMachineGunBullets(Game.getGameWorld().getBooker().getWeapon().getMachineGunBullets() + PurchaseType.MACHINE_GUN_BULLETS.value);
                 }
             }
         }
-        Game.hud.update();
+        Game.getGameWorld().getHud().update();
     }
 
     public void initializeButtons() {
@@ -151,9 +152,9 @@ public class VendingMachine extends Pane {
         setButton(pistolBulletsButton, littleSaltButton.getTranslateY() + BUTTON_HEIGHT);
         setButton(machineGunBulletsButton, pistolBulletsButton.getTranslateY() + BUTTON_HEIGHT);
 
-        if (Game.levelNumber == Level.FIRST_LEVEL)
+        if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.FIRST_LEVEL)
             addButtonsListeners(0);
-        else if (Game.levelNumber != Level.BOSS_LEVEL)
+        else if (Game.getGameWorld().getLevel().getCurrentLevelNumber() != Level.BOSS_LEVEL)
             addButtonsListeners(920);
     }
 
@@ -169,11 +170,11 @@ public class VendingMachine extends Pane {
         fadeTransition.play();
 
         getChildren().add(vendingMachineImage);
-        Game.appRoot.getChildren().add(vendingMachineMenuImage);
+        Game.getAppRoot().getChildren().add(vendingMachineMenuImage);
     }
 
     public void initializePosition() {
-        switch (Game.levelNumber) {
+        switch (Game.getGameWorld().getLevel().getCurrentLevelNumber()) {
             case Level.FIRST_LEVEL -> {
                 vendingMachineImage.setTranslateX(FIRST_LEVEL_X);
                 vendingMachineImage.setTranslateY(FIRST_LEVEL_Y);
@@ -190,8 +191,8 @@ public class VendingMachine extends Pane {
                 vendingMachineMenuImage.setViewport(new Rectangle2D(920, 0, 920, 597));
             }
         }
-        if (!Game.gameRoot.getChildren().contains(this) && Game.levelNumber != Level.BOSS_LEVEL)
-            Game.gameRoot.getChildren().add(this);
+        if (!Game.getGameRoot().getChildren().contains(this) && Game.getGameWorld().getLevel().getCurrentLevelNumber() != Level.BOSS_LEVEL)
+            Game.getGameRoot().getChildren().add(this);
     }
 
     public boolean isShown() {
@@ -202,35 +203,35 @@ public class VendingMachine extends Pane {
         bigMedicineButton.setOnMouseClicked(event -> {
             if (isShown) {
                 purchaseType = PurchaseType.BIG_MEDICINE;
-                Sounds.audioClipChangeItem.play(Game.menu.getFxSlider().getValue() / 100);
+                GameMedia.AUDIO_CLIP_CHANGE_ITEM.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
                 vendingMachineMenuImage.setViewport(new Rectangle2D(xOffset, 0, 920, 597));
             }
         });
         littleMedicineButton.setOnMouseClicked(event -> {
             if (isShown) {
                 purchaseType = PurchaseType.LITTLE_MEDICINE;
-                Sounds.audioClipChangeItem.play(Game.menu.getFxSlider().getValue() / 100);
+                GameMedia.AUDIO_CLIP_CHANGE_ITEM.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
                 vendingMachineMenuImage.setViewport(new Rectangle2D(xOffset, 597, 920, 597));
             }
         });
         bigSaltButton.setOnMouseClicked(event -> {
             if (isShown) {
                 purchaseType = PurchaseType.BIG_SALT;
-                Sounds.audioClipChangeItem.play(Game.menu.getFxSlider().getValue() / 100);
+                GameMedia.AUDIO_CLIP_CHANGE_ITEM.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
                 vendingMachineMenuImage.setViewport(new Rectangle2D(xOffset, 1194, 920, 597));
             }
         });
         littleSaltButton.setOnMouseClicked(event -> {
             if (isShown) {
                 purchaseType = PurchaseType.LITTLE_SALT;
-                Sounds.audioClipChangeItem.play(Game.menu.getFxSlider().getValue() / 100);
+                GameMedia.AUDIO_CLIP_CHANGE_ITEM.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
                 vendingMachineMenuImage.setViewport(new Rectangle2D(xOffset, 1791, 920, 597));
             }
         });
         pistolBulletsButton.setOnMouseClicked(event -> {
             if (isShown) {
                 purchaseType = PurchaseType.PISTOL_BULLETS;
-                Sounds.audioClipChangeItem.play(Game.menu.getFxSlider().getValue() / 100);
+                GameMedia.AUDIO_CLIP_CHANGE_ITEM.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
                 vendingMachineMenuImage.setViewport(new Rectangle2D(xOffset, 2388, 920, 597));
             }
         });
@@ -239,7 +240,7 @@ public class VendingMachine extends Pane {
             machineGunBulletsButton.setOnMouseClicked(event -> {
                 if (isShown) {
                     purchaseType = PurchaseType.MACHINE_GUN_BULLETS;
-                    Sounds.audioClipChangeItem.play(Game.menu.getFxSlider().getValue() / 100);
+                    GameMedia.AUDIO_CLIP_CHANGE_ITEM.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
                     vendingMachineMenuImage.setViewport(new Rectangle2D(xOffset, 2985, 920, 597));
                 }
             });
@@ -250,7 +251,7 @@ public class VendingMachine extends Pane {
         button.setTranslateY(y);
         button.setPrefWidth(BUTTON_WIDTH);
         button.setPrefHeight(BUTTON_HEIGHT);
-        Game.appRoot.getChildren().add(button);
+        Game.getAppRoot().getChildren().add(button);
         button.setTranslateX(vendingMachineMenuImage.getTranslateX() + 136);
     }
 

@@ -1,4 +1,4 @@
-package com.abhai.deadshock.weapons;
+package com.abhai.deadshock.types;
 
 public enum WeaponType {
     RPG,

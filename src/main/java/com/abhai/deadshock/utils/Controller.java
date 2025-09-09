@@ -2,7 +2,7 @@ package com.abhai.deadshock.utils;
 
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.Character;
-import com.abhai.deadshock.weapons.WeaponType;
+import com.abhai.deadshock.types.WeaponType;
 import com.abhai.deadshock.world.levels.Level;
 import javafx.scene.input.KeyCode;
 
@@ -15,9 +15,9 @@ public class Controller {
         menuListener();
 
         if (!isPressed(KeyCode.A) && !isPressed(KeyCode.D))
-            Game.booker.setIdleAnimation();
+            Game.getGameWorld().getBooker().setIdleAnimation();
 
-        if (Game.active && !Game.booker.isHypnotized()) {
+        if (Game.getGameWorld().isActive() && !Game.getGameWorld().getBooker().isHypnotized()) {
             weaponListener();
             movementListener();
             energeticListener();
@@ -28,75 +28,87 @@ public class Controller {
     private static void menuListener() {
         if (isPressed(KeyCode.ESCAPE)) {
             keys.remove(KeyCode.ESCAPE);
-            if (Game.vendingMachine.isShown())
-                Game.vendingMachine.hideMenu();
-            else if (Game.menu.isShown())
-                Game.menu.hideMenu();
+            if (Game.getGameWorld().getVendingMachine().isShown())
+                Game.getGameWorld().getVendingMachine().hideMenu();
+            else if (Game.getGameWorld().getMenu().isShown())
+                Game.getGameWorld().getMenu().hideMenu();
             else
-                Game.menu.showMenu();
+                Game.getGameWorld().getMenu().showMenu();
             return;
         }
 
-        if (isPressed(KeyCode.ENTER) && Game.vendingMachine.isShown()) {
+        if (isPressed(KeyCode.ENTER)) {
             keys.remove(KeyCode.ENTER);
-            Game.vendingMachine.makePurchase();
+            if (Game.getGameWorld().getVendingMachine().isShown())
+                Game.getGameWorld().getVendingMachine().makePurchase();
+            else if (Game.getGameWorld().getMenu().isCoverShown())
+                Game.getGameWorld().getMenu().hideCover();
         }
     }
 
     private static void weaponListener() {
         if (isPressed(KeyCode.R))
-            Game.booker.getWeapon().reload();
+            Game.getGameWorld().getBooker().getWeapon().reload();
         if (!isPressed(KeyCode.R))
-            Game.booker.getWeapon().setCanReload(true);
+            Game.getGameWorld().getBooker().getWeapon().setCanReload(true);
         if (isPressed(KeyCode.J))
-            Game.booker.getWeapon().shoot();
+            Game.getGameWorld().getBooker().getWeapon().shoot();
         if (!isPressed(KeyCode.J))
-            Game.booker.getWeapon().setSingleShot(true);
+            Game.getGameWorld().getBooker().getWeapon().setSingleShot(true);
         if (isPressed(KeyCode.DIGIT1))
-            Game.booker.getWeapon().changeWeapon(WeaponType.PISTOL);
+            Game.getGameWorld().getBooker().getWeapon().changeWeapon(WeaponType.PISTOL);
         if (isPressed(KeyCode.DIGIT2))
-            Game.booker.getWeapon().changeWeapon(WeaponType.MACHINE_GUN);
+            Game.getGameWorld().getBooker().getWeapon().changeWeapon(WeaponType.MACHINE_GUN);
         if (isPressed(KeyCode.DIGIT3))
-            Game.booker.getWeapon().changeWeapon(WeaponType.RPG);
+            Game.getGameWorld().getBooker().getWeapon().changeWeapon(WeaponType.RPG);
     }
 
     private static void movementListener() {
-        if (isPressed(KeyCode.D) && Game.booker.getTranslateX() < Game.gameRoot.getWidth() - Game.booker.getWidth()) {
-            Game.booker.moveX(Character.SPEED);
-            Game.booker.setScaleX(1);
+        if (isPressed(KeyCode.D) && Game.getGameWorld().getBooker().getTranslateX() <
+                Game.getGameRoot().getWidth() - Game.getGameWorld().getBooker().getWidth()) {
+            Game.getGameWorld().getBooker().moveX(Character.SPEED);
+            Game.getGameWorld().getBooker().setScaleX(1);
         }
-        if (isPressed(KeyCode.A) && Game.booker.getTranslateX() > 1) {
-            Game.booker.moveX(-Character.SPEED);
-            Game.booker.setScaleX(-1);
+        if (isPressed(KeyCode.A) && Game.getGameWorld().getBooker().getTranslateX() > 1) {
+            Game.getGameWorld().getBooker().moveX(-Character.SPEED);
+            Game.getGameWorld().getBooker().setScaleX(-1);
         }
         if (isPressed(KeyCode.A) && isPressed(KeyCode.D))
-            Game.booker.stopAnimation();
+            Game.getGameWorld().getBooker().stopAnimation();
         if (isPressed(KeyCode.W))
-            Game.booker.jump(false);
+            Game.getGameWorld().getBooker().jump(false);
     }
 
     private static void energeticListener() {
-        if (Game.booker.getEnergetic().getCountEnergetics() > 1 && isPressed(KeyCode.Q))
-            Game.booker.getEnergetic().changeEnergetic();
+        if (Game.getGameWorld().getBooker().getEnergetic().getCountEnergetics() > 1 && isPressed(KeyCode.Q))
+            Game.getGameWorld().getBooker().getEnergetic().changeEnergetic();
         if (!isPressed(KeyCode.Q))
-            Game.booker.getEnergetic().setCanChangeEnergetic(true);
+            Game.getGameWorld().getBooker().getEnergetic().setCanChangeEnergetic(true);
         if (!isPressed(KeyCode.L))
-            Game.booker.getEnergetic().setCanShoot(true);
-        if (isPressed(KeyCode.L) && !Game.booker.isHypnotized() && Game.booker.getSalt() >= Game.booker.getEnergetic().getSaltPrice())
-            Game.booker.getEnergetic().shoot();
+            Game.getGameWorld().getBooker().getEnergetic().setCanShoot(true);
+        if (isPressed(KeyCode.L) && !Game.getGameWorld().getBooker().isHypnotized() &&
+                Game.getGameWorld().getBooker().getSalt() >= Game.getGameWorld().getBooker().getEnergetic().getSaltPrice())
+            Game.getGameWorld().getBooker().getEnergetic().shoot();
     }
 
     private static void interactionListener() {
-        if (isPressed(KeyCode.E) && Game.levelNumber < Level.BOSS_LEVEL)
-            if (Game.booker.getBoundsInParent().intersects(Game.booker.getWeapon().getBoundsInParent()))
-                Game.booker.getWeapon().pickUpWeapon();
-            else if (Game.booker.getBoundsInParent().intersects(Game.booker.getEnergetic().getBoundsInParent()))
-                Game.booker.getEnergetic().pickUp();
-            else if (Game.booker.getBoundsInParent().intersects(Game.vendingMachine.getVendingMachineImage().getBoundsInParent()) && !Game.vendingMachine.isShown())
-                Game.vendingMachine.openMenu();
+        if (isPressed(KeyCode.E) && Game.getGameWorld().getLevel().getCurrentLevelNumber() < Level.BOSS_LEVEL)
+            if (Game.getGameWorld().getBooker().getBoundsInParent().intersects(Game.getGameWorld().getBooker().getWeapon().getBoundsInParent()))
+                Game.getGameWorld().getBooker().getWeapon().pickUpWeapon();
+            else if (Game.getGameWorld().getBooker().getBoundsInParent().intersects(Game.getGameWorld().getBooker().getEnergetic().getBoundsInParent()))
+                Game.getGameWorld().getBooker().getEnergetic().pickUp();
+            else if (Game.getGameWorld().getBooker().getBoundsInParent().intersects(Game.getGameWorld()
+                    .getVendingMachine().getVendingMachineImage().getBoundsInParent()) && !Game.getGameWorld().getVendingMachine().isShown())
+                Game.getGameWorld().getVendingMachine().openMenu();
         if (isPressed(KeyCode.G)) {
             keys.remove(KeyCode.G);
-            Game.menu.checkMusic();
+            Game.getGameWorld().getMenu().checkMusic();
+        }
+        if (isPressed(KeyCode.ESCAPE) || isPressed(KeyCode.ENTER) || isPressed(KeyCode.SPACE) && Game.getGameWorld().getBooker().isDead()) {
+            if (Game.getGameWorld().getBooker().isGameOver())
+                Game.getGameWorld().getBooker().newGame();
+            else if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.FIRST_LEVEL)
+                Game.getGameWorld().getBooker().deathReset();
         }
     }
 

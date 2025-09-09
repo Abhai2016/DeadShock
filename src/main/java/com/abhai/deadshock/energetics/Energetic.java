@@ -1,8 +1,9 @@
 package com.abhai.deadshock.energetics;
 
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.menus.DifficultyLevel;
-import com.abhai.deadshock.utils.Sounds;
+import com.abhai.deadshock.types.DifficultyType;
+import com.abhai.deadshock.types.EnergeticType;
+import com.abhai.deadshock.utils.GameMedia;
 import com.abhai.deadshock.world.levels.Level;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -80,9 +81,9 @@ public class Energetic extends Pane {
 
         initializePositionAndState();
 
-        if (Game.levelNumber != Level.BOSS_LEVEL) {
+        if (Game.getGameWorld().getLevel().getCurrentLevelNumber() != Level.BOSS_LEVEL) {
             getChildren().add(imageView);
-            Game.gameRoot.getChildren().add(this);
+            Game.getGameRoot().getChildren().add(this);
         }
     }
 
@@ -94,15 +95,15 @@ public class Energetic extends Pane {
         canChooseDevilKiss = false;
         canChooseElectricity = false;
 
-        Game.hud.getHypnosis().setVisible(false);
-        Game.hud.getDevilKiss().setVisible(false);
-        Game.hud.getElectricity().setVisible(false);
+        Game.getGameWorld().getHud().getHypnosis().setVisible(false);
+        Game.getGameWorld().getHud().getDevilKiss().setVisible(false);
+        Game.getGameWorld().getHud().getElectricity().setVisible(false);
 
         clear();
         initializePositionAndState();
 
-        if (!Game.gameRoot.getChildren().contains(this))
-            Game.gameRoot.getChildren().add(this);
+        if (!Game.getGameRoot().getChildren().contains(this))
+            Game.getGameRoot().getChildren().add(this);
     }
 
     public void clear() {
@@ -119,55 +120,55 @@ public class Energetic extends Pane {
                 case EnergeticType.HYPNOSIS -> hypnosis.hypnotize();
             }
             canShoot = false;
-            Game.booker.minusSaltForUsingEnergetic(saltPrice);
+            Game.getGameWorld().getBooker().minusSaltForUsingEnergetic(saltPrice);
         }
     }
 
     public void pickUp() {
-        switch (Game.levelNumber) {
+        switch (Game.getGameWorld().getLevel().getCurrentLevelNumber()) {
             case Level.FIRST_LEVEL -> {
                 countEnergetics++;
                 canChooseDevilKiss = true;
                 type = EnergeticType.DEVIL_KISS;
-                Game.hud.getDevilKiss().setVisible(true);
-                Sounds.energetic.play(Game.menu.getVoiceSlider().getValue() / 100);
+                Game.getGameWorld().getHud().getDevilKiss().setVisible(true);
+                GameMedia.ENERGETIC.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             }
             case Level.SECOND_LEVEL -> {
                 countEnergetics++;
                 canChooseElectricity = true;
                 type = EnergeticType.ELECTRICITY;
-                Game.hud.getElectricity().setVisible(true);
-                Sounds.newEnergetic.play(Game.menu.getVoiceSlider().getValue() / 100);
+                Game.getGameWorld().getHud().getElectricity().setVisible(true);
+                GameMedia.NEW_ENERGETIC.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             }
             case Level.THIRD_LEVEL -> {
                 countEnergetics++;
                 canChooseHypnosis = true;
                 type = EnergeticType.HYPNOSIS;
-                Game.hud.getHypnosis().setVisible(true);
-                Sounds.newEnergetic.play(Game.menu.getVoiceSlider().getValue() / 100);
+                Game.getGameWorld().getHud().getHypnosis().setVisible(true);
+                GameMedia.NEW_ENERGETIC.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             }
         }
         setTranslateY(0);
-        Game.gameRoot.getChildren().remove(this);
+        Game.getGameRoot().getChildren().remove(this);
     }
 
     public void changeLevel() {
-        if (Game.levelNumber == Level.BOSS_LEVEL) {
-            Game.gameRoot.getChildren().remove(this);
+        if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.BOSS_LEVEL) {
+            Game.getGameRoot().getChildren().remove(this);
             return;
         }
 
-        if (Game.levelNumber == Level.SECOND_LEVEL) {
+        if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.SECOND_LEVEL) {
             imageView.setImage(new Image(ELECTRICITY_IMAGE_PATH.toUri().toString()));
             setTranslateX(ELECTRICITY_X);
             setTranslateY(ELECTRICITY_Y);
-        } else if (Game.levelNumber == Level.THIRD_LEVEL) {
+        } else if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.THIRD_LEVEL) {
             imageView.setImage(new Image(HYPNOSIS_IMAGE_PATH.toUri().toString()));
             setTranslateX(HYPNOSIS_X);
             setTranslateY(HYPNOSIS_Y);
         }
-        if (!Game.gameRoot.getChildren().contains(this))
-            Game.gameRoot.getChildren().add(this);
+        if (!Game.getGameRoot().getChildren().contains(this))
+            Game.getGameRoot().getChildren().add(this);
     }
 
     public void changeEnergetic() {
@@ -176,35 +177,35 @@ public class Energetic extends Pane {
                 case EnergeticType.DEVIL_KISS -> {
                     if (canChooseElectricity) {
                         type = EnergeticType.ELECTRICITY;
-                        Game.hud.getElectricity().setVisible(true);
-                        Sounds.changeToElectricity.play(Game.menu.getFxSlider().getValue() / 100);
+                        Game.getGameWorld().getHud().getElectricity().setVisible(true);
+                        GameMedia.CHANGE_TO_ELECTRICITY.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
                     } else if (canChooseHypnosis) {
                         type = EnergeticType.HYPNOSIS;
-                        Game.hud.getHypnosis().setVisible(true);
-                        Sounds.changeToHypnosis.play(Game.menu.getFxSlider().getValue() / 100);
+                        Game.getGameWorld().getHud().getHypnosis().setVisible(true);
+                        GameMedia.CHANGE_TO_HYPNOSIS.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
                     }
                 }
                 case EnergeticType.ELECTRICITY -> {
                     if (canChooseHypnosis) {
                         type = EnergeticType.HYPNOSIS;
-                        Game.hud.getHypnosis().setVisible(true);
-                        Sounds.changeToHypnosis.play(Game.menu.getFxSlider().getValue() / 100);
+                        Game.getGameWorld().getHud().getHypnosis().setVisible(true);
+                        GameMedia.CHANGE_TO_HYPNOSIS.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
                     } else if (canChooseDevilKiss) {
                         type = EnergeticType.DEVIL_KISS;
-                        Game.hud.getElectricity().setVisible(false);
-                        Sounds.changeToDevilKiss.play(Game.menu.getFxSlider().getValue() / 100);
+                        Game.getGameWorld().getHud().getElectricity().setVisible(false);
+                        GameMedia.CHANGE_TO_DEVIL_KISS.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
                     }
                 }
                 case EnergeticType.HYPNOSIS -> {
                     if (canChooseDevilKiss) {
                         type = EnergeticType.DEVIL_KISS;
-                        Game.hud.getHypnosis().setVisible(false);
-                        Game.hud.getElectricity().setVisible(false);
-                        Sounds.changeToDevilKiss.play(Game.menu.getFxSlider().getValue() / 100);
+                        Game.getGameWorld().getHud().getHypnosis().setVisible(false);
+                        Game.getGameWorld().getHud().getElectricity().setVisible(false);
+                        GameMedia.CHANGE_TO_DEVIL_KISS.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
                     } else if (canChooseElectricity) {
                         type = EnergeticType.ELECTRICITY;
-                        Game.hud.getHypnosis().setVisible(false);
-                        Sounds.changeToElectricity.play(Game.menu.getFxSlider().getValue() / 100);
+                        Game.getGameWorld().getHud().getHypnosis().setVisible(false);
+                        GameMedia.CHANGE_TO_ELECTRICITY.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
                     }
                 }
             }
@@ -213,17 +214,17 @@ public class Energetic extends Pane {
     }
 
     public void setDifficultyLevel() {
-        switch (Game.difficultyLevel) {
-            case DifficultyLevel.MARIK -> saltPrice = 10;
-            case DifficultyLevel.EASY -> saltPrice = 15;
-            case DifficultyLevel.MEDIUM -> saltPrice = 20;
-            case DifficultyLevel.HARD -> saltPrice = 25;
-            case DifficultyLevel.HARDCORE -> saltPrice = 30;
+        switch (Game.getGameWorld().getDifficultyType()) {
+            case DifficultyType.MARIK -> saltPrice = 10;
+            case DifficultyType.EASY -> saltPrice = 15;
+            case DifficultyType.MEDIUM -> saltPrice = 20;
+            case DifficultyType.HARD -> saltPrice = 25;
+            case DifficultyType.HARDCORE -> saltPrice = 30;
         }
     }
 
     private void initializePositionAndState() {
-        switch (Game.levelNumber) {
+        switch (Game.getGameWorld().getLevel().getCurrentLevelNumber()) {
             case Level.FIRST_LEVEL -> {
                 imageView.setImage(new Image(DEVIL_KISS_IMAGE_PATH.toUri().toString()));
                 setTranslateX(DEVIL_KISS_X);
@@ -244,17 +245,17 @@ public class Energetic extends Pane {
         if (canChooseDevilKiss) {
             countEnergetics++;
             type = EnergeticType.DEVIL_KISS;
-            Game.hud.getDevilKiss().setVisible(true);
+            Game.getGameWorld().getHud().getDevilKiss().setVisible(true);
         }
         if (canChooseElectricity) {
             countEnergetics++;
             type = EnergeticType.ELECTRICITY;
-            Game.hud.getElectricity().setVisible(true);
+            Game.getGameWorld().getHud().getElectricity().setVisible(true);
         }
         if (canChooseHypnosis) {
             countEnergetics++;
             type = EnergeticType.HYPNOSIS;
-            Game.hud.getHypnosis().setVisible(true);
+            Game.getGameWorld().getHud().getHypnosis().setVisible(true);
         }
     }
 

@@ -1,7 +1,8 @@
 package com.abhai.deadshock.weapons;
 
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.utils.Sounds;
+import com.abhai.deadshock.types.WeaponType;
+import com.abhai.deadshock.utils.GameMedia;
 import com.abhai.deadshock.weapons.bullets.EnemyBullet;
 
 public class EnemyWeapon {
@@ -31,11 +32,11 @@ public class EnemyWeapon {
     private void reload() {
         if (!nowReloading) {
             switch ((int) (Math.random() * 5)) {
-                case 0 -> Sounds.noAmmo.play(Game.menu.getVoiceSlider().getValue() / 100);
-                case 1 -> Sounds.noAmmo2.play(Game.menu.getVoiceSlider().getValue() / 100);
-                case 2 -> Sounds.needAmmo.play(Game.menu.getVoiceSlider().getValue() / 100);
-                case 3 -> Sounds.needAmmo2.play(Game.menu.getVoiceSlider().getValue() / 100);
-                case 4 -> Sounds.reloading.play(Game.menu.getVoiceSlider().getValue() / 100);
+                case 0 -> GameMedia.NO_AMMO.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 1 -> GameMedia.NO_AMMO_2.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 2 -> GameMedia.NEED_AMMO.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 3 -> GameMedia.NEED_AMMO_2.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 4 -> GameMedia.RELOADING.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             }
             nowReloading = true;
         }
@@ -54,12 +55,12 @@ public class EnemyWeapon {
 
         currentShootInterval++;
         if (currentShootInterval > shootInterval && currentClip > 0) {
-            Sounds.pistolShot.play(Game.menu.getFxSlider().getValue() / 100);
+            GameMedia.PISTOL_SHOT.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
             currentClip--;
             currentShootInterval = 0;
-            EnemyBullet enemyBullet = Game.enemyBulletsPool.get();
+            EnemyBullet enemyBullet = Game.getGameWorld().getEnemyBulletsPool().get();
             enemyBullet.init(scaleX, x, y);
-            Game.enemyBullets.add(enemyBullet);
+            Game.getGameWorld().getEnemyBullets().add(enemyBullet);
         }
     }
 }

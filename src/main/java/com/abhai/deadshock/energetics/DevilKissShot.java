@@ -2,10 +2,10 @@ package com.abhai.deadshock.energetics;
 
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.enemies.Enemy;
-import com.abhai.deadshock.characters.enemies.EnemyType;
+import com.abhai.deadshock.types.BlockType;
+import com.abhai.deadshock.types.EnemyType;
 import com.abhai.deadshock.utils.SpriteAnimation;
 import com.abhai.deadshock.world.levels.Block;
-import com.abhai.deadshock.world.levels.BlockType;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -31,14 +31,14 @@ class DevilKissShot extends Pane {
     }
 
     private void intersectsWithWorld() {
-        for (Block block : Game.level.getBlocks())
+        for (Block block : Game.getGameWorld().getLevel().getBlocks())
             if (getBoundsInParent().intersects(block.getBoundsInParent()) && block.getType() != BlockType.INVISIBLE) {
                 toDelete = true;
                 return;
             }
 
-        if (getTranslateX() > Game.booker.getTranslateX() + 680
-                || getTranslateX() < Game.booker.getTranslateX() - 600)
+        if (getTranslateX() > Game.getGameWorld().getBooker().getTranslateX() + 680
+                || getTranslateX() < Game.getGameWorld().getBooker().getTranslateX() - 600)
             toDelete = true;
     }
 
@@ -46,7 +46,7 @@ class DevilKissShot extends Pane {
         toDelete = false;
         animation.play();
 
-        if (Game.booker.getScaleX() > 0) {
+        if (Game.getGameWorld().getBooker().getScaleX() > 0) {
             setScaleX(1);
             direction = true;
             setTranslateX(x + 16);
@@ -57,14 +57,14 @@ class DevilKissShot extends Pane {
         }
 
         setTranslateY(y);
-        Game.gameRoot.getChildren().add(this);
+        Game.getGameRoot().getChildren().add(this);
     }
 
     private void intersectsWithEnemies() {
-        for (Enemy enemy : Game.enemies)
+        for (Enemy enemy : Game.getGameWorld().getEnemies())
             if (getBoundsInParent().intersects(enemy.getBoundsInParent()))
                 if (enemy.getType() == EnemyType.BOSS) {
-                    enemy.setHP(enemy.getHP() - Game.booker.getWeapon().getRpgDamage());
+                    enemy.setHP(enemy.getHP() - Game.getGameWorld().getBooker().getWeapon().getRpgDamage());
                     toDelete = true;
                 } else
                     enemy.setHP(0);

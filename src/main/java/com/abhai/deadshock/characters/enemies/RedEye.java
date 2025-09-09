@@ -1,9 +1,10 @@
 package com.abhai.deadshock.characters.enemies;
 
+import com.abhai.deadshock.types.EnemyType;
+import com.abhai.deadshock.types.SupplyType;
+import com.abhai.deadshock.types.WeaponType;
 import com.abhai.deadshock.weapons.EnemyWeapon;
-import com.abhai.deadshock.weapons.WeaponType;
 import com.abhai.deadshock.world.levels.Block;
-import com.abhai.deadshock.world.supplies.SupplyType;
 
 public class RedEye extends Comstock {
 
@@ -14,8 +15,8 @@ public class RedEye extends Comstock {
     }
 
     @Override
-    public void reset() {
-        super.reset();
+    public void init(int x, int y) {
+        super.init(x, y);
 
         HP = 125;
     }

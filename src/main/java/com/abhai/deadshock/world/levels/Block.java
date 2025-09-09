@@ -1,6 +1,7 @@
 package com.abhai.deadshock.world.levels;
 
 import com.abhai.deadshock.Game;
+import com.abhai.deadshock.types.BlockType;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -53,6 +54,6 @@ public class Block extends Pane {
         else if (type.equals(BlockType.INVISIBLE))
             getChildren().remove(blockImage);
 
-        Game.gameRoot.getChildren().add(this);
+        Game.getGameRoot().getChildren().add(this);
     }
 }

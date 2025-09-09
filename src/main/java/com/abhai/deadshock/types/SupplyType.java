@@ -1,4 +1,4 @@
-package com.abhai.deadshock.world.supplies;
+package com.abhai.deadshock.types;
 
 public enum SupplyType {
     MEDICINE,

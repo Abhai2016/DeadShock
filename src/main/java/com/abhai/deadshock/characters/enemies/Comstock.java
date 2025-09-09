@@ -2,14 +2,14 @@ package com.abhai.deadshock.characters.enemies;
 
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.Animatable;
-import com.abhai.deadshock.utils.Sounds;
+import com.abhai.deadshock.types.BlockType;
+import com.abhai.deadshock.types.EnemyType;
+import com.abhai.deadshock.types.SupplyType;
+import com.abhai.deadshock.types.WeaponType;
+import com.abhai.deadshock.utils.GameMedia;
 import com.abhai.deadshock.utils.SpriteAnimation;
 import com.abhai.deadshock.weapons.EnemyWeapon;
-import com.abhai.deadshock.weapons.WeaponType;
 import com.abhai.deadshock.world.levels.Block;
-import com.abhai.deadshock.world.levels.BlockType;
-import com.abhai.deadshock.world.supplies.Supply;
-import com.abhai.deadshock.world.supplies.SupplyType;
 import javafx.geometry.Point2D;
 import javafx.util.Duration;
 
@@ -47,27 +47,15 @@ public class Comstock extends Enemy implements Animatable {
 
         animation = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED),
                 SPRITES_COUNT, SPRITES_COUNT, 0, 0, WIDTH, HEIGHT);
-        onTheLeft = () ->
-                Game.booker.getTranslateX() > getTranslateX() - 720 && Game.booker.getTranslateX() < getTranslateX();
-        onTheRight = () ->
-                Game.booker.getTranslateX() < getTranslateX() + 650 && Game.booker.getTranslateX() > getTranslateX();
-    }
-
-    private void die() {
-        toDelete = true;
-        stopAnimation();
-        playDeathVoice();
-        if (Math.random() < 0.5) {
-            Supply supply = Game.supplyPool.get();
-            supply.init(getSupplyType(), getTranslateX(), getTranslateY());
-            Game.supplies.add(supply);
-        }
-        Game.booker.addMoneyForKillingEnemy();
+        onTheLeft = () -> Game.getGameWorld().getBooker().getTranslateX() > getTranslateX() - 720
+                && Game.getGameWorld().getBooker().getTranslateX() < getTranslateX();
+        onTheRight = () -> Game.getGameWorld().getBooker().getTranslateX() < getTranslateX() + 650
+                && Game.getGameWorld().getBooker().getTranslateX() > getTranslateX();
     }
 
     @Override
-    public void reset() {
-        super.reset();
+    public void init(int x, int y) {
+        super.init(x, y);
 
         HP = 100;
         canJump = true;
@@ -77,6 +65,30 @@ public class Comstock extends Enemy implements Animatable {
         booleanVelocity = true;
     }
 
+    @Override
+    public void stopAnimation() {
+        animation.stop();
+    }
+
+    @Override
+    protected String getImageName() {
+        return "comstock.png";
+    }
+
+    @Override
+    protected SupplyType getSupplyType() {
+        return SupplyType.PISTOL_BULLETS;
+    }
+
+    private void die() {
+        toDelete = true;
+        stopAnimation();
+        playDeathVoice();
+        if (Math.random() < 0.5)
+            Game.getGameWorld().createSupply(getSupplyType(), getTranslateX(), getTranslateY());
+        Game.getGameWorld().getBooker().addMoneyForKillingEnemy();
+    }
+
     private void moveY() {
         if (velocity.getY() < GRAVITY) {
             velocity = velocity.add(0, ANIMATION_SPEED);
@@ -84,7 +96,7 @@ public class Comstock extends Enemy implements Animatable {
             booleanVelocity = true;
         }
 
-        if (getTranslateY() > Game.scene.getHeight()) {
+        if (getTranslateY() > Game.SCENE_HEIGHT) {
             toDelete = true;
             return;
         }
@@ -111,18 +123,18 @@ public class Comstock extends Enemy implements Animatable {
         if (voiceInterval > VOICE_INTERVAL)
             playAttackVoice();
 
-        if (getTranslateX() > Game.booker.getTranslateX())
+        if (getTranslateX() > Game.getGameWorld().getBooker().getTranslateX())
             canSeeBooker(onTheLeft);
-        if (getTranslateX() < Game.booker.getTranslateX())
+        if (getTranslateX() < Game.getGameWorld().getBooker().getTranslateX())
             canSeeBooker(onTheRight);
-        if (getTranslateX() == Game.booker.getTranslateX())
+        if (getTranslateX() == Game.getGameWorld().getBooker().getTranslateX())
             cannotSeeBooker();
     }
 
     private void moveX(int x) {
         animation.play();
         for (int i = 0; i < Math.abs(x); i++) {
-            if (x > 0 || getTranslateX() == Game.booker.getTranslateX()) {
+            if (x > 0 || getTranslateX() == Game.getGameWorld().getBooker().getTranslateX()) {
                 setTranslateX(getTranslateX() + 1);
                 setScaleX(1);
             } else {
@@ -151,16 +163,17 @@ public class Comstock extends Enemy implements Animatable {
 
     private void playAttackVoice() {
         switch ((int) (Math.random() * 10)) {
-            case 0 -> Sounds.canYouShoot.play(Game.menu.getVoiceSlider().getValue() / 100);
-            case 1 -> Sounds.dieAlready.play(Game.menu.getVoiceSlider().getValue() / 100);
-            case 2 -> Sounds.dontSpareBullets.play(Game.menu.getVoiceSlider().getValue() / 100);
-            case 3 -> Sounds.keepShooting2.play(Game.menu.getVoiceSlider().getValue() / 100);
-            case 4 -> Sounds.killMe.play(Game.menu.getVoiceSlider().getValue() / 100);
-            case 5 -> Sounds.allYouCan.play(Game.menu.getVoiceSlider().getValue() / 100);
-            case 6 -> Sounds.whoAreYou.play(Game.menu.getVoiceSlider().getValue() / 100);
-            case 7 -> Sounds.stupid.play(Game.menu.getVoiceSlider().getValue() / 100);
-            case 8 -> Sounds.giveHimBullets.play(Game.menu.getVoiceSlider().getValue() / 100);
-            case 9 -> Sounds.keepShooting.play(Game.menu.getVoiceSlider().getValue() / 100);
+            case 0 -> GameMedia.CAN_YOU_SHOOT.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 1 -> GameMedia.DIE_ALREADY.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 2 ->
+                    GameMedia.DONT_SPARE_BULLETS.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 3 -> GameMedia.KEEP_SHOOTING_2.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 4 -> GameMedia.KILL_ME.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 5 -> GameMedia.ALL_YOU_CAN.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 6 -> GameMedia.WHO_ARE_YOU.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 7 -> GameMedia.STUPID.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 8 -> GameMedia.GIVE_HIM_BULLETS.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 9 -> GameMedia.KEEP_SHOOTING.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
         }
         voiceInterval = 0;
     }
@@ -177,12 +190,12 @@ public class Comstock extends Enemy implements Animatable {
     private void playVoiceLostBooker() {
         if (booleanVoice) {
             switch ((int) (Math.random() * 6)) {
-                case 0 -> Sounds.heHasGone.play(Game.menu.getVoiceSlider().getValue() / 100);
-                case 1 -> Sounds.heHasGone2.play(Game.menu.getVoiceSlider().getValue() / 100);
-                case 2 -> Sounds.heHasGone3.play(Game.menu.getVoiceSlider().getValue() / 100);
-                case 3 -> Sounds.lostHim.play(Game.menu.getVoiceSlider().getValue() / 100);
-                case 4 -> Sounds.lostHim2.play(Game.menu.getVoiceSlider().getValue() / 100);
-                case 5 -> Sounds.wereHere.play(Game.menu.getVoiceSlider().getValue() / 100);
+                case 0 -> GameMedia.HE_HAS_GONE.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 1 -> GameMedia.HE_HAS_GONE_2.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 2 -> GameMedia.HE_HAS_GONE_3.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 3 -> GameMedia.LOST_HIM.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 4 -> GameMedia.LOST_HIM_2.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 5 -> GameMedia.WERE_HERE.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             }
             booleanVoice = false;
         }
@@ -191,35 +204,27 @@ public class Comstock extends Enemy implements Animatable {
     private void playVoiceFoundBooker() {
         if (booleanVoice) {
             switch ((int) (Math.random() * 8)) {
-                case 0 -> Sounds.wontGoAway.play(Game.menu.getVoiceSlider().getValue() / 100);
-                case 1 -> Sounds.audioClipFire.play(Game.menu.getVoiceSlider().getValue() / 100);
-                case 2 -> Sounds.heIsHere.play(Game.menu.getVoiceSlider().getValue() / 100);
-                case 3 -> Sounds.getDownWeapon.play(Game.menu.getVoiceSlider().getValue() / 100);
-                case 4 -> Sounds.die.play(Game.menu.getVoiceSlider().getValue() / 100);
-                case 5 -> Sounds.attack.play(Game.menu.getVoiceSlider().getValue() / 100);
-                case 6 -> Sounds.theyAreHere.play(Game.menu.getVoiceSlider().getValue() / 100);
-                case 7 -> Sounds.takeThem.play(Game.menu.getVoiceSlider().getValue() / 100);
+                case 0 -> GameMedia.WONT_GO_AWAY.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 1 ->
+                        GameMedia.AUDIO_CLIP_FIRE.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 2 -> GameMedia.HE_IS_HERE.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 3 ->
+                        GameMedia.GET_DOWN_WEAPON.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 4 -> GameMedia.DIE.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 5 -> GameMedia.ATTACK.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 6 -> GameMedia.THEY_ARE_HERE.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 7 -> GameMedia.TAKE_THEM.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             }
         }
         booleanVoice = false;
-    }
-
-    @Override
-    public void stopAnimation() {
-        animation.stop();
     }
 
     protected boolean intersectsWithBlock(Block block) {
         return getBoundsInParent().intersects(block.getBoundsInParent()) && !block.getType().equals(BlockType.INVISIBLE);
     }
 
-    @Override
-    protected String getImageName() {
-        return "comstock.png";
-    }
-
     private boolean intersectsWithBlocks(char coordinate) {
-        for (Block block : Game.level.getBlocks()) {
+        for (Block block : Game.getGameWorld().getLevel().getBlocks()) {
             if (intersectsWithBlock(block)) {
                 if (coordinate == 'Y') {
                     if (velocity.getY() > 0) {
@@ -243,11 +248,11 @@ public class Comstock extends Enemy implements Animatable {
     }
 
     private boolean intersectsWithBooker(char coordinate) {
-        if (getBoundsInParent().intersects(Game.booker.getBoundsInParent())) {
+        if (getBoundsInParent().intersects(Game.getGameWorld().getBooker().getBoundsInParent())) {
             if (coordinate == 'Y') {
                 setTranslateY(getTranslateY() - 1);
                 if (booleanVelocity) {
-                    Sounds.closeCombat.play(Game.menu.getFxSlider().getValue() / 100);
+                    GameMedia.CLOSE_COMBAT.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
                     velocity = velocity.add(getScaleX() * 5, JUMP_SPEED);
                     booleanVelocity = false;
                 }
@@ -259,7 +264,7 @@ public class Comstock extends Enemy implements Animatable {
     }
 
     private boolean intersectsWithEnemies(char coordinate) {
-        for (Enemy enemy : Game.enemies) {
+        for (Enemy enemy : Game.getGameWorld().getEnemies()) {
             if (this != enemy) {
                 if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
                     if (coordinate == 'Y') {
@@ -286,13 +291,13 @@ public class Comstock extends Enemy implements Animatable {
         if (!canSeeBooker) {
             if (booleanSupplier.getAsBoolean()) {
                 moveX(SPEED);
-                if (Game.booker.getTranslateY() >= getTranslateY()) {
+                if (Game.getGameWorld().getBooker().getTranslateY() >= getTranslateY()) {
                     canSeeBooker = true;
                     playVoiceFoundBooker();
                 }
             }
         } else {
-            if (getTranslateY() <= Game.booker.getTranslateY())
+            if (getTranslateY() <= Game.getGameWorld().getBooker().getTranslateY())
                 enemyWeapon.shoot(getScaleX(), getTranslateX(), getTranslateY());
             else
                 losingBooker();
@@ -302,11 +307,6 @@ public class Comstock extends Enemy implements Animatable {
             else
                 moveX(SPEED);
         }
-    }
-
-    @Override
-    protected SupplyType getSupplyType() {
-        return SupplyType.PISTOL_BULLETS;
     }
 
     protected void initWeapon() {

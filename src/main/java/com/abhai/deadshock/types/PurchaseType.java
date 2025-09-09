@@ -1,4 +1,4 @@
-package com.abhai.deadshock.world.vendingMachine;
+package com.abhai.deadshock.types;
 
 public enum PurchaseType {
     BIG_SALT(67, 100),

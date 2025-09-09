@@ -2,9 +2,9 @@ package com.abhai.deadshock.weapons.bullets;
 
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.enemies.Enemy;
-import com.abhai.deadshock.menus.DifficultyLevel;
-import com.abhai.deadshock.utils.Sounds;
-import com.abhai.deadshock.weapons.WeaponType;
+import com.abhai.deadshock.types.DifficultyType;
+import com.abhai.deadshock.types.WeaponType;
+import com.abhai.deadshock.utils.GameMedia;
 
 public class EnemyBullet extends Bullet {
     private int damage;
@@ -13,33 +13,33 @@ public class EnemyBullet extends Bullet {
     }
 
     public void setDifficultyLevel() {
-        switch (Game.difficultyLevel) {
-            case DifficultyLevel.MARIK -> damage = 2;
-            case DifficultyLevel.EASY -> damage = 3;
-            case DifficultyLevel.MEDIUM -> damage = 5;
-            case DifficultyLevel.HARD -> damage = 7;
-            case DifficultyLevel.HARDCORE -> damage = 10;
+        switch (Game.getGameWorld().getDifficultyType()) {
+            case DifficultyType.MARIK -> damage = 2;
+            case DifficultyType.EASY -> damage = 3;
+            case DifficultyType.MEDIUM -> damage = 5;
+            case DifficultyType.HARD -> damage = 7;
+            case DifficultyType.HARDCORE -> damage = 10;
         }
     }
 
     private void intersectsWithCharacters() {
-        if (getBoundsInParent().intersects(Game.booker.getBoundsInParent())) {
-            Game.booker.setHP(Game.booker.getHP() - damage);
+        if (getBoundsInParent().intersects(Game.getGameWorld().getBooker().getBoundsInParent())) {
+            Game.getGameWorld().getBooker().setHp(Game.getGameWorld().getBooker().getHp() - damage);
             switch ((int) (Math.random() * 3)) {
-                case 0 -> Sounds.bookerHit.play(Game.menu.getVoiceSlider().getValue() / 100);
-                case 1 -> Sounds.bookerHit2.play(Game.menu.getVoiceSlider().getValue() / 100);
-                case 2 -> Sounds.bookerHit3.play(Game.menu.getVoiceSlider().getValue() / 100);
+                case 0 -> GameMedia.BOOKER_HIT.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 1 -> GameMedia.BOOKER_HIT_2.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 2 -> GameMedia.BOOKER_HIT_3.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             }
             delete = true;
-            Game.gameRoot.getChildren().remove(this);
+            Game.getGameRoot().getChildren().remove(this);
         }
 
-        for (Enemy enemy : Game.enemies)
+        for (Enemy enemy : Game.getGameWorld().getEnemies())
             if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
-                if (Game.difficultyLevel == DifficultyLevel.MARIK || Game.difficultyLevel == DifficultyLevel.EASY)
+                if (Game.getGameWorld().getDifficultyType() == DifficultyType.MARIK || Game.getGameWorld().getDifficultyType() == DifficultyType.EASY)
                     enemy.setHP(enemy.getHP() - damage);
                 delete = true;
-                Game.gameRoot.getChildren().remove(this);
+                Game.getGameRoot().getChildren().remove(this);
                 return;
             }
     }

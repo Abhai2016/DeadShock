@@ -1,8 +1,9 @@
-package com.abhai.deadshock.world.supplies;
+package com.abhai.deadshock.world;
 
 import com.abhai.deadshock.Game;
+import com.abhai.deadshock.types.BlockType;
+import com.abhai.deadshock.types.SupplyType;
 import com.abhai.deadshock.world.levels.Block;
-import com.abhai.deadshock.world.levels.BlockType;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -31,7 +32,7 @@ public class Supply extends Pane {
     private void move() {
         for (int i = 0; i < velocity.getY(); i++) {
             setTranslateY(getTranslateY() + 1);
-            for (Block block : Game.level.getBlocks())
+            for (Block block : Game.getGameWorld().getLevel().getBlocks())
                 if (getBoundsInParent().intersects(block.getBoundsInParent()) && block.getType() != BlockType.INVISIBLE) {
                     setTranslateY(getTranslateY() - 1);
                     return;
@@ -42,10 +43,10 @@ public class Supply extends Pane {
     private void delete() {
         delete = true;
         if (type != SupplyType.MEDICINE)
-            Game.booker.takeAmmo(type);
+            Game.getGameWorld().getBooker().takeAmmo(type);
         else
-            Game.booker.addMedicineForKillingEnemy();
-        Game.gameRoot.getChildren().remove(this);
+            Game.getGameWorld().getBooker().addMedicineForKillingEnemy();
+        Game.getGameRoot().getChildren().remove(this);
     }
 
     public boolean isDelete() {
@@ -63,11 +64,10 @@ public class Supply extends Pane {
         delete = false;
         setTranslateX(x);
         setTranslateY(y - 15);
-        Game.gameRoot.getChildren().add(this);
     }
 
     public void update() {
-        if (!getBoundsInParent().intersects(Game.booker.getBoundsInParent()))
+        if (!getBoundsInParent().intersects(Game.getGameWorld().getBooker().getBoundsInParent()))
             move();
         else
             delete();

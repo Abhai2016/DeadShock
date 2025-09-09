@@ -1,9 +1,9 @@
-package com.abhai.deadshock.characters.enemies;
+package com.abhai.deadshock.dtos;
 
-public class EnemyData {
-    private String type;
+public class EnemyDTO {
     private int x;
     private int y;
+    private String type;
 
     public int getX() {
         return x;

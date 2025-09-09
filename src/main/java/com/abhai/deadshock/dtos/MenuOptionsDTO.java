@@ -1,6 +1,6 @@
-package com.abhai.deadshock.utils;
+package com.abhai.deadshock.dtos;
 
-public class Options {
+public class MenuOptionsDTO {
     private String track;
     private double fxVolume;
     private double musicVolume;

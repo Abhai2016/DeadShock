@@ -1,9 +1,9 @@
 package com.abhai.deadshock.characters;
 
 import com.abhai.deadshock.Game;
+import com.abhai.deadshock.utils.GameMedia;
 import com.abhai.deadshock.world.levels.Block;
 import com.abhai.deadshock.world.levels.Level;
-import com.abhai.deadshock.utils.Sounds;
 import javafx.geometry.Rectangle2D;
 
 public class Elizabeth extends Character {
@@ -22,13 +22,14 @@ public class Elizabeth extends Character {
 
     public Elizabeth() {
         reset();
+        Game.getGameRoot().getChildren().add(this);
     }
 
     public void init() {
         setTranslateX(START_X);
         setTranslateY(START_Y);
-        if (!Game.gameRoot.getChildren().contains(this))
-            Game.gameRoot.getChildren().add(this);
+        if (!Game.getGameRoot().getChildren().contains(this))
+            Game.getGameRoot().getChildren().add(this);
     }
 
     public void reset() {
@@ -43,16 +44,16 @@ public class Elizabeth extends Character {
         giveSupply = false;
         playVoiceWhereYouFrom = true;
 
-        Game.gameRoot.getChildren().remove(this);
+        Game.getGameRoot().getChildren().remove(this);
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
     }
 
     private void move() {
         if (canMove) {
             moveInterval++;
-            if (getTranslateX() < Game.booker.getTranslateX() - 100)
+            if (getTranslateX() < Game.getGameWorld().getBooker().getTranslateX() - 100)
                 moveX(SPEED);
-            else if (getTranslateX() > Game.booker.getTranslateX() + 100)
+            else if (getTranslateX() > Game.getGameWorld().getBooker().getTranslateX() + 100)
                 moveX(-SPEED);
 
             if (moveInterval < 50)
@@ -69,7 +70,7 @@ public class Elizabeth extends Character {
         if (!giveSupply && canMove)
             supplyInterval++;
 
-        if (Game.levelNumber == Level.BOSS_LEVEL)
+        if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.BOSS_LEVEL)
             medicineInterval++;
 
         if (medicineInterval > 600) {
@@ -79,8 +80,12 @@ public class Elizabeth extends Character {
 
         generateSupply();
 
-        if (giveSupply && supplyInterval > 300)
-            playSupplyVoice();
+        if (giveSupply)
+            if (getBoundsInParent().intersects(Game.getGameWorld().getBooker().getBoundsInParent())) {
+                Game.getGameWorld().getBooker().addMedicineForKillingEnemy();
+                giveMedicine();
+            } else if (supplyInterval > 300)
+                playSupplyVoice();
 
         noSupply();
     }
@@ -92,12 +97,12 @@ public class Elizabeth extends Character {
             emptySupplyInterval = 0;
 
         if (emptySupplyInterval > 900) {
-            if (Game.booker.getHP() < 100 || Game.booker.getWeapon().getCurrentBullets() == 0) {
+            if (Game.getGameWorld().getBooker().getHp() < 100 || Game.getGameWorld().getBooker().getWeapon().getCurrentBullets() == 0) {
                 switch ((int) (Math.random() * 4)) {
-                    case 0 -> Sounds.empty.play(Game.menu.getVoiceSlider().getValue() / 100);
-                    case 1 -> Sounds.foundNothing.play(Game.menu.getVoiceSlider().getValue() / 100);
-                    case 2 -> Sounds.haveNothing.play(Game.menu.getVoiceSlider().getValue() / 100);
-                    case 3 -> Sounds.tryToFind.play(Game.menu.getVoiceSlider().getValue() / 100);
+                    case 0 -> GameMedia.EMPTY.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                    case 1 -> GameMedia.FOUND_NOTHING.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                    case 2 -> GameMedia.HAVE_NOTHING.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                    case 3 -> GameMedia.TRY_TO_FIND.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
                 }
             }
             emptySupplyInterval = 0;
@@ -105,16 +110,16 @@ public class Elizabeth extends Character {
     }
 
     private void playVoice() {
-        if (Game.levelNumber == Level.SECOND_LEVEL)
+        if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.SECOND_LEVEL)
             if (startLevel && getTranslateX() > 100) {
                 startLevel = false;
-                Sounds.freedom.play(Game.menu.getVoiceSlider().getValue() / 100);
+                GameMedia.FREEDOM.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             } else if (getTranslateX() > Block.BLOCK_SIZE * 150 && playVoiceWhereYouFrom) {
                 canMove = false;
                 playVoiceWhereYouFrom = false;
-                Sounds.whereAreYouFrom.setOnEndOfMedia(() -> canMove = true);
-                Sounds.whereAreYouFrom.setVolume(Game.menu.getVoiceSlider().getValue() / 100);
-                Sounds.whereAreYouFrom.play();
+                GameMedia.WHERE_ARE_YOU_FROM.setOnEndOfMedia(() -> canMove = true);
+                GameMedia.WHERE_ARE_YOU_FROM.setVolume(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                GameMedia.WHERE_ARE_YOU_FROM.play();
             }
     }
 
@@ -156,7 +161,7 @@ public class Elizabeth extends Character {
     }
 
     private void generateSupply() {
-        if (supplyInterval > 300 && medicineCount > 0 && Game.booker.getHP() < 100) {
+        if (supplyInterval > 300 && medicineCount > 0 && Game.getGameWorld().getBooker().getHp() < 100) {
             canMove = false;
             giveSupply = true;
             playSupplyVoice();
@@ -166,9 +171,9 @@ public class Elizabeth extends Character {
 
     private void playSupplyVoice() {
         switch ((int) (Math.random() * 3)) {
-            case 0 -> Sounds.bookerCatch.play(Game.menu.getVoiceSlider().getValue() / 100);
-            case 1 -> Sounds.bookerCatch2.play(Game.menu.getVoiceSlider().getValue() / 100);
-            case 2 -> Sounds.bookerCatch3.play(Game.menu.getVoiceSlider().getValue() / 100);
+            case 0 -> GameMedia.BOOKER_CATCH.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 1 -> GameMedia.BOOKER_CATCH_2.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 2 -> GameMedia.BOOKER_CATCH_3.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
         }
         supplyInterval = 0;
     }
@@ -182,21 +187,13 @@ public class Elizabeth extends Character {
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
     }
 
-    public boolean isGiveSupply() {
-        return giveSupply;
-    }
-
     @Override
     protected String getImageName() {
         return "elizabeth.png";
     }
 
-    public void addMedicineForKillingEnemy() {
-        medicineCount++;
-    }
-
     private boolean intersectsWithBlocks(char typeOfCoordinate, double coordinate) {
-        for (Block block : Game.level.getBlocks())
+        for (Block block : Game.getGameWorld().getLevel().getBlocks())
             if (getBoundsInParent().intersects(block.getBoundsInParent())) {
                 if (typeOfCoordinate == 'X') {
                     setTranslateX(getTranslateX() - getScaleX());

@@ -1,4 +1,4 @@
-package com.abhai.deadshock.energetics;
+package com.abhai.deadshock.types;
 
 public enum EnergeticType {
     HYPNOSIS,
