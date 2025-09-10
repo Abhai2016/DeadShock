@@ -84,10 +84,7 @@ public class Boss extends Enemy implements Animatable {
         setTranslateY(getTranslateY() + HEIGHT);
 
         GameMedia.BOSS_DEATH.setVolume(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
-        GameMedia.BOSS_DEATH.setOnEndOfMedia(() -> {
-            toDelete = true;
-            Game.getGameWorld().playCutscene();
-        });
+        GameMedia.BOSS_DEATH.setOnEndOfMedia(() -> Game.getGameWorld().playCutscene());
         GameMedia.BOSS_DEATH.play();
     }
 
@@ -142,11 +139,11 @@ public class Boss extends Enemy implements Animatable {
         name.setFill(Color.WHITE);
         name.setTranslateX(Game.SCENE_WIDTH / 2 - 95);
         name.setTranslateY(30);
-        Game.getAppRoot().getChildren().add(name);
+        Game.getGameWorld().getAppRoot().getChildren().add(name);
 
         rectHP.setTranslateX(Game.SCENE_WIDTH / 2 - 240);
         rectHP.setTranslateY(40);
-        Game.getAppRoot().getChildren().add(rectHP);
+        Game.getGameWorld().getAppRoot().getChildren().add(rectHP);
     }
 
     private void velocityJump() {
@@ -187,12 +184,9 @@ public class Boss extends Enemy implements Animatable {
     public void checkOnLevelChange() {
         stopAnimation();
         if (stunInterval == 0) {
+            GameMedia.OH_BOOKER.setOnEndOfMedia(() -> GameMedia.FUCK.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100));
             GameMedia.OH_BOOKER.setVolume(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             GameMedia.OH_BOOKER.play();
-
-            GameMedia.OH_BOOKER.setOnEndOfMedia(() -> {
-                GameMedia.FUCK.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-            });
         }
 
         stunInterval++;
@@ -205,8 +199,8 @@ public class Boss extends Enemy implements Animatable {
         }
 
         if (stunInterval > 100) {
-            stunInterval = 0;
             initHpUi();
+            stunInterval = 0;
             setTranslateX(BLOCK_SIZE * 10);
             setTranslateY(BLOCK_SIZE * 12 - 5);
             Game.getGameWorld().setBossLevel();
@@ -214,7 +208,7 @@ public class Boss extends Enemy implements Animatable {
     }
 
     public void deleteHpUi() {
-        Game.getAppRoot().getChildren().removeAll(rectHP, name);
+        Game.getGameWorld().getAppRoot().getChildren().removeAll(rectHP, name);
     }
 
     @Override

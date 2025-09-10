@@ -26,7 +26,7 @@ public class DevilKiss {
         if (!devilKissShots.isEmpty()) {
             for (DevilKissShot devilKissShot : devilKissShots)
                 devilKissShotObjectPool.put(devilKissShot);
-            Game.getGameRoot().getChildren().removeAll(devilKissShots);
+            Game.getGameWorld().getGameRoot().getChildren().removeAll(devilKissShots);
             devilKissShots.clear();
         }
     }
@@ -38,7 +38,7 @@ public class DevilKiss {
                 if (devilKissShot.isToDelete()) {
                     devilKissShots.remove(devilKissShot);
                     devilKissShotObjectPool.put(devilKissShot);
-                    Game.getGameRoot().getChildren().remove(devilKissShot);
+                    Game.getGameWorld().getGameRoot().getChildren().remove(devilKissShot);
                     return;
                 }
             }

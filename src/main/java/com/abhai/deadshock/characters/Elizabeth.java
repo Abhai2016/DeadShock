@@ -20,32 +20,10 @@ public class Elizabeth extends Character {
     private boolean giveSupply;
     private boolean playVoiceWhereYouFrom;
 
-    public Elizabeth() {
-        reset();
-        Game.getGameRoot().getChildren().add(this);
-    }
-
-    public void init() {
-        setTranslateX(START_X);
-        setTranslateY(START_Y);
-        if (!Game.getGameRoot().getChildren().contains(this))
-            Game.getGameRoot().getChildren().add(this);
-    }
-
-    public void reset() {
-        moveInterval = 0;
-        medicineCount = 0;
-        supplyInterval = 0;
-        medicineInterval = 0;
-        emptySupplyInterval = 0;
-
-        canMove = true;
-        startLevel = true;
-        giveSupply = false;
-        playVoiceWhereYouFrom = true;
-
-        Game.getGameRoot().getChildren().remove(this);
-        imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
+    public Elizabeth(boolean forNewGame) {
+        reset(forNewGame);
+        if (!forNewGame)
+            Game.getGameWorld().getGameRoot().getChildren().add(this);
     }
 
     private void move() {
@@ -69,7 +47,6 @@ public class Elizabeth extends Character {
     private void supply() {
         if (!giveSupply && canMove)
             supplyInterval++;
-
         if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.BOSS_LEVEL)
             medicineInterval++;
 
@@ -78,8 +55,6 @@ public class Elizabeth extends Character {
             medicineInterval = 0;
         }
 
-        generateSupply();
-
         if (giveSupply)
             if (getBoundsInParent().intersects(Game.getGameWorld().getBooker().getBoundsInParent())) {
                 Game.getGameWorld().getBooker().addMedicineForKillingEnemy();
@@ -87,6 +62,7 @@ public class Elizabeth extends Character {
             } else if (supplyInterval > 300)
                 playSupplyVoice();
 
+        generateSupply();
         noSupply();
     }
 
@@ -100,9 +76,12 @@ public class Elizabeth extends Character {
             if (Game.getGameWorld().getBooker().getHp() < 100 || Game.getGameWorld().getBooker().getWeapon().getCurrentBullets() == 0) {
                 switch ((int) (Math.random() * 4)) {
                     case 0 -> GameMedia.EMPTY.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-                    case 1 -> GameMedia.FOUND_NOTHING.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-                    case 2 -> GameMedia.HAVE_NOTHING.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-                    case 3 -> GameMedia.TRY_TO_FIND.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                    case 1 ->
+                            GameMedia.FOUND_NOTHING.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                    case 2 ->
+                            GameMedia.HAVE_NOTHING.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                    case 3 ->
+                            GameMedia.TRY_TO_FIND.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
                 }
             }
             emptySupplyInterval = 0;
@@ -121,6 +100,13 @@ public class Elizabeth extends Character {
                 GameMedia.WHERE_ARE_YOU_FROM.setVolume(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
                 GameMedia.WHERE_ARE_YOU_FROM.play();
             }
+    }
+
+    public void changeLevel() {
+        setTranslateX(START_X);
+        setTranslateY(START_Y);
+        if (!Game.getGameWorld().getGameRoot().getChildren().contains(this))
+            Game.getGameWorld().getGameRoot().getChildren().add(this);
     }
 
     private void moveX(int x) {
@@ -178,13 +164,24 @@ public class Elizabeth extends Character {
         supplyInterval = 0;
     }
 
-    public void resetAfterBookersDeath() {
+    public void reset(boolean forNewGame) {
         canMove = true;
+        moveInterval = 0;
         medicineCount = 0;
         giveSupply = false;
-        setTranslateX(START_X);
-        setTranslateY(START_Y);
+        supplyInterval = 0;
+        medicineInterval = 0;
+        emptySupplyInterval = 0;
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
+
+        if (forNewGame) {
+            startLevel = true;
+            playVoiceWhereYouFrom = true;
+            Game.getGameWorld().getGameRoot().getChildren().remove(this);
+        } else {
+            setTranslateX(START_X);
+            setTranslateY(START_Y);
+        }
     }
 
     @Override

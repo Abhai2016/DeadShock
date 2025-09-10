@@ -108,79 +108,10 @@ public class Weapon extends Pane {
         this.machineGunBullets = builder.machineGunBullets;
 
         init();
-
         if (Game.getGameWorld().getLevel().getCurrentLevelNumber() != Level.BOSS_LEVEL) {
             getChildren().add(imageView);
-            Game.getGameRoot().getChildren().add(this);
+            Game.getGameWorld().getGameRoot().getChildren().add(this);
         }
-    }
-
-    public WeaponType getType() {
-        return type;
-    }
-
-    public int getRpgDamage() {
-        return rpgDamage;
-    }
-
-    public int getRpgBullets() {
-        return rpgBullets;
-    }
-
-    public int getCurrentClip() {
-        return currentClip;
-    }
-
-    public int getBulletDamage() {
-        return bulletDamage;
-    }
-
-    public int getPistolBullets() {
-        return pistolBullets;
-    }
-
-    public boolean isCanChooseRpg() {
-        return canChooseRpg;
-    }
-
-    public int getCurrentBullets() {
-        return currentBullets;
-    }
-
-    public void setCanReload(boolean value) {
-        canReload = value;
-    }
-
-    public boolean isCanChoosePistol() {
-        return canChoosePistol;
-    }
-
-    public int getMachineGunBullets() {
-        return machineGunBullets;
-    }
-
-    public void setSingleShot(boolean value) {
-        singleShot = value;
-    }
-
-    public void setPistolBullets(int bullets) {
-        pistolBullets = bullets;
-    }
-
-    public boolean isCanChooseMachineGun() {
-        return canChooseMachineGun;
-    }
-
-    public void setRpgBullets(int rpgBullets) {
-        this.rpgBullets = rpgBullets;
-    }
-
-    public void setCurrentBullets(long value) {
-        currentBullets = (short) value;
-    }
-
-    public void setMachineGunBullets(int bullets) {
-        machineGunBullets = bullets;
     }
 
     public void init() {
@@ -277,8 +208,8 @@ public class Weapon extends Pane {
         setTranslateY(BLOCK_SIZE * 12 - 18);
         imageView.setViewport(new Rectangle2D(265, 88, 33, 18));
 
-        if (!Game.getGameRoot().getChildren().contains(this))
-            Game.getGameRoot().getChildren().add(this);
+        if (!Game.getGameWorld().getGameRoot().getChildren().contains(this))
+            Game.getGameWorld().getGameRoot().getChildren().add(this);
     }
 
     public void shoot() {
@@ -353,7 +284,7 @@ public class Weapon extends Pane {
 
     public void changeLevel() {
         if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.BOSS_LEVEL) {
-            Game.getGameRoot().getChildren().remove(this);
+            Game.getGameWorld().getGameRoot().getChildren().remove(this);
             return;
         }
 
@@ -366,8 +297,8 @@ public class Weapon extends Pane {
             setTranslateX(BLOCK_SIZE * 24);
             setTranslateY(BLOCK_SIZE * 12 - 20);
         }
-        if (!Game.getGameRoot().getChildren().contains(this))
-            Game.getGameRoot().getChildren().add(this);
+        if (!Game.getGameWorld().getGameRoot().getChildren().contains(this))
+            Game.getGameWorld().getGameRoot().getChildren().add(this);
     }
 
     public void pickUpWeapon() {
@@ -399,7 +330,6 @@ public class Weapon extends Pane {
                 }
                 case Level.THIRD_LEVEL -> {
                     canChooseRpg = true;
-
                     if (type == WeaponType.PISTOL) {
                         pistolBullets = currentBullets;
                         pistolClip = currentClip;
@@ -407,7 +337,6 @@ public class Weapon extends Pane {
                         machineGunBullets = currentBullets;
                         machineGunClip = currentClip;
                     }
-
                     type = WeaponType.RPG;
                     rpgClip = currentClip = FULL_RPG_CLIP;
                     Game.getGameWorld().getBooker().changeWeaponAnimation(type);
@@ -419,21 +348,20 @@ public class Weapon extends Pane {
                     GameMedia.GREAT.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
                 }
             }
-
             setTranslateX(0);
             setTranslateY(0);
-            Game.getGameRoot().getChildren().remove(this);
+            Game.getGameWorld().getGameRoot().getChildren().remove(this);
         }
     }
 
     public void clearBullets() {
         for (Bullet bullet : bullets)
             bulletsPool.put(bullet);
-        Game.getGameRoot().getChildren().removeAll(bullets);
+        Game.getGameWorld().getGameRoot().getChildren().removeAll(bullets);
         bullets.clear();
     }
 
-    public void setDifficultyLevel() {
+    public void setDifficultyType() {
         switch (Game.getGameWorld().getDifficultyType()) {
             case DifficultyType.MARIK -> {
                 rpgDamage = 300;
@@ -540,6 +468,74 @@ public class Weapon extends Pane {
         }
     }
 
+    public WeaponType getType() {
+        return type;
+    }
+
+    public int getRpgDamage() {
+        return rpgDamage;
+    }
+
+    public int getRpgBullets() {
+        return rpgBullets;
+    }
+
+    public int getCurrentClip() {
+        return currentClip;
+    }
+
+    public int getBulletDamage() {
+        return bulletDamage;
+    }
+
+    public int getPistolBullets() {
+        return pistolBullets;
+    }
+
+    public boolean isCanChooseRpg() {
+        return canChooseRpg;
+    }
+
+    public int getCurrentBullets() {
+        return currentBullets;
+    }
+
+    public void setCanReload(boolean value) {
+        canReload = value;
+    }
+
+    public boolean isCanChoosePistol() {
+        return canChoosePistol;
+    }
+
+    public int getMachineGunBullets() {
+        return machineGunBullets;
+    }
+
+    public void setSingleShot(boolean value) {
+        singleShot = value;
+    }
+
+    public void setPistolBullets(int bullets) {
+        pistolBullets = bullets;
+    }
+
+    public boolean isCanChooseMachineGun() {
+        return canChooseMachineGun;
+    }
+
+    public void setRpgBullets(int rpgBullets) {
+        this.rpgBullets = rpgBullets;
+    }
+
+    public void setCurrentBullets(long value) {
+        currentBullets = (short) value;
+    }
+
+    public void setMachineGunBullets(int bullets) {
+        machineGunBullets = bullets;
+    }
+
     public void update() {
         currentShootInterval++;
         for (Bullet bullet : bullets) {
@@ -547,7 +543,7 @@ public class Weapon extends Pane {
             if (bullet.isDelete()) {
                 bulletsPool.put(bullet);
                 bullets.remove(bullet);
-                Game.getGameRoot().getChildren().remove(bullet);
+                Game.getGameWorld().getGameRoot().getChildren().remove(bullet);
                 break;
             }
         }

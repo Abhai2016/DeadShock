@@ -19,8 +19,7 @@ public class Character extends Pane {
         setTranslateX(START_X);
         setTranslateY(START_Y);
 
-        imageView = new ImageView(new Image(
-                Paths.get("resources", "images", "characters", getImageName()).toUri().toString()));
+        imageView = new ImageView(new Image(Paths.get("resources", "images", "characters", getImageName()).toUri().toString()));
         getChildren().add(imageView);
     }
 

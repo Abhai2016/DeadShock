@@ -23,20 +23,4 @@ public class EnemiesDTO {
     public ArrayList<EnemyDTO> getSecondLevel() {
         return secondLevel;
     }
-
-    public void setBossLevel(ArrayList<EnemyDTO> bossLevel) {
-        this.bossLevel = bossLevel;
-    }
-
-    public void setFirstLevel(ArrayList<EnemyDTO> firstLevel) {
-        this.firstLevel = firstLevel;
-    }
-
-    public void setThirdLevel(ArrayList<EnemyDTO> thirdLevel) {
-        this.thirdLevel = thirdLevel;
-    }
-
-    public void setSecondLevel(ArrayList<EnemyDTO> secondLevel) {
-        this.secondLevel = secondLevel;
-    }
 }

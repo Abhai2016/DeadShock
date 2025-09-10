@@ -70,39 +70,13 @@ public class Menu extends Pane {
 
         ImageView menuBackground = new ImageView(new Image(Paths.get("resources", "images", "menu", "menu.png").toUri().toString()));
         getChildren().add(menuBackground);
-
-        Game.getAppRoot().getChildren().add(this);
+        Game.getGameWorld().getAppRoot().getChildren().add(this);
         initializeSubMenus();
         createCover();
     }
 
-    public boolean isShown() {
-        return isShown;
-    }
-
-    public boolean isCoverShown() {
-        return isCoverShown;
-    }
-
-    public MediaPlayer getMusic() {
-        return music;
-    }
-
-    public Slider getFxSlider() {
-        return fxSlider;
-    }
-
-    public Slider getMusicSlider() {
-        return musicSlider;
-    }
-
-    public Slider getVoiceSlider() {
-        return voiceSlider;
-    }
-
     public void gameOver() {
         start = true;
-
         controls.setVisible(false);
         typeOfMusicText.setVisible(false);
         Game.getGameWorld().newGameReset();
@@ -115,7 +89,7 @@ public class Menu extends Pane {
             FadeTransition ft = new FadeTransition(Duration.seconds(0.5), this);
             ft.setFromValue(1);
             ft.setToValue(0);
-            ft.setOnFinished(event -> Game.getAppRoot().getChildren().remove(this));
+            ft.setOnFinished(event -> Game.getGameWorld().getAppRoot().getChildren().remove(this));
             ft.play();
 
             music.play();
@@ -137,7 +111,7 @@ public class Menu extends Pane {
         isShown = true;
         Game.getGameWorld().setActive(false);
         Game.getGameWorld().getBooker().stopAnimation();
-        Game.getAppRoot().getChildren().add(this);
+        Game.getGameWorld().getAppRoot().getChildren().add(this);
 
         for (Enemy enemy : Game.getGameWorld().getEnemies())
             if (enemy instanceof Animatable animatable)
@@ -151,10 +125,10 @@ public class Menu extends Pane {
         fadeTransitionTextCover.stop();
 
         FadeTransition fadeTransitionCover = new FadeTransition(Duration.seconds(2), cover);
+        fadeTransitionCover.setOnFinished(event -> getChildren().removeAll(cover, textCover));
         fadeTransitionCover.setFromValue(1);
         fadeTransitionCover.setToValue(0);
         fadeTransitionCover.play();
-        fadeTransitionCover.setOnFinished(event -> getChildren().removeAll(cover, textCover));
     }
 
     public void checkMusic() {
@@ -185,9 +159,8 @@ public class Menu extends Pane {
     private void startGame() {
         start = false;
         difficultyBackground.setVisible(false);
-        Game.getGameWorld().setDifficultyLevel();
+        Game.getGameWorld().setDifficultyType();
         changeSubMenu(subMenus.get(Texts.MAIN_SUBMENU));
-
         restartMusicIfNeeded();
         hideMenu();
     }
@@ -248,14 +221,12 @@ public class Menu extends Pane {
             changeSubMenu(subMenus.get(Texts.DIFFICULTY_SUBMENU));
             difficultyBackground.setVisible(true);
         });
-
         options.setOnMouseClicked(event -> changeSubMenu(subMenus.get(Texts.OPTIONS_SUBMENU)));
         exitGame.setOnMouseClicked(event -> System.exit(0));
     }
 
     private void createMusicSubMenu() {
         createTypeOfMusicText();
-
         SubMenu musicSubMenu = new SubMenu();
         CustomButton rockItem = new CustomButton(Texts.ROCK);
         CustomButton post_hardcoreItem = new CustomButton(Texts.METALCORE);
@@ -270,25 +241,21 @@ public class Menu extends Pane {
             restartMusicIfNeeded();
             typeOfMusicText.setText(Texts.CHOSEN_ROCK);
         });
-
         post_hardcoreItem.setOnMouseClicked(event -> {
             currentMusicPath = Paths.get("resources", "sounds", "music", "metalcore", "01.mp3");
             restartMusicIfNeeded();
             typeOfMusicText.setText(Texts.CHOSEN_METALCORE);
         });
-
         electronicItem.setOnMouseClicked(event -> {
             currentMusicPath = Paths.get("resources", "sounds", "music", "electronic", "01.mp3");
             restartMusicIfNeeded();
             typeOfMusicText.setText(Texts.CHOSEN_ELECTRO);
         });
-
         developersChoice.setOnMouseClicked(event -> {
             currentMusicPath = Paths.get("resources", "sounds", "music", "developersChoice", "01.mp3");
             restartMusicIfNeeded();
             typeOfMusicText.setText(Texts.CHOSEN_DEVELOPER_CHOICE);
         });
-
         musicMenuBackItem.setOnMouseClicked(event -> {
             changeSubMenu(subMenus.get(Texts.SOUNDS_OPTIONS_SUBMENU));
             typeOfMusicText.setVisible(false);
@@ -404,7 +371,6 @@ public class Menu extends Pane {
 
     private void createDifficultySubMenu() {
         createDifficultyLevelDescription();
-
         SubMenu difficultySubMenu = new SubMenu();
         CustomButton marik = new CustomButton(Texts.MARIK);
         CustomButton easy = new CustomButton(Texts.EASY);
@@ -436,7 +402,6 @@ public class Menu extends Pane {
             difficultyLevelText.setText(Texts.HARDCORE_DIFFICULTY_DESCRIPTION);
             Game.getGameWorld().setDifficultyType(DifficultyType.HARDCORE);
         });
-
         back.setOnMouseClicked(event -> {
             changeSubMenu(subMenus.get(Texts.MAIN_SUBMENU));
             difficultyBackground.setVisible(false);
@@ -498,7 +463,6 @@ public class Menu extends Pane {
 
         Pane rootPane = new Pane();
         rootPane.getChildren().addAll(areYouSureText, savesWillBeLostText, yesButton, noButton);
-
         Scene scene = new Scene(rootPane);
         stage.setScene(scene);
         stage.setTitle(Texts.NEW_GAME);
@@ -539,7 +503,30 @@ public class Menu extends Pane {
             currentMusicPath = DEVELOPERS_CHOICE_MUSIC_PATH;
             typeOfMusicText.setText(Texts.CHOSEN_DEVELOPER_CHOICE);
         }
-
         currentMusicPath = currentMusicPath.resolve(text.substring(text.length() - 6));
+    }
+
+    public boolean isShown() {
+        return isShown;
+    }
+
+    public MediaPlayer getMusic() {
+        return music;
+    }
+
+    public Slider getFxSlider() {
+        return fxSlider;
+    }
+
+    public boolean isCoverShown() {
+        return isCoverShown;
+    }
+
+    public Slider getMusicSlider() {
+        return musicSlider;
+    }
+
+    public Slider getVoiceSlider() {
+        return voiceSlider;
     }
 }

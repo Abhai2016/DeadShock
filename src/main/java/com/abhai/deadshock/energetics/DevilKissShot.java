@@ -57,7 +57,7 @@ class DevilKissShot extends Pane {
         }
 
         setTranslateY(y);
-        Game.getGameRoot().getChildren().add(this);
+        Game.getGameWorld().getGameRoot().getChildren().add(this);
     }
 
     private void intersectsWithEnemies() {

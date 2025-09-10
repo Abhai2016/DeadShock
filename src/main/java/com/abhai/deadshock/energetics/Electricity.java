@@ -24,11 +24,9 @@ class Electricity extends Pane {
     Electricity() {
         interval = 0;
         active = false;
-        ImageView imageView = new ImageView(new Image(
-                Paths.get("resources", "images", "energetics", "electricityShot.png").toUri().toString()));
+        ImageView imageView = new ImageView(new Image(Paths.get("resources", "images", "energetics", "electricityShot.png").toUri().toString()));
         imageView.setViewport(new Rectangle2D(0, 0, 172, 63));
-        animation = new SpriteAnimation(imageView,
-                Duration.seconds(0.5), 10, 1, 0, 0, 172, 63);
+        animation = new SpriteAnimation(imageView, Duration.seconds(0.5), 10, 1, 0, 0, 172, 63);
         getChildren().add(imageView);
     }
 
@@ -45,7 +43,7 @@ class Electricity extends Pane {
                 setTranslateX(Game.getGameWorld().getBooker().getTranslateX() - 170);
             }
 
-            Game.getGameRoot().getChildren().add(this);
+            Game.getGameWorld().getGameRoot().getChildren().add(this);
             setTranslateY(Game.getGameWorld().getBooker().getTranslateY() - 10);
             GameMedia.ELECTRICITY.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
         }
@@ -53,31 +51,29 @@ class Electricity extends Pane {
 
     private void move() {
         if (Game.getGameWorld().getBooker().getScaleX() > 0) {
-            setTranslateX(Game.getGameWorld().getBooker().getTranslateX() + Booker.WIDTH);
             setScaleX(1);
+            setTranslateX(Game.getGameWorld().getBooker().getTranslateX() + Booker.WIDTH);
         } else {
             setScaleX(-1);
             setTranslateX(Game.getGameWorld().getBooker().getTranslateX() - 170);
         }
-
         setTranslateY(Game.getGameWorld().getBooker().getTranslateY() - 10);
     }
 
     public void delete() {
         active = false;
-        Game.getGameRoot().getChildren().remove(this);
+        Game.getGameWorld().getGameRoot().getChildren().remove(this);
     }
 
     private void intersectsWithEnemies() {
         for (Enemy enemy : Game.getGameWorld().getEnemies())
-            if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
+            if (getBoundsInParent().intersects(enemy.getBoundsInParent()))
                 if (enemy.getType() != EnemyType.BOSS) {
                     enemy.setHP(0);
                     GameMedia.ELECTRICITY_DEATH.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
                     return;
                 } else
                     enemy.setHP(enemy.getHP() - Game.getGameWorld().getBooker().getWeapon().getBulletDamage() / 2);
-            }
     }
 
     public void update() {

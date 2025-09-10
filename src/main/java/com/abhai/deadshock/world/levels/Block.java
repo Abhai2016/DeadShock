@@ -28,9 +28,7 @@ public class Block extends Pane {
         this.type = type;
         setTranslateX(x);
         setTranslateY(y);
-
-        if (type.equals(BlockType.LITTLE_METAL) || type.equals(BlockType.LITTLE_BOX) || type.equals(BlockType.LITTLE_BRICK)
-                || type.equals(BlockType.LITTLE_LAND) || type.equals(BlockType.LITTLE_STONE))
+        if (type.equals(BlockType.LITTLE_METAL) || type.equals(BlockType.LITTLE_BOX) || type.equals(BlockType.LITTLE_BRICK) || type.equals(BlockType.LITTLE_LAND) || type.equals(BlockType.LITTLE_STONE))
             blockImage.setFitHeight(LITTLE_BLOCK_HEIGHT);
         else
             blockImage.setFitHeight(BLOCK_SIZE);
@@ -53,7 +51,6 @@ public class Block extends Pane {
             getChildren().add(blockImage);
         else if (type.equals(BlockType.INVISIBLE))
             getChildren().remove(blockImage);
-
-        Game.getGameRoot().getChildren().add(this);
+        Game.getGameWorld().getGameRoot().getChildren().add(this);
     }
 }

@@ -24,18 +24,14 @@ public class Game extends Application {
         }
     };
 
-    private static Pane appRoot;
-    private static Pane gameRoot;
     private static GameWorld gameWorld;
     private static SaveManager saveManager;
 
     @Override
     public void start(Stage primaryStage) {
-        appRoot = new Pane();
-        gameRoot = new Pane();
-        gameWorld = new GameWorld();
+        Pane appRoot = new Pane();
         saveManager = new SaveManager();
-        appRoot.getChildren().add(gameRoot);
+        gameWorld = new GameWorld(appRoot);
         gameWorld.init(saveManager.loadProgress(), saveManager.getEnemies());
 
         MenuOptionsDTO menuOptionsDTO = saveManager.loadMenuOptions();
@@ -56,14 +52,6 @@ public class Game extends Application {
 
     public static void main(String[] args) {
         launch(args);
-    }
-
-    public static Pane getAppRoot() {
-        return appRoot;
-    }
-
-    public static Pane getGameRoot() {
-        return gameRoot;
     }
 
     public static GameWorld getGameWorld() {

@@ -13,7 +13,7 @@ public class EnemyHypnosis extends Hypnosis {
     }
 
     @Override
-    protected void setDifficultyLevel() {
+    protected void setDifficultyType() {
         switch (Game.getGameWorld().getDifficultyType()) {
             case DifficultyType.MARIK -> maxInterval = 150;
             case DifficultyType.EASY -> maxInterval = 250;

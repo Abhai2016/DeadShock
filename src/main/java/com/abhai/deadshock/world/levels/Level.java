@@ -40,24 +40,22 @@ public class Level {
         blockPool = new ObjectPool<>(Block::new, 350, 500);
 
         initializeBackground();
-
-        Game.getGameRoot().getChildren().add(background);
-        if (currentLevelNumber == FIRST_LEVEL && !Game.getGameRoot().getChildren().contains(statue))
-            Game.getGameRoot().getChildren().add(statue);
+        Game.getGameWorld().getGameRoot().getChildren().add(background);
+        if (currentLevelNumber == FIRST_LEVEL && !Game.getGameWorld().getGameRoot().getChildren().contains(statue))
+            Game.getGameWorld().getGameRoot().getChildren().add(statue);
 
         createLevel();
     }
 
     public void changeLevel() {
         initializeBackground();
-        if (currentLevelNumber == FIRST_LEVEL && !Game.getGameRoot().getChildren().contains(statue))
-            Game.getGameRoot().getChildren().add(statue);
+        if (currentLevelNumber == FIRST_LEVEL && !Game.getGameWorld().getGameRoot().getChildren().contains(statue))
+            Game.getGameWorld().getGameRoot().getChildren().add(statue);
         createLevel();
     }
 
     private void createLevel() {
         String[] level = new String[0];
-
         try {
             LevelsDTO levelData = new ObjectMapper().readValue(LEVELS_DATA_PATH.toFile(), LevelsDTO.class);
             switch (currentLevelNumber) {
@@ -68,11 +66,11 @@ public class Level {
             }
         } catch (IOException e) {
             System.out.println(e.getLocalizedMessage());
+            throw new RuntimeException("Could not initialize level");
         }
 
         if (!blocks.isEmpty())
             resetBlocks();
-
         for (int i = 0; i < level.length; i++) {
             String line = level[i];
             for (int j = 0; j < line.length(); j++)
@@ -94,10 +92,9 @@ public class Level {
     }
 
     private void resetBlocks() {
-        for (Block block : blocks) {
+        for (Block block : blocks)
             blockPool.put(block);
-            Game.getGameRoot().getChildren().remove(block);
-        }
+        Game.getGameWorld().getGameRoot().getChildren().removeAll(blocks);
         blocks.clear();
     }
 
@@ -110,7 +107,7 @@ public class Level {
             }
             case SECOND_LEVEL -> {
                 background.setImage(new Image(SECOND_LEVEL_IMAGE_PATH.toUri().toString()));
-                Game.getGameRoot().getChildren().remove(statue);
+                Game.getGameWorld().getGameRoot().getChildren().remove(statue);
             }
             case THIRD_LEVEL -> background.setImage(new Image(THIRD_LEVEL_IMAGE_PATH.toUri().toString()));
             case BOSS_LEVEL -> background.setImage(new Image(BOSS_LEVEL_IMAGE_PATH.toUri().toString()));
@@ -121,18 +118,18 @@ public class Level {
         return blocks;
     }
 
-    private void initBlock(BlockType type, int x, int y) {
-        Block block = blockPool.get();
-        block.init(type, x, y);
-        blocks.add(block);
-    }
-
     public int getCurrentLevelNumber() {
         return currentLevelNumber;
     }
 
     public void setBackgroundLayoutX(double x) {
         background.setLayoutX(x);
+    }
+
+    private void initBlock(BlockType type, int x, int y) {
+        Block block = blockPool.get();
+        block.init(type, x, y);
+        blocks.add(block);
     }
 
     public void setCurrentLevelNumber(int currentLevelNumber) {

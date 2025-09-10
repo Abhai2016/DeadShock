@@ -76,9 +76,9 @@ public class Camper extends Enemy {
                 && Game.getGameWorld().getBooker().getTranslateX() > getTranslateX()) {
             voiceInterval++;
             setScaleX(1);
-        } else if (Game.getGameWorld().getBooker().getTranslateX() == getTranslateX()) {
+        } else if (Game.getGameWorld().getBooker().getTranslateX() == getTranslateX())
             voiceInterval++;
-        } else
+        else
             voiceInterval = 0;
 
         if (voiceInterval > 200)

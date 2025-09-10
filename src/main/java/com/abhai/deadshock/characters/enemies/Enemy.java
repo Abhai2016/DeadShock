@@ -32,10 +32,8 @@ public class Enemy extends Pane {
         voiceInterval = 0;
 
         velocity = new Point2D(0, GRAVITY);
-        imageView = new ImageView(new Image(
-                Paths.get("resources", "images", "characters", getImageName()).toUri().toString()));
+        imageView = new ImageView(new Image(Paths.get("resources", "images", "characters", getImageName()).toUri().toString()));
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
-
         getChildren().add(imageView);
     }
 
@@ -61,13 +59,13 @@ public class Enemy extends Pane {
 
     public void init(int x, int y) {
         toDelete = false;
-        hypnotized = false;
         voiceInterval = 0;
+        hypnotized = false;
         velocity = new Point2D(0, GRAVITY);
 
         setTranslateX(x);
         setTranslateY(y);
-        Game.getGameRoot().getChildren().add(this);
+        Game.getGameWorld().getGameRoot().getChildren().add(this);
     }
 
     protected void playDeathVoice() {

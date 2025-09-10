@@ -49,11 +49,11 @@ public class HUD extends Pane {
         initializeHpAndSaltPane();
         initializeEnergeticsPane();
 
-        Game.getAppRoot().getChildren().add(this);
+        Game.getGameWorld().getAppRoot().getChildren().add(this);
         getChildren().addAll(HP, salt, hpAndSalt, devilKiss, electricity, hypnosis, bulletPane, money, moneyText);
     }
 
-    public void setDifficultyLevel() {
+    public void setDifficultyType() {
         if (Game.getGameWorld().getDifficultyType() == DifficultyType.MARIK) {
             getChildren().remove(moneyText);
             money.setImage(moneyForMarikImage);
@@ -110,24 +110,19 @@ public class HUD extends Pane {
         salt = new Rectangle(RECTANGLE_WIDTH, RECTANGLE_HEIGHT, Color.BLUE);
         salt.setTranslateX(SALT_TEXT_OFFSET_X);
         salt.setTranslateY(SALT_TEXT_OFFSET_Y);
-
-        hpAndSalt = new ImageView(new Image(Paths.get("resources",
-                "images", "hud", "hpAndSalt.png").toUri().toString()));
+        hpAndSalt = new ImageView(new Image(Paths.get("resources", "images", "hud", "hpAndSalt.png").toUri().toString()));
     }
 
     private void initializeEnergeticsPane() {
-        devilKiss = new ImageView(new Image(Paths.get("resources",
-                "images", "hud", "devilKiss.png").toUri().toString()));
+        devilKiss = new ImageView(new Image(Paths.get("resources", "images", "hud", "devilKiss.png").toUri().toString()));
         devilKiss.setTranslateY(ENERGETIC_OFFSET_Y);
         devilKiss.setVisible(false);
 
-        electricity = new ImageView(new Image(Paths.get("resources",
-                "images", "hud", "electricity.png").toUri().toString()));
+        electricity = new ImageView(new Image(Paths.get("resources", "images", "hud", "electricity.png").toUri().toString()));
         electricity.setTranslateY(ENERGETIC_OFFSET_Y);
         electricity.setVisible(false);
 
-        hypnosis = new ImageView(new Image(Paths.get("resources",
-                "images", "hud", "hypnosis.png").toUri().toString()));
+        hypnosis = new ImageView(new Image(Paths.get("resources", "images", "hud", "hypnosis.png").toUri().toString()));
         hypnosis.setTranslateY(ENERGETIC_OFFSET_Y);
         hypnosis.setVisible(false);
     }

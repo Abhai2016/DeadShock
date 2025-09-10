@@ -9,10 +9,9 @@ import com.abhai.deadshock.utils.GameMedia;
 public class EnemyBullet extends Bullet {
     private int damage;
 
-    public EnemyBullet() {
-    }
+    public EnemyBullet() {}
 
-    public void setDifficultyLevel() {
+    public void setDifficultyType() {
         switch (Game.getGameWorld().getDifficultyType()) {
             case DifficultyType.MARIK -> damage = 2;
             case DifficultyType.EASY -> damage = 3;
@@ -31,7 +30,8 @@ public class EnemyBullet extends Bullet {
                 case 2 -> GameMedia.BOOKER_HIT_3.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             }
             delete = true;
-            Game.getGameRoot().getChildren().remove(this);
+            Game.getGameWorld().getGameRoot().getChildren().remove(this);
+            return;
         }
 
         for (Enemy enemy : Game.getGameWorld().getEnemies())
@@ -39,14 +39,13 @@ public class EnemyBullet extends Bullet {
                 if (Game.getGameWorld().getDifficultyType() == DifficultyType.MARIK || Game.getGameWorld().getDifficultyType() == DifficultyType.EASY)
                     enemy.setHP(enemy.getHP() - damage);
                 delete = true;
-                Game.getGameRoot().getChildren().remove(this);
+                Game.getGameWorld().getGameRoot().getChildren().remove(this);
                 return;
             }
     }
 
     public void init(double scaleX, double x, double y) {
         super.init(WeaponType.PISTOL);
-
         if (scaleX > 0) {
             direction = true;
             setTranslateX(x + 67);

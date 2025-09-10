@@ -46,7 +46,6 @@ public class Energetic extends Pane {
     private static final int HYPNOSIS_Y = BLOCK_SIZE * 14 - 27;
     private static final int DEVIL_KISS_Y = BLOCK_SIZE * 9 + 18;
     private static final int ELECTRICITY_Y = BLOCK_SIZE * 9 - 30;
-
     private static final Path HYPNOSIS_IMAGE_PATH = Paths.get("resources", "images", "energetics", "hypnosis.png");
     private static final Path DEVIL_KISS_IMAGE_PATH = Paths.get("resources", "images", "energetics", "devilKiss.png");
     private static final Path ELECTRICITY_IMAGE_PATH = Paths.get("resources", "images", "energetics", "electricity.png");
@@ -80,10 +79,9 @@ public class Energetic extends Pane {
         canChooseElectricity = builder.canChooseElectricity;
 
         initializePositionAndState();
-
         if (Game.getGameWorld().getLevel().getCurrentLevelNumber() != Level.BOSS_LEVEL) {
             getChildren().add(imageView);
-            Game.getGameRoot().getChildren().add(this);
+            Game.getGameWorld().getGameRoot().getChildren().add(this);
         }
     }
 
@@ -94,16 +92,14 @@ public class Energetic extends Pane {
         canChangeEnergetic = true;
         canChooseDevilKiss = false;
         canChooseElectricity = false;
-
         Game.getGameWorld().getHud().getHypnosis().setVisible(false);
         Game.getGameWorld().getHud().getDevilKiss().setVisible(false);
         Game.getGameWorld().getHud().getElectricity().setVisible(false);
 
         clear();
         initializePositionAndState();
-
-        if (!Game.getGameRoot().getChildren().contains(this))
-            Game.getGameRoot().getChildren().add(this);
+        if (!Game.getGameWorld().getGameRoot().getChildren().contains(this))
+            Game.getGameWorld().getGameRoot().getChildren().add(this);
     }
 
     public void clear() {
@@ -149,12 +145,12 @@ public class Energetic extends Pane {
             }
         }
         setTranslateY(0);
-        Game.getGameRoot().getChildren().remove(this);
+        Game.getGameWorld().getGameRoot().getChildren().remove(this);
     }
 
     public void changeLevel() {
         if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.BOSS_LEVEL) {
-            Game.getGameRoot().getChildren().remove(this);
+            Game.getGameWorld().getGameRoot().getChildren().remove(this);
             return;
         }
 
@@ -167,8 +163,9 @@ public class Energetic extends Pane {
             setTranslateX(HYPNOSIS_X);
             setTranslateY(HYPNOSIS_Y);
         }
-        if (!Game.getGameRoot().getChildren().contains(this))
-            Game.getGameRoot().getChildren().add(this);
+
+        if (!Game.getGameWorld().getGameRoot().getChildren().contains(this))
+            Game.getGameWorld().getGameRoot().getChildren().add(this);
     }
 
     public void changeEnergetic() {
@@ -213,7 +210,7 @@ public class Energetic extends Pane {
         }
     }
 
-    public void setDifficultyLevel() {
+    public void setDifficultyType() {
         switch (Game.getGameWorld().getDifficultyType()) {
             case DifficultyType.MARIK -> saltPrice = 10;
             case DifficultyType.EASY -> saltPrice = 15;

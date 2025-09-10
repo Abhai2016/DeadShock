@@ -58,7 +58,7 @@ public class Bullet extends Pane {
             explosionAnimation.stop();
             getChildren().add(bulletImageView);
             getChildren().remove(explosionImageView);
-            Game.getAppRoot().getChildren().remove(this);
+            Game.getGameWorld().getAppRoot().getChildren().remove(this);
         });
     }
 
@@ -96,7 +96,7 @@ public class Bullet extends Pane {
                 setTranslateY(Game.getGameWorld().getBooker().getTranslateY() + 10);
             }
         }
-        Game.getGameRoot().getChildren().add(this);
+        Game.getGameWorld().getGameRoot().getChildren().add(this);
     }
 
     private void intersectsWithEnemies() {
@@ -115,7 +115,7 @@ public class Bullet extends Pane {
                         createExplosion();
                     else {
                         delete = true;
-                        Game.getGameRoot().getChildren().remove(this);
+                        Game.getGameWorld().getGameRoot().getChildren().remove(this);
                         enemy.setHP((enemy.getHP() - Game.getGameWorld().getBooker().getWeapon().getBulletDamage()));
                     }
                 }
@@ -124,9 +124,9 @@ public class Bullet extends Pane {
     }
 
     protected void intersectsWithWorld() {
-        if (getTranslateX() > -Game.getGameRoot().getLayoutX() + Game.SCENE_WIDTH || getTranslateX() < -Game.getGameRoot().getLayoutX()) {
+        if (getTranslateX() > -Game.getGameWorld().getGameRoot().getLayoutX() + Game.SCENE_WIDTH || getTranslateX() < -Game.getGameWorld().getGameRoot().getLayoutX()) {
             delete = true;
-            Game.getGameRoot().getChildren().remove(this);
+            Game.getGameWorld().getGameRoot().getChildren().remove(this);
             return;
         }
 
@@ -136,7 +136,7 @@ public class Bullet extends Pane {
                     createExplosion();
                 else {
                     delete = true;
-                    Game.getGameRoot().getChildren().remove(this);
+                    Game.getGameWorld().getGameRoot().getChildren().remove(this);
                 }
                 return;
             }

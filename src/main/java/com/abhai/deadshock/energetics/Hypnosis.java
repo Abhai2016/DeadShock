@@ -22,17 +22,17 @@ public class Hypnosis {
     public Hypnosis() {
         interval = 0;
         hypnotized = false;
-        setDifficultyLevel();
+        setDifficultyType();
 
         intervalText = new Text(Texts.HYPNOSIS_DURATION);
         intervalText.setFont(Font.font("Aria", 28));
         intervalText.setFill(Color.WHITE);
         intervalText.setVisible(false);
-        Game.getAppRoot().getChildren().add(intervalText);
+        Game.getGameWorld().getAppRoot().getChildren().add(intervalText);
 
         intervalRect = new Rectangle(300, 3, Color.WHITE);
         intervalRect.setVisible(false);
-        Game.getAppRoot().getChildren().add(intervalRect);
+        Game.getGameWorld().getAppRoot().getChildren().add(intervalRect);
     }
 
     public void delete() {
@@ -58,7 +58,6 @@ public class Hypnosis {
         }
         intervalRect.setVisible(true);
 
-
         if (Game.getGameWorld().getLevel().getCurrentLevelNumber() != Level.BOSS_LEVEL) {
             intervalText.setTranslateX(Game.SCENE_WIDTH / 2 - intervalRect.getWidth() / 2 + 25);
             intervalText.setTranslateY(30);
@@ -69,7 +68,7 @@ public class Hypnosis {
         intervalText.setVisible(true);
     }
 
-    protected void setDifficultyLevel() {
+    protected void setDifficultyType() {
         switch (Game.getGameWorld().getDifficultyType()) {
             case DifficultyType.MARIK -> maxInterval = 550;
             case DifficultyType.EASY -> maxInterval = 450;

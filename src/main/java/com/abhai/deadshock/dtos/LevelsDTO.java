@@ -21,20 +21,4 @@ public class LevelsDTO {
     public String[] getSecondLevel() {
         return secondLevel;
     }
-
-    public void setBossLevel(String[] bossLevel) {
-        this.bossLevel = bossLevel;
-    }
-
-    public void setFirstLevel(String[] firstLevel) {
-        this.firstLevel = firstLevel;
-    }
-
-    public void setThirdLevel(String[] thirdLevel) {
-        this.thirdLevel = thirdLevel;
-    }
-
-    public void setSecondLevel(String[] secondLevel) {
-        this.secondLevel = secondLevel;
-    }
 }

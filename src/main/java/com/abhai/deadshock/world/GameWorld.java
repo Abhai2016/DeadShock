@@ -25,17 +25,18 @@ import com.abhai.deadshock.weapons.Weapon;
 import com.abhai.deadshock.weapons.bullets.EnemyBullet;
 import com.abhai.deadshock.world.levels.Level;
 import javafx.animation.FadeTransition;
+import javafx.scene.layout.Pane;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.util.Duration;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import static com.abhai.deadshock.world.levels.Block.BLOCK_SIZE;
 
 public class GameWorld {
+    private final Pane appRoot;
+    private final Pane gameRoot;
     private MediaView videoView;
     private ArrayList<Enemy> enemies;
     private ArrayList<Supply> supplies;
@@ -56,8 +57,10 @@ public class GameWorld {
     private boolean active;
     private DifficultyType difficultyType;
 
-    public GameWorld() {
-
+    public GameWorld(Pane appRoot) {
+        gameRoot = new Pane();
+        this.appRoot = appRoot;
+        this.appRoot.getChildren().add(gameRoot);
     }
 
     public HUD getHud() {
@@ -78,6 +81,14 @@ public class GameWorld {
 
     public boolean isActive() {
         return active;
+    }
+
+    public Pane getAppRoot() {
+        return appRoot;
+    }
+
+    public Pane getGameRoot() {
+        return gameRoot;
     }
 
     public ArrayList<Enemy> getEnemies() {
@@ -109,14 +120,13 @@ public class GameWorld {
     }
 
     public void deathPause() {
-        booker.stopAnimation();
         active = false;
-        menu.getMusic().pause();
         booker.clear();
+        menu.getMusic().pause();
 
         for (EnemyBullet enemyBullet : enemyBullets)
             enemyBulletsPool.put(enemyBullet);
-        Game.getGameRoot().getChildren().removeAll(enemyBullets);
+        gameRoot.getChildren().removeAll(enemyBullets);
         enemyBullets.clear();
 
         for (Enemy enemy : enemies) {
@@ -140,25 +150,22 @@ public class GameWorld {
         booker = new Booker();
         booker.setWeapon(new Weapon.Builder());
         booker.setEnergetic(new Energetic.Builder());
-        elizabeth = new Elizabeth();
+        elizabeth = new Elizabeth(true);
     }
 
     public void newGameReset() {
         clearData(false);
 
-        if (level.getCurrentLevelNumber() > Level.FIRST_LEVEL) {
-            Path savesPath = Paths.get("resources", "data", "saves.dat");
-            if (savesPath.toFile().exists())
-                savesPath.toFile().delete();
-        }
+        if (level.getCurrentLevelNumber() > Level.FIRST_LEVEL)
+            Game.getSaveManager().deleteSaves();
 
         level.setCurrentLevelNumber(Level.FIRST_LEVEL);
+        elizabeth.reset(true);
+        vendingMachine.changeLevel();
         level.changeLevel();
         createEnemies();
         booker.reset();
-        Tutorial.reset();
-        elizabeth.reset();
-        vendingMachine.initializePosition();
+        Tutorial.changeLevel();
     }
 
     public void playCutscene() {
@@ -169,7 +176,7 @@ public class GameWorld {
         Game.timer.stop();
         menu.getMusic().pause();
         clearData(false);
-        Game.getAppRoot().getChildren().add(videoView);
+        appRoot.getChildren().add(videoView);
 
         FadeTransition ft = new FadeTransition(Duration.seconds(1), videoView);
         ft.setFromValue(0);
@@ -201,12 +208,12 @@ public class GameWorld {
         booker.setTranslateY(500);
         clearData(true);
         elizabeth.setTranslateX(100);
-
         level.setCurrentLevelNumber(level.getCurrentLevelNumber() + 1);
+
         Tutorial.delete();
         level.changeLevel();
         booker.changeLevel();
-        Game.getAppRoot().getChildren().remove(vendingMachine);
+        vendingMachine.changeLevel();
 
         Game.getSaveManager().saveProgress();
         Game.getSaveManager().saveMenuOptions();
@@ -214,12 +221,12 @@ public class GameWorld {
 
     public void deathUnpause() {
         active = true;
+        gameRoot.setLayoutX(0);
         menu.getMusic().play();
-
-        Game.getGameRoot().setLayoutX(0);
-        if (level.getCurrentLevelNumber() > Level.FIRST_LEVEL)
-            elizabeth.resetAfterBookersDeath();
         level.setBackgroundLayoutX(0);
+
+        if (level.getCurrentLevelNumber() > Level.FIRST_LEVEL)
+            elizabeth.reset(false);
     }
 
     private void createEnemies() {
@@ -241,24 +248,20 @@ public class GameWorld {
             }
     }
 
-    public void setDifficultyLevel() {
+    public void setDifficultyType() {
         for (EnemyBullet enemyBullet : enemyBulletsPool.getAll())
-            enemyBullet.setDifficultyLevel();
-        hud.setDifficultyLevel();
-        booker.setDifficultyLevel();
+            enemyBullet.setDifficultyType();
+        hud.setDifficultyType();
+        booker.setDifficultyType();
     }
 
     private void updateCacheableData() {
         for (Enemy enemy : enemies) {
             enemy.update();
-
-            if (enemy instanceof Boss boss && level.getCurrentLevelNumber() == Level.THIRD_LEVEL && booker.getTranslateX() > BLOCK_SIZE * 285)
-                boss.checkOnLevelChange();
-
             if (enemy.isToDelete()) {
                 enemyPools.put(enemy);
                 enemies.remove(enemy);
-                Game.getGameRoot().getChildren().remove(enemy);
+                gameRoot.getChildren().remove(enemy);
                 break;
             }
         }
@@ -268,7 +271,7 @@ public class GameWorld {
             if (enemyBullet.isDelete()) {
                 enemyBullets.remove(enemyBullet);
                 enemyBulletsPool.put(enemyBullet);
-                Game.getGameRoot().getChildren().remove(enemyBullet);
+                gameRoot.getChildren().remove(enemyBullet);
                 break;
             }
         }
@@ -278,7 +281,7 @@ public class GameWorld {
             if (supply.isDelete()) {
                 supplyPool.put(supply);
                 supplies.remove(supply);
-                Game.getGameRoot().getChildren().remove(supply);
+                gameRoot.getChildren().remove(supply);
                 break;
             }
         }
@@ -286,55 +289,54 @@ public class GameWorld {
 
     public SavesDTO generateSavesDTO() {
         SavesDTO savesDTO = new SavesDTO();
+        savesDTO.setSalt(booker.getSalt());
+        savesDTO.setMoney(booker.getMoney());
         savesDTO.setDifficultyType(difficultyType);
         savesDTO.setLevelNumber(level.getCurrentLevelNumber());
-        savesDTO.setMoney(booker.getMoney());
-        savesDTO.setSalt(booker.getSalt());
 
         switch (booker.getWeapon().getType()) {
             case WeaponType.PISTOL -> {
+                savesDTO.setRpgBullets(booker.getWeapon().getRpgBullets());
                 savesDTO.setPistolBullets(booker.getWeapon().getCurrentBullets());
                 savesDTO.setMachineGunBullets(booker.getWeapon().getMachineGunBullets());
-                savesDTO.setRpgBullets(booker.getWeapon().getRpgBullets());
             }
             case WeaponType.MACHINE_GUN -> {
+                savesDTO.setRpgBullets(booker.getWeapon().getRpgBullets());
                 savesDTO.setPistolBullets(booker.getWeapon().getPistolBullets());
                 savesDTO.setMachineGunBullets(booker.getWeapon().getCurrentBullets());
-                savesDTO.setRpgBullets(booker.getWeapon().getRpgBullets());
             }
             case WeaponType.RPG -> {
+                savesDTO.setRpgBullets(booker.getWeapon().getCurrentBullets());
                 savesDTO.setPistolBullets(booker.getWeapon().getPistolBullets());
                 savesDTO.setMachineGunBullets(booker.getWeapon().getMachineGunBullets());
-                savesDTO.setRpgBullets(booker.getWeapon().getCurrentBullets());
             }
         }
 
-        savesDTO.setCanChoosePistol(booker.getWeapon().isCanChoosePistol());
-        savesDTO.setCanChooseMachineGun(booker.getWeapon().isCanChooseMachineGun());
         savesDTO.setCanChooseRPG(booker.getWeapon().isCanChooseRpg());
-        savesDTO.setCanChooseDevilKiss(booker.getEnergetic().canChooseDevilKiss());
-        savesDTO.setCanChooseElectricity(booker.getEnergetic().canChooseElectricity());
+        savesDTO.setCanChoosePistol(booker.getWeapon().isCanChoosePistol());
         savesDTO.setCanChooseHypnosis(booker.getEnergetic().canChooseHypnosis());
+        savesDTO.setCanChooseDevilKiss(booker.getEnergetic().canChooseDevilKiss());
+        savesDTO.setCanChooseMachineGun(booker.getWeapon().isCanChooseMachineGun());
+        savesDTO.setCanChooseElectricity(booker.getEnergetic().canChooseElectricity());
         return savesDTO;
     }
 
     private void initLevelAfterCutscene() {
         video.stop();
         booker.setCanPlayVoice(true);
-        Game.getAppRoot().getChildren().remove(videoView);
+        appRoot.getChildren().remove(videoView);
 
         level.setCurrentLevelNumber(level.getCurrentLevelNumber() + 1);
-        createEnemies();
-        level.changeLevel();
         booker.changeLevel();
-        Tutorial.delete();
+        level.changeLevel();
+        createEnemies();
 
         active = true;
-        Tutorial.init();
-        elizabeth.init();
         Game.timer.start();
+        Tutorial.changeLevel();
         menu.getMusic().play();
-        vendingMachine.initializePosition();
+        elizabeth.changeLevel();
+        vendingMachine.changeLevel();
 
         Game.getSaveManager().saveProgress();
         Game.getSaveManager().saveMenuOptions();
@@ -348,7 +350,7 @@ public class GameWorld {
             else
                 boss = (Boss) enemy;
         }
-        Game.getGameRoot().getChildren().removeAll(enemies);
+        gameRoot.getChildren().removeAll(enemies);
         enemies.clear();
 
         if (boss != null) {
@@ -360,18 +362,19 @@ public class GameWorld {
 
         for (Supply supply : supplies)
             supplyPool.put(supply);
-        Game.getGameRoot().getChildren().removeAll(supplies);
+        gameRoot.getChildren().removeAll(supplies);
         supplies.clear();
 
         for (EnemyBullet enemyBullet : enemyBullets)
             enemyBulletsPool.put(enemyBullet);
-        Game.getGameRoot().getChildren().removeAll(enemyBullets);
+        gameRoot.getChildren().removeAll(enemyBullets);
         enemyBullets.clear();
 
         booker.clear();
-        Game.getGameRoot().setLayoutX(0);
+        gameRoot.setLayoutX(0);
         Controller.keys.clear();
         level.setBackgroundLayoutX(0);
+        elizabeth.reset(false);
     }
 
     private void initSavedGame(SavesDTO savesDTO) {
@@ -398,8 +401,7 @@ public class GameWorld {
         booker.setSalt(savesDTO.getSalt());
         booker.setWeapon(weaponBuilder);
         booker.setEnergetic(energeticBuilder);
-
-        elizabeth = new Elizabeth();
+        elizabeth = new Elizabeth(false);
     }
 
     public MenuOptionsDTO generateMenuOptionsDTO() {
@@ -435,8 +437,8 @@ public class GameWorld {
         enemyPools.register(Comstock.class, Comstock::new, 15, 20);
         booker.translateXProperty().addListener(((observable, oldValue, newValue) -> {
             int offset = newValue.intValue();
-            if (offset > 600 && offset < Game.getGameRoot().getWidth() - 680) {
-                Game.getGameRoot().setLayoutX(-(offset - 600));
+            if (offset > 600 && offset < gameRoot.getWidth() - 680) {
+                gameRoot.setLayoutX(-(offset - 600));
                 level.setBackgroundLayoutX((offset - 600) / 1.5);
             }
         }));
@@ -452,7 +454,6 @@ public class GameWorld {
         Supply supply = supplyPool.get();
         supply.init(type, x, y);
         supplies.add(supply);
-        Game.getGameRoot().getChildren().add(supply);
     }
 
     public void initializeMenuOptions(MenuOptionsDTO menuOptionsDTO) {

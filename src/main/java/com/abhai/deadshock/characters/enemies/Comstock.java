@@ -90,11 +90,10 @@ public class Comstock extends Enemy implements Animatable {
     }
 
     private void moveY() {
-        if (velocity.getY() < GRAVITY) {
+        if (velocity.getY() < GRAVITY)
             velocity = velocity.add(0, ANIMATION_SPEED);
-        } else {
+        else
             booleanVelocity = true;
-        }
 
         if (getTranslateY() > Game.SCENE_HEIGHT) {
             toDelete = true;
@@ -165,8 +164,7 @@ public class Comstock extends Enemy implements Animatable {
         switch ((int) (Math.random() * 10)) {
             case 0 -> GameMedia.CAN_YOU_SHOOT.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             case 1 -> GameMedia.DIE_ALREADY.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-            case 2 ->
-                    GameMedia.DONT_SPARE_BULLETS.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 2 -> GameMedia.DONT_SPARE_BULLETS.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             case 3 -> GameMedia.KEEP_SHOOTING_2.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             case 4 -> GameMedia.KILL_ME.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             case 5 -> GameMedia.ALL_YOU_CAN.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
@@ -180,7 +178,6 @@ public class Comstock extends Enemy implements Animatable {
 
     private void cannotSeeBooker() {
         stopAnimation();
-
         if (canSeeBooker)
             losingBooker();
         else

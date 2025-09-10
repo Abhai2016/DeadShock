@@ -64,8 +64,7 @@ public class Controller {
     }
 
     private static void movementListener() {
-        if (isPressed(KeyCode.D) && Game.getGameWorld().getBooker().getTranslateX() <
-                Game.getGameRoot().getWidth() - Game.getGameWorld().getBooker().getWidth()) {
+        if (isPressed(KeyCode.D) && Game.getGameWorld().getBooker().getTranslateX() < Game.getGameWorld().getGameRoot().getWidth() - Game.getGameWorld().getBooker().getWidth()) {
             Game.getGameWorld().getBooker().moveX(Character.SPEED);
             Game.getGameWorld().getBooker().setScaleX(1);
         }
@@ -86,8 +85,7 @@ public class Controller {
             Game.getGameWorld().getBooker().getEnergetic().setCanChangeEnergetic(true);
         if (!isPressed(KeyCode.L))
             Game.getGameWorld().getBooker().getEnergetic().setCanShoot(true);
-        if (isPressed(KeyCode.L) && !Game.getGameWorld().getBooker().isHypnotized() &&
-                Game.getGameWorld().getBooker().getSalt() >= Game.getGameWorld().getBooker().getEnergetic().getSaltPrice())
+        if (isPressed(KeyCode.L) && !Game.getGameWorld().getBooker().isHypnotized() && Game.getGameWorld().getBooker().getSalt() >= Game.getGameWorld().getBooker().getEnergetic().getSaltPrice())
             Game.getGameWorld().getBooker().getEnergetic().shoot();
     }
 
@@ -97,8 +95,7 @@ public class Controller {
                 Game.getGameWorld().getBooker().getWeapon().pickUpWeapon();
             else if (Game.getGameWorld().getBooker().getBoundsInParent().intersects(Game.getGameWorld().getBooker().getEnergetic().getBoundsInParent()))
                 Game.getGameWorld().getBooker().getEnergetic().pickUp();
-            else if (Game.getGameWorld().getBooker().getBoundsInParent().intersects(Game.getGameWorld()
-                    .getVendingMachine().getVendingMachineImage().getBoundsInParent()) && !Game.getGameWorld().getVendingMachine().isShown())
+            else if (Game.getGameWorld().getBooker().getBoundsInParent().intersects(Game.getGameWorld().getVendingMachine().getVendingMachineImage().getBoundsInParent()) && !Game.getGameWorld().getVendingMachine().isShown())
                 Game.getGameWorld().getVendingMachine().openMenu();
         if (isPressed(KeyCode.G)) {
             keys.remove(KeyCode.G);

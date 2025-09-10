@@ -46,10 +46,10 @@ public class VendingMachine extends Pane {
     private ImageView vendingMachineMenuImage;
 
     public VendingMachine() {
-        isShown = false;
-        initializeImages();
-        initializePosition();
         purchaseType = PurchaseType.BIG_MEDICINE;
+        initializeImages();
+        isShown = false;
+        changeLevel();
     }
 
     public void openMenu() {
@@ -81,6 +81,29 @@ public class VendingMachine extends Pane {
         fadeTransition.setByValue(1);
         fadeTransition.setToValue(0);
         fadeTransition.play();
+    }
+
+    public void changeLevel() {
+        switch (Game.getGameWorld().getLevel().getCurrentLevelNumber()) {
+            case Level.FIRST_LEVEL -> {
+                vendingMachineImage.setTranslateX(FIRST_LEVEL_X);
+                vendingMachineImage.setTranslateY(FIRST_LEVEL_Y);
+                vendingMachineMenuImage.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
+            }
+            case Level.SECOND_LEVEL -> {
+                vendingMachineImage.setTranslateX(SECOND_LEVEL_X);
+                vendingMachineImage.setTranslateY(SECOND_LEVEL_Y);
+                vendingMachineMenuImage.setViewport(new Rectangle2D(WIDTH, 0, WIDTH, HEIGHT));
+            }
+            case Level.THIRD_LEVEL -> {
+                vendingMachineImage.setTranslateX(THIRD_LEVEL_X);
+                vendingMachineImage.setTranslateY(THIRD_LEVEL_Y);
+                vendingMachineMenuImage.setViewport(new Rectangle2D(920, 0, 920, 597));
+            }
+            case Level.BOSS_LEVEL -> Game.getGameWorld().getGameRoot().getChildren().remove(this);
+        }
+        if (!Game.getGameWorld().getGameRoot().getChildren().contains(this) && Game.getGameWorld().getLevel().getCurrentLevelNumber() != Level.BOSS_LEVEL)
+            Game.getGameWorld().getGameRoot().getChildren().add(this);
     }
 
     public void makePurchase() {
@@ -170,29 +193,7 @@ public class VendingMachine extends Pane {
         fadeTransition.play();
 
         getChildren().add(vendingMachineImage);
-        Game.getAppRoot().getChildren().add(vendingMachineMenuImage);
-    }
-
-    public void initializePosition() {
-        switch (Game.getGameWorld().getLevel().getCurrentLevelNumber()) {
-            case Level.FIRST_LEVEL -> {
-                vendingMachineImage.setTranslateX(FIRST_LEVEL_X);
-                vendingMachineImage.setTranslateY(FIRST_LEVEL_Y);
-                vendingMachineMenuImage.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
-            }
-            case Level.SECOND_LEVEL -> {
-                vendingMachineImage.setTranslateX(SECOND_LEVEL_X);
-                vendingMachineImage.setTranslateY(SECOND_LEVEL_Y);
-                vendingMachineMenuImage.setViewport(new Rectangle2D(WIDTH, 0, WIDTH, HEIGHT));
-            }
-            case Level.THIRD_LEVEL -> {
-                vendingMachineImage.setTranslateX(THIRD_LEVEL_X);
-                vendingMachineImage.setTranslateY(THIRD_LEVEL_Y);
-                vendingMachineMenuImage.setViewport(new Rectangle2D(920, 0, 920, 597));
-            }
-        }
-        if (!Game.getGameRoot().getChildren().contains(this) && Game.getGameWorld().getLevel().getCurrentLevelNumber() != Level.BOSS_LEVEL)
-            Game.getGameRoot().getChildren().add(this);
+        Game.getGameWorld().getAppRoot().getChildren().add(vendingMachineMenuImage);
     }
 
     public boolean isShown() {
@@ -235,7 +236,6 @@ public class VendingMachine extends Pane {
                 vendingMachineMenuImage.setViewport(new Rectangle2D(xOffset, 2388, 920, 597));
             }
         });
-
         if (xOffset == WIDTH)
             machineGunBulletsButton.setOnMouseClicked(event -> {
                 if (isShown) {
@@ -251,7 +251,7 @@ public class VendingMachine extends Pane {
         button.setTranslateY(y);
         button.setPrefWidth(BUTTON_WIDTH);
         button.setPrefHeight(BUTTON_HEIGHT);
-        Game.getAppRoot().getChildren().add(button);
+        Game.getGameWorld().getAppRoot().getChildren().add(button);
         button.setTranslateX(vendingMachineMenuImage.getTranslateX() + 136);
     }
 

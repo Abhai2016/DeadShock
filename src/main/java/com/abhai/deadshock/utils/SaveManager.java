@@ -22,10 +22,14 @@ public class SaveManager {
         mapper = new ObjectMapper();
     }
 
+    public void deleteSaves() {
+        if (SAVES_PATH.toFile().exists())
+            SAVES_PATH.toFile().delete();
+    }
+
     public void saveProgress() {
         try (FileWriter fileWriter = new FileWriter(SAVES_PATH.toFile())) {
-            if (SAVES_PATH.toFile().exists())
-                SAVES_PATH.toFile().delete();
+            deleteSaves();
 
             if (!SAVES_PATH.toFile().exists())
                 SAVES_PATH.toFile().createNewFile();
