@@ -82,7 +82,7 @@ public class Texts {
     public static final String YOU_ARE_DEAD = "Вы мертвы!";
     public static final String GAME_OVER = "Игра окончена!";
     public static final String BOSS_NAME = "Большой папочка";
-    public static final String WITH_EACH_DEATH_YOU_LOSE = "  С каждой смертью вы теряете ";
+    public static final String WITH_EACH_DEATH_YOU_LOSE_MONEY = "  С каждой смертью вы теряете ";
     public static final String NO_MONEY_NO_GAME = " монет, если\nваши монеты закончатся - игра будет окончена!";
     public static final String PUSH_ENTER_TO_START_LEVEL_AGAIN = "Для того, что начать уровень заново нажмите ввод";
 

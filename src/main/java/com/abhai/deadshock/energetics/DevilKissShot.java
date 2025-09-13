@@ -3,7 +3,6 @@ package com.abhai.deadshock.energetics;
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.types.BlockType;
-import com.abhai.deadshock.types.EnemyType;
 import com.abhai.deadshock.utils.SpriteAnimation;
 import com.abhai.deadshock.world.levels.Block;
 import javafx.geometry.Rectangle2D;
@@ -23,8 +22,7 @@ class DevilKissShot extends Pane {
 
     DevilKissShot() {
         toDelete = false;
-        ImageView imageView = new ImageView(new Image(
-                Paths.get("resources", "images", "energetics", "devilKissShot.png").toUri().toString()));
+        ImageView imageView = new ImageView(new Image(Paths.get("resources", "images", "energetics", "devilKissShot.png").toUri().toString()));
         imageView.setViewport(new Rectangle2D(0, 0, 64, 30));
         getChildren().add(imageView);
         animation = new SpriteAnimation(imageView, Duration.seconds(0.5), 8, 8, 0, 0, 64, 30);
@@ -62,12 +60,10 @@ class DevilKissShot extends Pane {
 
     private void intersectsWithEnemies() {
         for (Enemy enemy : Game.getGameWorld().getEnemies())
-            if (getBoundsInParent().intersects(enemy.getBoundsInParent()))
-                if (enemy.getType() == EnemyType.BOSS) {
-                    enemy.setHP(enemy.getHP() - Game.getGameWorld().getBooker().getWeapon().getRpgDamage());
-                    toDelete = true;
-                } else
-                    enemy.setHP(0);
+            if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
+                enemy.setHP(enemy.getHP() - Game.getGameWorld().getBooker().getWeapon().getRpgDamage());
+                toDelete = true;
+            }
     }
 
     public boolean isToDelete() {

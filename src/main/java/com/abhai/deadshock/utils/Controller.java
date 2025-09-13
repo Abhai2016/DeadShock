@@ -5,6 +5,7 @@ import com.abhai.deadshock.characters.Character;
 import com.abhai.deadshock.types.WeaponType;
 import com.abhai.deadshock.world.levels.Level;
 import javafx.scene.input.KeyCode;
+import javafx.scene.media.MediaPlayer;
 
 import java.util.HashMap;
 
@@ -12,10 +13,7 @@ public class Controller {
     public static HashMap<KeyCode, Boolean> keys = new HashMap<>();
 
     public static void update() {
-        menuListener();
-
-        if (!isPressed(KeyCode.A) && !isPressed(KeyCode.D))
-            Game.getGameWorld().getBooker().setIdleAnimation();
+        gameListener();
 
         if (Game.getGameWorld().isActive() && !Game.getGameWorld().getBooker().isHypnotized()) {
             weaponListener();
@@ -25,24 +23,40 @@ public class Controller {
         }
     }
 
-    private static void menuListener() {
+    private static void gameListener() {
+        if (!isPressed(KeyCode.A) && !isPressed(KeyCode.D))
+            Game.getGameWorld().getBooker().setIdleAnimation();
+
         if (isPressed(KeyCode.ESCAPE)) {
             keys.remove(KeyCode.ESCAPE);
-            if (Game.getGameWorld().getVendingMachine().isShown())
-                Game.getGameWorld().getVendingMachine().hideMenu();
-            else if (Game.getGameWorld().getMenu().isShown())
-                Game.getGameWorld().getMenu().hideMenu();
-            else
-                Game.getGameWorld().getMenu().showMenu();
+            if (!Game.getGameWorld().getBooker().isDead()) {
+                if (Game.getGameWorld().getVideo().getStatus() == MediaPlayer.Status.PLAYING)
+                    Game.getGameWorld().initLevelAfterCutscene();
+                if (Game.getGameWorld().getVendingMachine().isShown())
+                    Game.getGameWorld().getVendingMachine().hideMenu();
+                else if (Game.getGameWorld().getMenu().isShown())
+                    Game.getGameWorld().getMenu().hideMenu();
+                else
+                    Game.getGameWorld().getMenu().showMenu();
+            }
             return;
         }
 
         if (isPressed(KeyCode.ENTER)) {
             keys.remove(KeyCode.ENTER);
-            if (Game.getGameWorld().getVendingMachine().isShown())
-                Game.getGameWorld().getVendingMachine().makePurchase();
-            else if (Game.getGameWorld().getMenu().isCoverShown())
-                Game.getGameWorld().getMenu().hideCover();
+            if (Game.getGameWorld().getBooker().isDead()) {
+                if (Game.getGameWorld().getBooker().isGameOver())
+                    Game.getGameWorld().getBooker().newGame();
+                else if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.FIRST_LEVEL)
+                    Game.getGameWorld().getBooker().deathReset();
+            } else {
+                if (Game.getGameWorld().getVendingMachine().isShown())
+                    Game.getGameWorld().getVendingMachine().makePurchase();
+                if (Game.getGameWorld().getMenu().isCoverShown())
+                    Game.getGameWorld().getMenu().hideCover();
+                if (Game.getGameWorld().getVideo().getStatus() == MediaPlayer.Status.PLAYING)
+                    Game.getGameWorld().initLevelAfterCutscene();
+            }
         }
     }
 
@@ -100,12 +114,6 @@ public class Controller {
         if (isPressed(KeyCode.G)) {
             keys.remove(KeyCode.G);
             Game.getGameWorld().getMenu().checkMusic();
-        }
-        if (isPressed(KeyCode.ESCAPE) || isPressed(KeyCode.ENTER) || isPressed(KeyCode.SPACE) && Game.getGameWorld().getBooker().isDead()) {
-            if (Game.getGameWorld().getBooker().isGameOver())
-                Game.getGameWorld().getBooker().newGame();
-            else if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.FIRST_LEVEL)
-                Game.getGameWorld().getBooker().deathReset();
         }
     }
 

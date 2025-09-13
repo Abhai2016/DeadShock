@@ -91,6 +91,10 @@ public class GameWorld {
         return gameRoot;
     }
 
+    public MediaPlayer getVideo() {
+        return video;
+    }
+
     public ArrayList<Enemy> getEnemies() {
         return enemies;
     }
@@ -173,7 +177,6 @@ public class GameWorld {
         booker.setTranslateY(500);
 
         active = false;
-        Game.timer.stop();
         menu.getMusic().pause();
         clearData(false);
         appRoot.getChildren().add(videoView);
@@ -321,7 +324,7 @@ public class GameWorld {
         return savesDTO;
     }
 
-    private void initLevelAfterCutscene() {
+    public void initLevelAfterCutscene() {
         video.stop();
         booker.setCanPlayVoice(true);
         appRoot.getChildren().remove(videoView);
@@ -332,7 +335,6 @@ public class GameWorld {
         createEnemies();
 
         active = true;
-        Game.timer.start();
         Tutorial.changeLevel();
         menu.getMusic().play();
         elizabeth.changeLevel();

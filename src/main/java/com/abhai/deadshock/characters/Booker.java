@@ -309,7 +309,7 @@ public class Booker extends Character implements Animatable {
         continueText.setTranslateY(Game.SCENE_HEIGHT / 2 + 40);
         continueText.setFont(Font.font("Arial", FontWeight.BOLD, 28));
 
-        moneyText = new Text(Texts.WITH_EACH_DEATH_YOU_LOSE + priceForGeneration + Texts.NO_MONEY_NO_GAME);
+        moneyText = new Text();
         moneyText.setFill(Color.RED);
         moneyText.setTranslateX(Game.SCENE_WIDTH / 4);
         moneyText.setTranslateY(Game.SCENE_HEIGHT / 1.5 - 30);
@@ -433,6 +433,7 @@ public class Booker extends Character implements Animatable {
         weapon.setDifficultyType();
         energetic.setDifficultyType();
         Game.getGameWorld().getHud().updateMoneyTextPosition();
+        moneyText.setText(Texts.WITH_EACH_DEATH_YOU_LOSE_MONEY + priceForGeneration + Texts.NO_MONEY_NO_GAME);
     }
 
     public void jump(boolean enemyJump) {

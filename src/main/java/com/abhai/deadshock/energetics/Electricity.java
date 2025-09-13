@@ -15,7 +15,7 @@ import javafx.util.Duration;
 import java.nio.file.Paths;
 
 class Electricity extends Pane {
-    private static final int LIFE_INTERVAL = 550;
+    private static final int LIFE_INTERVAL = 250;
 
     private int interval;
     private boolean active;
