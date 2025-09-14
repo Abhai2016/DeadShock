@@ -70,8 +70,6 @@ public class Weapon extends Pane {
     private static final int FULL_MACHINE_GUN_CLIP = 30;
     private static final int MACHINE_GUN_SHOOT_INTERVAL = 5;
     private static final int START_MACHINE_GUN_BULLETS = 120;
-    private static final Image RPG_IMAGE = new Image(Paths.get("resources", "images", "weapons", "rpg.png").toUri().toString());
-    private static final Image WEAPON_IMAGE = new Image(Paths.get("resources", "images", "weapons", "weapons.png").toUri().toString());
 
     private WeaponType type;
     private ImageView imageView;
@@ -127,7 +125,7 @@ public class Weapon extends Pane {
         bullets = new ArrayList<>();
         pistolClip = FULL_PISTOL_CLIP;
         machineGunClip = FULL_MACHINE_GUN_CLIP;
-        imageView = new ImageView(WEAPON_IMAGE);
+        imageView = new ImageView(new Image(Paths.get("resources", "images", "weapons", "weapons.png").toUri().toString()));
         bulletsPool = new ObjectPool<>(Bullet::new, 50, 150);
 
         switch (Game.getGameWorld().getLevel().getCurrentLevelNumber()) {
@@ -158,9 +156,9 @@ public class Weapon extends Pane {
                     currentClip = pistolClip;
                     currentBullets = pistolBullets;
                 }
-                imageView.setImage(RPG_IMAGE);
                 setTranslateX(BLOCK_SIZE * 24);
                 setTranslateY(BLOCK_SIZE * 12 - 20);
+                imageView.setViewport(new Rectangle2D(680, 80, 65, 18));
                 Game.getGameWorld().getBooker().changeWeaponAnimation(type);
             }
             case Level.BOSS_LEVEL -> {
@@ -204,7 +202,6 @@ public class Weapon extends Pane {
 
         type = WeaponType.NO_GUN;
         setTranslateX(BLOCK_SIZE * 38);
-        imageView.setImage(WEAPON_IMAGE);
         setTranslateY(BLOCK_SIZE * 12 - 18);
         imageView.setViewport(new Rectangle2D(265, 88, 33, 18));
 
@@ -293,9 +290,9 @@ public class Weapon extends Pane {
             setTranslateY(BLOCK_SIZE * 12 - 20);
             imageView.setViewport(new Rectangle2D(400, 80, 56, 18));
         } else if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.THIRD_LEVEL) {
-            imageView.setImage(RPG_IMAGE);
             setTranslateX(BLOCK_SIZE * 24);
             setTranslateY(BLOCK_SIZE * 12 - 20);
+            imageView.setViewport(new Rectangle2D(680, 80, 65, 18));
         }
         if (!Game.getGameWorld().getGameRoot().getChildren().contains(this))
             Game.getGameWorld().getGameRoot().getChildren().add(this);

@@ -399,9 +399,9 @@ public class GameWorld {
                 .canChooseHypnosis(savesDTO.isCanChooseHypnosis());
 
         booker = new Booker();
-        booker.setMoney(savesDTO.getMoney());
-        booker.setSalt(savesDTO.getSalt());
         booker.setWeapon(weaponBuilder);
+        booker.setSalt(savesDTO.getSalt());
+        booker.setMoney(savesDTO.getMoney());
         booker.setEnergetic(energeticBuilder);
         elizabeth = new Elizabeth(false);
     }
@@ -482,7 +482,8 @@ public class GameWorld {
             if (level.getCurrentLevelNumber() > Level.FIRST_LEVEL)
                 elizabeth.update();
 
-            if (booker.getTranslateX() > BLOCK_SIZE * 295)
+            if (level.getCurrentLevelNumber() == Level.FIRST_LEVEL && booker.getTranslateX() > BLOCK_SIZE * 295
+                    || level.getCurrentLevelNumber() == Level.SECOND_LEVEL && booker.getTranslateX() > BLOCK_SIZE * 287)
                 playCutscene();
         }
     }

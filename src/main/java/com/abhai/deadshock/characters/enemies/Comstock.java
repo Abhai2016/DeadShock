@@ -84,7 +84,7 @@ public class Comstock extends Enemy implements Animatable {
         toDelete = true;
         stopAnimation();
         playDeathVoice();
-        if (Math.random() < 0.5)
+        if (Math.random() < 0.75)
             Game.getGameWorld().createSupply(getSupplyType(), getTranslateX(), getTranslateY());
         Game.getGameWorld().getBooker().addMoneyForKillingEnemy();
     }

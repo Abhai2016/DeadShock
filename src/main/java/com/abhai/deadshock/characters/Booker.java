@@ -170,7 +170,7 @@ public class Booker extends Character implements Animatable {
         Hp = 100;
         salt = 100;
         setTranslateX(100);
-        setTranslateY(200);
+        setTranslateY(500);
     }
 
     private void behave() {

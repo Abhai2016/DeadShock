@@ -37,7 +37,7 @@ public class Camper extends Enemy {
     private void die() {
         toDelete = true;
         playDeathVoice();
-        if (Math.random() < 0.5)
+        if (Math.random() < 0.75)
             Game.getGameWorld().createSupply(getSupplyType(), getTranslateX(), getTranslateY());
         Game.getGameWorld().getBooker().addMoneyForKillingEnemy();
     }

@@ -27,8 +27,9 @@ public class Level {
     private static final Path THIRD_LEVEL_IMAGE_PATH = Paths.get("resources", "images", "levels", "backgrounds", "thirdLevel.jpg");
     private static final Path BOSS_LEVEL_IMAGE_PATH = Paths.get("resources", "images", "levels", "backgrounds", "bossLevel.jpg");
 
-    private ImageView statue;
     private int currentLevelNumber;
+    private final ImageView statue;
+    private final ImageView airship;
     private final ImageView background;
     private final ArrayList<Block> blocks;
     private final ObjectPool<Block> blockPool;
@@ -37,20 +38,25 @@ public class Level {
         blocks = new ArrayList<>();
         background = new ImageView();
         this.currentLevelNumber = currentLevelNumber;
+        Game.getGameWorld().getGameRoot().getChildren().add(background);
         blockPool = new ObjectPool<>(Block::new, 350, 500);
 
-        initializeBackground();
-        Game.getGameWorld().getGameRoot().getChildren().add(background);
-        if (currentLevelNumber == FIRST_LEVEL && !Game.getGameWorld().getGameRoot().getChildren().contains(statue))
-            Game.getGameWorld().getGameRoot().getChildren().add(statue);
+        statue = new ImageView(new Image(Paths.get("resources", "images", "levels", "statue.png").toUri().toString()));
+        statue.setTranslateX(BLOCK_SIZE * 300 - statue.getImage().getWidth());
+        Game.getGameWorld().getGameRoot().getChildren().add(statue);
+        statue.setVisible(false);
 
+        airship = new ImageView(new Image(Paths.get("resources", "images", "levels", "airship.png").toUri().toString()));
+        airship.setTranslateX(BLOCK_SIZE * 300 - airship.getImage().getWidth());
+        Game.getGameWorld().getGameRoot().getChildren().add(airship);
+        airship.setVisible(false);
+
+        initializeBackground();
         createLevel();
     }
 
     public void changeLevel() {
         initializeBackground();
-        if (currentLevelNumber == FIRST_LEVEL && !Game.getGameWorld().getGameRoot().getChildren().contains(statue))
-            Game.getGameWorld().getGameRoot().getChildren().add(statue);
         createLevel();
     }
 
@@ -98,28 +104,32 @@ public class Level {
         blocks.clear();
     }
 
+    public int getCurrentLevelNumber() {
+        return currentLevelNumber;
+    }
+
     private void initializeBackground() {
         switch (currentLevelNumber) {
             case FIRST_LEVEL -> {
                 background.setImage(new Image(FIRST_LEVEL_IMAGE_PATH.toUri().toString()));
-                statue = new ImageView(new Image(Paths.get("resources", "images", "levels", "statue.jpg").toUri().toString()));
-                statue.setTranslateX(BLOCK_SIZE * 300 - statue.getImage().getWidth());
+                airship.setVisible(false);
+                statue.setVisible(true);
             }
             case SECOND_LEVEL -> {
                 background.setImage(new Image(SECOND_LEVEL_IMAGE_PATH.toUri().toString()));
-                Game.getGameWorld().getGameRoot().getChildren().remove(statue);
+                statue.setVisible(false);
+                airship.setVisible(true);
             }
-            case THIRD_LEVEL -> background.setImage(new Image(THIRD_LEVEL_IMAGE_PATH.toUri().toString()));
+            case THIRD_LEVEL -> {
+                background.setImage(new Image(THIRD_LEVEL_IMAGE_PATH.toUri().toString()));
+                airship.setVisible(false);
+            }
             case BOSS_LEVEL -> background.setImage(new Image(BOSS_LEVEL_IMAGE_PATH.toUri().toString()));
         }
     }
 
     public ArrayList<Block> getBlocks() {
         return blocks;
-    }
-
-    public int getCurrentLevelNumber() {
-        return currentLevelNumber;
     }
 
     public void setBackgroundLayoutX(double x) {
