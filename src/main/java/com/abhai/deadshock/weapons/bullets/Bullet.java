@@ -24,7 +24,8 @@ public class Bullet extends Pane {
 
     private WeaponType type;
     private boolean exploding;
-    private boolean bossDamagedByRPG;
+    private boolean bossDamagedByRpg;
+    private boolean bookerDamagedByRpg;
     private final ImageView bulletImageView;
     private final ImageView explosionImageView;
     private final SpriteAnimation explosionAnimation;
@@ -40,7 +41,7 @@ public class Bullet extends Pane {
         explosionImageView = new ImageView(new Image(Paths.get("resources", "images", "weapons", "explosion.png").toUri().toString()));
         explosionImageView.setFitWidth(EXPLOSION_SIZE);
         explosionImageView.setFitHeight(EXPLOSION_SIZE);
-        explosionAnimation = new SpriteAnimation(explosionImageView, Duration.seconds(1), 16, 4, 0, 0, EXPLOSION_SIZE, EXPLOSION_SIZE);
+        explosionAnimation = new SpriteAnimation(explosionImageView, Duration.seconds(0.8), 16, 4, 0, 0, EXPLOSION_SIZE, EXPLOSION_SIZE);
         explosionAnimation.setCycleCount(1);
     }
 
@@ -67,7 +68,8 @@ public class Bullet extends Pane {
         this.type = type;
         direction = true;
         exploding = false;
-        bossDamagedByRPG = false;
+        bossDamagedByRpg = false;
+        bookerDamagedByRpg = false;
 
         if (Game.getGameWorld().getBooker().getScaleX() < 0) {
             direction = false;
@@ -105,9 +107,9 @@ public class Bullet extends Pane {
                 if (exploding) {
                     if (enemy.getType() != EnemyType.BOSS)
                         enemy.setHP(enemy.getHP() - Game.getGameWorld().getBooker().getWeapon().getRpgDamage());
-                    else if (!bossDamagedByRPG) {
+                    else if (!bossDamagedByRpg) {
                         enemy.setHP(enemy.getHP() - Game.getGameWorld().getBooker().getWeapon().getRpgDamage());
-                        bossDamagedByRPG = true;
+                        bossDamagedByRpg = true;
                     }
                 } else {
                     enemy.playHitVoice();
@@ -148,8 +150,10 @@ public class Bullet extends Pane {
 
     public void update() {
         if (exploding) {
-            if (getBoundsInParent().intersects(Game.getGameWorld().getBooker().getBoundsInParent()))
-                Game.getGameWorld().getBooker().setHp(Game.getGameWorld().getBooker().getHp() - Game.getGameWorld().getBooker().getWeapon().getRpgDamage());
+            if (!bookerDamagedByRpg && getBoundsInParent().intersects(Game.getGameWorld().getBooker().getBoundsInParent())) {
+                bookerDamagedByRpg = true;
+                Game.getGameWorld().getBooker().setHp(Game.getGameWorld().getBooker().getHp() - Game.getGameWorld().getBooker().getWeapon().getBulletDamage());
+            }
             intersectsWithEnemies();
         } else {
             if (direction)

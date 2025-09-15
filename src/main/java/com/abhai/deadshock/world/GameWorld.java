@@ -187,21 +187,13 @@ public class GameWorld {
         ft.play();
 
         switch (level.getCurrentLevelNumber()) {
-            case Level.FIRST_LEVEL -> {
-                video = new MediaPlayer(GameMedia.FIRST_CUTSCENE);
-                video.setOnEndOfMedia(this::initLevelAfterCutscene);
-            }
-            case Level.SECOND_LEVEL -> {
-                video = new MediaPlayer(GameMedia.SECOND_CUTSCENE);
-                video.setOnEndOfMedia(this::initLevelAfterCutscene);
-            }
-            case Level.BOSS_LEVEL -> {
-                video = new MediaPlayer(GameMedia.THIRD_CUTSCENE);
-                video.setOnEndOfMedia(() -> System.exit(0));
-            }
+            case Level.FIRST_LEVEL -> video = new MediaPlayer(GameMedia.FIRST_CUTSCENE);
+            case Level.SECOND_LEVEL -> video = new MediaPlayer(GameMedia.SECOND_CUTSCENE);
+            case Level.BOSS_LEVEL -> video = new MediaPlayer(GameMedia.THIRD_CUTSCENE);
         }
 
         videoView.setMediaPlayer(video);
+        video.setOnEndOfMedia(this::initLevelAfterCutscene);
         videoView.getMediaPlayer().setVolume(menu.getVoiceSlider().getValue() / 100);
         video.play();
     }
@@ -325,6 +317,9 @@ public class GameWorld {
     }
 
     public void initLevelAfterCutscene() {
+        if (level.getCurrentLevelNumber() == Level.BOSS_LEVEL)
+            System.exit(0);
+
         video.stop();
         booker.setCanPlayVoice(true);
         appRoot.getChildren().remove(videoView);
@@ -356,9 +351,10 @@ public class GameWorld {
         enemies.clear();
 
         if (boss != null) {
-            if (forBossLevel)
+            if (forBossLevel) {
                 enemies.add(boss);
-            else
+                gameRoot.getChildren().add(boss);
+            } else
                 boss.deleteHpUi();
         }
 
@@ -448,8 +444,7 @@ public class GameWorld {
         Tutorial.init();
         createEnemies();
         menu = new Menu();
-        if (level.getCurrentLevelNumber() != Level.BOSS_LEVEL)
-            vendingMachine.initializeButtons();
+        vendingMachine.initializeButtons();
     }
 
     public void createSupply(SupplyType type, double x, double y) {

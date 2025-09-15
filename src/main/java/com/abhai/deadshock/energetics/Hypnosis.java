@@ -70,10 +70,10 @@ public class Hypnosis {
 
     protected void setDifficultyType() {
         switch (Game.getGameWorld().getDifficultyType()) {
-            case DifficultyType.MARIK -> maxInterval = 550;
-            case DifficultyType.EASY -> maxInterval = 450;
-            case DifficultyType.MEDIUM -> maxInterval = 350;
-            case DifficultyType.HARD -> maxInterval = 250;
+            case DifficultyType.MARIK -> maxInterval = 350;
+            case DifficultyType.EASY -> maxInterval = 300;
+            case DifficultyType.MEDIUM -> maxInterval = 250;
+            case DifficultyType.HARD -> maxInterval = 200;
             case DifficultyType.HARDCORE -> maxInterval = 150;
         }
     }

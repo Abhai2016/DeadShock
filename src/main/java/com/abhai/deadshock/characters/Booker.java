@@ -53,7 +53,8 @@ public class Booker extends Character implements Animatable {
     private int Hp;
     private int salt;
     private int money;
-    private int livesCount;
+    private int fullLivesCount;
+    private int currentLivesCount;
     private int priceForGeneration;
     private int moneyForKillingEnemy;
     private int bulletsForKillingEnemy;
@@ -91,7 +92,7 @@ public class Booker extends Character implements Animatable {
         Hp = 100;
         money = 0;
         salt = 100;
-        livesCount = 0;
+        currentLivesCount = 0;
         closeCombatDamageToEnemies = 0;
         priceForGeneration = 0;
         moneyForKillingEnemy = 0;
@@ -122,7 +123,7 @@ public class Booker extends Character implements Animatable {
             if (money < priceForGeneration)
                 gameOver();
             else {
-                livesCount--;
+                currentLivesCount--;
                 money -= priceForGeneration;
                 Game.getGameWorld().getHud().updateMoneyTextPosition();
 
@@ -132,7 +133,7 @@ public class Booker extends Character implements Animatable {
                     Game.getGameWorld().getAppRoot().getChildren().add(deathText);
                     if (start)
                         Game.getGameWorld().getAppRoot().getChildren().add(moneyText);
-                    if (livesCount < 0) {
+                    if (currentLivesCount < 0) {
                         continueText.setText(Texts.PUSH_ENTER_TO_START_LEVEL_AGAIN);
                         continueText.setTranslateX(Game.SCENE_WIDTH / 4);
                     } else {
@@ -249,13 +250,14 @@ public class Booker extends Character implements Animatable {
         setTranslateY(200);
         velocity = new Point2D(0, 0);
 
-        if (livesCount < 0) {
+        if (currentLivesCount < 0) {
             salt = 100;
+            currentLivesCount = fullLivesCount;
             switch (Game.getGameWorld().getDifficultyType()) {
-                case DifficultyType.MARIK, DifficultyType.EASY -> livesCount = 4;
-                case DifficultyType.MEDIUM -> livesCount = 2;
-                case DifficultyType.HARD -> livesCount = 1;
-                case DifficultyType.HARDCORE -> livesCount = 0;
+                case DifficultyType.MARIK, DifficultyType.EASY -> currentLivesCount = 4;
+                case DifficultyType.MEDIUM -> currentLivesCount = 2;
+                case DifficultyType.HARD -> currentLivesCount = 1;
+                case DifficultyType.HARDCORE -> currentLivesCount = 0;
             }
             canPlayVoice = true;
             Game.getGameWorld().resetLevel();
@@ -270,6 +272,7 @@ public class Booker extends Character implements Animatable {
     public void changeLevel() {
         weapon.changeLevel();
         energetic.changeLevel();
+        currentLivesCount = fullLivesCount;
     }
 
     public void moveX(double x) {
@@ -383,8 +386,8 @@ public class Booker extends Character implements Animatable {
         int money = 0;
         switch (Game.getGameWorld().getDifficultyType()) {
             case DifficultyType.MARIK -> {
-                livesCount = 4;
                 money = 1000000;
+                fullLivesCount = 4;
                 priceForGeneration = 0;
                 moneyForKillingEnemy = 0;
                 bulletsForKillingEnemy = 30;
@@ -394,43 +397,43 @@ public class Booker extends Character implements Animatable {
             }
             case DifficultyType.EASY -> {
                 money = 300;
-                livesCount = 4;
+                fullLivesCount = 3;
                 priceForGeneration = 15;
                 moneyForKillingEnemy = 10;
                 bulletsForKillingEnemy = 25;
                 medicineForKillingEnemy = 25;
                 closeCombatDamageToEnemies = 50;
-                closeCombatDamageFromEnemies = 10;
+                closeCombatDamageFromEnemies = 5;
             }
             case DifficultyType.MEDIUM -> {
                 money = 150;
-                livesCount = 2;
+                fullLivesCount = 2;
                 priceForGeneration = 20;
                 moneyForKillingEnemy = 5;
                 bulletsForKillingEnemy = 20;
                 medicineForKillingEnemy = 20;
                 closeCombatDamageToEnemies = 40;
-                closeCombatDamageFromEnemies = 20;
+                closeCombatDamageFromEnemies = 10;
             }
             case DifficultyType.HARD -> {
                 money = 100;
-                livesCount = 1;
+                fullLivesCount = 1;
                 priceForGeneration = 25;
                 moneyForKillingEnemy = 3;
                 bulletsForKillingEnemy = 10;
                 medicineForKillingEnemy = 10;
                 closeCombatDamageToEnemies = 30;
-                closeCombatDamageFromEnemies = 30;
+                closeCombatDamageFromEnemies = 15;
             }
             case DifficultyType.HARDCORE -> {
                 money = 100;
-                livesCount = 0;
+                fullLivesCount = 0;
                 priceForGeneration = 0;
                 moneyForKillingEnemy = 2;
                 bulletsForKillingEnemy = 10;
                 medicineForKillingEnemy = 10;
                 closeCombatDamageToEnemies = 25;
-                closeCombatDamageFromEnemies = 40;
+                closeCombatDamageFromEnemies = 20;
             }
         }
         if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.FIRST_LEVEL)
@@ -438,6 +441,7 @@ public class Booker extends Character implements Animatable {
 
         weapon.setDifficultyType();
         energetic.setDifficultyType();
+        currentLivesCount = fullLivesCount;
         Game.getGameWorld().getHud().updateMoneyTextPosition();
         moneyText.setText(Texts.WITH_EACH_DEATH_YOU_LOSE_MONEY + priceForGeneration + Texts.NO_MONEY_NO_GAME);
     }

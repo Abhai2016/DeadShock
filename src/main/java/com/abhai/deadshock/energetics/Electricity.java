@@ -73,7 +73,7 @@ class Electricity extends Pane {
                     GameMedia.ELECTRICITY_DEATH.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
                     return;
                 } else
-                    enemy.setHP(enemy.getHP() - Game.getGameWorld().getBooker().getWeapon().getBulletDamage() / 2);
+                    enemy.setHP(enemy.getHP() - Game.getGameWorld().getBooker().getWeapon().getBulletDamage() / 4);
     }
 
     public void update() {

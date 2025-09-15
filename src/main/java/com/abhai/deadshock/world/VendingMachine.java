@@ -21,8 +21,8 @@ import java.nio.file.Paths;
 import static com.abhai.deadshock.world.levels.Block.BLOCK_SIZE;
 
 public class VendingMachine extends Pane {
-    private static final int WIDTH = 920;
-    private static final int HEIGHT = 597;
+    private static final int OFFSET_X = 920;
+    private static final int OFFSET_Y = 597;
     private static final int BUTTON_WIDTH = 356;
     private static final int BUTTON_HEIGHT = 53;
     private static final int FIRST_LEVEL_X = BLOCK_SIZE * 188;
@@ -46,10 +46,10 @@ public class VendingMachine extends Pane {
     private ImageView vendingMachineMenuImage;
 
     public VendingMachine() {
-        purchaseType = PurchaseType.BIG_MEDICINE;
-        initializeImages();
         isShown = false;
-        changeLevel();
+        initializeImages();
+        initializePosition();
+        purchaseType = PurchaseType.BIG_MEDICINE;
     }
 
     public void openMenu() {
@@ -84,26 +84,11 @@ public class VendingMachine extends Pane {
     }
 
     public void changeLevel() {
-        switch (Game.getGameWorld().getLevel().getCurrentLevelNumber()) {
-            case Level.FIRST_LEVEL -> {
-                vendingMachineImage.setTranslateX(FIRST_LEVEL_X);
-                vendingMachineImage.setTranslateY(FIRST_LEVEL_Y);
-                vendingMachineMenuImage.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
-            }
-            case Level.SECOND_LEVEL -> {
-                vendingMachineImage.setTranslateX(SECOND_LEVEL_X);
-                vendingMachineImage.setTranslateY(SECOND_LEVEL_Y);
-                vendingMachineMenuImage.setViewport(new Rectangle2D(WIDTH, 0, WIDTH, HEIGHT));
-            }
-            case Level.THIRD_LEVEL -> {
-                vendingMachineImage.setTranslateX(THIRD_LEVEL_X);
-                vendingMachineImage.setTranslateY(THIRD_LEVEL_Y);
-                vendingMachineMenuImage.setViewport(new Rectangle2D(920, 0, 920, 597));
-            }
-            case Level.BOSS_LEVEL -> Game.getGameWorld().getGameRoot().getChildren().remove(this);
-        }
-        if (!Game.getGameWorld().getGameRoot().getChildren().contains(this) && Game.getGameWorld().getLevel().getCurrentLevelNumber() != Level.BOSS_LEVEL)
-            Game.getGameWorld().getGameRoot().getChildren().add(this);
+        initializePosition();
+        if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.FIRST_LEVEL)
+            addButtonsListeners(0);
+        else
+            addButtonsListeners(OFFSET_X);
     }
 
     public void makePurchase() {
@@ -177,8 +162,8 @@ public class VendingMachine extends Pane {
 
         if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.FIRST_LEVEL)
             addButtonsListeners(0);
-        else if (Game.getGameWorld().getLevel().getCurrentLevelNumber() != Level.BOSS_LEVEL)
-            addButtonsListeners(920);
+        else
+            addButtonsListeners(OFFSET_X);
     }
 
     private void initializeImages() {
@@ -193,7 +178,32 @@ public class VendingMachine extends Pane {
         fadeTransition.play();
 
         getChildren().add(vendingMachineImage);
+        Game.getGameWorld().getGameRoot().getChildren().add(this);
         Game.getGameWorld().getAppRoot().getChildren().add(vendingMachineMenuImage);
+    }
+
+    private void initializePosition() {
+        switch (Game.getGameWorld().getLevel().getCurrentLevelNumber()) {
+            case Level.FIRST_LEVEL -> {
+                vendingMachineImage.setVisible(true);
+                vendingMachineImage.setTranslateX(FIRST_LEVEL_X);
+                vendingMachineImage.setTranslateY(FIRST_LEVEL_Y);
+                vendingMachineMenuImage.setViewport(new Rectangle2D(0, 0, OFFSET_X, OFFSET_Y));
+            }
+            case Level.SECOND_LEVEL -> {
+                vendingMachineImage.setVisible(true);
+                vendingMachineImage.setTranslateX(SECOND_LEVEL_X);
+                vendingMachineImage.setTranslateY(SECOND_LEVEL_Y);
+                vendingMachineMenuImage.setViewport(new Rectangle2D(OFFSET_X, 0, OFFSET_X, OFFSET_Y));
+            }
+            case Level.THIRD_LEVEL -> {
+                vendingMachineImage.setVisible(true);
+                vendingMachineImage.setTranslateX(THIRD_LEVEL_X);
+                vendingMachineImage.setTranslateY(THIRD_LEVEL_Y);
+                vendingMachineMenuImage.setViewport(new Rectangle2D(920, 0, 920, 597));
+            }
+            case Level.BOSS_LEVEL -> vendingMachineImage.setVisible(false);
+        }
     }
 
     public boolean isShown() {
@@ -236,7 +246,7 @@ public class VendingMachine extends Pane {
                 vendingMachineMenuImage.setViewport(new Rectangle2D(xOffset, 2388, 920, 597));
             }
         });
-        if (xOffset == WIDTH)
+        if (xOffset == OFFSET_X)
             machineGunBulletsButton.setOnMouseClicked(event -> {
                 if (isShown) {
                     purchaseType = PurchaseType.MACHINE_GUN_BULLETS;
@@ -244,6 +254,8 @@ public class VendingMachine extends Pane {
                     vendingMachineMenuImage.setViewport(new Rectangle2D(xOffset, 2985, 920, 597));
                 }
             });
+        else
+            machineGunBulletsButton.setOnMouseClicked(event -> {});
     }
 
     private void setButton(Button button, double y) {

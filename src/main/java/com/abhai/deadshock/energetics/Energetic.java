@@ -73,16 +73,15 @@ public class Energetic extends Pane {
         canChangeEnergetic = true;
         imageView = new ImageView();
         devilKiss = new DevilKiss();
+        getChildren().add(imageView);
         electricity = new Electricity();
         canChooseHypnosis = builder.canChooseHypnosis;
         canChooseDevilKiss = builder.canChooseDevilKiss;
         canChooseElectricity = builder.canChooseElectricity;
 
         initializePositionAndState();
-        if (Game.getGameWorld().getLevel().getCurrentLevelNumber() != Level.BOSS_LEVEL) {
-            getChildren().add(imageView);
+        if (Game.getGameWorld().getLevel().getCurrentLevelNumber() != Level.BOSS_LEVEL)
             Game.getGameWorld().getGameRoot().getChildren().add(this);
-        }
     }
 
     public void reset() {
@@ -212,11 +211,11 @@ public class Energetic extends Pane {
 
     public void setDifficultyType() {
         switch (Game.getGameWorld().getDifficultyType()) {
-            case DifficultyType.MARIK -> saltPrice = 10;
-            case DifficultyType.EASY -> saltPrice = 15;
-            case DifficultyType.MEDIUM -> saltPrice = 20;
-            case DifficultyType.HARD -> saltPrice = 25;
-            case DifficultyType.HARDCORE -> saltPrice = 30;
+            case DifficultyType.MARIK -> saltPrice = 0;
+            case DifficultyType.EASY -> saltPrice = 5;
+            case DifficultyType.MEDIUM -> saltPrice = 10;
+            case DifficultyType.HARD -> saltPrice = 15;
+            case DifficultyType.HARDCORE -> saltPrice = 20;
         }
     }
 
@@ -260,10 +259,6 @@ public class Energetic extends Pane {
         return saltPrice;
     }
 
-    public void setCanShoot(boolean value) {
-        canShoot = value;
-    }
-
     public int getCountEnergetics() {
         return countEnergetics;
     }
@@ -278,6 +273,10 @@ public class Energetic extends Pane {
 
     public boolean canChooseElectricity() {
         return canChooseElectricity;
+    }
+
+    public void setCanShoot(boolean value) {
+        canShoot = value;
     }
 
     public void setCanChangeEnergetic(boolean value) {

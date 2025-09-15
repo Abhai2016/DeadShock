@@ -106,10 +106,8 @@ public class Weapon extends Pane {
         this.machineGunBullets = builder.machineGunBullets;
 
         init();
-        if (Game.getGameWorld().getLevel().getCurrentLevelNumber() != Level.BOSS_LEVEL) {
-            getChildren().add(imageView);
+        if (Game.getGameWorld().getLevel().getCurrentLevelNumber() != Level.BOSS_LEVEL)
             Game.getGameWorld().getGameRoot().getChildren().add(this);
-        }
     }
 
     public void init() {
@@ -127,6 +125,7 @@ public class Weapon extends Pane {
         machineGunClip = FULL_MACHINE_GUN_CLIP;
         imageView = new ImageView(new Image(Paths.get("resources", "images", "weapons", "weapons.png").toUri().toString()));
         bulletsPool = new ObjectPool<>(Bullet::new, 50, 150);
+        getChildren().add(imageView);
 
         switch (Game.getGameWorld().getLevel().getCurrentLevelNumber()) {
             case Level.FIRST_LEVEL -> {
@@ -465,10 +464,6 @@ public class Weapon extends Pane {
         }
     }
 
-    public WeaponType getType() {
-        return type;
-    }
-
     public int getRpgDamage() {
         return rpgDamage;
     }
@@ -481,6 +476,10 @@ public class Weapon extends Pane {
         return currentClip;
     }
 
+    public WeaponType getType() {
+        return type;
+    }
+
     public int getBulletDamage() {
         return bulletDamage;
     }
@@ -489,24 +488,28 @@ public class Weapon extends Pane {
         return pistolBullets;
     }
 
-    public boolean isCanChooseRpg() {
-        return canChooseRpg;
-    }
-
     public int getCurrentBullets() {
         return currentBullets;
     }
 
-    public void setCanReload(boolean value) {
-        canReload = value;
+    public boolean isCanChooseRpg() {
+        return canChooseRpg;
+    }
+
+    public int getMachineGunBullets() {
+        return machineGunBullets;
     }
 
     public boolean isCanChoosePistol() {
         return canChoosePistol;
     }
 
-    public int getMachineGunBullets() {
-        return machineGunBullets;
+    public boolean isCanChooseMachineGun() {
+        return canChooseMachineGun;
+    }
+
+    public void setCanReload(boolean value) {
+        canReload = value;
     }
 
     public void setSingleShot(boolean value) {
@@ -515,10 +518,6 @@ public class Weapon extends Pane {
 
     public void setPistolBullets(int bullets) {
         pistolBullets = bullets;
-    }
-
-    public boolean isCanChooseMachineGun() {
-        return canChooseMachineGun;
     }
 
     public void setRpgBullets(int rpgBullets) {
