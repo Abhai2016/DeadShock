@@ -54,11 +54,12 @@ public class Booker extends Character implements Animatable {
     private int salt;
     private int money;
     private int livesCount;
-    private int closeCombatDamage;
     private int priceForGeneration;
     private int moneyForKillingEnemy;
     private int bulletsForKillingEnemy;
     private int medicineForKillingEnemy;
+    private int closeCombatDamageToEnemies;
+    private int closeCombatDamageFromEnemies;
 
     private Weapon weapon;
     private Point2D velocity;
@@ -91,7 +92,7 @@ public class Booker extends Character implements Animatable {
         money = 0;
         salt = 100;
         livesCount = 0;
-        closeCombatDamage = 0;
+        closeCombatDamageToEnemies = 0;
         priceForGeneration = 0;
         moneyForKillingEnemy = 0;
         bulletsForKillingEnemy = 0;
@@ -291,7 +292,7 @@ public class Booker extends Character implements Animatable {
 
             if (intersectsWithBlocks('X', x))
                 return;
-            if (intersectsWithEnemies('X'))
+            if (intersectsWithEnemies('X', x))
                 return;
         }
     }
@@ -331,7 +332,7 @@ public class Booker extends Character implements Animatable {
 
             if (intersectsWithBlocks('Y', y))
                 return;
-            if (intersectsWithEnemies('Y'))
+            if (intersectsWithEnemies('Y', y))
                 return;
         }
     }
@@ -382,49 +383,54 @@ public class Booker extends Character implements Animatable {
         int money = 0;
         switch (Game.getGameWorld().getDifficultyType()) {
             case DifficultyType.MARIK -> {
-                money = 1000000;
                 livesCount = 4;
+                money = 1000000;
                 priceForGeneration = 0;
-                closeCombatDamage = 75;
                 moneyForKillingEnemy = 0;
                 bulletsForKillingEnemy = 30;
                 medicineForKillingEnemy = 30;
+                closeCombatDamageToEnemies = 75;
+                closeCombatDamageFromEnemies = 0;
             }
             case DifficultyType.EASY -> {
                 money = 300;
                 livesCount = 4;
-                closeCombatDamage = 50;
                 priceForGeneration = 15;
                 moneyForKillingEnemy = 10;
                 bulletsForKillingEnemy = 25;
                 medicineForKillingEnemy = 25;
+                closeCombatDamageToEnemies = 50;
+                closeCombatDamageFromEnemies = 10;
             }
             case DifficultyType.MEDIUM -> {
                 money = 150;
                 livesCount = 2;
-                closeCombatDamage = 40;
                 priceForGeneration = 20;
                 moneyForKillingEnemy = 5;
                 bulletsForKillingEnemy = 20;
                 medicineForKillingEnemy = 20;
+                closeCombatDamageToEnemies = 40;
+                closeCombatDamageFromEnemies = 20;
             }
             case DifficultyType.HARD -> {
                 money = 100;
                 livesCount = 1;
-                closeCombatDamage = 30;
                 priceForGeneration = 25;
                 moneyForKillingEnemy = 3;
                 bulletsForKillingEnemy = 10;
                 medicineForKillingEnemy = 10;
+                closeCombatDamageToEnemies = 30;
+                closeCombatDamageFromEnemies = 30;
             }
             case DifficultyType.HARDCORE -> {
                 money = 100;
                 livesCount = 0;
-                closeCombatDamage = 25;
                 priceForGeneration = 0;
                 moneyForKillingEnemy = 2;
                 bulletsForKillingEnemy = 10;
                 medicineForKillingEnemy = 10;
+                closeCombatDamageToEnemies = 25;
+                closeCombatDamageFromEnemies = 40;
             }
         }
         if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.FIRST_LEVEL)
@@ -463,7 +469,7 @@ public class Booker extends Character implements Animatable {
     }
 
     public void closeCombat(double scaleX) {
-        Hp -= closeCombatDamage / 10;
+        Hp -= closeCombatDamageFromEnemies;
 
         if (booleanVelocityX) {
             booleanVelocityX = false;
@@ -481,27 +487,6 @@ public class Booker extends Character implements Animatable {
             default -> animation = withoutGun;
         }
         animation.play();
-    }
-
-    private boolean intersectsWithEnemies(char typeOfCoordinate) {
-        for (Enemy enemy : Game.getGameWorld().getEnemies())
-            if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
-                if (typeOfCoordinate == 'Y') {
-                    if ((enemy.getType() == EnemyType.BOSS && enemy.getHP() < 1) || enemy.isHypnotized())
-                        canJump = true;
-                    else {
-                        jump(true);
-                        if (enemy.getType() == EnemyType.BOSS)
-                            Hp -= closeCombatDamage / 10;
-                        enemy.setHP(enemy.getHP() - closeCombatDamage);
-                        GameMedia.CLOSE_COMBAT.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
-                    }
-                    setTranslateY(getTranslateY() - 1);
-                } else
-                    setTranslateX(getTranslateX() - getScaleX());
-                return true;
-            }
-        return false;
     }
 
     private boolean intersectsWithBlocks(char typeOfCoordinate, double coordinate) {
@@ -529,6 +514,30 @@ public class Booker extends Character implements Animatable {
                     return true;
                 }
         }
+        return false;
+    }
+
+    private boolean intersectsWithEnemies(char typeOfCoordinate, double coordinate) {
+        for (Enemy enemy : Game.getGameWorld().getEnemies())
+            if (getBoundsInParent().intersects(enemy.getBoundsInParent())) {
+                if (typeOfCoordinate == 'Y') {
+                    if (coordinate > 0)
+                        setTranslateY(getTranslateY() - 1);
+                    else
+                        setTranslateY(getTranslateY() + 1);
+                    if ((enemy.getType() == EnemyType.BOSS && enemy.getHP() < 1) || enemy.isHypnotized())
+                        canJump = true;
+                    else {
+                        jump(true);
+                        Hp -= closeCombatDamageFromEnemies;
+                        enemy.setHP(enemy.getHP() - closeCombatDamageToEnemies);
+                        GameMedia.CLOSE_COMBAT.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
+                    }
+                    setTranslateY(getTranslateY() - 1);
+                } else
+                    setTranslateX(getTranslateX() - getScaleX());
+                return true;
+            }
         return false;
     }
 
@@ -610,6 +619,10 @@ public class Booker extends Character implements Animatable {
 
     public void setEnergetic(Energetic.Builder builder) {
         energetic = builder.build();
+    }
+
+    public int getCloseCombatDamageFromEnemies() {
+        return closeCombatDamageFromEnemies;
     }
 
     public void update() {

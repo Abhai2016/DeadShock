@@ -247,12 +247,16 @@ public class Comstock extends Enemy implements Animatable {
     private boolean intersectsWithBooker(char coordinate) {
         if (getBoundsInParent().intersects(Game.getGameWorld().getBooker().getBoundsInParent())) {
             if (coordinate == 'Y') {
-                setTranslateY(getTranslateY() - 1);
-                if (booleanVelocity) {
-                    GameMedia.CLOSE_COMBAT.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
-                    velocity = velocity.add(getScaleX() * 5, JUMP_SPEED);
-                    booleanVelocity = false;
-                }
+                if (velocity.getY() > 0) {
+                    setTranslateY(getTranslateY() - 1);
+                    if (booleanVelocity) {
+                        Game.getGameWorld().getBooker().setHp(Game.getGameWorld().getBooker().getHp() - Game.getGameWorld().getBooker().getCloseCombatDamageFromEnemies());
+                        GameMedia.CLOSE_COMBAT.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
+                        velocity = velocity.add(getScaleX() * 5, JUMP_SPEED);
+                        booleanVelocity = false;
+                    }
+                } else
+                    setTranslateY(getTranslateY() + 1);
             } else
                 closeCombat();
             return true;
