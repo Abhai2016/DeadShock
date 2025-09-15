@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 public class Supply extends Pane {
     private static final int GRAVITY = 10;
     private final Image ammoImage = new Image(Paths.get("resources", "images", "supply", "ammo.png").toUri().toString());
+    private final Image saltImage = new Image(Paths.get("resources", "images", "supply", "salt.png").toUri().toString());
     private final Image medicineImage = new Image(Paths.get("resources", "images", "supply", "medicine.png").toUri().toString());
 
     private boolean delete;
@@ -42,10 +43,12 @@ public class Supply extends Pane {
 
     private void delete() {
         delete = true;
-        if (type != SupplyType.MEDICINE)
-            Game.getGameWorld().getBooker().takeAmmo(type);
-        else
+        if (type == SupplyType.SALT)
+            Game.getGameWorld().getBooker().addSaltForKillingEnemy();
+        else if (type == SupplyType.MEDICINE)
             Game.getGameWorld().getBooker().addMedicineForKillingEnemy();
+        else
+            Game.getGameWorld().getBooker().takeAmmo(type);
         Game.getGameWorld().getGameRoot().getChildren().remove(this);
     }
 
@@ -54,16 +57,20 @@ public class Supply extends Pane {
     }
 
     public void init(SupplyType supplyType, double x, double y) {
-        if (Math.random() < 0.5) {
+        double random = Math.random();
+        if (random < 0.3) {
             type = SupplyType.MEDICINE;
             imageView.setImage(medicineImage);
+        } else if (random < 0.7) {
+            type = SupplyType.SALT;
+            imageView.setImage(saltImage);
         } else {
             type = supplyType;
             imageView.setImage(ammoImage);
         }
         delete = false;
         setTranslateX(x);
-        setTranslateY(y - 15);
+        setTranslateY(y);
         Game.getGameWorld().getGameRoot().getChildren().add(this);
     }
 

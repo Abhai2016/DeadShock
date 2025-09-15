@@ -57,8 +57,7 @@ public class Booker extends Character implements Animatable {
     private int currentLivesCount;
     private int priceForGeneration;
     private int moneyForKillingEnemy;
-    private int bulletsForKillingEnemy;
-    private int medicineForKillingEnemy;
+    private int supplyForKillingEnemy;
     private int closeCombatDamageToEnemies;
     private int closeCombatDamageFromEnemies;
 
@@ -93,11 +92,10 @@ public class Booker extends Character implements Animatable {
         money = 0;
         salt = 100;
         currentLivesCount = 0;
-        closeCombatDamageToEnemies = 0;
         priceForGeneration = 0;
         moneyForKillingEnemy = 0;
-        bulletsForKillingEnemy = 0;
-        medicineForKillingEnemy = 0;
+        supplyForKillingEnemy = 0;
+        closeCombatDamageToEnemies = 0;
 
         initDeathText();
         initAnimations();
@@ -390,8 +388,7 @@ public class Booker extends Character implements Animatable {
                 fullLivesCount = 4;
                 priceForGeneration = 0;
                 moneyForKillingEnemy = 0;
-                bulletsForKillingEnemy = 30;
-                medicineForKillingEnemy = 30;
+                supplyForKillingEnemy = 30;
                 closeCombatDamageToEnemies = 75;
                 closeCombatDamageFromEnemies = 0;
             }
@@ -400,8 +397,7 @@ public class Booker extends Character implements Animatable {
                 fullLivesCount = 3;
                 priceForGeneration = 15;
                 moneyForKillingEnemy = 10;
-                bulletsForKillingEnemy = 25;
-                medicineForKillingEnemy = 25;
+                supplyForKillingEnemy = 25;
                 closeCombatDamageToEnemies = 50;
                 closeCombatDamageFromEnemies = 5;
             }
@@ -410,8 +406,7 @@ public class Booker extends Character implements Animatable {
                 fullLivesCount = 2;
                 priceForGeneration = 20;
                 moneyForKillingEnemy = 5;
-                bulletsForKillingEnemy = 20;
-                medicineForKillingEnemy = 20;
+                supplyForKillingEnemy = 20;
                 closeCombatDamageToEnemies = 40;
                 closeCombatDamageFromEnemies = 10;
             }
@@ -420,8 +415,7 @@ public class Booker extends Character implements Animatable {
                 fullLivesCount = 1;
                 priceForGeneration = 25;
                 moneyForKillingEnemy = 3;
-                bulletsForKillingEnemy = 10;
-                medicineForKillingEnemy = 10;
+                supplyForKillingEnemy = 15;
                 closeCombatDamageToEnemies = 30;
                 closeCombatDamageFromEnemies = 15;
             }
@@ -430,8 +424,7 @@ public class Booker extends Character implements Animatable {
                 fullLivesCount = 0;
                 priceForGeneration = 0;
                 moneyForKillingEnemy = 2;
-                bulletsForKillingEnemy = 10;
-                medicineForKillingEnemy = 10;
+                supplyForKillingEnemy = 10;
                 closeCombatDamageToEnemies = 25;
                 closeCombatDamageFromEnemies = 20;
             }
@@ -460,9 +453,9 @@ public class Booker extends Character implements Animatable {
 
     public void takeAmmo(SupplyType type) {
         switch (type) {
-            case SupplyType.RPG_BULLETS -> weapon.setRpgBullets(weapon.getRpgBullets() + bulletsForKillingEnemy / 5);
-            case SupplyType.PISTOL_BULLETS -> weapon.setPistolBullets(weapon.getPistolBullets() + bulletsForKillingEnemy);
-            case SupplyType.MACHINE_GUN_BULLETS -> weapon.setMachineGunBullets(weapon.getMachineGunBullets() + bulletsForKillingEnemy);
+            case SupplyType.RPG_BULLETS -> weapon.setRpgBullets(weapon.getRpgBullets() + supplyForKillingEnemy / 5);
+            case SupplyType.PISTOL_BULLETS -> weapon.setPistolBullets(weapon.getPistolBullets() + supplyForKillingEnemy);
+            case SupplyType.MACHINE_GUN_BULLETS -> weapon.setMachineGunBullets(weapon.getMachineGunBullets() + supplyForKillingEnemy);
         }
 
         switch (weapon.getType()) {
@@ -588,7 +581,7 @@ public class Booker extends Character implements Animatable {
     }
 
     public void addMedicineForKillingEnemy() {
-        setHp(Hp + medicineForKillingEnemy);
+        setHp(Hp + supplyForKillingEnemy);
 
         switch ((int) (Math.random() * 2)) {
             case 0 -> GameMedia.FEELS_BETTER.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
@@ -611,6 +604,10 @@ public class Booker extends Character implements Animatable {
 
     public void setCanPlayVoice(boolean value) {
         canPlayVoice = value;
+    }
+
+    public void addSaltForKillingEnemy() {
+        salt += supplyForKillingEnemy / 2;
     }
 
     public void setWeapon(Weapon.Builder builder) {
