@@ -154,7 +154,7 @@ public class GameWorld {
         booker = new Booker();
         booker.setWeapon(new Weapon.Builder());
         booker.setEnergetic(new Energetic.Builder());
-        elizabeth = new Elizabeth(true);
+        elizabeth = new Elizabeth();
     }
 
     public void newGameReset() {
@@ -164,8 +164,8 @@ public class GameWorld {
             Game.getSaveManager().deleteSaves();
 
         level.setCurrentLevelNumber(Level.FIRST_LEVEL);
-        elizabeth.reset(true);
         vendingMachine.changeLevel();
+        elizabeth.resetForNewGame();
         level.changeLevel();
         createEnemies();
         booker.reset();
@@ -221,7 +221,7 @@ public class GameWorld {
         level.setBackgroundLayoutX(0);
 
         if (level.getCurrentLevelNumber() > Level.FIRST_LEVEL)
-            elizabeth.reset(false);
+            elizabeth.reset();
     }
 
     private void createEnemies() {
@@ -332,8 +332,10 @@ public class GameWorld {
         active = true;
         Tutorial.changeLevel();
         menu.getMusic().play();
-        elizabeth.changeLevel();
         vendingMachine.changeLevel();
+
+        if (level.getCurrentLevelNumber() == Level.SECOND_LEVEL)
+            elizabeth.changeToSecondLevel();
 
         Game.getSaveManager().saveProgress();
         Game.getSaveManager().saveMenuOptions();
@@ -369,10 +371,10 @@ public class GameWorld {
         enemyBullets.clear();
 
         booker.clear();
+        elizabeth.reset();
         gameRoot.setLayoutX(0);
         Controller.keys.clear();
         level.setBackgroundLayoutX(0);
-        elizabeth.reset(false);
     }
 
     private void initSavedGame(SavesDTO savesDTO) {
@@ -395,11 +397,11 @@ public class GameWorld {
                 .canChooseHypnosis(savesDTO.isCanChooseHypnosis());
 
         booker = new Booker();
+        elizabeth = new Elizabeth();
         booker.setWeapon(weaponBuilder);
         booker.setSalt(savesDTO.getSalt());
         booker.setMoney(savesDTO.getMoney());
         booker.setEnergetic(energeticBuilder);
-        elizabeth = new Elizabeth(false);
     }
 
     public MenuOptionsDTO generateMenuOptionsDTO() {

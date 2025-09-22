@@ -20,10 +20,27 @@ public class Elizabeth extends Character {
     private boolean giveSupply;
     private boolean playVoiceWhereYouFrom;
 
-    public Elizabeth(boolean forNewGame) {
-        reset(forNewGame);
-        if (!forNewGame)
+    public Elizabeth() {
+        reset();
+
+        if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.SECOND_LEVEL)
+            changeToSecondLevel();
+        else if (Game.getGameWorld().getLevel().getCurrentLevelNumber() > Level.FIRST_LEVEL)
             Game.getGameWorld().getGameRoot().getChildren().add(this);
+    }
+
+    public void reset() {
+        canMove = true;
+        moveInterval = 0;
+        medicineCount = 0;
+        giveSupply = false;
+        supplyInterval = 0;
+        medicineInterval = 0;
+        emptySupplyInterval = 0;
+        imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
+
+        setTranslateX(START_X);
+        setTranslateY(START_Y);
     }
 
     private void move() {
@@ -102,13 +119,6 @@ public class Elizabeth extends Character {
             }
     }
 
-    public void changeLevel() {
-        setTranslateX(START_X);
-        setTranslateY(START_Y);
-        if (!Game.getGameWorld().getGameRoot().getChildren().contains(this))
-            Game.getGameWorld().getGameRoot().getChildren().add(this);
-    }
-
     private void moveX(int x) {
         for (int i = 0; i < Math.abs(x); i++) {
             if (x > 0) {
@@ -146,6 +156,12 @@ public class Elizabeth extends Character {
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
     }
 
+    public void resetForNewGame() {
+        startLevel = true;
+        playVoiceWhereYouFrom = true;
+        Game.getGameWorld().getGameRoot().getChildren().remove(this);
+    }
+
     private void generateSupply() {
         if (supplyInterval > 300 && medicineCount > 0 && Game.getGameWorld().getBooker().getHp() < 100) {
             canMove = false;
@@ -164,29 +180,15 @@ public class Elizabeth extends Character {
         supplyInterval = 0;
     }
 
-    public void reset(boolean forNewGame) {
-        canMove = true;
-        moveInterval = 0;
-        medicineCount = 0;
-        giveSupply = false;
-        supplyInterval = 0;
-        medicineInterval = 0;
-        emptySupplyInterval = 0;
-        imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
-
-        if (forNewGame) {
-            startLevel = true;
-            playVoiceWhereYouFrom = true;
-            Game.getGameWorld().getGameRoot().getChildren().remove(this);
-        } else {
-            setTranslateX(START_X);
-            setTranslateY(START_Y);
-        }
-    }
-
     @Override
     protected String getImageName() {
         return "elizabeth.png";
+    }
+
+    public void changeToSecondLevel() {
+        startLevel = true;
+        playVoiceWhereYouFrom = true;
+        Game.getGameWorld().getGameRoot().getChildren().add(this);
     }
 
     private boolean intersectsWithBlocks(char typeOfCoordinate, double coordinate) {
