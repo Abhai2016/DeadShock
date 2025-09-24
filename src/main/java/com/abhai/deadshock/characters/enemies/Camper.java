@@ -2,7 +2,7 @@ package com.abhai.deadshock.characters.enemies;
 
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.types.EnemyType;
-import com.abhai.deadshock.types.SupplyType;
+import com.abhai.deadshock.types.SupplySubType;
 import com.abhai.deadshock.utils.GameMedia;
 import com.abhai.deadshock.world.levels.Block;
 
@@ -14,32 +14,6 @@ public class Camper extends Enemy {
         HP = 500;
         moveInterval = 0;
         type = EnemyType.CAMPER;
-    }
-
-    @Override
-    public void init(int x, int y) {
-        super.init(x, y);
-
-        HP = 500;
-        moveInterval = 0;
-    }
-
-    @Override
-    protected String getImageName() {
-        return "camper.png";
-    }
-
-    @Override
-    protected SupplyType getSupplyType() {
-        return SupplyType.RPG_BULLETS;
-    }
-
-    private void die() {
-        toDelete = true;
-        playDeathVoice();
-        if (Math.random() < 0.75)
-            Game.getGameWorld().createSupply(getSupplyType(), getTranslateX(), getTranslateY());
-        Game.getGameWorld().getBooker().addMoneyForKillingEnemy();
     }
 
     private void moveY() {
@@ -94,6 +68,24 @@ public class Camper extends Enemy {
         }
         Game.getGameWorld().getBooker().setHp(Game.getGameWorld().getBooker().getHp() - DAMAGE);
         voiceInterval = 0;
+    }
+
+    @Override
+    public void init(int x, int y) {
+        super.init(x, y);
+
+        HP = 500;
+        moveInterval = 0;
+    }
+
+    @Override
+    protected String getImageName() {
+        return "camper.png";
+    }
+
+    @Override
+    protected SupplySubType getSupplySubType() {
+        return SupplySubType.RPG_BULLETS;
     }
 
     @Override

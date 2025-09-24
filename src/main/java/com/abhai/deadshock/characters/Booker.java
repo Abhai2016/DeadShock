@@ -435,11 +435,11 @@ public class Booker extends Character implements Animatable {
         }
     }
 
-    public void takeAmmo(SupplyType type) {
-        switch (type) {
-            case SupplyType.RPG_BULLETS -> weapon.setRpgBullets(weapon.getRpgBullets() + supplyForKillingEnemy / 5);
-            case SupplyType.PISTOL_BULLETS -> weapon.setPistolBullets(weapon.getPistolBullets() + supplyForKillingEnemy);
-            case SupplyType.MACHINE_GUN_BULLETS -> weapon.setMachineGunBullets(weapon.getMachineGunBullets() + supplyForKillingEnemy);
+    public void takeAmmo(SupplySubType subType) {
+        switch (subType) {
+            case SupplySubType.RPG_BULLETS -> weapon.setRpgBullets(weapon.getRpgBullets() + supplyForKillingEnemy / 5);
+            case SupplySubType.PISTOL_BULLETS -> weapon.setPistolBullets(weapon.getPistolBullets() + supplyForKillingEnemy);
+            case SupplySubType.MACHINE_GUN_BULLETS -> weapon.setMachineGunBullets(weapon.getMachineGunBullets() + supplyForKillingEnemy);
         }
 
         switch (weapon.getType()) {

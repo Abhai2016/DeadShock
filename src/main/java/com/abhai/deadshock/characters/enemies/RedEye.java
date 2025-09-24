@@ -1,7 +1,7 @@
 package com.abhai.deadshock.characters.enemies;
 
 import com.abhai.deadshock.types.EnemyType;
-import com.abhai.deadshock.types.SupplyType;
+import com.abhai.deadshock.types.SupplySubType;
 import com.abhai.deadshock.types.WeaponType;
 import com.abhai.deadshock.weapons.EnemyWeapon;
 import com.abhai.deadshock.world.levels.Block;
@@ -32,8 +32,8 @@ public class RedEye extends Comstock {
     }
 
     @Override
-    protected SupplyType getSupplyType() {
-        return SupplyType.MACHINE_GUN_BULLETS;
+    protected SupplySubType getSupplySubType() {
+        return SupplySubType.MACHINE_GUN_BULLETS;
     }
 
     @Override

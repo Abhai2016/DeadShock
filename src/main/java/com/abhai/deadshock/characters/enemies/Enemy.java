@@ -1,9 +1,12 @@
 package com.abhai.deadshock.characters.enemies;
 
 import com.abhai.deadshock.Game;
+import com.abhai.deadshock.characters.Elizabeth;
 import com.abhai.deadshock.types.EnemyType;
+import com.abhai.deadshock.types.SupplySubType;
 import com.abhai.deadshock.types.SupplyType;
 import com.abhai.deadshock.utils.GameMedia;
+import com.abhai.deadshock.world.levels.Level;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
@@ -40,16 +43,27 @@ public class Enemy extends Pane {
     public void update() {
     }
 
+    protected void die() {
+        toDelete = true;
+        playDeathVoice();
+        Game.getGameWorld().getBooker().addMoneyForKillingEnemy();
+
+        if (Math.random() < 0.75) {
+            if (Game.getGameWorld().getLevel().getCurrentLevelNumber() > Level.FIRST_LEVEL) {
+                Elizabeth elizabeth = Game.getGameWorld().getElizabeth();
+                elizabeth.playSupplyVoice();
+                Game.getGameWorld().createSupply(SupplyType.ELIZABETH, getSupplySubType(), elizabeth.getTranslateX(), elizabeth.getTranslateY());
+            } else
+                Game.getGameWorld().createSupply(SupplyType.ENEMY, getSupplySubType(), getTranslateX(), getTranslateY());
+        }
+    }
+
     public void playHitVoice() {
         switch ((int) (Math.random() * 3)) {
             case 0 -> GameMedia.AUDIO_CLIP_HIT.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             case 1 -> GameMedia.AUDIO_CLIP_HIT_2.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             case 2 -> GameMedia.AUDIO_CLIP_HIT_3.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
         }
-    }
-
-    public int getHP() {
-        return HP;
     }
 
     protected void closeCombat() {
@@ -73,6 +87,10 @@ public class Enemy extends Pane {
             case 0 -> GameMedia.DEATH.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
             case 1 -> GameMedia.DEATH_2.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
         }
+    }
+
+    public int getHP() {
+        return HP;
     }
 
     public EnemyType getType() {
@@ -99,7 +117,7 @@ public class Enemy extends Pane {
         hypnotized = value;
     }
 
-    protected SupplyType getSupplyType() {
-        return SupplyType.MEDICINE;
+    protected SupplySubType getSupplySubType() {
+        return SupplySubType.MEDICINE;
     }
 }

@@ -4,7 +4,7 @@ import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.Animatable;
 import com.abhai.deadshock.types.BlockType;
 import com.abhai.deadshock.types.EnemyType;
-import com.abhai.deadshock.types.SupplyType;
+import com.abhai.deadshock.types.SupplySubType;
 import com.abhai.deadshock.types.WeaponType;
 import com.abhai.deadshock.utils.GameMedia;
 import com.abhai.deadshock.utils.SpriteAnimation;
@@ -76,17 +76,14 @@ public class Comstock extends Enemy implements Animatable {
     }
 
     @Override
-    protected SupplyType getSupplyType() {
-        return SupplyType.PISTOL_BULLETS;
+    protected SupplySubType getSupplySubType() {
+        return SupplySubType.PISTOL_BULLETS;
     }
 
-    private void die() {
-        toDelete = true;
+    @Override
+    protected void die() {
+        super.die();
         stopAnimation();
-        playDeathVoice();
-        if (Math.random() < 0.75)
-            Game.getGameWorld().createSupply(getSupplyType(), getTranslateX(), getTranslateY());
-        Game.getGameWorld().getBooker().addMoneyForKillingEnemy();
     }
 
     private void moveY() {

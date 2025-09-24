@@ -1,10 +1,8 @@
-package com.abhai.deadshock.world;
+package com.abhai.deadshock.world.supplies;
 
 import com.abhai.deadshock.Game;
-import com.abhai.deadshock.types.BlockType;
+import com.abhai.deadshock.types.SupplySubType;
 import com.abhai.deadshock.types.SupplyType;
-import com.abhai.deadshock.world.levels.Block;
-import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -12,43 +10,34 @@ import javafx.scene.layout.Pane;
 import java.nio.file.Paths;
 
 public class Supply extends Pane {
-    private static final int GRAVITY = 10;
     private final Image ammoImage = new Image(Paths.get("resources", "images", "supply", "ammo.png").toUri().toString());
     private final Image saltImage = new Image(Paths.get("resources", "images", "supply", "salt.png").toUri().toString());
     private final Image medicineImage = new Image(Paths.get("resources", "images", "supply", "medicine.png").toUri().toString());
 
     private boolean delete;
-    private SupplyType type;
-    private final Point2D velocity;
-    private final ImageView imageView;
+    private SupplySubType subType;
+
+    protected SupplyType type;
+    protected final ImageView imageView;
 
     public Supply() {
+        delete = false;
         imageView = new ImageView();
         getChildren().add(imageView);
-
-        delete = false;
-        velocity = new Point2D(0, GRAVITY);
     }
 
-    private void move() {
-        for (int i = 0; i < velocity.getY(); i++) {
-            setTranslateY(getTranslateY() + 1);
-            for (Block block : Game.getGameWorld().getLevel().getBlocks())
-                if (getBoundsInParent().intersects(block.getBoundsInParent()) && block.getType() != BlockType.INVISIBLE) {
-                    setTranslateY(getTranslateY() - 1);
-                    return;
-                }
-        }
+    protected void move() {
+
     }
 
     private void delete() {
         delete = true;
-        if (type == SupplyType.SALT)
+        if (subType == SupplySubType.SALT)
             Game.getGameWorld().getBooker().addSaltForKillingEnemy();
-        else if (type == SupplyType.MEDICINE)
+        else if (subType == SupplySubType.MEDICINE)
             Game.getGameWorld().getBooker().addMedicineForKillingEnemy();
         else
-            Game.getGameWorld().getBooker().takeAmmo(type);
+            Game.getGameWorld().getBooker().takeAmmo(subType);
         Game.getGameWorld().getGameRoot().getChildren().remove(this);
     }
 
@@ -56,16 +45,16 @@ public class Supply extends Pane {
         return delete;
     }
 
-    public void init(SupplyType supplyType, double x, double y) {
+    public void init(SupplySubType supplySubType, double x, double y) {
         double random = Math.random();
         if (random < 0.3) {
-            type = SupplyType.MEDICINE;
+            subType = SupplySubType.MEDICINE;
             imageView.setImage(medicineImage);
         } else if (random < 0.7) {
-            type = SupplyType.SALT;
+            subType = SupplySubType.SALT;
             imageView.setImage(saltImage);
         } else {
-            type = supplyType;
+            subType = supplySubType;
             imageView.setImage(ammoImage);
         }
         delete = false;

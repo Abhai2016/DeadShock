@@ -13,10 +13,7 @@ import com.abhai.deadshock.energetics.Energetic;
 import com.abhai.deadshock.hud.HUD;
 import com.abhai.deadshock.hud.Tutorial;
 import com.abhai.deadshock.menus.Menu;
-import com.abhai.deadshock.types.DifficultyType;
-import com.abhai.deadshock.types.EnemyType;
-import com.abhai.deadshock.types.SupplyType;
-import com.abhai.deadshock.types.WeaponType;
+import com.abhai.deadshock.types.*;
 import com.abhai.deadshock.utils.Controller;
 import com.abhai.deadshock.utils.GameMedia;
 import com.abhai.deadshock.utils.pools.ObjectPool;
@@ -24,6 +21,9 @@ import com.abhai.deadshock.utils.pools.ObjectPoolManager;
 import com.abhai.deadshock.weapons.Weapon;
 import com.abhai.deadshock.weapons.bullets.EnemyBullet;
 import com.abhai.deadshock.world.levels.Level;
+import com.abhai.deadshock.world.supplies.ElizabethSupply;
+import com.abhai.deadshock.world.supplies.EnemySupply;
+import com.abhai.deadshock.world.supplies.Supply;
 import javafx.animation.FadeTransition;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.MediaPlayer;
@@ -40,9 +40,9 @@ public class GameWorld {
     private MediaView videoView;
     private ArrayList<Enemy> enemies;
     private ArrayList<Supply> supplies;
-    private ObjectPool<Supply> supplyPool;
     private ArrayList<EnemyBullet> enemyBullets;
     private ObjectPoolManager<Enemy> enemyPools;
+    private ObjectPoolManager<Supply> supplyPools;
     private ObjectPool<EnemyBullet> enemyBulletsPool;
 
     private HUD hud;
@@ -61,66 +61,6 @@ public class GameWorld {
         gameRoot = new Pane();
         this.appRoot = appRoot;
         this.appRoot.getChildren().add(gameRoot);
-    }
-
-    public HUD getHud() {
-        return hud;
-    }
-
-    public Menu getMenu() {
-        return menu;
-    }
-
-    public Level getLevel() {
-        return level;
-    }
-
-    public Booker getBooker() {
-        return booker;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public Pane getAppRoot() {
-        return appRoot;
-    }
-
-    public Pane getGameRoot() {
-        return gameRoot;
-    }
-
-    public MediaPlayer getVideo() {
-        return video;
-    }
-
-    public ArrayList<Enemy> getEnemies() {
-        return enemies;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public VendingMachine getVendingMachine() {
-        return vendingMachine;
-    }
-
-    public DifficultyType getDifficultyType() {
-        return difficultyType;
-    }
-
-    public ArrayList<EnemyBullet> getEnemyBullets() {
-        return enemyBullets;
-    }
-
-    public ObjectPool<EnemyBullet> getEnemyBulletsPool() {
-        return enemyBulletsPool;
-    }
-
-    public void setDifficultyType(DifficultyType difficultyType) {
-        this.difficultyType = difficultyType;
     }
 
     public void deathPause() {
@@ -274,7 +214,7 @@ public class GameWorld {
         for (Supply supply : supplies) {
             supply.update();
             if (supply.isDelete()) {
-                supplyPool.put(supply);
+                supplyPools.put(supply);
                 supplies.remove(supply);
                 gameRoot.getChildren().remove(supply);
                 break;
@@ -361,7 +301,7 @@ public class GameWorld {
         }
 
         for (Supply supply : supplies)
-            supplyPool.put(supply);
+            supplyPools.put(supply);
         gameRoot.getChildren().removeAll(supplies);
         supplies.clear();
 
@@ -423,7 +363,7 @@ public class GameWorld {
         supplies = new ArrayList<>();
         enemyBullets = new ArrayList<>();
         enemyPools = new ObjectPoolManager<>();
-        supplyPool = new ObjectPool<>(Supply::new, 10, 20);
+        supplyPools = new ObjectPoolManager<>();
         enemyBulletsPool = new ObjectPool<>(EnemyBullet::new, 50, 150);
 
         if (savesDTO == null)
@@ -435,6 +375,8 @@ public class GameWorld {
         enemyPools.register(Camper.class, Camper::new, 5, 10);
         enemyPools.register(RedEye.class, RedEye::new, 10, 15);
         enemyPools.register(Comstock.class, Comstock::new, 15, 20);
+        supplyPools.register(EnemySupply.class, EnemySupply::new, 10, 20);
+        supplyPools.register(ElizabethSupply.class, ElizabethSupply::new, 10, 20);
         booker.translateXProperty().addListener(((observable, oldValue, newValue) -> {
             int offset = newValue.intValue();
             if (offset > 600 && offset < gameRoot.getWidth() - 680) {
@@ -449,12 +391,6 @@ public class GameWorld {
         vendingMachine.initializeButtons();
     }
 
-    public void createSupply(SupplyType type, double x, double y) {
-        Supply supply = supplyPool.get();
-        supply.init(type, x, y);
-        supplies.add(supply);
-    }
-
     public void initializeMenuOptions(MenuOptionsDTO menuOptionsDTO) {
         menu.getFxSlider().setValue(menuOptionsDTO.getFxVolume());
         menu.checkMusicForContinueGame(menuOptionsDTO.getTrack());
@@ -466,6 +402,82 @@ public class GameWorld {
         Enemy enemy = enemyPools.get(enemyClassType);
         enemy.init(x, y);
         enemies.add(enemy);
+    }
+
+    public void createSupply(SupplyType type, SupplySubType subType, double x, double y) {
+        Supply supply;
+
+        if (type == SupplyType.ENEMY)
+            supply = supplyPools.get(EnemySupply.class);
+        else
+            supply = supplyPools.get(ElizabethSupply.class);
+
+        supply.init(subType, x, y);
+        supplies.add(supply);
+    }
+
+    public HUD getHud() {
+        return hud;
+    }
+
+    public Menu getMenu() {
+        return menu;
+    }
+
+    public Level getLevel() {
+        return level;
+    }
+
+    public Booker getBooker() {
+        return booker;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public Pane getAppRoot() {
+        return appRoot;
+    }
+
+    public Pane getGameRoot() {
+        return gameRoot;
+    }
+
+    public MediaPlayer getVideo() {
+        return video;
+    }
+
+    public Elizabeth getElizabeth() {
+        return elizabeth;
+    }
+
+    public ArrayList<Enemy> getEnemies() {
+        return enemies;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public VendingMachine getVendingMachine() {
+        return vendingMachine;
+    }
+
+    public DifficultyType getDifficultyType() {
+        return difficultyType;
+    }
+
+    public ArrayList<EnemyBullet> getEnemyBullets() {
+        return enemyBullets;
+    }
+
+    public ObjectPool<EnemyBullet> getEnemyBulletsPool() {
+        return enemyBulletsPool;
+    }
+
+    public void setDifficultyType(DifficultyType difficultyType) {
+        this.difficultyType = difficultyType;
     }
 
     public void update() {

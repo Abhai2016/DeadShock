@@ -52,6 +52,19 @@ public class Boss extends Enemy implements Animatable {
     }
 
     @Override
+    protected void die() {
+        dead = true;
+        stopAnimation();
+        rectHP.setWidth(0);
+        getTransforms().add(new Rotate(-90));
+        setTranslateY(getTranslateY() + HEIGHT);
+
+        GameMedia.BOSS_DEATH.setVolume(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
+        GameMedia.BOSS_DEATH.setOnEndOfMedia(() -> Game.getGameWorld().playCutscene());
+        GameMedia.BOSS_DEATH.play();
+    }
+
+    @Override
     public void init(int x, int y) {
         super.init(x, y);
 
@@ -74,18 +87,6 @@ public class Boss extends Enemy implements Animatable {
     @Override
     protected String getImageName() {
         return "bigDaddy.png";
-    }
-
-    private void die() {
-        dead = true;
-        stopAnimation();
-        rectHP.setWidth(0);
-        getTransforms().add(new Rotate(-90));
-        setTranslateY(getTranslateY() + HEIGHT);
-
-        GameMedia.BOSS_DEATH.setVolume(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
-        GameMedia.BOSS_DEATH.setOnEndOfMedia(() -> Game.getGameWorld().playCutscene());
-        GameMedia.BOSS_DEATH.play();
     }
 
     private void stun() {
