@@ -435,6 +435,16 @@ public class Booker extends Character implements Animatable {
         }
     }
 
+    public void closeCombat(double scaleX) {
+        Hp -= closeCombatDamageFromEnemies;
+
+        if (booleanVelocityX) {
+            booleanVelocityX = false;
+            velocity = velocity.add(scaleX * -JUMP_SPEED, 0);
+            GameMedia.CLOSE_COMBAT.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
+        }
+    }
+
     public void takeAmmo(SupplySubType subType) {
         switch (subType) {
             case SupplySubType.RPG_BULLETS -> weapon.setRpgBullets(weapon.getRpgBullets() + supplyForKillingEnemy / 5);
@@ -446,16 +456,6 @@ public class Booker extends Character implements Animatable {
             case WeaponType.RPG -> weapon.setCurrentBullets(weapon.getRpgBullets());
             case WeaponType.PISTOL -> weapon.setCurrentBullets(weapon.getPistolBullets());
             case WeaponType.MACHINE_GUN -> weapon.setCurrentBullets(weapon.getMachineGunBullets());
-        }
-    }
-
-    public void closeCombat(double scaleX) {
-        Hp -= closeCombatDamageFromEnemies;
-
-        if (booleanVelocityX) {
-            booleanVelocityX = false;
-            velocity = velocity.add(scaleX * -JUMP_SPEED, 0);
-            GameMedia.CLOSE_COMBAT.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
         }
     }
 

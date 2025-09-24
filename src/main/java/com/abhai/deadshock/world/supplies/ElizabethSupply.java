@@ -13,6 +13,7 @@ public class ElizabethSupply extends Supply {
         type = SupplyType.ELIZABETH;
         RotateTransition rotateAnimation = new RotateTransition(Duration.seconds(1), imageView);
         rotateAnimation.setCycleCount(Animation.INDEFINITE);
+        rotateAnimation.setByAngle(360);
         rotateAnimation.play();
     }
 

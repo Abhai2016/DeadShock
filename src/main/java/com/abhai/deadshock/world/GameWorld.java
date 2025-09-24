@@ -79,6 +79,11 @@ public class GameWorld {
             if (enemy instanceof Comstock comstock)
                 comstock.setCanSeeBooker(false);
         }
+
+        for (Supply supply : supplies)
+            supplyPools.put(supply);
+        gameRoot.getChildren().removeAll(supplies);
+        supplies.clear();
     }
 
     public void resetLevel() {
