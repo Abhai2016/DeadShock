@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 
 public class GameMedia {
     //Booker
+    public static final Media deathMedia = new Media(Paths.get("resources", "videos", "death.mp4").toUri().toString());
     public static final AudioClip FUCK = new AudioClip(Paths.get("resources", "sounds", "voices", "booker", "fuck.mp3").toUri().toString());
     public static final AudioClip SHIT = new AudioClip(Paths.get("resources", "sounds", "voices", "booker", "shit.mp3").toUri().toString());
     public static final AudioClip GREAT = new AudioClip(Paths.get("resources", "sounds", "voices", "booker", "great.mp3").toUri().toString());

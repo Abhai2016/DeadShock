@@ -13,7 +13,6 @@ import com.abhai.deadshock.world.levels.Block;
 import com.abhai.deadshock.world.levels.Level;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
@@ -21,8 +20,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-
-import java.nio.file.Paths;
 
 public class Booker extends Character implements Animatable {
     public static final int WIDTH = 60;
@@ -39,7 +36,6 @@ public class Booker extends Character implements Animatable {
     private static final int IDLE_PISTOL_OFFSET_X = 125;
     private static final int IDLE_MACHINE_OFFSET_X = 185;
     private static final int IDLE_WITH_NO_GUN_OFFSET_X = 42;
-    private static final Media deathMedia = new Media(Paths.get("resources", "videos", "death.mp4").toUri().toString());
 
     private boolean dead;
     private boolean start;
@@ -64,12 +60,8 @@ public class Booker extends Character implements Animatable {
     private Weapon weapon;
     private Point2D velocity;
     private Energetic energetic;
-    private SpriteAnimation withRPG;
     private final MediaView videoView;
     private SpriteAnimation animation;
-    private SpriteAnimation withoutGun;
-    private SpriteAnimation withPistol;
-    private SpriteAnimation withMachineGun;
 
     private Text moneyText;
     private Text deathText;
@@ -87,6 +79,7 @@ public class Booker extends Character implements Animatable {
         videoView = new MediaView();
         velocity = new Point2D(0, 0);
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
+        animation = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED), SPRITES_COUNT, SPRITES_COUNT, 0, NO_GUN_OFFSET_Y, WIDTH, HEIGHT);
 
         Hp = 100;
         money = 0;
@@ -98,7 +91,6 @@ public class Booker extends Character implements Animatable {
         closeCombatDamageToEnemies = 0;
 
         initDeathText();
-        initAnimations();
         Game.getGameWorld().getGameRoot().getChildren().add(this);
     }
 
@@ -158,10 +150,10 @@ public class Booker extends Character implements Animatable {
         energetic.reset();
         hypnotized = false;
         canPlayVoice = true;
-        animation = withoutGun;
         booleanVelocityX = true;
         booleanVelocityY = true;
         velocity = new Point2D(0, 0);
+        animation.setOffsetY(NO_GUN_OFFSET_Y);
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
 
         if (GameMedia.WHERE_ARE_YOU_FROM.getStatus() == MediaPlayer.Status.PLAYING)
@@ -338,14 +330,6 @@ public class Booker extends Character implements Animatable {
         }
     }
 
-    private void initAnimations() {
-        withRPG = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED), SPRITES_COUNT, SPRITES_COUNT, 0, RPG_OFFSET_Y, WIDTH, HEIGHT);
-        withoutGun = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED), SPRITES_COUNT, SPRITES_COUNT, 0, NO_GUN_OFFSET_Y, WIDTH, HEIGHT);
-        withPistol = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED), SPRITES_COUNT, SPRITES_COUNT, 0, PISTOL_OFFSET_Y, WIDTH, HEIGHT);
-        withMachineGun = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED), SPRITES_COUNT, SPRITES_COUNT, 0, MACHINE_GUN_OFFSET_Y, WIDTH, HEIGHT);
-        animation = withoutGun;
-    }
-
     private void playVideoDeath() {
         if (GameMedia.WHERE_ARE_YOU_FROM.getStatus() == MediaPlayer.Status.PLAYING)
             GameMedia.WHERE_ARE_YOU_FROM.pause();
@@ -354,7 +338,7 @@ public class Booker extends Character implements Animatable {
                 && Game.getGameWorld().getEnemies().getFirst() instanceof Boss boss)
             boss.unStun();
 
-        MediaPlayer videoDeath = new MediaPlayer(deathMedia);
+        MediaPlayer videoDeath = new MediaPlayer(GameMedia.deathMedia);
         videoDeath.setVolume(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
         videoDeath.setOnEndOfMedia(() -> {
             deathReset();
@@ -478,10 +462,10 @@ public class Booker extends Character implements Animatable {
     public void changeWeaponAnimation(WeaponType weaponType) {
         stopAnimation();
         switch (weaponType) {
-            case WeaponType.MACHINE_GUN -> animation = withMachineGun;
-            case WeaponType.PISTOL -> animation = withPistol;
-            case WeaponType.RPG -> animation = withRPG;
-            default -> animation = withoutGun;
+            case WeaponType.MACHINE_GUN -> animation.setOffsetY(MACHINE_GUN_OFFSET_Y);
+            case WeaponType.PISTOL -> animation.setOffsetY(PISTOL_OFFSET_Y);
+            case WeaponType.RPG -> animation.setOffsetY(RPG_OFFSET_Y);
+            default -> animation.setOffsetY(NO_GUN_OFFSET_Y);
         }
         animation.play();
     }
