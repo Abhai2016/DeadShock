@@ -24,12 +24,8 @@ public class GameMedia {
     public static final AudioClip FEELING_BETTER = new AudioClip(Paths.get("resources", "sounds", "voices", "booker", "feelingBetter.mp3").toUri().toString());
 
     //Elizabeth
-    public static final AudioClip EMPTY = new AudioClip(Paths.get("resources", "sounds", "voices", "elizabeth", "empty.mp3").toUri().toString());
     public static final AudioClip FREEDOM = new AudioClip(Paths.get("resources", "sounds", "voices", "elizabeth", "freedom.mp3").toUri().toString());
-    public static final AudioClip TRY_TO_FIND = new AudioClip(Paths.get("resources", "sounds", "voices", "elizabeth", "tryToFind.mp3").toUri().toString());
-    public static final AudioClip HAVE_NOTHING = new AudioClip(Paths.get("resources", "sounds", "voices", "elizabeth", "haveNothing.mp3").toUri().toString());
     public static final AudioClip BOOKER_CATCH = new AudioClip(Paths.get("resources", "sounds", "voices", "elizabeth", "bookerCatch.mp3").toUri().toString());
-    public static final AudioClip FOUND_NOTHING = new AudioClip(Paths.get("resources", "sounds", "voices", "elizabeth", "foundNothing.mp3").toUri().toString());
     public static final AudioClip BOOKER_CATCH_2 = new AudioClip(Paths.get("resources", "sounds", "voices", "elizabeth", "bookerCatch2.mp3").toUri().toString());
     public static final AudioClip BOOKER_CATCH_3 = new AudioClip(Paths.get("resources", "sounds", "voices", "elizabeth", "bookerCatch3.mp3").toUri().toString());
     public static final MediaPlayer OH_BOOKER = new MediaPlayer(new Media(Paths.get("resources", "sounds", "voices", "elizabeth", "booker.mp3").toUri().toString()));

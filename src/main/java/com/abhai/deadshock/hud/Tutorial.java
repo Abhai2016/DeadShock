@@ -19,36 +19,30 @@ public class Tutorial {
         switch (Game.getGameWorld().getLevel().getCurrentLevelNumber()) {
             case Level.FIRST_LEVEL -> {
                 setText(Texts.MOVE_CHARACTER, 100, DEFAULT_OFFSET_Y);
-                setText(Texts.JUMP, BLOCK_SIZE * 23, DEFAULT_OFFSET_Y);
-                setText(Texts.SHOOT, BLOCK_SIZE * 45, DEFAULT_OFFSET_Y);
-                setText(Texts.RELOAD, BLOCK_SIZE * 55, DEFAULT_OFFSET_Y);
-                setText(Texts.CHANGE_MUSIC, BLOCK_SIZE * 73, SMALL_OFFSET_Y);
-                setText(Texts.CHANGE_TRACK, BLOCK_SIZE * 74, SMALLER_OFFSET_Y);
-                setText(Texts.PICK_UP_WEAPON, BLOCK_SIZE * 33, DEFAULT_OFFSET_Y);
-                setText(Texts.RELOAD_ENERGETIC, BLOCK_SIZE * 43, SMALL_OFFSET_Y);
-                setText(Texts.SHOOT_ENERGETIC, BLOCK_SIZE * 43, SMALLER_OFFSET_Y);
-                setText(Texts.GET_MONEY_FROM_ENEMY, BLOCK_SIZE * 95, DEFAULT_OFFSET_Y);
+                setText(Texts.JUMP, BLOCK_SIZE * 7, SMALL_OFFSET_Y);
+                setText(Texts.SHOOT, BLOCK_SIZE * 27, SMALL_OFFSET_Y);
+                setText(Texts.RELOAD, BLOCK_SIZE * 25, DEFAULT_OFFSET_Y);
+                setText(Texts.CHANGE_MUSIC, BLOCK_SIZE * 59, DEFAULT_OFFSET_Y);
+                setText(Texts.CHANGE_TRACK, BLOCK_SIZE * 65, SMALL_OFFSET_Y);
+                setText(Texts.PICK_UP_OBJECT, BLOCK_SIZE * 26, SMALLER_OFFSET_Y);
+                setText(Texts.SHOOT_ENERGETIC, BLOCK_SIZE * 41, DEFAULT_OFFSET_Y);
                 setText(Texts.TURN_ON_VENDING_MACHINE, BLOCK_SIZE * 182, SMALLEST_OFFSET_Y);
             }
             case Level.SECOND_LEVEL -> {
-                setText(Texts.SAVES, BLOCK_SIZE, 200);
                 setText(Texts.SWITCH_WEAPON, BLOCK_SIZE * 18, DEFAULT_OFFSET_Y);
-                setText(Texts.TAKE_MEDICINE, BLOCK_SIZE * 55, SMALLEST_OFFSET_Y);
                 setText(Texts.SWITCH_ENERGETIC, BLOCK_SIZE * 46, DEFAULT_OFFSET_Y);
             }
             case Level.THIRD_LEVEL -> {
-                setText(Texts.RPG_BULLETS, BLOCK_SIZE * 33, SMALLEST_OFFSET_Y);
                 setText(Texts.CHANGE_WEAPON, BLOCK_SIZE * 19, DEFAULT_OFFSET_Y);
             }
         }
     }
 
     public static void delete() {
-        Game.getGameWorld().getGameRoot().getChildren().removeAll(Texts.MOVE_CHARACTER, Texts.JUMP, Texts.PICK_UP_WEAPON,
-                Texts.SHOOT, Texts.RELOAD, Texts.CHANGE_TRACK, Texts.CHANGE_MUSIC,
-                Texts.GET_MONEY_FROM_ENEMY, Texts.TURN_ON_VENDING_MACHINE, Texts.SHOOT_ENERGETIC,
-                Texts.RELOAD_ENERGETIC, Texts.VENDING_MACHINE_MENU, Texts.TAKE_MEDICINE,
-                Texts.SWITCH_WEAPON, Texts.SWITCH_ENERGETIC, Texts.SAVES, Texts.CHANGE_WEAPON, Texts.RPG_BULLETS);
+        Game.getGameWorld().getGameRoot().getChildren().removeAll(Texts.MOVE_CHARACTER, Texts.JUMP,
+                Texts.PICK_UP_OBJECT, Texts.SHOOT, Texts.RELOAD, Texts.CHANGE_TRACK, Texts.CHANGE_MUSIC,
+                Texts.TURN_ON_VENDING_MACHINE, Texts.SHOOT_ENERGETIC, Texts.VENDING_MACHINE_MENU,
+                Texts.SWITCH_WEAPON, Texts.SWITCH_ENERGETIC, Texts.CHANGE_WEAPON);
     }
 
     public static void changeLevel() {
@@ -58,9 +52,9 @@ public class Tutorial {
 
     public static void setVendingMachineMenu() {
         Texts.VENDING_MACHINE_MENU.setFont(Font.font("Aria", 28));
+        Texts.VENDING_MACHINE_MENU.setTranslateX(BLOCK_SIZE * 4.5 + 5);
         Texts.VENDING_MACHINE_MENU.setFill(Color.WHITE);
-        Texts.VENDING_MACHINE_MENU.setTranslateX(50);
-        Texts.VENDING_MACHINE_MENU.setTranslateY(50);
+        Texts.VENDING_MACHINE_MENU.setTranslateY(40);
         Game.getGameWorld().getAppRoot().getChildren().add(Texts.VENDING_MACHINE_MENU);
     }
 

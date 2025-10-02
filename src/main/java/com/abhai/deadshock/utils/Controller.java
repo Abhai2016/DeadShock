@@ -70,22 +70,18 @@ public class Controller {
         if (!isPressed(KeyCode.J))
             Game.getGameWorld().getBooker().getWeapon().setSingleShot(true);
         if (isPressed(KeyCode.DIGIT1))
-            Game.getGameWorld().getBooker().getWeapon().changeWeapon(WeaponType.PISTOL);
+            Game.getGameWorld().getBooker().changeWeapon(WeaponType.PISTOL);
         if (isPressed(KeyCode.DIGIT2))
-            Game.getGameWorld().getBooker().getWeapon().changeWeapon(WeaponType.MACHINE_GUN);
+            Game.getGameWorld().getBooker().changeWeapon(WeaponType.MACHINE_GUN);
         if (isPressed(KeyCode.DIGIT3))
-            Game.getGameWorld().getBooker().getWeapon().changeWeapon(WeaponType.RPG);
+            Game.getGameWorld().getBooker().changeWeapon(WeaponType.RPG);
     }
 
     private static void movementListener() {
-        if (isPressed(KeyCode.D) && Game.getGameWorld().getBooker().getTranslateX() < Game.getGameWorld().getGameRoot().getWidth() - Game.getGameWorld().getBooker().getWidth()) {
+        if (isPressed(KeyCode.D) && Game.getGameWorld().getBooker().getTranslateX() < Game.getGameWorld().getGameRoot().getWidth() - Game.getGameWorld().getBooker().getWidth())
             Game.getGameWorld().getBooker().moveX(Character.SPEED);
-            Game.getGameWorld().getBooker().setScaleX(1);
-        }
-        if (isPressed(KeyCode.A) && Game.getGameWorld().getBooker().getTranslateX() > 1) {
+        if (isPressed(KeyCode.A) && Game.getGameWorld().getBooker().getTranslateX() > 1)
             Game.getGameWorld().getBooker().moveX(-Character.SPEED);
-            Game.getGameWorld().getBooker().setScaleX(-1);
-        }
         if (isPressed(KeyCode.A) && isPressed(KeyCode.D))
             Game.getGameWorld().getBooker().stopAnimation();
         if (isPressed(KeyCode.W))
@@ -106,7 +102,7 @@ public class Controller {
     private static void interactionListener() {
         if (isPressed(KeyCode.E) && Game.getGameWorld().getLevel().getCurrentLevelNumber() < Level.BOSS_LEVEL)
             if (Game.getGameWorld().getBooker().getBoundsInParent().intersects(Game.getGameWorld().getBooker().getWeapon().getBoundsInParent()))
-                Game.getGameWorld().getBooker().getWeapon().pickUpWeapon();
+                Game.getGameWorld().getBooker().pickUpWeapon();
             else if (Game.getGameWorld().getBooker().getBoundsInParent().intersects(Game.getGameWorld().getBooker().getEnergetic().getBoundsInParent()))
                 Game.getGameWorld().getBooker().getEnergetic().pickUp();
             else if (Game.getGameWorld().getBooker().getBoundsInParent().intersects(Game.getGameWorld().getVendingMachine().getVendingMachineImage().getBoundsInParent()) && !Game.getGameWorld().getVendingMachine().isShown())

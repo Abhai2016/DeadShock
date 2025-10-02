@@ -21,6 +21,8 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+import java.util.Random;
+
 public class Booker extends Character implements Animatable {
     public static final int WIDTH = 60;
 
@@ -125,7 +127,7 @@ public class Booker extends Character implements Animatable {
                         Game.getGameWorld().getAppRoot().getChildren().add(moneyText);
                     if (currentLivesCount < 0) {
                         continueText.setText(Texts.PUSH_ENTER_TO_START_LEVEL_AGAIN);
-                        continueText.setTranslateX(Game.SCENE_WIDTH / 4);
+                        continueText.setTranslateX(Game.SCENE_WIDTH / 4.5 - 20);
                     } else {
                         continueText.setText(Texts.PUSH_ENTER_TO_CONTINUE);
                         continueText.setTranslateX(Game.SCENE_WIDTH / 3);
@@ -265,6 +267,11 @@ public class Booker extends Character implements Animatable {
         currentLivesCount = fullLivesCount;
     }
 
+    public void pickUpWeapon() {
+        weapon.pickUpWeapon();
+        changeWeaponAnimation();
+    }
+
     public void moveX(double x) {
         if (velocity.getX() < 0)
             velocity = velocity.add(ANIMATION_SPEED, 0);
@@ -280,8 +287,13 @@ public class Booker extends Character implements Animatable {
                         || (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.BOSS_LEVEL
                         && getTranslateX() < Block.BLOCK_SIZE * 37 - WIDTH))
                     setTranslateX(getTranslateX() + 1);
-            } else if (getTranslateX() > 1)
+                if (booleanVelocityX)
+                    setScaleX(1);
+            } else if (getTranslateX() > 1) {
                 setTranslateX(getTranslateX() - 1);
+                if (booleanVelocityX)
+                    setScaleX(-1);
+            }
 
             if (intersectsWithBlocks('X', x))
                 return;
@@ -292,7 +304,7 @@ public class Booker extends Character implements Animatable {
 
     private void initDeathText() {
         deathText = new Text(Texts.YOU_ARE_DEAD);
-        deathText.setFill(Color.RED);
+        deathText.setFill(Color.WHITE);
         deathText.setTranslateY(Game.SCENE_HEIGHT / 2);
         deathText.setTranslateX(Game.SCENE_WIDTH / 2 - 75);
         deathText.setFont(Font.font("Arial", FontWeight.BOLD, 28));
@@ -304,9 +316,9 @@ public class Booker extends Character implements Animatable {
         continueText.setFont(Font.font("Arial", FontWeight.BOLD, 28));
 
         moneyText = new Text();
-        moneyText.setFill(Color.RED);
+        moneyText.setFill(Color.WHITE);
         moneyText.setTranslateX(Game.SCENE_WIDTH / 4);
-        moneyText.setTranslateY(Game.SCENE_HEIGHT / 1.5 - 30);
+        moneyText.setTranslateY(Game.SCENE_HEIGHT / 1.5 - 40);
         moneyText.setFont(Font.font("Arial", FontWeight.BOLD, 28));
     }
 
@@ -379,29 +391,29 @@ public class Booker extends Character implements Animatable {
             case DifficultyType.EASY -> {
                 money = 300;
                 fullLivesCount = 3;
-                priceForGeneration = 15;
+                priceForGeneration = 10;
                 moneyForKillingEnemy = 10;
                 supplyForKillingEnemy = 25;
                 closeCombatDamageToEnemies = 50;
-                closeCombatDamageFromEnemies = 5;
+                closeCombatDamageFromEnemies = 0;
             }
             case DifficultyType.MEDIUM -> {
                 money = 150;
                 fullLivesCount = 2;
-                priceForGeneration = 20;
+                priceForGeneration = 15;
                 moneyForKillingEnemy = 5;
                 supplyForKillingEnemy = 20;
                 closeCombatDamageToEnemies = 40;
-                closeCombatDamageFromEnemies = 10;
+                closeCombatDamageFromEnemies = 5;
             }
             case DifficultyType.HARD -> {
                 money = 100;
                 fullLivesCount = 1;
-                priceForGeneration = 25;
+                priceForGeneration = 20;
                 moneyForKillingEnemy = 3;
                 supplyForKillingEnemy = 15;
                 closeCombatDamageToEnemies = 30;
-                closeCombatDamageFromEnemies = 15;
+                closeCombatDamageFromEnemies = 10;
             }
             case DifficultyType.HARDCORE -> {
                 money = 100;
@@ -410,7 +422,7 @@ public class Booker extends Character implements Animatable {
                 moneyForKillingEnemy = 2;
                 supplyForKillingEnemy = 10;
                 closeCombatDamageToEnemies = 25;
-                closeCombatDamageFromEnemies = 20;
+                closeCombatDamageFromEnemies = 15;
             }
         }
         if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.FIRST_LEVEL)
@@ -435,6 +447,15 @@ public class Booker extends Character implements Animatable {
         }
     }
 
+    public void changeWeaponAnimation() {
+        switch (weapon.getType()) {
+            case WeaponType.MACHINE_GUN -> animation.setOffsetY(MACHINE_GUN_OFFSET_Y);
+            case WeaponType.PISTOL -> animation.setOffsetY(PISTOL_OFFSET_Y);
+            case WeaponType.RPG -> animation.setOffsetY(RPG_OFFSET_Y);
+            default -> animation.setOffsetY(NO_GUN_OFFSET_Y);
+        }
+    }
+
     public void closeCombat(double scaleX) {
         Hp -= closeCombatDamageFromEnemies;
 
@@ -443,6 +464,11 @@ public class Booker extends Character implements Animatable {
             velocity = velocity.add(scaleX * -JUMP_SPEED, 0);
             GameMedia.CLOSE_COMBAT.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
         }
+    }
+
+    public void changeWeapon(WeaponType type) {
+        weapon.changeWeapon(type);
+        changeWeaponAnimation();
     }
 
     public void takeAmmo(SupplySubType subType) {
@@ -457,17 +483,6 @@ public class Booker extends Character implements Animatable {
             case WeaponType.PISTOL -> weapon.setCurrentBullets(weapon.getPistolBullets());
             case WeaponType.MACHINE_GUN -> weapon.setCurrentBullets(weapon.getMachineGunBullets());
         }
-    }
-
-    public void changeWeaponAnimation(WeaponType weaponType) {
-        stopAnimation();
-        switch (weaponType) {
-            case WeaponType.MACHINE_GUN -> animation.setOffsetY(MACHINE_GUN_OFFSET_Y);
-            case WeaponType.PISTOL -> animation.setOffsetY(PISTOL_OFFSET_Y);
-            case WeaponType.RPG -> animation.setOffsetY(RPG_OFFSET_Y);
-            default -> animation.setOffsetY(NO_GUN_OFFSET_Y);
-        }
-        animation.play();
     }
 
     private boolean intersectsWithBlocks(char typeOfCoordinate, double coordinate) {
@@ -526,25 +541,8 @@ public class Booker extends Character implements Animatable {
         return Hp;
     }
 
-    public void setHp(int value) {
-        Hp = value;
-        if (Hp > 100)
-            Hp = 100;
-    }
-
-    public void setSalt(int value) {
-        salt = value;
-        if (salt > 100)
-            salt = 100;
-    }
-
     public int getSalt() {
         return salt;
-    }
-
-    public void setMoney(int value) {
-        money = value;
-        Game.getGameWorld().getHud().updateMoneyTextPosition();
     }
 
     public int getMoney() {
@@ -555,59 +553,77 @@ public class Booker extends Character implements Animatable {
         return dead;
     }
 
-    public void addMoneyForKillingEnemy() {
-        money += moneyForKillingEnemy;
-        Game.getGameWorld().getHud().updateMoneyTextPosition();
-    }
-
     public Weapon getWeapon() {
         return weapon;
-    }
-
-    public void addMedicineForKillingEnemy() {
-        setHp(Hp + supplyForKillingEnemy);
-
-        switch ((int) (Math.random() * 2)) {
-            case 0 -> GameMedia.FEELS_BETTER.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-            case 1 -> GameMedia.FEELING_BETTER.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-        }
-
     }
 
     public boolean isGameOver() {
         return gameOver;
     }
 
+    public void setHp(int value) {
+        Hp = value;
+        if (Hp > 100)
+            Hp = 100;
+    }
+
     public boolean isHypnotized() {
         return hypnotized;
+    }
+
+    public void setSalt(int value) {
+        salt = value;
+        if (salt > 100)
+            salt = 100;
+    }
+
+    public void setMoney(int value) {
+        money = value;
+        Game.getGameWorld().getHud().updateMoneyTextPosition();
     }
 
     public Energetic getEnergetic() {
         return energetic;
     }
 
+    public void addSaltForKillingEnemy() {
+        setSalt(salt + supplyForKillingEnemy / 2);
+    }
+
+    public void addMoneyForKillingEnemy() {
+        money += moneyForKillingEnemy;
+        Game.getGameWorld().getHud().updateMoneyTextPosition();
+    }
+
+    public void addMedicineForKillingEnemy() {
+        setHp(Hp + supplyForKillingEnemy);
+
+        switch (new Random().nextInt(2)) {
+            case 0 -> GameMedia.FEELS_BETTER.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 1 -> GameMedia.FEELING_BETTER.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+        }
+
+    }
+
     public void setCanPlayVoice(boolean value) {
         canPlayVoice = value;
     }
 
-    public void addSaltForKillingEnemy() {
-        salt += supplyForKillingEnemy / 2;
+    public int getCloseCombatDamageFromEnemies() {
+        return closeCombatDamageFromEnemies;
     }
 
     public void setWeapon(Weapon.Builder builder) {
         weapon = builder.build();
-    }
-
-    public void minusSaltForUsingEnergetic(int saltPrice) {
-        salt -= saltPrice;
+        changeWeaponAnimation();
     }
 
     public void setEnergetic(Energetic.Builder builder) {
         energetic = builder.build();
     }
 
-    public int getCloseCombatDamageFromEnemies() {
-        return closeCombatDamageFromEnemies;
+    public void minusSaltForUsingEnergetic(int saltPrice) {
+        salt -= saltPrice;
     }
 
     public void update() {

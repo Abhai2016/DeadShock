@@ -14,11 +14,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
 import java.nio.file.Paths;
+import java.util.Random;
 
 public class Enemy extends Pane {
     protected static final int WIDTH = 62;
     protected static final int HEIGHT = 65;
     protected static final int GRAVITY = 10;
+    protected static final Random RANDOM = new Random();
 
     protected EnemyType type;
     protected Point2D velocity;
@@ -48,7 +50,7 @@ public class Enemy extends Pane {
         playDeathVoice();
         Game.getGameWorld().getBooker().addMoneyForKillingEnemy();
 
-        if (Math.random() < 0.75) {
+        if (RANDOM.nextDouble() < 0.6) {
             if (Game.getGameWorld().getLevel().getCurrentLevelNumber() > Level.FIRST_LEVEL) {
                 Elizabeth elizabeth = Game.getGameWorld().getElizabeth();
                 elizabeth.playSupplyVoice();
@@ -59,7 +61,7 @@ public class Enemy extends Pane {
     }
 
     public void playHitVoice() {
-        switch ((int) (Math.random() * 3)) {
+        switch (RANDOM.nextInt(3)) {
             case 0 -> GameMedia.AUDIO_CLIP_HIT.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             case 1 -> GameMedia.AUDIO_CLIP_HIT_2.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             case 2 -> GameMedia.AUDIO_CLIP_HIT_3.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
@@ -83,7 +85,7 @@ public class Enemy extends Pane {
     }
 
     protected void playDeathVoice() {
-        switch ((int) (Math.random() * 2)) {
+        switch (RANDOM.nextInt(2)) {
             case 0 -> GameMedia.DEATH.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
             case 1 -> GameMedia.DEATH_2.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
         }

@@ -155,7 +155,7 @@ public class Boss extends Enemy implements Animatable {
             else
                 velocity = velocity.add(JUMP_SPEED, 0);
 
-            switch ((int) (Math.random() * 3)) {
+            switch (RANDOM.nextInt(3)) {
                 case 0 -> GameMedia.BOSS_HIT.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
                 case 1 -> GameMedia.BOSS_HIT_2.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
                 case 2 -> GameMedia.BOSS_HIT_3.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);

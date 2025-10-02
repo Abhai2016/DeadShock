@@ -8,8 +8,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
 import java.nio.file.Paths;
+import java.util.Random;
 
 public class Supply extends Pane {
+    private static final Random RANDOM = new Random();
     private final Image ammoImage = new Image(Paths.get("resources", "images", "supply", "ammo.png").toUri().toString());
     private final Image saltImage = new Image(Paths.get("resources", "images", "supply", "salt.png").toUri().toString());
     private final Image medicineImage = new Image(Paths.get("resources", "images", "supply", "medicine.png").toUri().toString());
@@ -46,8 +48,8 @@ public class Supply extends Pane {
     }
 
     public void init(SupplySubType supplySubType, double x, double y) {
-        double random = Math.random();
-        if (random < 0.3) {
+        double random = RANDOM.nextDouble();
+        if (random < 0.4) {
             subType = SupplySubType.MEDICINE;
             imageView.setImage(medicineImage);
         } else if (random < 0.7) {
@@ -64,7 +66,7 @@ public class Supply extends Pane {
     }
 
     public void update() {
-        if (!getBoundsInParent().intersects(Game.getGameWorld().getBooker().getBoundsInParent()))
+        if (!getBoundsInParent().intersects(Game.getGameWorld().getBooker().getBoundsInParent()) && getTranslateY() < Game.SCENE_HEIGHT)
             move();
         else
             delete();

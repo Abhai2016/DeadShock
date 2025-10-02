@@ -6,6 +6,8 @@ import com.abhai.deadshock.types.DifficultyType;
 import com.abhai.deadshock.types.WeaponType;
 import com.abhai.deadshock.utils.GameMedia;
 
+import java.util.Random;
+
 public class EnemyBullet extends Bullet {
     private int damage;
 
@@ -24,7 +26,7 @@ public class EnemyBullet extends Bullet {
     private void intersectsWithCharacters() {
         if (getBoundsInParent().intersects(Game.getGameWorld().getBooker().getBoundsInParent())) {
             Game.getGameWorld().getBooker().setHp(Game.getGameWorld().getBooker().getHp() - damage);
-            switch ((int) (Math.random() * 3)) {
+            switch (new Random().nextInt(3)) {
                 case 0 -> GameMedia.BOOKER_HIT.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
                 case 1 -> GameMedia.BOOKER_HIT_2.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
                 case 2 -> GameMedia.BOOKER_HIT_3.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);

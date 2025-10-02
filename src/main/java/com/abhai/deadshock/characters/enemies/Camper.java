@@ -61,7 +61,7 @@ public class Camper extends Enemy {
 
     private void playVoice() {
         GameMedia.AUDIO_CLIP_CAMPER.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
-        switch ((int) (Math.random() * 3)) {
+        switch (RANDOM.nextInt(3)) {
             case 0 -> GameMedia.BOOKER_HIT.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
             case 1 -> GameMedia.BOOKER_HIT_2.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
             case 2 -> GameMedia.BOOKER_HIT_3.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);

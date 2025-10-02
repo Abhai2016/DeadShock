@@ -67,8 +67,10 @@ public class Weapon extends Pane {
     private static final int FULL_PISTOL_CLIP = 20;
     private static final int START_RPG_BULLETS = 30;
     private static final int START_PISTOL_BULLETS = 80;
+    private static final int PISTOL_X = BLOCK_SIZE * 30;
     private static final int FULL_MACHINE_GUN_CLIP = 30;
     private static final int MACHINE_GUN_SHOOT_INTERVAL = 5;
+    private static final int PISTOL_Y = BLOCK_SIZE * 12 - 18;
     private static final int START_MACHINE_GUN_BULLETS = 120;
 
     private WeaponType type;
@@ -130,8 +132,8 @@ public class Weapon extends Pane {
         switch (Game.getGameWorld().getLevel().getCurrentLevelNumber()) {
             case Level.FIRST_LEVEL -> {
                 type = WeaponType.NO_GUN;
-                setTranslateX(BLOCK_SIZE * 38);
-                setTranslateY(BLOCK_SIZE * 12 - 18);
+                setTranslateX(PISTOL_X);
+                setTranslateY(PISTOL_Y);
                 imageView.setViewport(new Rectangle2D(265, 88, 33, 18));
             }
             case Level.SECOND_LEVEL -> {
@@ -139,7 +141,6 @@ public class Weapon extends Pane {
                     type = WeaponType.PISTOL;
                     currentClip = pistolClip;
                     currentBullets = pistolBullets;
-                    Game.getGameWorld().getBooker().changeWeaponAnimation(type);
                 }
                 setTranslateX(BLOCK_SIZE * 26);
                 setTranslateY(BLOCK_SIZE * 12 - 20);
@@ -158,7 +159,6 @@ public class Weapon extends Pane {
                 setTranslateX(BLOCK_SIZE * 24);
                 setTranslateY(BLOCK_SIZE * 12 - 20);
                 imageView.setViewport(new Rectangle2D(680, 80, 65, 18));
-                Game.getGameWorld().getBooker().changeWeaponAnimation(type);
             }
             case Level.BOSS_LEVEL -> {
                 if (canChooseRpg) {
@@ -174,7 +174,6 @@ public class Weapon extends Pane {
                     currentClip = pistolClip;
                     currentBullets = pistolBullets;
                 }
-                Game.getGameWorld().getBooker().changeWeaponAnimation(type);
             }
         }
     }
@@ -200,8 +199,8 @@ public class Weapon extends Pane {
         canChooseMachineGun = false;
 
         type = WeaponType.NO_GUN;
-        setTranslateX(BLOCK_SIZE * 38);
-        setTranslateY(BLOCK_SIZE * 12 - 18);
+        setTranslateX(PISTOL_X);
+        setTranslateY(PISTOL_Y);
         imageView.setViewport(new Rectangle2D(265, 88, 33, 18));
 
         if (!Game.getGameWorld().getGameRoot().getChildren().contains(this))
@@ -303,7 +302,7 @@ public class Weapon extends Pane {
                 case Level.FIRST_LEVEL -> {
                     canChoosePistol = true;
                     type = WeaponType.PISTOL;
-                    Game.getGameWorld().getBooker().changeWeaponAnimation(type);
+                    Game.getGameWorld().getBooker().changeWeaponAnimation();
                     pistolClip = currentClip = FULL_PISTOL_CLIP;
                     if (pistolBullets > 0)
                         currentBullets = pistolBullets;
@@ -316,7 +315,7 @@ public class Weapon extends Pane {
                     canChooseMachineGun = true;
                     type = WeaponType.MACHINE_GUN;
                     pistolBullets = currentBullets;
-                    Game.getGameWorld().getBooker().changeWeaponAnimation(type);
+                    Game.getGameWorld().getBooker().changeWeaponAnimation();
                     machineGunClip = currentClip = FULL_MACHINE_GUN_CLIP;
                     if (machineGunBullets > 0)
                         currentBullets = machineGunBullets;
@@ -335,7 +334,6 @@ public class Weapon extends Pane {
                     }
                     type = WeaponType.RPG;
                     rpgClip = currentClip = FULL_RPG_CLIP;
-                    Game.getGameWorld().getBooker().changeWeaponAnimation(type);
 
                     if (rpgBullets > 0)
                         currentBullets = rpgBullets;
@@ -429,7 +427,6 @@ public class Weapon extends Pane {
                         currentClip = pistolClip;
                         this.type = WeaponType.PISTOL;
                         currentBullets = pistolBullets;
-                        Game.getGameWorld().getBooker().changeWeaponAnimation(type);
                     }
                 }
                 case WeaponType.MACHINE_GUN -> {
@@ -442,7 +439,6 @@ public class Weapon extends Pane {
                         this.type = WeaponType.MACHINE_GUN;
                         currentClip = machineGunClip;
                         currentBullets = machineGunBullets;
-                        Game.getGameWorld().getBooker().changeWeaponAnimation(type);
                     }
                 }
                 case WeaponType.RPG -> {
@@ -457,7 +453,6 @@ public class Weapon extends Pane {
                         currentClip = rpgClip;
                         this.type = WeaponType.RPG;
                         currentBullets = rpgBullets;
-                        Game.getGameWorld().getBooker().changeWeaponAnimation(type);
                     }
                 }
             }

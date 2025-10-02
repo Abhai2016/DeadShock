@@ -13,11 +13,13 @@ import com.abhai.deadshock.world.levels.Block;
 import javafx.geometry.Point2D;
 import javafx.util.Duration;
 
+import java.util.Random;
 import java.util.function.BooleanSupplier;
 
 public class Comstock extends Enemy implements Animatable {
     private static final int SPEED = 3;
     private static final int VOICE_INTERVAL = 500;
+    private static final Random  RANDOM = new Random();
 
     protected static final int SPRITES_COUNT = 10;
     protected static final double JUMP_SPEED = -25;
@@ -158,7 +160,7 @@ public class Comstock extends Enemy implements Animatable {
     }
 
     private void playAttackVoice() {
-        switch ((int) (Math.random() * 10)) {
+        switch (RANDOM.nextInt(10)) {
             case 0 -> GameMedia.CAN_YOU_SHOOT.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             case 1 -> GameMedia.DIE_ALREADY.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             case 2 -> GameMedia.DONT_SPARE_BULLETS.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
@@ -183,7 +185,7 @@ public class Comstock extends Enemy implements Animatable {
 
     private void playVoiceLostBooker() {
         if (booleanVoice) {
-            switch ((int) (Math.random() * 6)) {
+            switch (RANDOM.nextInt(6)) {
                 case 0 -> GameMedia.HE_HAS_GONE.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
                 case 1 -> GameMedia.HE_HAS_GONE_2.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
                 case 2 -> GameMedia.HE_HAS_GONE_3.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
@@ -197,7 +199,7 @@ public class Comstock extends Enemy implements Animatable {
 
     private void playVoiceFoundBooker() {
         if (booleanVoice) {
-            switch ((int) (Math.random() * 8)) {
+            switch (RANDOM.nextInt(8)) {
                 case 0 -> GameMedia.WONT_GO_AWAY.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
                 case 1 ->
                         GameMedia.AUDIO_CLIP_FIRE.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);

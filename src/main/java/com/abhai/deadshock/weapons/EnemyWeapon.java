@@ -5,6 +5,8 @@ import com.abhai.deadshock.types.WeaponType;
 import com.abhai.deadshock.utils.GameMedia;
 import com.abhai.deadshock.weapons.bullets.EnemyBullet;
 
+import java.util.Random;
+
 public class EnemyWeapon {
     private static final int RELOAD_INTERVAL = 180;
 
@@ -32,7 +34,7 @@ public class EnemyWeapon {
 
     private void reload() {
         if (!nowReloading) {
-            switch ((int) (Math.random() * 5)) {
+            switch (new Random().nextInt(5)) {
                 case 0 -> GameMedia.NO_AMMO.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
                 case 1 -> GameMedia.NO_AMMO_2.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
                 case 2 -> GameMedia.NEED_AMMO.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);

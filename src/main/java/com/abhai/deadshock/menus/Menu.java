@@ -474,15 +474,17 @@ public class Menu extends Pane {
     private void createDifficultyLevelDescription() {
         difficultyBackground = new Pane();
         difficultyBackground.setVisible(false);
-        Rectangle rectangle = new Rectangle(775, 280, Color.WHITE);
-        rectangle.setTranslateX(Game.SCENE_WIDTH / 5 + 20);
-        rectangle.setTranslateY(Game.SCENE_HEIGHT / 10);
-        rectangle.setOpacity(0.5);
+        Rectangle rectangle = new Rectangle(Game.SCENE_WIDTH / 2, Game.SCENE_HEIGHT / 5, Color.WHITE);
+        rectangle.setTranslateX(Game.SCENE_WIDTH / 4.5);
+        rectangle.setTranslateY(Game.SCENE_HEIGHT / 5);
+        rectangle.setOpacity(0.75);
+        rectangle.setArcHeight(20);
+        rectangle.setArcWidth(20);
         difficultyBackground.getChildren().add(rectangle);
 
         difficultyLevelText = new Text(Texts.MEDIUM_DIFFICULTY_DESCRIPTION);
-        difficultyLevelText.setTranslateX(Game.SCENE_WIDTH / 5 + 25);
-        difficultyLevelText.setTranslateY(Game.SCENE_HEIGHT / 8);
+        difficultyLevelText.setTranslateX(Game.SCENE_WIDTH / 4.4);
+        difficultyLevelText.setTranslateY(Game.SCENE_HEIGHT / 4.4);
         difficultyLevelText.setFont(Font.font("Arial", FontWeight.BOLD, 20));
         difficultyLevelText.setFill(Color.BLACK);
         difficultyBackground.getChildren().add(difficultyLevelText);

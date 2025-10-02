@@ -41,8 +41,8 @@ public class Energetic extends Pane {
     }
 
     private static final int HYPNOSIS_X = BLOCK_SIZE * 40;
-    private static final int DEVIL_KISS_X = BLOCK_SIZE * 50;
-    private static final int ELECTRICITY_X = BLOCK_SIZE * 42;
+    private static final int DEVIL_KISS_X = BLOCK_SIZE * 47;
+    private static final int ELECTRICITY_X = BLOCK_SIZE * 50;
     private static final int HYPNOSIS_Y = BLOCK_SIZE * 14 - 27;
     private static final int DEVIL_KISS_Y = BLOCK_SIZE * 9 + 18;
     private static final int ELECTRICITY_Y = BLOCK_SIZE * 9 - 30;
@@ -212,10 +212,10 @@ public class Energetic extends Pane {
     public void setDifficultyType() {
         switch (Game.getGameWorld().getDifficultyType()) {
             case DifficultyType.MARIK -> saltPrice = 0;
-            case DifficultyType.EASY -> saltPrice = 5;
-            case DifficultyType.MEDIUM -> saltPrice = 10;
-            case DifficultyType.HARD -> saltPrice = 15;
-            case DifficultyType.HARDCORE -> saltPrice = 20;
+            case DifficultyType.EASY -> saltPrice = 10;
+            case DifficultyType.MEDIUM -> saltPrice = 15;
+            case DifficultyType.HARD -> saltPrice = 20;
+            case DifficultyType.HARDCORE -> saltPrice = 25;
         }
     }
 

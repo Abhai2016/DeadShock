@@ -104,10 +104,6 @@ public class Level {
         blocks.clear();
     }
 
-    public int getCurrentLevelNumber() {
-        return currentLevelNumber;
-    }
-
     private void initializeBackground() {
         switch (currentLevelNumber) {
             case FIRST_LEVEL -> {
@@ -132,14 +128,18 @@ public class Level {
         return blocks;
     }
 
-    public void setBackgroundLayoutX(double x) {
-        background.setLayoutX(x);
-    }
-
     private void initBlock(BlockType type, int x, int y) {
         Block block = blockPool.get();
         block.init(type, x, y);
         blocks.add(block);
+    }
+
+    public int getCurrentLevelNumber() {
+        return currentLevelNumber;
+    }
+
+    public void setBackgroundLayoutX(double x) {
+        background.setLayoutX(x);
     }
 
     public void setCurrentLevelNumber(int currentLevelNumber) {

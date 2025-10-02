@@ -31,6 +31,7 @@ import javafx.scene.media.MediaView;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import static com.abhai.deadshock.world.levels.Block.BLOCK_SIZE;
 
@@ -181,10 +182,10 @@ public class GameWorld {
 
         for (EnemyDTO enemy : enemiesByLevel)
             switch (enemy.getType()) {
-                case "comstock" -> initEnemy(Comstock.class, enemy.getX(), enemy.getY());
-                case "red_eye" -> initEnemy(RedEye.class, enemy.getX(), enemy.getY());
-                case "camper" -> initEnemy(Camper.class, enemy.getX(), enemy.getY());
-                case "boss" -> initEnemy(Boss.class, enemy.getX(), enemy.getY());
+                case EnemyType.COMSTOCK -> initEnemy(Comstock.class, enemy.getX(), enemy.getY());
+                case EnemyType.RED_EYE -> initEnemy(RedEye.class, enemy.getX(), enemy.getY());
+                case EnemyType.CAMPER -> initEnemy(Camper.class, enemy.getX(), enemy.getY());
+                case EnemyType.BOSS -> initEnemy(Boss.class, enemy.getX(), enemy.getY());
             }
     }
 
@@ -433,16 +434,16 @@ public class GameWorld {
         return level;
     }
 
+    public Pane getAppRoot() {
+        return appRoot;
+    }
+
     public Booker getBooker() {
         return booker;
     }
 
     public boolean isActive() {
         return active;
-    }
-
-    public Pane getAppRoot() {
-        return appRoot;
     }
 
     public Pane getGameRoot() {

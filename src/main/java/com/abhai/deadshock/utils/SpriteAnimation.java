@@ -30,16 +30,15 @@ public class SpriteAnimation extends Transition {
         imageView.setViewport(new Rectangle2D(offSetX, offSetY, width, height));
     }
 
-    public void setOffsetY(int offSetY) {
-        this.offSetY = offSetY;
-        imageView.setViewport(new Rectangle2D(offSetX, this.offSetY, width, height));
-    }
-
     @Override
     protected void interpolate(double k) {
         int index = (int) Math.min(Math.floor(k * count), count - 1);
         int x = (index % columns) * width + offSetX;
         int y = (index / columns) * height + offSetY;
         imageView.setViewport(new Rectangle2D(x, y, width, height));
+    }
+
+    public void setOffsetY(int offSetY) {
+        this.offSetY = offSetY;
     }
 }

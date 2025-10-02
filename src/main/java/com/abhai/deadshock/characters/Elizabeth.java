@@ -8,8 +8,11 @@ import com.abhai.deadshock.world.levels.Block;
 import com.abhai.deadshock.world.levels.Level;
 import javafx.geometry.Rectangle2D;
 
+import java.util.Random;
+
 public class Elizabeth extends Character {
     private static final int WIDTH = 43;
+    private static final Random RANDOM = new Random();
     private static final int MAX_SUPPLY_INTERVAL = 900;
 
     private int moveInterval;
@@ -60,7 +63,7 @@ public class Elizabeth extends Character {
 
         if (supplyInterval > MAX_SUPPLY_INTERVAL) {
             SupplySubType subType;
-            switch ((int) (Math.random() * 5)) {
+            switch (RANDOM.nextInt(5)) {
                 case 0 -> subType = SupplySubType.SALT;
                 case 1 -> subType = SupplySubType.MEDICINE;
                 case 2 -> subType = SupplySubType.RPG_BULLETS;
@@ -125,7 +128,7 @@ public class Elizabeth extends Character {
     }
 
     public void playSupplyVoice() {
-        switch ((int) (Math.random() * 3)) {
+        switch (RANDOM.nextInt(3)) {
             case 0 -> GameMedia.BOOKER_CATCH.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             case 1 -> GameMedia.BOOKER_CATCH_2.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             case 2 -> GameMedia.BOOKER_CATCH_3.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
