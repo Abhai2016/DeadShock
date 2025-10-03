@@ -3,4 +3,4 @@ Is a game inspired by Bioshock Infinite from Irrational Games and built with Jav
 To launch the game, download it via Google Drive link, unpack anywhere and run DeadShock.exe:<br>
 https://drive.google.com/file/d/10FFNbp_b_DeZTf4UmMSpd8jZGPjEMJy7/view?usp=drive_link <br> <br>
 ![alt text](https://github.com/Abhai2016/DeadShock/blob/master/resources/images/MenuScreenshot.jpg)
-![alt text](https://github.com/Abhai2016/DeadShock/blob/master/resources/images/GameplayScreenshot.png)
+![alt text](https://github.com/Abhai2016/DeadShock/blob/master/resources/images/GameplayScreenshot.jpg)
