@@ -11,8 +11,8 @@ public class SubMenu extends VBox {
     SubMenu() {}
 
     void addLabel(Label label) {
-        label.setTextFill(Color.WHITE);
         label.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        label.setTextFill(Color.WHITE);
         getChildren().add(label);
     }
 

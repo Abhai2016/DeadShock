@@ -34,12 +34,14 @@ public class Supply extends Pane {
 
     private void delete() {
         delete = true;
-        if (subType == SupplySubType.SALT)
-            Game.getGameWorld().getBooker().addSaltForKillingEnemy();
-        else if (subType == SupplySubType.MEDICINE)
-            Game.getGameWorld().getBooker().addMedicineForKillingEnemy();
-        else
-            Game.getGameWorld().getBooker().takeAmmo(subType);
+        if (getTranslateY() < Game.SCENE_HEIGHT) {
+            if (subType == SupplySubType.SALT)
+                Game.getGameWorld().getBooker().addSaltForKillingEnemy();
+            else if (subType == SupplySubType.MEDICINE)
+                Game.getGameWorld().getBooker().addMedicineForKillingEnemy();
+            else
+                Game.getGameWorld().getBooker().takeAmmo(subType);
+        }
         Game.getGameWorld().getGameRoot().getChildren().remove(this);
     }
 

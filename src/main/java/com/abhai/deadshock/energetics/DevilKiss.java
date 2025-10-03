@@ -16,8 +16,8 @@ public class DevilKiss {
     }
 
     public void shoot() {
-        GameMedia.DEVIL_KISS_SHOT.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
         DevilKissShot devilKissShot = devilKissShotObjectPool.get();
+        GameMedia.DEVIL_KISS_SHOT.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
         devilKissShot.init(Game.getGameWorld().getBooker().getTranslateX(), Game.getGameWorld().getBooker().getTranslateY() + 5);
         devilKissShots.add(devilKissShot);
     }

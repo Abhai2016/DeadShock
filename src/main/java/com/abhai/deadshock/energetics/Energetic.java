@@ -51,10 +51,10 @@ public class Energetic extends Pane {
     private static final Path ELECTRICITY_IMAGE_PATH = Paths.get("resources", "images", "energetics", "electricity.png");
 
     private boolean canShoot;
+    private boolean canChooseHypnosis;
     private boolean canChangeEnergetic;
     private boolean canChooseDevilKiss;
     private boolean canChooseElectricity;
-    private boolean canChooseHypnosis;
 
     private int saltPrice;
     private int countEnergetics;
@@ -263,6 +263,10 @@ public class Energetic extends Pane {
         return countEnergetics;
     }
 
+    public void setCanShoot(boolean value) {
+        canShoot = value;
+    }
+
     public boolean canChooseHypnosis() {
         return canChooseHypnosis;
     }
@@ -273,10 +277,6 @@ public class Energetic extends Pane {
 
     public boolean canChooseElectricity() {
         return canChooseElectricity;
-    }
-
-    public void setCanShoot(boolean value) {
-        canShoot = value;
     }
 
     public void setCanChangeEnergetic(boolean value) {

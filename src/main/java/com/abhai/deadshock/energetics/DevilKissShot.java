@@ -35,8 +35,7 @@ class DevilKissShot extends Pane {
                 return;
             }
 
-        if (getTranslateX() > Game.getGameWorld().getBooker().getTranslateX() + 680
-                || getTranslateX() < Game.getGameWorld().getBooker().getTranslateX() - 600)
+        if (getTranslateX() > Game.getGameWorld().getBooker().getTranslateX() + 680 || getTranslateX() < Game.getGameWorld().getBooker().getTranslateX() - 600)
             toDelete = true;
     }
 

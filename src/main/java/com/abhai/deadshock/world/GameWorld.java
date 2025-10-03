@@ -31,7 +31,6 @@ import javafx.scene.media.MediaView;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import static com.abhai.deadshock.world.levels.Block.BLOCK_SIZE;
 

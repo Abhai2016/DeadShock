@@ -29,7 +29,6 @@ public class GameMedia {
     public static final AudioClip BOOKER_CATCH_2 = new AudioClip(Paths.get("resources", "sounds", "voices", "elizabeth", "bookerCatch2.mp3").toUri().toString());
     public static final AudioClip BOOKER_CATCH_3 = new AudioClip(Paths.get("resources", "sounds", "voices", "elizabeth", "bookerCatch3.mp3").toUri().toString());
     public static final MediaPlayer OH_BOOKER = new MediaPlayer(new Media(Paths.get("resources", "sounds", "voices", "elizabeth", "booker.mp3").toUri().toString()));
-    public static final MediaPlayer WHERE_ARE_YOU_FROM = new MediaPlayer(new Media(Paths.get("resources", "sounds", "voices", "elizabeth", "whereAreYouFrom.mp3").toUri().toString()));
 
     //Enemies
     public static final AudioClip DIE = new AudioClip(Paths.get("resources", "sounds", "voices", "enemies", "die.mp3").toUri().toString());

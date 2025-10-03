@@ -32,7 +32,6 @@ public class Elizabeth extends Character {
     }
 
     public void reset() {
-        canMove = true;
         moveInterval = 0;
         supplyInterval = 0;
         setTranslateX(START_X);
@@ -41,21 +40,18 @@ public class Elizabeth extends Character {
     }
 
     private void move() {
-        if (canMove) {
-            moveInterval++;
-            if (getTranslateX() < Game.getGameWorld().getBooker().getTranslateX() - 100)
-                moveX(SPEED);
-            else if (getTranslateX() > Game.getGameWorld().getBooker().getTranslateX() + 100)
-                moveX(-SPEED);
+        moveInterval++;
+        if (getTranslateX() < Game.getGameWorld().getBooker().getTranslateX() - 100)
+            moveX(SPEED);
+        else if (getTranslateX() > Game.getGameWorld().getBooker().getTranslateX() + 100)
+            moveX(-SPEED);
 
-            if (moveInterval < 50)
-                moveY(1);
-            else if (moveInterval < 100)
-                moveY(-1);
-            else
-                moveInterval = 0;
-        } else
-            moveY(SPEED);
+        if (moveInterval < 50)
+            moveY(1);
+        else if (moveInterval < 100)
+            moveY(-1);
+        else
+            moveInterval = 0;
     }
 
     private void supply() {
@@ -75,20 +71,6 @@ public class Elizabeth extends Character {
             supplyInterval = 0;
             Game.getGameWorld().createSupply(SupplyType.ELIZABETH, subType, getTranslateX(), getTranslateY());
         }
-    }
-
-    private void playVoice() {
-        if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.SECOND_LEVEL)
-            if (startLevel && getTranslateX() > 100) {
-                startLevel = false;
-                GameMedia.FREEDOM.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-            } else if (getTranslateX() > Block.BLOCK_SIZE * 150 && playVoiceWhereYouFrom) {
-                canMove = false;
-                playVoiceWhereYouFrom = false;
-                GameMedia.WHERE_ARE_YOU_FROM.setOnEndOfMedia(() -> canMove = true);
-                GameMedia.WHERE_ARE_YOU_FROM.setVolume(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-                GameMedia.WHERE_ARE_YOU_FROM.play();
-            }
     }
 
     private void moveX(int x) {
@@ -170,7 +152,9 @@ public class Elizabeth extends Character {
         if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.BOSS_LEVEL)
             supply();
 
-        if (startLevel || playVoiceWhereYouFrom)
-            playVoice();
+        if (startLevel && Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.SECOND_LEVEL && getTranslateX() > 100) {
+            startLevel = false;
+            GameMedia.FREEDOM.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+        }
     }
 }

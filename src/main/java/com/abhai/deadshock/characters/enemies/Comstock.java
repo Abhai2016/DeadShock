@@ -47,12 +47,9 @@ public class Comstock extends Enemy implements Animatable {
         booleanVelocity = true;
         type = EnemyType.COMSTOCK;
 
-        animation = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED),
-                SPRITES_COUNT, SPRITES_COUNT, 0, 0, WIDTH, HEIGHT);
-        onTheLeft = () -> Game.getGameWorld().getBooker().getTranslateX() > getTranslateX() - 720
-                && Game.getGameWorld().getBooker().getTranslateX() < getTranslateX();
-        onTheRight = () -> Game.getGameWorld().getBooker().getTranslateX() < getTranslateX() + 650
-                && Game.getGameWorld().getBooker().getTranslateX() > getTranslateX();
+        animation = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED), SPRITES_COUNT, SPRITES_COUNT, 0, 0, WIDTH, HEIGHT);
+        onTheLeft = () -> Game.getGameWorld().getBooker().getTranslateX() > getTranslateX() - 720 && Game.getGameWorld().getBooker().getTranslateX() < getTranslateX();
+        onTheRight = () -> Game.getGameWorld().getBooker().getTranslateX() < getTranslateX() + 650 && Game.getGameWorld().getBooker().getTranslateX() > getTranslateX();
     }
 
     @Override
@@ -161,16 +158,16 @@ public class Comstock extends Enemy implements Animatable {
 
     private void playAttackVoice() {
         switch (RANDOM.nextInt(10)) {
-            case 0 -> GameMedia.CAN_YOU_SHOOT.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-            case 1 -> GameMedia.DIE_ALREADY.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-            case 2 -> GameMedia.DONT_SPARE_BULLETS.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-            case 3 -> GameMedia.KEEP_SHOOTING_2.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-            case 4 -> GameMedia.KILL_ME.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-            case 5 -> GameMedia.ALL_YOU_CAN.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-            case 6 -> GameMedia.WHO_ARE_YOU.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-            case 7 -> GameMedia.STUPID.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 0 -> GameMedia.STUPID.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 1 -> GameMedia.KILL_ME.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 2 -> GameMedia.ALL_YOU_CAN.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 3 -> GameMedia.WHO_ARE_YOU.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 4 -> GameMedia.DIE_ALREADY.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 5 -> GameMedia.CAN_YOU_SHOOT.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 6 -> GameMedia.KEEP_SHOOTING.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 7 -> GameMedia.KEEP_SHOOTING_2.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             case 8 -> GameMedia.GIVE_HIM_BULLETS.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-            case 9 -> GameMedia.KEEP_SHOOTING.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            case 9 -> GameMedia.DONT_SPARE_BULLETS.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
         }
         voiceInterval = 0;
     }
@@ -186,12 +183,12 @@ public class Comstock extends Enemy implements Animatable {
     private void playVoiceLostBooker() {
         if (booleanVoice) {
             switch (RANDOM.nextInt(6)) {
-                case 0 -> GameMedia.HE_HAS_GONE.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-                case 1 -> GameMedia.HE_HAS_GONE_2.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-                case 2 -> GameMedia.HE_HAS_GONE_3.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-                case 3 -> GameMedia.LOST_HIM.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-                case 4 -> GameMedia.LOST_HIM_2.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-                case 5 -> GameMedia.WERE_HERE.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 0 -> GameMedia.LOST_HIM.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 1 -> GameMedia.WERE_HERE.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 2 -> GameMedia.LOST_HIM_2.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 3 -> GameMedia.HE_HAS_GONE.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 4 -> GameMedia.HE_HAS_GONE_2.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 5 -> GameMedia.HE_HAS_GONE_3.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             }
             booleanVoice = false;
         }
@@ -200,16 +197,14 @@ public class Comstock extends Enemy implements Animatable {
     private void playVoiceFoundBooker() {
         if (booleanVoice) {
             switch (RANDOM.nextInt(8)) {
-                case 0 -> GameMedia.WONT_GO_AWAY.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-                case 1 ->
-                        GameMedia.AUDIO_CLIP_FIRE.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-                case 2 -> GameMedia.HE_IS_HERE.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-                case 3 ->
-                        GameMedia.GET_DOWN_WEAPON.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-                case 4 -> GameMedia.DIE.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-                case 5 -> GameMedia.ATTACK.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-                case 6 -> GameMedia.THEY_ARE_HERE.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-                case 7 -> GameMedia.TAKE_THEM.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 0 -> GameMedia.DIE.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 1 -> GameMedia.ATTACK.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 2 -> GameMedia.TAKE_THEM.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 3 -> GameMedia.HE_IS_HERE.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 4 -> GameMedia.WONT_GO_AWAY.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 5 -> GameMedia.THEY_ARE_HERE.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 6 -> GameMedia.AUDIO_CLIP_FIRE.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+                case 7 -> GameMedia.GET_DOWN_WEAPON.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
             }
         }
         booleanVoice = false;

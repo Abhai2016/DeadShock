@@ -4,7 +4,6 @@ import com.abhai.deadshock.Game;
 import com.abhai.deadshock.characters.Animatable;
 import com.abhai.deadshock.characters.enemies.Enemy;
 import com.abhai.deadshock.types.DifficultyType;
-import com.abhai.deadshock.utils.GameMedia;
 import com.abhai.deadshock.utils.Texts;
 import com.abhai.deadshock.world.levels.Level;
 import javafx.animation.FadeTransition;
@@ -87,17 +86,14 @@ public class Menu extends Pane {
     public void hideMenu() {
         if (!start) {
             FadeTransition ft = new FadeTransition(Duration.seconds(0.5), this);
+            ft.setOnFinished(event -> Game.getGameWorld().getAppRoot().getChildren().remove(this));
             ft.setFromValue(1);
             ft.setToValue(0);
-            ft.setOnFinished(event -> Game.getGameWorld().getAppRoot().getChildren().remove(this));
             ft.play();
 
             music.play();
             isShown = false;
             Game.getGameWorld().setActive(true);
-
-            if (GameMedia.WHERE_ARE_YOU_FROM.getStatus() == MediaPlayer.Status.PAUSED)
-                GameMedia.WHERE_ARE_YOU_FROM.play();
         }
     }
 
@@ -116,8 +112,6 @@ public class Menu extends Pane {
         for (Enemy enemy : Game.getGameWorld().getEnemies())
             if (enemy instanceof Animatable animatable)
                 animatable.stopAnimation();
-        if (GameMedia.WHERE_ARE_YOU_FROM.getStatus() == MediaPlayer.Status.PLAYING)
-            GameMedia.WHERE_ARE_YOU_FROM.pause();
     }
 
     public void hideCover() {
@@ -185,30 +179,31 @@ public class Menu extends Pane {
 
     private void createCover() {
         textCover = new Text(Texts.PUSH_ENTER_TO_CONTINUE);
-        textCover.setFont(Font.font("Arial", FontWeight.BOLD, 28));
         textCover.setFill(Color.AQUA);
         textCover.setTranslateX(Game.SCENE_WIDTH / 3);
         textCover.setTranslateY(Game.SCENE_HEIGHT - 225);
+        textCover.setFont(Font.font("Arial", FontWeight.BOLD, 28));
         getChildren().addAll(cover, textCover);
 
         fadeTransitionTextCover = new FadeTransition(Duration.seconds(1), textCover);
-        fadeTransitionTextCover.setFromValue(1);
-        fadeTransitionTextCover.setToValue(0);
         fadeTransitionTextCover.setCycleCount(FadeTransition.INDEFINITE);
         fadeTransitionTextCover.setAutoReverse(true);
+        fadeTransitionTextCover.setFromValue(1);
+        fadeTransitionTextCover.setToValue(0);
         fadeTransitionTextCover.play();
     }
 
     private void createMainSubMenu() {
         SubMenu mainSubMenu = new SubMenu();
-        CustomButton continueGame = new CustomButton(Texts.CONTINUE_GAME);
-        CustomButton newGame = new CustomButton(Texts.NEW_GAME);
-        CustomButton options = new CustomButton(Texts.OPTIONS);
         CustomButton exitGame = new CustomButton(Texts.EXIT);
+        CustomButton options = new CustomButton(Texts.OPTIONS);
+        CustomButton newGame = new CustomButton(Texts.NEW_GAME);
+        CustomButton continueGame = new CustomButton(Texts.CONTINUE_GAME);
         mainSubMenu.addCustomButtons(continueGame, newGame, options, exitGame);
-        subMenus.put(Texts.MAIN_SUBMENU, mainSubMenu);
+
         currentSubMenu = mainSubMenu;
         getChildren().add(currentSubMenu);
+        subMenus.put(Texts.MAIN_SUBMENU, mainSubMenu);
 
         continueGame.setOnMouseClicked(event -> {
             if (!start) {
@@ -229,10 +224,10 @@ public class Menu extends Pane {
         createTypeOfMusicText();
         SubMenu musicSubMenu = new SubMenu();
         CustomButton rockItem = new CustomButton(Texts.ROCK);
-        CustomButton post_hardcoreItem = new CustomButton(Texts.METALCORE);
         CustomButton electronicItem = new CustomButton(Texts.ELECTRO);
-        CustomButton developersChoice = new CustomButton(Texts.DEVELOPERS_CHOICE);
         CustomButton musicMenuBackItem = new CustomButton(Texts.BACK);
+        CustomButton post_hardcoreItem = new CustomButton(Texts.METALCORE);
+        CustomButton developersChoice = new CustomButton(Texts.DEVELOPERS_CHOICE);
         musicSubMenu.addCustomButtons(rockItem, post_hardcoreItem, electronicItem, developersChoice, musicMenuBackItem);
         subMenus.put(Texts.SOUNDS_MUSIC_SUBMENU, musicSubMenu);
 
@@ -299,8 +294,8 @@ public class Menu extends Pane {
 
     private void createSoundsSubMenu() {
         SubMenu soundOptionSubMenu = new SubMenu();
-        CustomButton volume = new CustomButton(Texts.VOLUME);
         CustomButton music = new CustomButton(Texts.MUSIC);
+        CustomButton volume = new CustomButton(Texts.VOLUME);
         CustomButton soundOptionBack = new CustomButton(Texts.BACK);
         soundOptionSubMenu.addCustomButtons(volume, music, soundOptionBack);
         subMenus.put(Texts.SOUNDS_OPTIONS_SUBMENU, soundOptionSubMenu);
@@ -340,12 +335,13 @@ public class Menu extends Pane {
     }
 
     private void createTypeOfMusicText() {
-        typeOfMusicText = new Text(Texts.CHOSEN_DEVELOPER_CHOICE);
+        typeOfMusicText = new Text();
+        typeOfMusicText.setVisible(false);
+        typeOfMusicText.setFill(Color.WHITE);
         typeOfMusicText.setTranslateX(Game.SCENE_WIDTH / 5);
         typeOfMusicText.setTranslateY(Game.SCENE_HEIGHT / 6);
+        typeOfMusicText.setText(Texts.CHOSEN_DEVELOPER_CHOICE);
         typeOfMusicText.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        typeOfMusicText.setFill(Color.WHITE);
-        typeOfMusicText.setVisible(false);
         getChildren().add(typeOfMusicText);
     }
 
@@ -372,13 +368,13 @@ public class Menu extends Pane {
     private void createDifficultySubMenu() {
         createDifficultyLevelDescription();
         SubMenu difficultySubMenu = new SubMenu();
-        CustomButton marik = new CustomButton(Texts.MARIK);
         CustomButton easy = new CustomButton(Texts.EASY);
-        CustomButton normal = new CustomButton(Texts.MEDIUM);
         CustomButton high = new CustomButton(Texts.HARD);
-        CustomButton hardcore = new CustomButton(Texts.HARDCORE);
         CustomButton back = new CustomButton(Texts.BACK);
+        CustomButton marik = new CustomButton(Texts.MARIK);
         CustomButton ready = new CustomButton(Texts.APPLY);
+        CustomButton normal = new CustomButton(Texts.MEDIUM);
+        CustomButton hardcore = new CustomButton(Texts.HARDCORE);
         difficultySubMenu.addCustomButtons(marik, easy, normal, high, hardcore, back, ready);
         subMenus.put(Texts.DIFFICULTY_SUBMENU, difficultySubMenu);
 
@@ -428,8 +424,8 @@ public class Menu extends Pane {
         Stage stage = new Stage();
         stage.setWidth(217);
         stage.setHeight(113);
-        stage.initModality(Modality.APPLICATION_MODAL);
         stage.setResizable(false);
+        stage.initModality(Modality.APPLICATION_MODAL);
 
         Text areYouSureText = new Text(Texts.ARE_YOU_SURE);
         areYouSureText.setFont(Font.font("Arial", FontWeight.BOLD, 20));
@@ -440,8 +436,8 @@ public class Menu extends Pane {
         Text savesWillBeLostText = new Text(Texts.SAVES_WILL_BE_LOST);
         savesWillBeLostText.setFont(Font.font("Arial", FontWeight.BOLD, 12));
         savesWillBeLostText.setFill(Color.BLACK);
-        savesWillBeLostText.setTranslateX(5);
         savesWillBeLostText.setTranslateY(40);
+        savesWillBeLostText.setTranslateX(5);
 
         Button yesButton = new Button(Texts.YES);
         yesButton.setPrefWidth(50);
@@ -454,8 +450,8 @@ public class Menu extends Pane {
 
         Button noButton = new Button(Texts.NO);
         noButton.setPrefWidth(50);
-        noButton.setTranslateX(stage.getWidth() - 70);
         noButton.setTranslateY(50);
+        noButton.setTranslateX(stage.getWidth() - 70);
         noButton.setOnMouseClicked(event -> {
             newGame = false;
             stage.close();

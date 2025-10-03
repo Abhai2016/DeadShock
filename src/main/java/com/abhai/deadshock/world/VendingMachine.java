@@ -210,10 +210,6 @@ public class VendingMachine extends Pane {
         return isShown;
     }
 
-    public ImageView getVendingMachineImage() {
-        return vendingMachineImage;
-    }
-
     private void addButtonsListeners(int xOffset) {
         bigMedicineButton.setOnMouseClicked(event -> {
             if (isShown) {
@@ -269,5 +265,9 @@ public class VendingMachine extends Pane {
         button.setPrefHeight(BUTTON_HEIGHT);
         Game.getGameWorld().getAppRoot().getChildren().add(button);
         button.setTranslateX(vendingMachineMenuImage.getTranslateX() + 136);
+    }
+
+    public ImageView getVendingMachineImage() {
+        return vendingMachineImage;
     }
 }

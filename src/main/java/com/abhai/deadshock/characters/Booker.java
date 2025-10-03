@@ -63,7 +63,7 @@ public class Booker extends Character implements Animatable {
     private Point2D velocity;
     private Energetic energetic;
     private final MediaView videoView;
-    private SpriteAnimation animation;
+    private final SpriteAnimation animation;
 
     private Text moneyText;
     private Text deathText;
@@ -157,9 +157,6 @@ public class Booker extends Character implements Animatable {
         velocity = new Point2D(0, 0);
         animation.setOffsetY(NO_GUN_OFFSET_Y);
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
-
-        if (GameMedia.WHERE_ARE_YOU_FROM.getStatus() == MediaPlayer.Status.PLAYING)
-            GameMedia.WHERE_ARE_YOU_FROM.stop();
 
         Hp = 100;
         salt = 100;
@@ -282,10 +279,8 @@ public class Booker extends Character implements Animatable {
 
         for (int i = 0; i < Math.abs(x); i++) {
             if (x > 0) {
-                if ((Game.getGameWorld().getLevel().getCurrentLevelNumber() != Level.BOSS_LEVEL
-                        && getTranslateX() < Block.BLOCK_SIZE * 300 - WIDTH)
-                        || (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.BOSS_LEVEL
-                        && getTranslateX() < Block.BLOCK_SIZE * 37 - WIDTH))
+                if ((Game.getGameWorld().getLevel().getCurrentLevelNumber() != Level.BOSS_LEVEL && getTranslateX() < Block.BLOCK_SIZE * 300 - WIDTH)
+                        || (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.BOSS_LEVEL && getTranslateX() < Block.BLOCK_SIZE * 37 - WIDTH))
                     setTranslateX(getTranslateX() + 1);
                 if (booleanVelocityX)
                     setScaleX(1);
@@ -343,9 +338,6 @@ public class Booker extends Character implements Animatable {
     }
 
     private void playVideoDeath() {
-        if (GameMedia.WHERE_ARE_YOU_FROM.getStatus() == MediaPlayer.Status.PLAYING)
-            GameMedia.WHERE_ARE_YOU_FROM.pause();
-
         if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.BOSS_LEVEL
                 && Game.getGameWorld().getEnemies().getFirst() instanceof Boss boss)
             boss.unStun();
@@ -356,9 +348,6 @@ public class Booker extends Character implements Animatable {
             deathReset();
             Game.getGameWorld().deathUnpause();
             Game.getGameWorld().getAppRoot().getChildren().remove(videoView);
-
-            if (GameMedia.WHERE_ARE_YOU_FROM.getStatus() == MediaPlayer.Status.PAUSED)
-                GameMedia.WHERE_ARE_YOU_FROM.play();
         });
 
         videoDeath.play();
@@ -541,34 +530,10 @@ public class Booker extends Character implements Animatable {
         return Hp;
     }
 
-    public int getSalt() {
-        return salt;
-    }
-
-    public int getMoney() {
-        return money;
-    }
-
-    public boolean isDead() {
-        return dead;
-    }
-
-    public Weapon getWeapon() {
-        return weapon;
-    }
-
-    public boolean isGameOver() {
-        return gameOver;
-    }
-
     public void setHp(int value) {
         Hp = value;
         if (Hp > 100)
             Hp = 100;
-    }
-
-    public boolean isHypnotized() {
-        return hypnotized;
     }
 
     public void setSalt(int value) {
@@ -582,17 +547,25 @@ public class Booker extends Character implements Animatable {
         Game.getGameWorld().getHud().updateMoneyTextPosition();
     }
 
-    public Energetic getEnergetic() {
-        return energetic;
+    public int getSalt() {
+        return salt;
     }
 
-    public void addSaltForKillingEnemy() {
-        setSalt(salt + supplyForKillingEnemy / 2);
+    public int getMoney() {
+        return money;
+    }
+
+    public boolean isDead() {
+        return dead;
     }
 
     public void addMoneyForKillingEnemy() {
         money += moneyForKillingEnemy;
         Game.getGameWorld().getHud().updateMoneyTextPosition();
+    }
+
+    public Weapon getWeapon() {
+        return weapon;
     }
 
     public void addMedicineForKillingEnemy() {
@@ -605,12 +578,8 @@ public class Booker extends Character implements Animatable {
 
     }
 
-    public void setCanPlayVoice(boolean value) {
-        canPlayVoice = value;
-    }
-
-    public int getCloseCombatDamageFromEnemies() {
-        return closeCombatDamageFromEnemies;
+    public boolean isGameOver() {
+        return gameOver;
     }
 
     public void setWeapon(Weapon.Builder builder) {
@@ -618,12 +587,32 @@ public class Booker extends Character implements Animatable {
         changeWeaponAnimation();
     }
 
-    public void setEnergetic(Energetic.Builder builder) {
-        energetic = builder.build();
+    public boolean isHypnotized() {
+        return hypnotized;
+    }
+
+    public Energetic getEnergetic() {
+        return energetic;
+    }
+
+    public void setCanPlayVoice(boolean value) {
+        canPlayVoice = value;
     }
 
     public void minusSaltForUsingEnergetic(int saltPrice) {
         salt -= saltPrice;
+    }
+
+    public void addSaltForKillingEnemy() {
+        setSalt(salt + supplyForKillingEnemy / 2);
+    }
+
+    public void setEnergetic(Energetic.Builder builder) {
+        energetic = builder.build();
+    }
+
+    public int getCloseCombatDamageFromEnemies() {
+        return closeCombatDamageFromEnemies;
     }
 
     public void update() {

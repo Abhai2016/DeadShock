@@ -28,8 +28,7 @@ public class Camper extends Enemy {
     }
 
     private void behave() {
-        if (getBoundsInParent().intersects(Game.getGameWorld().getBooker().getBoundsInParent())
-                && getTranslateY() == Game.getGameWorld().getBooker().getTranslateY())
+        if (getBoundsInParent().intersects(Game.getGameWorld().getBooker().getBoundsInParent()) && getTranslateY() == Game.getGameWorld().getBooker().getTranslateY())
             closeCombat();
 
         if (GameMedia.AUDIO_CLIP_CAMPER.isPlaying()) {
@@ -42,12 +41,10 @@ public class Camper extends Enemy {
                 moveInterval = 0;
         }
 
-        if (Game.getGameWorld().getBooker().getTranslateX() > getTranslateX() - 750
-                && Game.getGameWorld().getBooker().getTranslateX() < getTranslateX()) {
+        if (Game.getGameWorld().getBooker().getTranslateX() > getTranslateX() - 750 && Game.getGameWorld().getBooker().getTranslateX() < getTranslateX()) {
             voiceInterval++;
             setScaleX(-1);
-        } else if (Game.getGameWorld().getBooker().getTranslateX() < getTranslateX() + 650
-                && Game.getGameWorld().getBooker().getTranslateX() > getTranslateX()) {
+        } else if (Game.getGameWorld().getBooker().getTranslateX() < getTranslateX() + 650 && Game.getGameWorld().getBooker().getTranslateX() > getTranslateX()) {
             voiceInterval++;
             setScaleX(1);
         } else if (Game.getGameWorld().getBooker().getTranslateX() == getTranslateX())

@@ -43,20 +43,11 @@ public class Texts {
     public static final String PUSH_ENTER_TO_CONTINUE = "Для продолжения нажмите ввод";
     public static final String CHOSEN_DEVELOPER_CHOICE = "Выбрано : ВЫБОР РАЗРАБОТЧИКА";
 
-    public static final String MARIK_DIFFICULTY_DESCRIPTION = "УРОВЕНЬ СЛОЖНОСТИ 'МАРИК':\n" +
-            "- бесконечные монеты\n- у противников включен friendly fire\n -при прыжке на противника у игрока не отнимаются жизни";
-    public static final String EASY_DIFFICULTY_DESCRIPTION = "УРОВЕНЬ СЛОЖНОСТИ 'ЛЕГКИЙ':\n" +
-            "- 300 монет в начале игры\n- у противников включен friendly fire\n- при прыжке на противника у игрока не отнимаются жизни" +
-            "\n- каждая регенерация отнимает 10 монет";
-    public static final String MEDIUM_DIFFICULTY_DESCRIPTION = "УРОВЕНЬ СЛОЖНОСТИ 'СРЕДНИЙ':\n" +
-            "- 150 монет в начале игры\n- у противников выключен friendly fire\n- при прыжке на противника у игрока " +
-            "отнимается 5% жизней\n- каждая регенерация отнимает 15 монет";
-    public static final String HARD_DIFFICULTY_DESCRIPTION = "УРОВЕНЬ СЛОЖНОСТИ 'ВЫСОКИЙ':\n" +
-            "- 100 монет в начале игры\n- у противников выключен friendly fire\n- при прыжке на противника у игрока " +
-            "отнимается 10% жизней\n- каждая регенерация отнимает 20 монет";
-    public static final String HARDCORE_DIFFICULTY_DESCRIPTION = "УРОВЕНЬ СЛОЖНОСТИ 'ХАРДКОР':\n" +
-            "- 100 монет в начале игры\n- у противников выключен friendly fire\n- при прыжке на противника у игрока " +
-            "отнимается 15% жизней\n- никакой регенирации, никаких сохранений\n- умрете - начинайте игру заново";
+    public static final String MARIK_DIFFICULTY_DESCRIPTION = "УРОВЕНЬ СЛОЖНОСТИ 'МАРИК':\n- бесконечные монеты\n- у противников включен friendly fire\n -при прыжке на противника у игрока не отнимаются жизни";
+    public static final String EASY_DIFFICULTY_DESCRIPTION = "УРОВЕНЬ СЛОЖНОСТИ 'ЛЕГКИЙ':\n- 300 монет в начале игры\n- у противников включен friendly fire\n- при прыжке на противника у игрока не отнимаются жизни\n- каждая регенерация отнимает 10 монет";
+    public static final String MEDIUM_DIFFICULTY_DESCRIPTION = "УРОВЕНЬ СЛОЖНОСТИ 'СРЕДНИЙ':\n- 150 монет в начале игры\n- у противников выключен friendly fire\n- при прыжке на противника у игрока отнимается 5% жизней\n- каждая регенерация отнимает 15 монет";
+    public static final String HARD_DIFFICULTY_DESCRIPTION = "УРОВЕНЬ СЛОЖНОСТИ 'ВЫСОКИЙ':\n- 100 монет в начале игры\n- у противников выключен friendly fire\n- при прыжке на противника у игрока отнимается 10% жизней\n- каждая регенерация отнимает 20 монет";
+    public static final String HARDCORE_DIFFICULTY_DESCRIPTION = "УРОВЕНЬ СЛОЖНОСТИ 'ХАРДКОР':\n- 100 монет в начале игры\n- у противников выключен friendly fire\n- при прыжке на противника у игрока отнимается 15% жизней\n- никакой регенирации, никаких сохранений\n- умрете - начинайте игру заново";
 
     // Characters
     public static final String YOU_ARE_DEAD = "Вы мертвы!";

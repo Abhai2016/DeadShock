@@ -50,10 +50,6 @@ public class Game extends Application {
         timer.start();
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
-
     public static GameWorld getGameWorld() {
         return gameWorld;
     }

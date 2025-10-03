@@ -78,14 +78,14 @@ public class HUD extends Pane {
 
     private void initializeBulletsPane() {
         Rectangle rect = new Rectangle(RECTANGLE_WIDTH, 30, Color.SKYBLUE);
-        rect.setOpacity(0.5);
-        rect.setArcWidth(BULLET_PANE_ARC);
         rect.setArcHeight(BULLET_PANE_ARC);
+        rect.setArcWidth(BULLET_PANE_ARC);
+        rect.setOpacity(0.5);
 
         bulletText = new Text();
+        bulletText.setFill(Color.WHITE);
         bulletText.setTranslateX(BULLET_TEXT_OFFSET_X);
         bulletText.setTranslateY(BULLET_TEXT_OFFSET_Y);
-        bulletText.setFill(Color.WHITE);
         bulletText.setFont(Font.font("Arial", 24));
 
         bulletPane = new Pane();
@@ -107,10 +107,10 @@ public class HUD extends Pane {
         HP.setTranslateX(HP_TEXT_OFFSET_X);
         HP.setTranslateY(HP_TEXT_OFFSET_Y);
 
+        hpAndSalt = new ImageView(new Image(Paths.get("resources", "images", "hud", "hpAndSalt.png").toUri().toString()));
         salt = new Rectangle(RECTANGLE_WIDTH, RECTANGLE_HEIGHT, Color.BLUE);
         salt.setTranslateX(SALT_TEXT_OFFSET_X);
         salt.setTranslateY(SALT_TEXT_OFFSET_Y);
-        hpAndSalt = new ImageView(new Image(Paths.get("resources", "images", "hud", "hpAndSalt.png").toUri().toString()));
     }
 
     private void initializeEnergeticsPane() {
@@ -144,7 +144,6 @@ public class HUD extends Pane {
         salt.setWidth(Game.getGameWorld().getBooker().getSalt());
 
         moneyText.setText(String.valueOf(Game.getGameWorld().getBooker().getMoney()));
-        bulletText.setText(Game.getGameWorld().getBooker().getWeapon().getCurrentClip() +
-                " / " + Game.getGameWorld().getBooker().getWeapon().getCurrentBullets());
+        bulletText.setText(Game.getGameWorld().getBooker().getWeapon().getCurrentClip() + " / " + Game.getGameWorld().getBooker().getWeapon().getCurrentBullets());
     }
 }

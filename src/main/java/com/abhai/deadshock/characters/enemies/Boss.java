@@ -47,8 +47,7 @@ public class Boss extends Enemy implements Animatable {
         name = new Text(Texts.BOSS_NAME);
         rectHP = new Rectangle(500, 5, Color.RED);
         imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
-        animation = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED),
-                COUNT_OF_SPRITES, COUNT_OF_SPRITES, 0, 0, WIDTH, HEIGHT);
+        animation = new SpriteAnimation(imageView, Duration.seconds(ANIMATION_SPEED), COUNT_OF_SPRITES, COUNT_OF_SPRITES, 0, 0, WIDTH, HEIGHT);
     }
 
     @Override
@@ -113,19 +112,13 @@ public class Boss extends Enemy implements Animatable {
             return;
         }
 
-        if (velocity.getX() < 0)
-            velocity = velocity.add(ANIMATION_SPEED, 0);
-        else if (velocity.getX() > 0)
-            velocity = velocity.add(-ANIMATION_SPEED, 0);
-
+        moveX(velocity.getX());
         if (Game.getGameWorld().getBooker().getTranslateX() < getTranslateX())
             moveX(-SPEED);
         if (Game.getGameWorld().getBooker().getTranslateX() > getTranslateX())
             moveX(SPEED);
         if (Game.getGameWorld().getBooker().getTranslateX() == getTranslateX())
             stopAnimation();
-
-        moveX(velocity.getX());
 
         if (!Game.getGameWorld().getBooker().isHypnotized() && Game.getGameWorld().getBooker().getTranslateY() < getTranslateY())
             stunInterval++;
@@ -147,6 +140,10 @@ public class Boss extends Enemy implements Animatable {
         Game.getGameWorld().getAppRoot().getChildren().add(rectHP);
     }
 
+    public void deleteHpUi() {
+        Game.getGameWorld().getAppRoot().getChildren().removeAll(rectHP, name);
+    }
+
     private void velocityJump() {
         velocityInterval++;
         if (velocityInterval > 100) {
@@ -165,6 +162,11 @@ public class Boss extends Enemy implements Animatable {
     }
 
     private void moveX(double x) {
+        if (velocity.getX() < 0)
+            velocity = velocity.add(ANIMATION_SPEED, 0);
+        else if (velocity.getX() > 0)
+            velocity = velocity.add(-ANIMATION_SPEED, 0);
+
         animation.play();
         for (int i = 0; i < Math.abs(x); i++) {
             if (x > 0 && getTranslateX() < BLOCK_SIZE * 37) {
@@ -191,13 +193,13 @@ public class Boss extends Enemy implements Animatable {
         }
 
         stunInterval++;
-        if (stunInterval < 50)
-            imageView.setViewport(new Rectangle2D(WIDTH * 2, 0, WIDTH, HEIGHT));
-
-        if (stunInterval > 75) {
+        if (stunInterval < 50) {
             GameMedia.BOSS_TROMP.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
-            imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
+            imageView.setViewport(new Rectangle2D(WIDTH * 2, 0, WIDTH, HEIGHT));
         }
+
+        if (stunInterval > 75)
+            imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
 
         if (stunInterval > 100) {
             initHpUi();
@@ -206,10 +208,6 @@ public class Boss extends Enemy implements Animatable {
             setTranslateY(BLOCK_SIZE * 12 - 5);
             Game.getGameWorld().setBossLevel();
         }
-    }
-
-    public void deleteHpUi() {
-        Game.getGameWorld().getAppRoot().getChildren().removeAll(rectHP, name);
     }
 
     @Override
@@ -221,8 +219,7 @@ public class Boss extends Enemy implements Animatable {
         }
 
         rectHP.setWidth(HP / 10);
-        if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.THIRD_LEVEL
-                && Game.getGameWorld().getBooker().getTranslateX() > BLOCK_SIZE * 285)
+        if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.THIRD_LEVEL && Game.getGameWorld().getBooker().getTranslateX() > BLOCK_SIZE * 280)
             checkOnLevelChange();
 
         if (!hypnotized && Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.BOSS_LEVEL)
