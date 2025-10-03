@@ -159,6 +159,14 @@ public class Menu extends Pane {
         hideMenu();
     }
 
+    public void setEndGame() {
+        showMenu();
+        music = new MediaPlayer(new Media(Paths.get("resources", "sounds", "music", "mainTheme.mp3").toUri().toString()));
+        music.setCycleCount(MediaPlayer.INDEFINITE);
+        start = true;
+        music.play();
+    }
+
     private void checkTrack() {
         if (music.getMedia().getSource().contains("01.mp3"))
             currentMusicPath = currentMusicPath.resolve("02.mp3");

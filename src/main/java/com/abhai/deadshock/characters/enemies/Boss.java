@@ -9,6 +9,7 @@ import com.abhai.deadshock.utils.SpriteAnimation;
 import com.abhai.deadshock.utils.Texts;
 import com.abhai.deadshock.world.levels.Level;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -58,9 +59,10 @@ public class Boss extends Enemy implements Animatable {
         getTransforms().add(new Rotate(-90));
         setTranslateY(getTranslateY() + HEIGHT);
 
-        GameMedia.BOSS_DEATH.setVolume(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
-        GameMedia.BOSS_DEATH.setOnEndOfMedia(() -> Game.getGameWorld().playCutscene());
-        GameMedia.BOSS_DEATH.play();
+        MediaPlayer player = new MediaPlayer(GameMedia.BOSS_DEATH);
+        player.setVolume(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
+        player.setOnEndOfMedia(() -> Game.getGameWorld().playCutscene());
+        player.play();
     }
 
     @Override
@@ -187,9 +189,10 @@ public class Boss extends Enemy implements Animatable {
     public void checkOnLevelChange() {
         stopAnimation();
         if (stunInterval == 0) {
-            GameMedia.OH_BOOKER.setOnEndOfMedia(() -> GameMedia.FUCK.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100));
-            GameMedia.OH_BOOKER.setVolume(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
-            GameMedia.OH_BOOKER.play();
+            MediaPlayer player = new MediaPlayer(GameMedia.OH_BOOKER);
+            player.setOnEndOfMedia(() -> GameMedia.FUCK.play(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100));
+            player.setVolume(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
+            player.play();
         }
 
         stunInterval++;

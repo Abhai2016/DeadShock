@@ -263,19 +263,22 @@ public class GameWorld {
     }
 
     public void initLevelAfterCutscene() {
-        if (level.getCurrentLevelNumber() == Level.BOSS_LEVEL)
-            System.exit(0);
-
         video.stop();
+        active = true;
         booker.setCanPlayVoice(true);
         appRoot.getChildren().remove(videoView);
+
+        if (level.getCurrentLevelNumber() == Level.BOSS_LEVEL) {
+            createEnemies();
+            menu.setEndGame();
+            return;
+        }
 
         level.setCurrentLevelNumber(level.getCurrentLevelNumber() + 1);
         booker.changeLevel();
         level.changeLevel();
         createEnemies();
 
-        active = true;
         Tutorial.changeLevel();
         menu.getMusic().play();
         vendingMachine.changeLevel();

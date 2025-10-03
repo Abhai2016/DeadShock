@@ -24,11 +24,11 @@ public class GameMedia {
     public static final AudioClip FEELING_BETTER = new AudioClip(Paths.get("resources", "sounds", "voices", "booker", "feelingBetter.mp3").toUri().toString());
 
     //Elizabeth
+    public static final Media OH_BOOKER = new Media(Paths.get("resources", "sounds", "voices", "elizabeth", "booker.mp3").toUri().toString());
     public static final AudioClip FREEDOM = new AudioClip(Paths.get("resources", "sounds", "voices", "elizabeth", "freedom.mp3").toUri().toString());
     public static final AudioClip BOOKER_CATCH = new AudioClip(Paths.get("resources", "sounds", "voices", "elizabeth", "bookerCatch.mp3").toUri().toString());
     public static final AudioClip BOOKER_CATCH_2 = new AudioClip(Paths.get("resources", "sounds", "voices", "elizabeth", "bookerCatch2.mp3").toUri().toString());
     public static final AudioClip BOOKER_CATCH_3 = new AudioClip(Paths.get("resources", "sounds", "voices", "elizabeth", "bookerCatch3.mp3").toUri().toString());
-    public static final MediaPlayer OH_BOOKER = new MediaPlayer(new Media(Paths.get("resources", "sounds", "voices", "elizabeth", "booker.mp3").toUri().toString()));
 
     //Enemies
     public static final AudioClip DIE = new AudioClip(Paths.get("resources", "sounds", "voices", "enemies", "die.mp3").toUri().toString());
@@ -88,11 +88,11 @@ public class GameMedia {
     public static final AudioClip CHANGE_TO_ELECTRICITY = new AudioClip(Paths.get("resources", "sounds", "fx", "energetics", "changeToElectricity.mp3").toUri().toString());
 
     //boss
+    public static final Media BOSS_DEATH = new Media(Paths.get("resources", "sounds", "fx", "boss", "death.mp3").toUri().toString());
     public static final AudioClip BOSS_HIT = new AudioClip(Paths.get("resources", "sounds", "fx", "boss", "hit.mp3").toUri().toString());
     public static final AudioClip BOSS_HIT_2 = new AudioClip(Paths.get("resources", "sounds", "fx", "boss", "hit2.mp3").toUri().toString());
     public static final AudioClip BOSS_HIT_3 = new AudioClip(Paths.get("resources", "sounds", "fx", "boss", "hit3.mp3").toUri().toString());
     public static final AudioClip BOSS_TROMP = new AudioClip(Paths.get("resources", "sounds", "fx", "boss", "tromp.mp3").toUri().toString());
-    public static final MediaPlayer BOSS_DEATH = new MediaPlayer(new Media(Paths.get("resources", "sounds", "fx", "boss", "death.mp3").toUri().toString()));
 
     //cutscenes
     public static final Media THIRD_CUTSCENE = new Media(Paths.get("resources", "videos", "end.mp4").toUri().toString());
