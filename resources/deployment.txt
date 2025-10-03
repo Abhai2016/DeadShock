@@ -4,4 +4,4 @@
     a) download javafx jmods
     b) jlink --module-path "%JAVA_HOME%\jmods;C:\Program Files\Java\javafx-25\jmods" --add-modules java.base,javafx.controls,javafx.media --output target/DeadShock
 
-3. Create executable exe - jpackage --type app-image --name DeadShock --input target --main-jar DeadShock-1.0.0.jar --main-class com.abhai.deadshock.Game --runtime-image target/DeadShock --icon resources/images/icons/icon.ico
+3. Create executable exe - jpackage --type app-image --name DeadShock --input target --main-jar DeadShock-2.0.jar --main-class com.abhai.deadshock.Game --runtime-image target/DeadShock --icon resources/images/icons/icon.ico
