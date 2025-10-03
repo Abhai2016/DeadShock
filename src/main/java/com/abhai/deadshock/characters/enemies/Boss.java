@@ -196,12 +196,12 @@ public class Boss extends Enemy implements Animatable {
         }
 
         stunInterval++;
-        if (stunInterval < 50) {
+        if (stunInterval == 50) {
             GameMedia.BOSS_TROMP.play(Game.getGameWorld().getMenu().getFxSlider().getValue() / 100);
             imageView.setViewport(new Rectangle2D(WIDTH * 2, 0, WIDTH, HEIGHT));
         }
 
-        if (stunInterval > 75)
+        if (stunInterval == 75)
             imageView.setViewport(new Rectangle2D(0, 0, WIDTH, HEIGHT));
 
         if (stunInterval > 100) {
