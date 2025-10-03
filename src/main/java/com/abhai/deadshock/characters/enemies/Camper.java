@@ -11,7 +11,7 @@ public class Camper extends Enemy {
     private int moveInterval;
 
     public Camper() {
-        HP = 500;
+        HP = 250;
         moveInterval = 0;
         type = EnemyType.CAMPER;
     }
@@ -71,7 +71,7 @@ public class Camper extends Enemy {
     public void init(int x, int y) {
         super.init(x, y);
 
-        HP = 500;
+        HP = 250;
         moveInterval = 0;
     }
 
