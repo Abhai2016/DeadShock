@@ -138,6 +138,7 @@ public class GameWorld {
         }
 
         videoView.setMediaPlayer(video);
+        video.setVolume(menu.getMusicSlider().getValue());
         video.setOnEndOfMedia(this::initLevelAfterCutscene);
         videoView.getMediaPlayer().setVolume(menu.getVoiceSlider().getValue() / 100);
         video.play();

@@ -18,7 +18,7 @@ public class CustomButton extends StackPane {
         rectangle.setOpacity(0.5);
 
         Text text = new Text(name);
-        text.setFill(Color.WHITE);
+        text.setFill(Color.BLACK);
         text.setFont(Font.font("Arial", FontWeight.BOLD, 14));
 
         setAlignment(Pos.CENTER);
