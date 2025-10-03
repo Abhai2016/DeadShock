@@ -158,6 +158,7 @@ public class GameWorld {
 
         Game.getSaveManager().saveProgress();
         Game.getSaveManager().saveMenuOptions();
+        menu.setBossMusic();
     }
 
     public void deathUnpause() {

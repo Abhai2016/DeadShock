@@ -58,9 +58,7 @@ public class Menu extends Pane {
 
     public Menu() {
         currentMusicPath = Paths.get("resources", "sounds", "music", "developersChoice", "01.mp3");
-        music = new MediaPlayer(new Media(Paths.get("resources", "sounds", "music", "mainTheme.mp3").toUri().toString()));
-        music.setCycleCount(MediaPlayer.INDEFINITE);
-        music.play();
+        setMainTheme();
 
         start = true;
         isShown = true;
@@ -161,10 +159,8 @@ public class Menu extends Pane {
 
     public void setEndGame() {
         showMenu();
-        music = new MediaPlayer(new Media(Paths.get("resources", "sounds", "music", "mainTheme.mp3").toUri().toString()));
-        music.setCycleCount(MediaPlayer.INDEFINITE);
         start = true;
-        music.play();
+        setMainTheme();
     }
 
     private void checkTrack() {
@@ -185,6 +181,14 @@ public class Menu extends Pane {
         restartMusicIfNeeded();
     }
 
+    public void setBossMusic() {
+        music.stop();
+        music = new MediaPlayer(new Media(Paths.get("resources", "sounds", "music", "bossTrack.mp3").toUri().toString()));
+        music.setCycleCount(MediaPlayer.INDEFINITE);
+        music.setVolume(musicSlider.getValue());
+        music.play();
+    }
+
     private void createCover() {
         textCover = new Text(Texts.PUSH_ENTER_TO_CONTINUE);
         textCover.setFill(Color.AQUA);
@@ -199,6 +203,12 @@ public class Menu extends Pane {
         fadeTransitionTextCover.setFromValue(1);
         fadeTransitionTextCover.setToValue(0);
         fadeTransitionTextCover.play();
+    }
+
+    private void setMainTheme() {
+        music = new MediaPlayer(new Media(Paths.get("resources", "sounds", "music", "mainTheme.mp3").toUri().toString()));
+        music.setCycleCount(MediaPlayer.INDEFINITE);
+        music.play();
     }
 
     private void createMainSubMenu() {
@@ -333,6 +343,11 @@ public class Menu extends Pane {
     }
 
     private void restartMusicIfNeeded() {
+        if (Game.getGameWorld().getLevel().getCurrentLevelNumber() == Level.BOSS_LEVEL) {
+            setBossMusic();
+            return;
+        }
+
         if (!start) {
             music.stop();
             music = new MediaPlayer(new javafx.scene.media.Media(currentMusicPath.toUri().toString()));
