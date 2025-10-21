@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 public class GameMedia {
     //Booker
     public static final Media deathMedia = new Media(Paths.get("resources", "videos", "death.mp4").toUri().toString());
+    public static final Media linuxDeathMedia = new Media(Paths.get("resources", "videos", "death.wav").toUri().toString());
     public static final AudioClip FUCK = new AudioClip(Paths.get("resources", "sounds", "voices", "booker", "fuck.wav").toUri().toString());
     public static final AudioClip SHIT = new AudioClip(Paths.get("resources", "sounds", "voices", "booker", "shit.wav").toUri().toString());
     public static final AudioClip GREAT = new AudioClip(Paths.get("resources", "sounds", "voices", "booker", "great.wav").toUri().toString());
@@ -95,6 +96,9 @@ public class GameMedia {
 
     //cutscenes
     public static final Media THIRD_CUTSCENE = new Media(Paths.get("resources", "videos", "end.mp4").toUri().toString());
+    public static final Media LINUX_THIRD_CUTSCENE = new Media(Paths.get("resources", "videos", "end.wav").toUri().toString());
     public static final Media SECOND_CUTSCENE = new Media(Paths.get("resources", "videos", "comstock.mp4").toUri().toString());
     public static final Media FIRST_CUTSCENE = new Media(Paths.get("resources", "videos", "elizabeth.mp4").toUri().toString());
+    public static final Media LINUX_SECOND_CUTSCENE = new Media(Paths.get("resources", "videos", "comstock.wav").toUri().toString());
+    public static final Media LINUX_FIRST_CUTSCENE = new Media(Paths.get("resources", "videos", "elizabeth.wav").toUri().toString());
 }

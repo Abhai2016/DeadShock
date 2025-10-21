@@ -342,7 +342,12 @@ public class Booker extends Character implements Animatable {
                 && Game.getGameWorld().getEnemies().getFirst() instanceof Boss boss)
             boss.unStun();
 
-        MediaPlayer videoDeath = new MediaPlayer(GameMedia.deathMedia);
+        MediaPlayer videoDeath;
+        if (Game.OS_NAME.contains("linux"))
+            videoDeath = new MediaPlayer(GameMedia.linuxDeathMedia);
+        else
+            videoDeath = new MediaPlayer(GameMedia.deathMedia);
+
         videoDeath.setVolume(Game.getGameWorld().getMenu().getVoiceSlider().getValue() / 100);
         videoDeath.setOnEndOfMedia(() -> {
             deathReset();

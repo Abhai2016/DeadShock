@@ -23,6 +23,7 @@ public class Game extends Application {
             gameWorld.update();
         }
     };
+    public static final String OS_NAME = System.getProperty("os.name").toLowerCase();
 
     private static GameWorld gameWorld;
     private static SaveManager saveManager;

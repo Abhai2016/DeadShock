@@ -131,10 +131,19 @@ public class GameWorld {
         ft.setToValue(1);
         ft.play();
 
-        switch (level.getCurrentLevelNumber()) {
-            case Level.FIRST_LEVEL -> video = new MediaPlayer(GameMedia.FIRST_CUTSCENE);
-            case Level.SECOND_LEVEL -> video = new MediaPlayer(GameMedia.SECOND_CUTSCENE);
-            case Level.BOSS_LEVEL -> video = new MediaPlayer(GameMedia.THIRD_CUTSCENE);
+        if (Game.OS_NAME.contains("linux")) {
+            switch (level.getCurrentLevelNumber()) {
+                case Level.FIRST_LEVEL -> video = new MediaPlayer(GameMedia.LINUX_FIRST_CUTSCENE);
+                case Level.SECOND_LEVEL -> video = new MediaPlayer(GameMedia.LINUX_SECOND_CUTSCENE);
+                case Level.BOSS_LEVEL -> video = new MediaPlayer(GameMedia.LINUX_THIRD_CUTSCENE);
+            }
+        }
+        else {
+            switch (level.getCurrentLevelNumber()) {
+                case Level.FIRST_LEVEL -> video = new MediaPlayer(GameMedia.FIRST_CUTSCENE);
+                case Level.SECOND_LEVEL -> video = new MediaPlayer(GameMedia.SECOND_CUTSCENE);
+                case Level.BOSS_LEVEL -> video = new MediaPlayer(GameMedia.THIRD_CUTSCENE);
+            }
         }
 
         videoView.setMediaPlayer(video);
@@ -364,7 +373,10 @@ public class GameWorld {
     }
 
     public void init(SavesDTO savesDTO, EnemiesDTO enemiesDTO) {
-        video = new MediaPlayer(GameMedia.FIRST_CUTSCENE);
+        if (Game.OS_NAME.contains("linux"))
+            video = new MediaPlayer(GameMedia.LINUX_FIRST_CUTSCENE);
+        else
+            video = new MediaPlayer(GameMedia.FIRST_CUTSCENE);
         videoView = new MediaView(video);
         this.enemiesDTO = enemiesDTO;
 
