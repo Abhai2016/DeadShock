@@ -57,7 +57,7 @@ public class Menu extends Pane {
     private boolean isCoverShown;
 
     public Menu() {
-        currentMusicPath = Paths.get("resources", "sounds", "music", "developersChoice", "01.wav");
+        currentMusicPath = Paths.get("resources", "sounds", "music", "developersChoice", "01.mp3");
         setMainTheme();
 
         start = true;
@@ -164,26 +164,26 @@ public class Menu extends Pane {
     }
 
     private void checkTrack() {
-        if (music.getMedia().getSource().contains("01.wav"))
-            currentMusicPath = currentMusicPath.resolve("02.wav");
-        else if (music.getMedia().getSource().contains("02.wav"))
-            currentMusicPath = currentMusicPath.resolve("03.wav");
-        else if (music.getMedia().getSource().contains("03.wav"))
-            currentMusicPath = currentMusicPath.resolve("04.wav");
-        else if (music.getMedia().getSource().contains("04.wav"))
-            currentMusicPath = currentMusicPath.resolve("05.wav");
-        else if (music.getMedia().getSource().contains("05.wav"))
-            currentMusicPath = currentMusicPath.resolve("06.wav");
-        else if (music.getMedia().getSource().contains("06.wav"))
-            currentMusicPath = currentMusicPath.resolve("07.wav");
-        else if (music.getMedia().getSource().contains("07.wav"))
-            currentMusicPath = currentMusicPath.resolve("01.wav");
+        if (music.getMedia().getSource().contains("01.mp3"))
+            currentMusicPath = currentMusicPath.resolve("02.mp3");
+        else if (music.getMedia().getSource().contains("02.mp3"))
+            currentMusicPath = currentMusicPath.resolve("03.mp3");
+        else if (music.getMedia().getSource().contains("03.mp3"))
+            currentMusicPath = currentMusicPath.resolve("04.mp3");
+        else if (music.getMedia().getSource().contains("04.mp3"))
+            currentMusicPath = currentMusicPath.resolve("05.mp3");
+        else if (music.getMedia().getSource().contains("05.mp3"))
+            currentMusicPath = currentMusicPath.resolve("06.mp3");
+        else if (music.getMedia().getSource().contains("06.mp3"))
+            currentMusicPath = currentMusicPath.resolve("07.mp3");
+        else if (music.getMedia().getSource().contains("07.mp3"))
+            currentMusicPath = currentMusicPath.resolve("01.mp3");
         restartMusicIfNeeded();
     }
 
     public void setBossMusic() {
         music.stop();
-        music = new MediaPlayer(new Media(Paths.get("resources", "sounds", "music", "bossTrack.wav").toUri().toString()));
+        music = new MediaPlayer(new Media(Paths.get("resources", "sounds", "music", "bossTrack.mp3").toUri().toString()));
         music.setCycleCount(MediaPlayer.INDEFINITE);
         music.setVolume(musicSlider.getValue());
         music.play();
@@ -206,7 +206,7 @@ public class Menu extends Pane {
     }
 
     private void setMainTheme() {
-        music = new MediaPlayer(new Media(Paths.get("resources", "sounds", "music", "mainTheme.wav").toUri().toString()));
+        music = new MediaPlayer(new Media(Paths.get("resources", "sounds", "music", "mainTheme.mp3").toUri().toString()));
         music.setCycleCount(MediaPlayer.INDEFINITE);
         music.play();
     }
@@ -250,22 +250,22 @@ public class Menu extends Pane {
         subMenus.put(Texts.SOUNDS_MUSIC_SUBMENU, musicSubMenu);
 
         rockItem.setOnMouseClicked(event -> {
-            currentMusicPath = Paths.get("resources", "sounds", "music", "rock", "01.wav");
+            currentMusicPath = Paths.get("resources", "sounds", "music", "rock", "01.mp3");
             restartMusicIfNeeded();
             typeOfMusicText.setText(Texts.CHOSEN_ROCK);
         });
         post_hardcoreItem.setOnMouseClicked(event -> {
-            currentMusicPath = Paths.get("resources", "sounds", "music", "metalcore", "01.wav");
+            currentMusicPath = Paths.get("resources", "sounds", "music", "metalcore", "01.mp3");
             restartMusicIfNeeded();
             typeOfMusicText.setText(Texts.CHOSEN_METALCORE);
         });
         electronicItem.setOnMouseClicked(event -> {
-            currentMusicPath = Paths.get("resources", "sounds", "music", "electronic", "01.wav");
+            currentMusicPath = Paths.get("resources", "sounds", "music", "electronic", "01.mp3");
             restartMusicIfNeeded();
             typeOfMusicText.setText(Texts.CHOSEN_ELECTRO);
         });
         developersChoice.setOnMouseClicked(event -> {
-            currentMusicPath = Paths.get("resources", "sounds", "music", "developersChoice", "01.wav");
+            currentMusicPath = Paths.get("resources", "sounds", "music", "developersChoice", "01.mp3");
             restartMusicIfNeeded();
             typeOfMusicText.setText(Texts.CHOSEN_DEVELOPER_CHOICE);
         });
