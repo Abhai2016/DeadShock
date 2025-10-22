@@ -2,6 +2,7 @@ package com.abhai.deadshock.utils;
 
 import com.abhai.deadshock.Game;
 import com.abhai.deadshock.dtos.EnemiesDTO;
+import com.abhai.deadshock.dtos.LevelsDTO;
 import com.abhai.deadshock.dtos.MenuOptionsDTO;
 import com.abhai.deadshock.dtos.SavesDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +16,7 @@ public class SaveManager {
     private static final Path SAVES_PATH = Paths.get("resources", "data", "saves.dat");
     private static final Path OPTIONS_PATH = Paths.get("resources", "data", "options.dat");
     private static final Path ENEMIES_PATH = Paths.get("resources", "data", "enemies.dat");
+    private static final Path LEVELS_DATA_PATH = Paths.get("resources", "data", "levels.dat");
 
     private final ObjectMapper mapper;
 
@@ -64,7 +66,7 @@ public class SaveManager {
                 return null;
         } catch (IOException e) {
             System.out.println(e.getLocalizedMessage());
-            throw new RuntimeException("Could not initialize retrieve saves");
+            throw new RuntimeException("Could not retrieve saves");
         }
     }
 
@@ -80,6 +82,18 @@ public class SaveManager {
         }
     }
 
+    public LevelsDTO getLevels() {
+        try {
+            if (LEVELS_DATA_PATH.toFile().exists())
+                return mapper.readValue(LEVELS_DATA_PATH.toFile(), LevelsDTO.class);
+            else
+                return null;
+        } catch (IOException e) {
+            System.out.println(e.getLocalizedMessage());
+            throw new RuntimeException("Could not retrieve levels");
+        }
+    }
+
     public MenuOptionsDTO loadMenuOptions() {
         try {
             if (OPTIONS_PATH.toFile().exists())
@@ -88,7 +102,7 @@ public class SaveManager {
                 return null;
         } catch (IOException e) {
             System.out.println(e.getLocalizedMessage());
-            throw new RuntimeException("Could not initialize retrieve menu options");
+            throw new RuntimeException("Could not retrieve menu options");
         }
     }
 }

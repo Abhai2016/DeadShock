@@ -21,7 +21,6 @@ public class Level {
     public static final int THIRD_LEVEL = 3;
     public static final int BOSS_LEVEL = 4;
 
-    private static final Path LEVELS_DATA_PATH = Paths.get("resources", "data", "levels.dat");
     private static final Path FIRST_LEVEL_IMAGE_PATH = Paths.get("resources", "images", "levels", "backgrounds", "firstLevel.jpg");
     private static final Path SECOND_LEVEL_IMAGE_PATH = Paths.get("resources", "images", "levels", "backgrounds", "secondLevel.jpg");
     private static final Path THIRD_LEVEL_IMAGE_PATH = Paths.get("resources", "images", "levels", "backgrounds", "thirdLevel.jpg");
@@ -62,17 +61,12 @@ public class Level {
 
     private void createLevel() {
         String[] level = new String[0];
-        try {
-            LevelsDTO levelData = new ObjectMapper().readValue(LEVELS_DATA_PATH.toFile(), LevelsDTO.class);
-            switch (currentLevelNumber) {
-                case FIRST_LEVEL -> level = levelData.getFirstLevel();
-                case SECOND_LEVEL -> level = levelData.getSecondLevel();
-                case THIRD_LEVEL -> level = levelData.getThirdLevel();
-                case BOSS_LEVEL -> level = levelData.getBossLevel();
-            }
-        } catch (IOException e) {
-            System.out.println(e.getLocalizedMessage());
-            throw new RuntimeException("Could not initialize level");
+        LevelsDTO levelData = Game.getSaveManager().getLevels();
+        switch (currentLevelNumber) {
+            case FIRST_LEVEL -> level = levelData.getFirstLevel();
+            case SECOND_LEVEL -> level = levelData.getSecondLevel();
+            case THIRD_LEVEL -> level = levelData.getThirdLevel();
+            case BOSS_LEVEL -> level = levelData.getBossLevel();
         }
 
         if (!blocks.isEmpty())
