@@ -4,11 +4,9 @@ import com.abhai.deadshock.Game;
 import com.abhai.deadshock.dtos.LevelsDTO;
 import com.abhai.deadshock.types.BlockType;
 import com.abhai.deadshock.utils.pools.ObjectPool;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
