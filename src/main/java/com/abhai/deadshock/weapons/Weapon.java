@@ -91,6 +91,7 @@ public class Weapon extends Pane {
     private int machineGunBullets;
     private int currentShootInterval;
 
+    //TODO change canChoose booleans to EnumSets
     private boolean canReload;
     private boolean singleShot;
     private boolean nowReloading;
