@@ -57,6 +57,7 @@ public class GameWorld {
     private boolean active;
     private DifficultyType difficultyType;
 
+    //TODO pass this(GameWorld) to the objects to avoid using public static fields
     public GameWorld(Pane appRoot) {
         gameRoot = new Pane();
         this.appRoot = appRoot;
